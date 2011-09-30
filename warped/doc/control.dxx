@@ -1,0 +1,16 @@
+/**@name Doc++ Documentation for ControlKit */
+//@{
+        //@Include: ../include/Actuator.h
+        //@Include: ../include/ActuatorImplementationBase.h
+        //@Include: ../include/AsyncSensor.h
+        //@Include: ../include/AverageFilter.h
+        //@Include: ../include/ControlManager.h
+        //@Include: ../include/FIRFilter.h
+        //@Include: ../include/Filter.h
+        //@Include: ../include/IIRFilter.h
+        //@Include: ../include/MedianFilter.h
+        //@Include: ../include/Sensor.h
+        //@Include: ../include/SensorImplementationBase.h
+        //@Include: ../include/SyncSensor.h
+
+//@} 

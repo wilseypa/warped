@@ -1,0 +1,143 @@
+ThreadedTimeWarp Programmers Manual
+
+Acronyms:
+GVT - Global Virtual Time
+LKM - Local Kernel Message
+LTSE - Least Time Stamped Event
+
+
+ThreadedTimeWarp Topics:
+*. pthread Functions
+*. Thread Types
+*. Atomic Data Structures
+*. OrganizedEventSet
+	*. SimulationObjectState
+	*. LocalKernelMessage
+	*. Multiple Round Fossil Collection
+	*. ObjectQueue
+*. ThreadedScheduler
+*. AtomicMatternGVTManager
+*. ThreadedSimulationManager
+*. References
+
+********************************************************************************
+pthread Functions:
+	The pthread functions used in ThreadedTimeWarp include, pthread_create, 
+	pthread_exit, and pthread_join. As you may guess, pthread_create, creates 
+	new threads, pthread_exit allows a running thread to quit, and pthread_join, 
+	when called by the main process, halts the main thread's execution until the 
+	specified thread has successfully executed pthread_exit[1] rejoining the main
+	process.
+
+Thread Types:
+	There are two types of threads in ThreadedTimeWarp. The first type, which I 
+	will call the manager, takes care of all housekeeping functions such as 
+	receiving messages from other SimulationManagers and calculating the GVT. 
+	The manager is also allowed to execute events if the user chooses 
+	to allow it in the configuration file at runtime. The second thread class will be 
+	referred to as workers.  Workers are tasked with emptying the OrganizedEventSet 
+	of all pending jobs. This includes processing LKMs and events, in that order.  
+	When all workers are reporting that the OrganizedEventSet is empty, the 
+	SimulationManager sends out a LKM to clear the object's output queues of all 
+	remaining events. If no further events are found the manager thread then 
+	proceeds to join the worker threads using pthread_join. When the 
+	manager thread has rejoined with all of the workers the simulation ends.
+
+Atomic Data Structures:
+	ThreadedTimeWarp currently makes use of two AtomicDataStructures which are the 
+	AtomicQueue, and the AtomicCalendarQueue.  The AtomicQueue has three functions
+	functions, enqueue, dequeue and peek.  There is no searching or removing of interior 
+	elements.  The AtomicCalendarQueue is a slightly modified version of a 
+	CalendarQueue[2]. Unlike the original, our implementation takes each bucket 
+	and splits it into two AtomicQueue containers. One container is for the current 
+	year and the second is for all future years.  When a bucket is emptied, the 
+	currentBucket pointer to the current bucket is moved to the next in the list, 
+	and the thread that found the empty bucket is tasked with moving the appropriate 
+	events from the future years' bucket into the next current year. There is no 
+	dynamic sizing so whatever number of buckets, and bucket width is chosen at the 
+	start of the simulation is what is maintained throughout. The other important 
+	note is that if the object to be inserted into the Calendar Queue has an event 
+	that happens in the past, as established by the curretBucket pointer, the insert 
+	will fail which indicates that object should have its next event processed 
+	before trying to insert again.
+
+OrganizedEventSet:
+	The EventSet in a normal TimeWarp type simulation is where all the simulation 
+	objects store their events. For ThreadedTimeWarp, the EventSet is "organized" 
+	meaning there is a LTSE order among the objects which is maintained by the 
+	ObjectQueue. There are also some additional containers that each object stores 
+	in the OrganizedEventSet including an AtomicQueue of LKMs, and a state container. 
+	Both are vectors that are indexed by ObjectID.
+
+SimulationObjectState:
+	Each SimulationObject has two boolean flags.  The first flag, locks the object
+	to that thread letting other threads know if it is available. The second flag, 
+	named "hasLocalMessages", indicates whether this object has any pending local 
+	messages.  This flag is only used by the "queueOfObjectsWithReceivedMessages".  
+	This queue indicates whether an object needs to be scheduled for message 
+	processing and the flag keeps an object from being inserted multiple times into 
+	this queue.
+
+LocalKernelMessage:
+	LocalKernelMessages(LKM) allow the various threads to communicate with Objects 
+	they do not currently wish to lock, or have access to lock. Each object has 
+	its own Atomic LKM queue.  A LKM can come in any of the following forms: Event, 
+	NegativeEvent, CleanOutputManager, and FossilCollect. The Event and NegativeEvent 
+	messages are used when an Event is received by the object but the object is 
+	currently locked by another thread.  Instead of waiting for the thread to unlock 
+	the Event is merely added to the Local Message queue for that object. The 
+	CleanOutputManager message is sent to all objects simultaneously by the 
+	SimulationManager when the worker threads run out of events to execute. This is 
+	done to make sure there are no messages stuck in the output queue before ending 
+	the simulation. The fossilCollect message will be discussed in the next section.
+
+Multiple Round Fossil Collection:
+	The fossilCollect message is actually a 3 phase message passed from 
+	SimulationObjectID 0 to SimulationObjectID N. The first phase cleans the state 
+	manager and finds the last state entry for that object so the simulation 
+	knows how far back it can clean the OutputManager, and EventSet.  As this first 
+	phase progresses, objects report their minimum fossilCollection time, and pass on 
+	the lowest value seen so far.  When reaching the last object, the one with the 
+	greatest objectID, the lowest time has already been established and a phase 2 
+	message is sent to object 0 telling object 0 to clean its OutputManager.  When the 
+	phase 2 message hits the last object again, the phase 3 message is sent to object 0 
+	telling it to clean its EventSetManager.  The reason for splitting the OutputManager, 
+	and EventSetManager is because it is possible the same event could be in the 
+	EventSetManager for one object and the output manager of another object.  Cleaning 
+	them in the reverse order would cause a segfault because the outputManager assumes
+	all events still exist.
+
+TimeWarpSimulationObjectQueue:
+	The ObjectQueue is what orders objects by their LTSE. Currently the ObjectQueue is 
+	implemented using an AtomicCalendarQueue described above, and there is also a locked
+	version. It is important to note that if you attempt to insert an Event lower than
+	the queues current LTSE, the insert will fail.  That object will then be required 
+	to execute events until it can successfully insert itself back into the objectQueue.
+	
+ThreadedScheduler
+	This class functions almost identically to the DefaultSchedulingManager except it uses
+	the ObjectQueue described above to keep track of what is the last LTSE executed. This 
+	is done everytime an event is scheduled from the ObjectQueue and the MessageQueue is 
+	guarenteed to be empty. The LastEventScheduled is what the ThreadedScheduler uses to 
+	tell the SimulationManager how far GVT has progressed
+	
+AtomicMatternGVTManager
+	Every time a worker thread executes an event from the ObjectQueue, the period is 
+	incremented atomically. When a worker thread increments period beyond what was specified
+	in the configuration file, a flag is set.  This flag is checked by the manager thread 
+	who then sends out the fossil collection messages to all of the objects.
+
+ThreadedSimulationManager
+	This is the real heart of any TimeWarpSimulation. The ThreadedSimulationManager is built
+	ontop of the existing TimeWarpSimulationManager because many of the functions are unchanged.
+	There are two new loops in the Threaded version, one for each thread type.  The Manager thread
+	checks messages, verifys the GVTPeriod Flag is unset and then executes one or more events 
+	depending on what is specified in the configuration file.  The Worker threads execute in a
+	much tighter loop checking first if that the manager thread hasnt told them to end, then 
+	proceeding to get the next job which could be processing messages or events.
+
+References:
+[1] https://computing.llnl.gov/tutorials/pthreads/
+[2] Randy Brown "Calendar Queues: A Fast O(1) Priority Queue Implementation for the Simulation Event Set Problem:
+
+

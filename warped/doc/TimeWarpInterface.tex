@@ -1,0 +1,664 @@
+
+\documentstyle[11pt,alltt,url,fullpage,psfig]{article}
+
+%\setlength{\unitlength}{1in}
+
+\begin{document}
+
+\title{\textbf{The \textsc{warped} Simulation Kernel's API Reference}} 
+
+\author{ \textsf{Dhananjai Madhava Rao, Dale E. Martin,}\\
+\textsf{Radharamanan Radhakrishnan, Malolan Chetlur,}\\ 
+\textsf{and Philip A. Wilsey} \\
+\textbf{Computer Architecture Design Laboratory} \\
+\textbf{Dept. of ECECS, PO Box 210030} \\
+\textbf{University of Cincinnati, Cincinnati, OH 45221--0030.}
+}
+
+
+\date{ }
+
+\maketitle
+
+\section{Introduction}
+
+As far as the big picture goes, {\sc warped} is the specification of an
+API of a discrete event simulator.  It defines interfaces required to
+implement a discrete event simulation (both applications and new
+simulation kernels).  In theory, the underlying implementation of the
+discrete event simulation kernel should not be visible to the user.
+Attempts have been made to ensure that this really is the case, and this
+document will attempt to be thorough enough to allow the implantation of a
+new ``plug and pray'' \textsc{warped} simulation kernel. To start things
+off, Figure~\ref{fig:classHierarchy} illustrates the class hierarchy. The
+kernel interface that the \textsc{warped} kernel builds off of is
+described in the simulation developer's API reference
+document~\cite{devel-api}.
+
+\begin{figure}
+\begin{center}
+  \ \psfig{figure=figures/new-warped.eps,silent=}
+\end{center}
+\caption{Current Class Hierarchy}\label{fig:classHierarchy}
+\end{figure}
+
+\section{What a {\sc warped} kernel must supply}
+
+\subsection{Kernel's view of LogicalProcesses}
+
+This subsection defines how the logical process from the kernel's side is
+organized.
+
+\subsubsection{KernelLogicalProcessInterface}
+
+The {\tt KernelLogicalProcessInterface} class defines what a kernel
+process should provide to the user process. These methods are called from
+the application. The {\tt LogicalProcess} class in turn routes the calls
+via a kernel process pointer set by the configuration manager when the
+object registers with it. A concise description of this class is shown in
+Figure~\ref{fig:KernelLogicalProcessInterface} and a detailed description
+of the interface is as follows.
+
+\begin{figure*}
+\begin{center}
+\ \psfig{figure=figures/KernelLogicalProcessInterface.ps,silent=}
+\end{center}
+\caption{The interface kernel should provide to the user
+  process.}\label{fig:KernelLogicalProcessInterface}
+\end{figure*}
+
+\begin{itemize}
+
+\item{\tt void receiveUserEvent(UserEvent *)} - This method should receive
+  the event passed to the kernel by the user and suitably process the
+  event. Once the event has been handed over to the kernel, the user has
+  no control over the data in the event and the user may not modify the
+  contents of the event.
+
+\item{\tt bool haveMoreEvents() const} - This method can be invoked to check
+  if there are any events for this object waiting to be processed.  The
+  values returned from haveMoreEvents() is valid only at that instant of
+  time when the method is called. The value returned may not be valid
+  across simulation cycles.
+    
+\item{\tt UserEvent *giveCurrentEvent() const} - This method returns the
+  current pending event that is to be processed by the user process. The
+  method return NULL if no pending events are present for this process.
+  
+\item{\tt const VTime *getSimulationTime() const} - This method should
+  return the local virtual time of the process.
+  
+\item{\tt UserState* getState() const} - This method should return the
+  current state of the process. The current state is valid once the
+  simulation starts and before the process terminates. The function should
+  return NULL when invoked during process creation and destruction. At all
+  other times this function should return a non-null state pointer that
+  points to a valid user state.
+
+\item{\tt void processError(const char *message, const Severity} - This
+  method provides access to exception handling in the system. The kernel
+  process, depending on the severity level reported could abort, display a
+  warning or log/ignore the message.
+
+\end{itemize}
+
+This subsection defines the interfaces that a simulation process presents
+to the \emph{Cluster}.  A \emph{Cluster} is a collection of kernel logical
+processes.  It provides a focal point and a place holder for all the
+aggregate level sub-systems such as the scheduler, communication manager
+and the GVT manager (what about the input, state, or the output
+manager? They could be aggregate level sub-systems as well). 
+
+\subsubsection{KernelLogicalProcess class}
+
+The {\tt KernelLogicalProcess} class provides a handle to the user side
+logical process. The {\tt Kernel\-LogicalProcess} class is inherited from
+the {\tt KernelLogicalProcessInterface} class (see
+Figure~\ref{fig:KernelLogicalProcessInterface}) and provides the similar
+interface as the methods defined in the {\tt LogicalProcessInterface}
+class. The cluster to which the kernel side process is attached calls
+these methods and in turn the user defined method get called. The pointers
+are initialized by the {\tt ConfigurationManager} class.
+
+\subsubsection{StateManagerInterface class}
+
+\begin{figure*}
+\begin{center}
+\ \psfig{figure=figures/StateManagerInterface.ps,silent=}
+\end{center}
+\caption{The interface every State Manager should provide to the kernel
+  process.}\label{fig:StateManagerInterface}
+\end{figure*}
+
+The following subsection defines the interface for the state manager
+associated with each kernel logical process. The state manager class
+provides the necessary control needed to implement different state saving
+strategies in the system.  Figure~\ref{fig:StateManagerInterface} provides
+a concise description of the interface.
+
+\begin{itemize}
+
+\item {\tt KernelState *getCurrentState()} - This method is invoked by the
+  kernel process to obtain its current state.
+
+\item {\tt void saveState()} - This method is invoked by the kernel
+  process at the end of each simulation cycle to indicate that a
+  simulation cycle has been completed. The state manager may then decide
+  whether to save state or not.  This provides the necessary information
+  to implement different state saving mechanisms.
+
+\item {\tt void rollback(const VTime *)} - This method is invoked by the
+  kernel process to indicate that a rollback is occuring in the
+  system. The state manager is expected to reset its internal data
+  structures and restore the state to a simulation time that is passed
+  in as a parameter.
+
+\item {\tt void fossilCollect(const VTime *)} - This method is invoked by
+  the kernel process to indicate that it is safe to fossil collect the
+  state manager's internal data structures up to the simulation time that
+  is passed in as a parameter.
+
+\item {\tt void setLogicalProcess(KernelLogicalProcessInterface *)} - This
+  method is invoked by the configuration manager to inform the state
+  manager about the kernel process that is associated with it.
+
+\item {\tt KernelLogicalProcessInterface *getLogicalProcess() const} -
+  This method provides a convenient mechanism to access the process.
+\end{itemize}
+
+\subsubsection{OutputManagerInterface class}
+
+\begin{figure*}
+\begin{center}
+\ \psfig{figure=figures/OutputManagerInterface.ps,silent=}
+\end{center}
+\caption{The interface an Output Manager should provide to the kernel
+  process}\label{fig:OutputManagerInterface}
+\end{figure*}
+
+The following subsection defines the interface for the output manager
+associated with each kernel logical process. The output manager class
+provides the necessary control needed to implement different output
+optimization strategies (such as lazy cancellation and dynamic
+cancellation, one-anti message \emph{etc}.,).
+Figure~\ref{fig:OutputManagerInterface} provides a consise description of
+the interface. The following is a detailed description of the interface.
+
+\begin{itemize}
+\item {\tt void receiveUserEvent(UserEvent *)} - This method is invoked by 
+  the kernel process to forward the events generated to the output
+  manager. Inturn, the output manager forwards the events to the
+  communication manager. 
+
+\item {\tt void rollback(const VTime *)} - This method is invoked by the
+  kernel process to indicate that a rollback is occuring in the
+  system. The output manager is expected to reset its internal data
+  structures and perform any necessary actions. 
+  
+\item {\tt void fossilCollect(const VTime *)} - This method is invoked by
+  the kernel process to indicate that it is safe to fossil collect the
+  output manager's internal data structures up to the simulation time,
+  passed in as the parameter.
+
+\item {\tt void setLogicalProcess(KernelLogicalProcessInterface *)} - This
+  method is invoked by the configuration manager to inform the state
+  manager about the kernel process that is associated with it. 
+
+\item {\tt KernelLogicalProcessInterface *getLogicalProcess() const} -
+  This method provides a convenient mechanism to access the kernel process
+  associated with the output manager.
+
+\end{itemize}
+
+\subsubsection{Input Manager Interface class}
+
+\begin{figure*}
+\begin{center}
+\ \psfig{figure=figures/InputManagerInterface.ps,silent=}
+\end{center}
+\caption{The interface every Input Manager should provide to the kernel
+  process}\label{fig:InputManagerInterface}
+\end{figure*}
+
+The input manager class is a completely new facet of the redesign. The
+input manager class may provide centralized input to the system. The input
+manager may also handle the input messages that the scheduler passes down.
+The input manager also provides mechanisms to implement some local
+scheduling control and may also provide a source for applying more control
+strategies.  Figure~\ref{fig:InputManagerInterface} provides a consise
+description of the interface and the following is a detailed description
+of the interface.
+
+\begin{itemize}
+
+\item {\tt void receiveUserEvent(UserEvent *)} - This method is invoked by
+  the kernel process to schedule the events in the system.
+
+\item {\tt void rollback(const VTime *)} - This method is invoked by the
+  kernel process to indicate that a rollback is occuring in the
+  system. The input manager is expected to reset its internal data
+  structures and perform any necessary actions.
+  
+\item {\tt void fossilCollect(const VTime *)} - This method is invoked by
+  the kernel process to indicate that it is safe to fossil collect the
+  input manager's internal data structures up to the simulation time,
+  passed in as the parameter.
+
+\item {\tt void setLogicalProcess(KernelLogicalProcessInterface *)} - This
+  method is invoked by the configuration manager to inform the state
+  manager about the kernel process that is associated with it.
+
+\item {\tt KernelLogicalProcessInterfcae *getLogicalProcess() const} -
+  This method provides a convenient mechanism to access the process.
+  
+\item {\tt bool haveMoreEvents() const} - This method is invoked by the
+  kernel process to ensure that the input manager has no pending events. 
+
+\item {\tt UserEvent* giveCurrentEvent()} - This method is invoked by the
+  kernel process to obtain any pending events from the local input
+  manager.
+
+\end{itemize}
+
+These local manager classes provide the level of hierarchical control that
+may be needed in the system.  These could be merely wrappers with inlined
+functions (whose call that an optimizing compiler could optimize out) to
+the corresponding queues in the system.  With this design, the symmetry of
+the system is also maintained.  Now, the {\tt KernelLogicalProcess}
+becomes a mere shell and a focal point for the different queues to attach
+onto. This is analogous to the cluster that has a set of logical
+processes; a logical process has a set of states and events.
+
+\subsubsection{TimeWarpLogicalProcessInterface class}
+
+\begin{figure*}
+\begin{center}
+\ \psfig{figure=figures/TimeWarpLogicalProcessInterface.ps,silent=}
+\end{center}
+\caption{The interface a TimeWarp logical process should provide to the
+  cluster.}\label{fig:TimeWarpLogicalProcessInterface} 
+\end{figure*}
+
+The {\tt TimeWarpLogicalProcessInterface} class provides the interfaces
+that should be provided by a TimeWarp-based logical process. The
+Figure~\ref{fig:TimeWarpLogicalProcessInterface} provides a concise
+description.  A more precise definition is given below.
+
+\begin{itemize}
+\item {\tt void rollback(const VTime *)} - This method is invoked by the
+  cluster (or may be invoked from within the kernel side logical process
+  itself) to indicate the occurrence of a rollback in the process. The
+  time to which the process should rollback is specified by the input
+  parameter. The process should roll back its local input queues to the
+  specified time, send out anti-messages and restore its state to the
+  appropriate state in the system.
+  
+\item {\tt fossilCollect(const VTime *)} - This method is invoked by the
+  cluster (or may be invoked from within the kernel side logical process
+  itself) to indicate that the process is free to fossil collect up to the
+  time specified by the input parameter of the function. The process
+  should fossil collect its input, state and output queues only at that
+  point and fossil collection should be done only up to the time
+  specified.
+
+\item {\tt insertEvent(UserEvent *)} - This method is invoked by the
+  cluster when an event has been received for that process. The kernel
+  process may insert the event into its input queue or choose to ignore it.
+
+\item {\tt setCluster(ClusterKernelLogicalProcessInterface *)} - This
+  method will be called by the cluster when the {\tt ConfigurationManager}
+  informs the cluster that a new simulation object is added to it. The
+  cluster passes a pointer to itself as the parameter. The pointer should
+  be saved for future references. 
+
+\item {\tt ClusterKernelLogicalProcessInterface* getCluster() const} -
+  This method provides access to the cluster to which this process 
+  belongs. It should return the pointer provided using the {\tt
+  setCluster} method.
+
+\item {\tt void setStateManager(StateManagerInterface *)} - This method is
+  invoked by the configuration manager to set the state manager associated
+  with this process.
+
+\item {\tt StateManagerInterface* getStateManager() const} - This method
+  provides a convinient handle to the state manager. This method should
+  return the pointer to the state manager set using the {\tt
+  setStateManager} method.
+
+\item {\tt void setInputManager(InputManagerInterface *)} - The input
+  manager associated with the logical process is filled in by the
+  configuration manager using this method.
+
+\item {\tt InputManagerInteface* getInputManager() const} - This method
+  should return the pointer set using the {\tt setInputManager()} method.
+  
+\item {\tt void setOutputManager(OutputManagerInterface *)} - This method
+  is invoked by the configuration manager to inform the kernel logical
+  process about the output manager associated with this process.
+
+\item {\tt OutputManagerInterface* getOutputManager() const} - This
+  method provides a convinient handle to the output manager.
+
+\end{itemize}
+
+\subsection{A TimeWarp cluster's interface}
+
+This subsection defines the interface for a cluster used to maintain a set
+of TimeWarp logical processes. The cluster provides a common point to tie
+the different components such as the scheduler, GVT Manager, and the
+Communication Manager together. Each of these sub components expects a
+different set of information from the cluster. Hence a TimeWarp cluster's
+interface is multiply inherited from the interfaces that each of the
+sub-systems expected the cluster to provide. A simple sequential cluster
+can be built by removing the communication manager and GVT Manager
+interfaces. The following subsections define each of these sub-interfaces
+in detail.
+
+\subsubsection{A cluster's interface to a LogicalProcess}
+
+\begin{figure*}
+\begin{center}
+\ \psfig{figure=figures/ClusterKernelLogicalProcessInterface.ps,silent=}
+\end{center}
+\caption{The interface a cluster should provide to a kernel logical
+  process.}\label{fig:ClusterKernelLogicalProcessInterface}  
+\end{figure*}
+
+The class {\tt ClusterKernelLogicalProcessInterface} defines the methods
+that a kernel should provide to the LogicalProcesses associated with
+it. The cluster sees the methods defined in {\tt
+KernelLogicalProcessIntercace} class (See
+Figure~\ref{fig:KernelLogicalProcessInterface}) while the
+KernelLogicalProcesses sees this interface to the
+cluster. Figure~\ref{fig:ClusterKernelLogicalProcessInterface} provides a
+concise description of the interface. Following is a detailed description
+of the interface.
+
+\begin{itemize}
+\item {\tt sendUserEvent(UserEvent *)} This method is called by the
+  KernelLogicalProcess to send events generated. This method is called
+  by the kernel process when its event dispatch methods are invoked. This
+  method should handle the event appropriately (send it across to the
+  communication sub-system or schedule it if it is to a local guy).
+\end{itemize}
+
+\subsubsection{A cluster's interface to a GVT Manager}
+
+\begin{figure*}
+\begin{center}
+\ \psfig{figure=figures/ClusterGVTManagerInterface.ps,silent=}
+\end{center}
+\caption{The interface a cluster should provide to a GVT
+  manager.}\label{fig:ClusterGVTManagerInterface}   
+\end{figure*}
+
+The class {\tt ClusterGVTManagerInterface} defines the methods that any
+GVT manager can invoke in the cluster.
+Figure~\ref{fig:ClusterGVTManagerInterface} provides a concise description
+of the interface.
+
+\begin{itemize}
+\item {\tt int getNumberOfLogicalProcesses() const} This method merely
+  returns the number of logical processes that the cluster contains.
+
+\item {\tt const VTime* getSimulationTime(int) const}: \\
+  This method provides the GVT manager with a handle to the simulation
+  time of a process. This method can be used by the GVT manager to merely
+  iterate over the list of processes local to an cluster and estimate
+  LGVT.
+
+\item {\tt const VTime* getNthLogicalProcessSimulationTime(ObjectId)
+const}:\\ 
+  This method provides access to the simulation time of the object whose
+  identification is passed as the parameter. 
+
+\item {\tt void fossilCollect(const VTime *)} This method is called by
+  the GVT manager to inform the cluster that it is safe to fossil collect
+  up to the simulation time specified in the parameter. It is the
+  responsibility of the cluster to further pass this information to the
+  various logical processes and other sub-systems associated to it.
+\end{itemize}
+
+\subsubsection{A cluster's interface to the Configuration Manager}
+
+\begin{figure*}
+\begin{center}
+\ \psfig{figure=figures/ClusterConfigurationManagerInterface.ps,silent=}
+\end{center}
+\caption{The interface a cluster should provide to a Configuration
+  Manager.}\label{fig:ClusterConfigurationManagerInterface}    
+\end{figure*}
+
+The configuration manager is the final authority that decides the
+configuration that the cluster is to operate under. The configuration
+manager provides the cluster with all the sub-systems it is to use. The
+class {\tt ClusterConfigurationManagerInterface} defines the methods that
+the cluster must provide for the configuration manager.
+Figure~\ref{fig:ClusterConfigurationManagerInterface} provides a concise
+description.
+
+\begin{itemize}
+\item {\tt void setCommunicationManager(CommunicationManagerInterface *)}
+  This method is invoked by the configuration manager to inform the
+  cluster about the communication sub-system alloted to it.
+
+\item {\tt CommunicationManagerInterface *getCommunicationManager() const}
+  This method may be invoked to obtain the current communication system,
+  both by the configuration manager (for inspection) and by the methods in
+  the cluster for communication.
+
+\item {\tt void setScheduler(SchedulerInterface *)} This method is used to
+  set the scheduler associated with a cluster.
+
+\item {\tt SchedulerInterface *getScheduler() const} This method is used
+  to obtain a handle to the scheduler.
+
+\item {\tt setGVTManager(GVTManagerInterface *)} This method is used to
+  provide the cluster with an handle to the GVT manager.
+
+\item {\tt GVTManagerInterface *getGVTManager() const} This method
+  provides the handle to the GVT manager associated with the cluster.
+
+\item {\tt void registerLogicalProcess(KernelLogicalProcessInterface *)}
+  This method is one of the most important method that the cluster must
+  provide to the configuration manager. This is through this method that
+  logical processes are added to a cluster.
+\end{itemize}
+
+The methods to set and access the handles to the different sub-system is
+provided here so that the configuration manager can obtain full control
+over allocation and deallocation of the sub-systems. These methods can
+also be used by the other methods used in the implementation of the
+cluster.
+
+\subsubsection{A cluster's interface to a scheduler}
+
+
+\subsubsection{A cluster's interface to a CommunicationManager}
+
+\begin{figure*}
+\begin{center}
+\ \psfig{figure=figures/ClusterCommunicationManagerInterface.ps,silent=}
+\end{center}
+\caption{The interface a cluster should provide to a communication 
+  manager.}\label{fig:ClusterCommunicationManagerInterface}
+\end{figure*}
+
+Figure~\ref{fig:ClusterCommunicationManagerInterface} provides a brief
+description of the interface a communication manager expects to see in a
+cluster. A detailed description of the interface is as follows
+
+\begin{itemize}
+\item {\tt void receiveUserEvent(CommunicationEvent *)} This method is
+  invoked by the CommunicationManager to inform the cluster that the
+  communication sub-system received a user event and a pointer to the user
+  event is provided via the communication event method.
+
+\item {\tt void receiveKernelEvent(CommunicationEvent *)} This method is
+  invoked to inform the cluster that a kernel message was received.
+\end{itemize}
+
+These methods have been provided to enable up calls in the system. The
+communication sub-system could be a separate thread that invokes the
+methods in the cluster.
+
+\subsection{GVT Manager's interface}
+
+The GVT Manager's interface consists of a set of interfaces that every GVT
+manager should present to the different sub-systems in the simulator. The
+different sub-systems being the cluster, communication manager and the
+configuration manager. Figure~\ref{fig:GVTManagerInterface} presents a
+concise description of the interface. Following is a detailed description
+of the interface.
+
+\begin{figure*}
+\begin{center}
+  \ \psfig{figure=figures/GVTManagerInterface.ps,silent=}
+\end{center}
+\caption{The interface a GVT Manager should
+  provide.}\label{fig:GVTManagerInterface}
+\end{figure*}
+
+\begin{itemize}
+\item {\tt void setCommunicationManager(CommunicationManagerInterface *)}
+  This method is invoked by the configuration manager to inform the GVT
+  manager about the communication sub-system associated with it. The GVT
+  manager should save this pointer and use it for its communication.
+
+\item {\tt CommunicationManagerInterface *getCommunicationManager() const}
+  This method provides an convenient method to obtain an handle to the
+  communication manager associated with it.
+
+\item {\tt setCluster(ClusterGVTManagerInterface *)} This method is called
+  by the configuration manager to inform the GVT manager about the cluster
+  to which it is associated.
+
+\item {\tt ClusterGVTManagerInterface *getCluster() const} This method
+  provides an convenient mechanism to access the cluster associated with
+  an GVT manager.
+
+\item {\tt const VTime *getGVT() const} This method provides access to the
+  most important information that the GVT manager provides to the system,
+  the Global Virtual Time of the simulation.
+
+\item {\tt void receiveGVTMessage(GVTMessage *)}:\\
+  This method is called by the communication manager to inform the GVT
+  manager about any GVT message tokens that it receives.
+
+\item {\tt void inspectEvent(const UserEvent *)} This method is invoked
+  from the communication manager to inform the GVT manager about the
+  messages flowing in the system. Some of the GVT managers (Mattern for
+  example) need to know about the events in the system for their working.
+  This method may not modify the event passed to it.  It is the
+  responsibility of the GVT manager to talk to the communication manager
+  to inform the communication manager to forward all the messages to it
+  (See CommunicationManagerInterface for details on this method). The GVT
+  manager can inform the communication manager about its need to inspect
+  events using the communication manager pointer passed to it by the
+  configuration manager.
+  
+\end{itemize}
+  
+\subsection{Scheduler's interface}
+
+A concise description of the interface a cluster expects its scheduler to
+have is shown in Figure~\ref{fig:SchedulerInterface}. The following is a
+detailed description of the interface.
+
+\begin{figure*}
+\begin{center}
+  \ \psfig{figure=figures/SchedulerInterface.ps,silent=}
+\end{center}
+\caption{The interface a Scheduler should
+  provide.}\label{fig:SchedulerInterface}
+\end{figure*}
+
+\begin{itemize}
+\item {\tt void scheduleEvent(UserEvent *)} This method is called by the
+  cluster that is employing this scheduler to schedule events on it. The
+  scheduler is expected to schedule this event. The scheduler should
+  handle all the associated overheads that may occur when a scheduler for
+  TimeWarp is built. The scheduler should handle stragglers and
+  anti-messages that could be passed down to it by the cluster. This
+  method should be called only with non {\tt NULL} pointers.
+
+\item {\tt UserEvent *giveEventToExecute()} This method is called by the
+  cluster to determine which is the next event that has been scheduled for
+  execution. The next event to be executed is completely determined by the
+  scheduling policies adopted by the scheduler. If no events are
+  available for scheduling this method return {\tt NULL}. But, a {\tt
+    NULL} return value should not be interpreted as the queue being
+  empty.
+
+\item {\tt bool haveMoreEvents()} This method returns {\tt TRUE} if the
+  scheduler has more events to process else it returns {\tt FALSE}. This
+  method should be the one used by the cluster to decide if the scheduler
+  queue is empty or not.
+
+  The above two methods have been provided so that some blocking schemes
+  can be implemented at the scheduler level.
+
+\item {\tt void fossilCollect(const VTime *)} This method is called by
+  the cluster to indicate to the scheduler that it is safe to fossil
+  collect its internal data structures to the point in simulation time
+  passed in as a parameter.
+\end{itemize}
+
+\subsection{Configuration Manager's interface}
+
+\begin{figure*}
+\begin{center}
+  \ \psfig{figure=figures/ConfigurationManagerInterface.ps,silent=}
+\end{center}
+\caption{A Configuration Manager's
+  interface.}\label{fig:ConfigurationManagerInterface}
+\end{figure*}
+
+The \emph{configuration manager} is the top level object that decides on
+what the different sub-systems in the system and how they are
+interconnected. Figure~\ref{fig:ConfigurationManagerInterface} defines the
+interface every configuration manager should have. Following is a detailed
+description of the interface.
+
+The configuration manager is global to a given LP. A global pointer to the 
+configuration manager is available to the different sub-systems that need
+to interact with it.
+
+\begin{itemize}
+\item {\tt void initialize(int argc, char *argv[], char *env[], int\\
+    maxClusterCount = 1)}: This method should be the first invoked method
+  on the configuration manager. The configuration manager uses the
+  parameters to determine the different configurations from the user
+  sepcified parameters. It could use default values or report errors and
+  abort the simulation. The {\tt maxClusterCount} indicates the maximum
+  number of clusters that should be used. This number may be overriddedn
+  by any of the other user defined parameters. The minimum value for this
+  parameter is 1.
+
+\item {\tt void registerLogialProcess(LogicalProcessInterface *, int
+    clusterNumber = 0)}:\\ This method will be called by the user defined
+  logical process to add a new process to a cluster. The cluster number is
+  optional and defaults to cluster 0 (which is always present).
+
+  It is at this point that configuration manager decides on the intial
+  settings for the kernel side of the logical process. It instantiates the
+  appropriate {\tt KernelLogicalProcess} (See
+  Figure~\ref{fig:KernelLogicalProcessInterface} for more details), with
+  the corresponding sub-systems and establishes the handles between them.
+  It should also register the kernel side logical process with the
+  corresponding cluster. The {\tt clusterNumber} specified by the user is
+  optional and will be over-ridden by the configuration manager if it
+  decides to.
+
+\item {\tt void startSimulation()} This method should be called by the
+  application process to start the simulation.
+\end{itemize}
+
+\subsection{Communication Manager's interface}
+
+  SOON!!!
+
+\bibliography{ref}
+\bibliographystyle{acm}
+
+\end{document}

@@ -1,0 +1,50 @@
+# Process this file with automake to produce Makefile.in
+
+MPI_SRC = warped/eclmpl/MPIPhysicalCommunicationLayer.cpp \
+	      warped/eclmpl/MPIPhysicalCommunicationLayer.h
+
+
+if USE_TIMEWARP
+ECLMPL_SRC = \
+	$(MPI_SRC) \
+	warped/eclmpl/eclmplConfigFileTable.cpp \
+	warped/eclmpl/eclmplConnectionInterface.cpp \
+	warped/eclmpl/eclmplConnectionInterfaceImplementationBase.cpp \
+	warped/eclmpl/eclmplPhysicalCommunicationLayer.cpp \
+	warped/eclmpl/eclmplReliablePhysicalCommunicationLayer.cpp \
+	warped/eclmpl/eclmplSocket.cpp \
+	warped/eclmpl/eclmplTimer.cpp \
+	warped/eclmpl/eclmplUnreliableNetworkMessage.cpp \
+	warped/eclmpl/MPIMessage.cpp \
+	warped/eclmpl/NetworkMessage.cpp \
+	warped/eclmpl/SocketBasedConnectionInterface.cpp \
+	warped/eclmpl/TCPConnectionInterface.cpp \
+	warped/eclmpl/TCPSelectPhysicalCommunicationLayer.cpp \
+	warped/eclmpl/UDPConnectionInterface.cpp \
+	warped/eclmpl/UDPSelectPhysicalCommunicationLayer.cpp
+else
+ECLMPL_SRC = 
+endif
+
+ECLMPL_H_FILES = \
+	warped/eclmpl/eclmplCommonInclude.h \
+	warped/eclmpl/eclmplConfigFileTable.h \
+	warped/eclmpl/eclmplConnectionInterface.h \
+	warped/eclmpl/eclmplConnectionInterfaceImplementationBase.h \
+	warped/eclmpl/eclmplContactInfo.h \
+	warped/eclmpl/eclmpl.h \
+	warped/eclmpl/eclmplPhysicalCommunicationLayer.h \
+	warped/eclmpl/eclmplReliablePhysicalCommunicationLayer.h \
+	warped/eclmpl/eclmplSocket.h \
+	warped/eclmpl/eclmplTimer.h \
+	warped/eclmpl/eclmplUnreliableNetworkMessage.h \
+	warped/eclmpl/MPIMessage.h \
+	warped/eclmpl/MPIPhysicalCommunicationLayer.h \
+	warped/eclmpl/NetworkMessage.h \
+	warped/eclmpl/PhysicalCommunicationLayer.h \
+	warped/eclmpl/SocketBasedConnectionInterface.h \
+	warped/eclmpl/TCPConnectionInterface.h \
+	warped/eclmpl/TCPSelectPhysicalCommunicationLayer.h \
+	warped/eclmpl/UDPConnectionInterface.h \
+	warped/eclmpl/UDPSelectPhysicalCommunicationLayer.h
+

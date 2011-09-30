@@ -1,0 +1,13 @@
+\textsc{WARPED}
+
+Copyright (c), The University of Cincinnati.
+All rights reserved.
+
+Usage: <executable> -options <SSL module file> <Simulator Config. File>
+       Where options is one of the following:
+         -simulate   specify module to simulate
+         -debug      display debug messages
+         -help       print this message
+
+For further information, please refer to the INSTALL document.
+

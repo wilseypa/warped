@@ -1,0 +1,5 @@
+	//@Include: ../factory/include/Factory.h
+	//@Include: ../factory/include/FactoryImplementationBase.h
+	//@Include: ../factory/include/FactoryManager.h
+	//@Include: ../factory/include/FactorySymbolTable.h
+	//@Include: ../factory/include/ObjectStub.h

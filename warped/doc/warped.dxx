@@ -1,0 +1,6 @@
+/**@name Doc++ Documentation for WARPED */
+//@{
+	//@Include: kernel.dxx
+	//@Include: factory.dxx
+	//@Include: common.dxx
+//@}	

@@ -1,0 +1,38 @@
+# Process this file with automake to produce Makefile.in
+
+# See copyright notice in file Copyright in the root directory of this archive.
+
+if USE_TIMEWARP
+	THREADED_H_FILES = \
+	    warped/threadedtimewarp/AtomicCalendarQueueBucket.h \
+		warped/threadedtimewarp/AtomicLinkedList.h \
+		warped/threadedtimewarp/AtomicMatternGVTManager.h \
+		warped/threadedtimewarp/AtomicMatternObjectRecord.h \
+		warped/threadedtimewarp/AtomicQueue.h \
+		warped/threadedtimewarp/AtomicSimulationObjectState.h \
+		warped/threadedtimewarp/AtomicStack.h \
+		warped/threadedtimewarp/LockedQueue.h \
+		warped/threadedtimewarp/ThreadedTimeWarpConfigurationManager.h \
+		warped/threadedtimewarp/ThreadedTimeWarpEventSet.h \
+		warped/threadedtimewarp/ThreadedTimeWarpSimulationManager.h \
+		warped/threadedtimewarp/ThreadedTimeWarpSimulationManagerFactory.h \
+    	warped/threadedtimewarp/ThreadedSchedulingManager.h \
+    	warped/threadedtimewarp/TimeWarpSimulationObjectCalendarQueue.h \
+    	warped/threadedtimewarp/TimeWarpSimulationObjectLockedQueue.h \
+    	warped/threadedtimewarp/WorkerInformation.h
+
+    THREADED_SRC = \
+    	warped/threadedtimewarp/AtomicCalendarQueueBucket.cpp \
+    	warped/threadedtimewarp/AtomicMatternGVTManager.cpp \
+		warped/threadedtimewarp/ThreadedTimeWarpConfigurationManager.cpp \
+		warped/threadedtimewarp/ThreadedTimeWarpEventSet.cpp \
+		warped/threadedtimewarp/ThreadedTimeWarpSimulationManager.cpp \
+		warped/threadedtimewarp/ThreadedTimeWarpSimulationManagerFactory.cpp \
+		warped/threadedtimewarp/ThreadedSchedulingManager.cpp \
+		warped/threadedtimewarp/TimeWarpSimulationObjectCalendarQueue.cpp \
+		warped/threadedtimewarp/TimeWarpSimulationObjectLockedQueue.cpp
+else
+	THREADED_H_FILES = 
+	THREADED_SRC = 
+endif
+

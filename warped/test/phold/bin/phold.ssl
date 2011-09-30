@@ -1,0 +1,28 @@
+PHOLD(0, 0) {
+  Process(3, 3) : PHOLDFactory.Process "20 EXPONENTIAL 1.0";
+}
+
+{
+  PHOLDObject1 : Process "0";
+  PHOLDObject2 : Process "1";
+  PHOLDObject3 : Process "2";
+  PHOLDObject4 : Process "3";
+}
+
+{
+  PHOLDObject1(OUT, 1) : PHOLDObject2(IN, 1);
+  PHOLDObject1(OUT, 2) : PHOLDObject3(IN, 1);
+  PHOLDObject1(OUT, 3) : PHOLDObject4(IN, 1);
+
+  PHOLDObject2(OUT, 1) : PHOLDObject1(IN, 1);
+  PHOLDObject2(OUT, 2) : PHOLDObject3(IN, 2);
+  PHOLDObject2(OUT, 3) : PHOLDObject4(IN, 2);
+
+  PHOLDObject3(OUT, 1) : PHOLDObject1(IN, 2);
+  PHOLDObject3(OUT, 2) : PHOLDObject2(IN, 2);
+  PHOLDObject3(OUT, 3) : PHOLDObject4(IN, 3);
+
+  PHOLDObject4(OUT, 1) : PHOLDObject1(IN, 3);
+  PHOLDObject4(OUT, 2) : PHOLDObject2(IN, 3);
+  PHOLDObject4(OUT, 3) : PHOLDObject3(IN, 3);
+}

@@ -1,0 +1,40 @@
+# Process this file with automake to produce Makefile.in
+
+# See copyright notice in file Copyright in the root directory of this archive.
+
+if USE_TIMEWARP
+	DYNAMICTHREADED_H_FILES = \
+		warped/dynamic/DTOutputEvents.h \
+		warped/dynamic/DTOutputManagerImplementationBase.h \
+		warped/dynamic/DTAggressiveOutputManager.h \
+		warped/dynamic/DTTimeWarpMultiSet.h \
+		warped/dynamic/DTStateManagerImplementationBase.h \
+		warped/dynamic/DTTimeWarpMultiSet.h \
+		warped/dynamic/DTStateManagerImplementationBase.h \
+		warped/dynamic/DTPeriodicStateManager.h \
+		warped/dynamic/DTOutputManager.h \
+		warped/dynamic/DTStateManager.h \
+		warped/dynamic/DTTimeWarpEventSet.h \
+		warped/dynamic/DTTimeWarpMultiSetSchedulingManager.h \
+		warped/dynamic/DTTimeWarpSimulationManager.h\
+		warped/dynamic/StragglerEvent.h
+
+    DYNAMICTHREADED_SRC = \
+        warped/dynamic/DTOutputEvents.cpp \
+        warped/dynamic/DTOutputManagerImplementationBase.cpp \
+        warped/dynamic/DTAggressiveOutputManager.cpp \
+        warped/dynamic/DTTimeWarpMultiSet.cpp \
+        warped/dynamic/DTStateManagerImplementationBase.cpp \
+        warped/dynamic/DTTimeWarpMultiSet.cpp \
+        warped/dynamic/DTStateManagerImplementationBase.cpp \
+        warped/dynamic/DTPeriodicStateManager.cpp \
+        warped/dynamic/DTTimeWarpEventSet.cpp \
+        warped/dynamic/DTTimeWarpMultiSetSchedulingManager.cpp \
+        warped/dynamic/DTTimeWarpSimulationManager.cpp\
+        warped/dynamic/StragglerEvent.cpp
+        
+        
+else
+	DYNAMICTHREADED_H_FILES = 
+	DYNAMICTHREADED_SRC = 
+endif

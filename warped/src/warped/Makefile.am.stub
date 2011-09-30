@@ -1,0 +1,23 @@
+# Process this file with automake to produce Makefile.in
+
+# See copyright notice in file Copyright in the root directory of this archive.
+
+include $(top_srcdir)/Makefile.am.common
+
+CPPFLAGS=$(GLOBALCPPFLAGS) @CPPFLAGS@
+CXXFLAGS=$(GLOBALCXXFLAGS) @CXXFLAGS@
+LDFLAGS=$(GLOBALLDFLAGS) @LDFLAGS@
+
+lib_LTLIBRARIES= libvisualization.la
+
+libvisualization_la_SOURCES= \
+	src/DefaultVisualizationManager.cpp \
+	src/NullVisualizationManager.cpp \
+	src/TimeWarpSimMgrWithVisualization.cpp \
+	src/VisualizationClient.cpp \
+	src/VisualizationManager.cpp \
+	include/DefaultVisualizationManager.h \
+	include/NullVisualizationManager.h \
+	include/TimeWarpSimMgrWithVisualization.h \
+	include/VisualizationClient.h \
+	include/VisualizationManager.h

@@ -1,0 +1,140 @@
+<<
+/* parser.dlg -- DLG Description of scanner
+ *
+ * Generated from: SSL.gg
+ *
+ * Terence Parr, Will Cohen, and Hank Dietz: 1989-2001
+ * Purdue University Electrical Engineering
+ * With AHPCRC, University of Minnesota
+ * ANTLR Version 1.33MR32
+ */
+
+#define ANTLR_VERSION	13332
+#include "SSLTokenTypes.h"
+#include "AToken.h"
+
+#include <string>
+#include <assert.h>
+#include <stddef.h>
+#include <strstream>
+#include "SSLNodes.h"
+#include "FactorySymbolTable.h"
+
+extern int errors, warnings, currentLineNumber;
+
+  
+>>
+
+<<%%parserclass SSLParser>>
+
+<<%%lexmember
+
+virtual ANTLRTokenType erraction() {
+  // this our error action; just increment the errors variable
+  errors++;
+  // then call the default lexer error action
+  return DLGLexerBase::erraction();
+};
+>>
+
+
+%%START
+
+@
+	<<
+		return ENDFILE;
+	>>
+
+\"
+	<<
+		return QUOTE;
+	>>
+
+,
+	<<
+		return COMMA;
+	>>
+
+:
+	<<
+		return COLON;
+	>>
+
+;
+	<<
+		return SEMI_COLON;
+	>>
+
+\{
+	<<
+		return OPEN_FLOWER;
+	>>
+
+\}
+	<<
+		return CLOSE_FLOWER;
+	>>
+
+\(
+	<<
+		return LPAREN;
+	>>
+
+\)
+	<<
+		return RPAREN;
+	>>
+
+.
+	<<
+		return DOT;
+	>>
+
+[0-9]+
+	<<
+		return NUMBER;
+	>>
+
+include
+	<<
+		return INCLUDE;
+	>>
+
+in
+	<<
+		return IN;
+	>>
+
+out
+	<<
+		return OUT;
+	>>
+
+[a-zA-Z][a-zA-Z0-9_]*
+	<<
+		return IDENTIFIER;
+	>>
+
+\" (~[\"])* \"
+	<<
+		return STRING;
+	>>
+
+\(\* (~[\*])* \* (\* | (~[\*\)] (~[\*])* \*))* \)
+	<<
+		return COMMENT;
+	>>
+
+[\ \t ]+
+	<<
+    skip();   
+		return (ANTLRTokenType)19;
+	>>
+
+[\n]+
+	<<
+    currentLineNumber++; skip();   
+		return (ANTLRTokenType)20;
+	>>
+
+%%

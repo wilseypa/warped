@@ -1,0 +1,915 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{alltt}
+\usepackage{url}
+\usepackage{fullpage}
+\usepackage{psfig}
+
+\begin{document}
+
+\title{\textbf{Simulation Developer's API Reference}} 
+
+% I changed this to alphabetical order as it's hard to say
+% whose document this really is now.
+\author{ 
+\textsf{Malolan Chetlur, Dale E. Martin,}\\ 
+\textsf{Radharamanan Radhakrishnan, Dhananjai M. Rao,}\\ 
+\textsf{and Philip A. Wilsey} \\
+\textbf{Experimental Computing Laboratory} \\
+\textbf{Dept. of ECECS, PO Box 210030} \\
+\textbf{University of Cincinnati, Cincinnati, OH 45221--0030.}
+}
+
+\date{ }
+
+\maketitle
+
+\section{Introduction}
+
+\textsc{warped} is the specification of the API of a discrete event simulator,
+defining the interface required to implement discrete event simulation.
+In the past, \textsc{warped} has been synonymous with Time Warp; that was
+our original research interest and so it developed that way.  As the
+\textsc{warped} project matured, we decided to generalize the interface
+as we had interest in developing a sequential kernel, and possibly others.
+From the beginning of this revision, we have attempted to make the
+underlying implementation of the discrete event simulation kernel
+invisible to the user, while being thorough enough to allow the
+implementation of applications that use the Time Warp kernel, the
+sequential kernels provided in the \textsc{warped} distribution, or any
+other new ``plug point compatible'' simulation kernel. In addition to
+describing the application interface of \textsc{warped}, this document
+also presents additional requirements for distributed and Time Warp based
+simulation.  It is possible that other simulation kernels could require
+slight additions to the API that are specific to those kernels as well.
+
+It should be noted, too, that this revision of the \textsc{warped} interface
+incorporates several new objectives that were not present in the previous
+revisions.  Those objectives are listed here (in no particular order):
+
+\begin{description}
+
+\item \textbf{Defensive Definition} 
+  
+  The original design and implementation of \textsc{warped} was simple and
+  elegant, and it worked well for the most part.  Many extensions were
+  added to the original design, each one becoming less simple and in some
+  cases, less elegant.  Members were added to the ``public'' areas of
+  classes where they should have been ``private''.  Many hacks and {\tt
+  \#ifdefs} evolved into the code as time went on.  Also, much ugliness
+  was introduced in the name of performance.
+
+  We, the developers, are the guilty parties in this mess.  This time
+  around, we are protecting ourselves from ourselves and defensively
+  defining an interface. This interface is intended to be unchanging, and
+  to be \emph{clearly} separate from any implementation.  The previous
+  definition of \textsc{warped} was somewhat data-centric; it defined
+  queues and other key data structures.  This time around, we are defining
+  a procedural interface in the form of a class hierarchy.  The minimal
+  interface that is defined should be all that is required for any kernel
+  to ``talk'' to an application.  This should allow the ugliness to be
+  hidden from view, to a large extent, if the ugliness has to evolve.
+
+\item \textbf{Run-time Configuration}
+
+  Previous versions of \textsc{warped} have provided many tweaks,
+  optimizations, and various algorithms for all aspects of simulations.
+  Communication optimizations, state savings algorithms, GVT algorithms,
+  sequential and Time Warp kernels have all been available, just to name a
+  few.  However, these configurable options have traditionally been
+  selectable at compile time only.  This was a stated goal of the old
+  system; compile time configuration.  This choice was made in the name of
+  performance.  However, noting that there are multiple definitions of
+  performance, we have now decided that long recompile times for
+  reconfiguration are not acceptable and a new goal is to support runtime
+  configuration for as many pieces of the system where possible, with as
+  minimal performance sacrifice as possible.
+
+\end{description}
+
+These objectives are in addition to the many others of the original
+project.  These objectives may be found in the numerous papers published on
+\textsc{warped}~\cite{martin-96,ramanan-98-iscope,ramanan-96}.
+
+\section{Notation}
+
+To maximize the decoupling of the provided interfaces and their
+implementations, all interfaces described in this document will be
+provided by the \textsc{warped} implementation as \emph{pure} interfaces.
+\emph{i.e.}, all kernel references to the user's classes will occur through
+abstract classes.  All such abstract classes will be named with the suffix
+{\tt Base} and \emph{will not} contain default implementations of methods.
+For example, the class that a simulation kernel will use to refer to an
+user event will be called {\tt EventBase} and this class will contain no
+implementation whatsoever.  In some cases, default implementations of some
+methods may be desirable.  In these cases, these methods will be defined
+in a separately named class derived from the {\tt Base} class.  This
+separation makes it very clear what is \emph{required} by the kernel to
+function as opposed to things that have been added for convenience.  For
+example, the class {\tt FlatEvent}, derived from {\tt EventBase} is
+provided with a fair bit of functionality in place by default.  This class
+is probably sufficient for most users to describe their events. So most
+can derive their events from it rather than {\tt EventBase}, which would
+have required the user to provide more functionality themselves.  In the
+case where a more complex event definition is required, deriving from {\tt
+EventBase} makes it very clear what is required by the kernel.  If we
+deviate from this protocol, then the place where the deviation occurs as
+well as an explanation for the deviation will be detailed in this
+document.
+
+Before diving into the details of the API, it might be prudent to read-up
+on the notation used in these descriptions. To easily describe the class
+interfaces, we use the ``class diagrams'' notation to illustrate the
+interface classes. Specifically, we use the Unified Modeling Language (UML)
+definition of class diagrams (as generated by UML tools such as Dia or
+Argo/UML)~\cite{fowler-97}. Appendix A briefly introduces the UML notation.
+
+\section{{\sc warped}'s Application Interface}
+
+This section describes what is necessary for an application writer to
+provide to the \textsc{warped} kernel and what a simulation kernel
+provides to the application in return.  Loosely, an application provides
+simulation objects, their state, and their events.  The required interface
+has been described for each of these pieces.  The text in the following
+sections will attempt to precisely define the semantics of each
+piece. However, we must first define (in Section~\ref{VTime}) how time is
+handled in the simulation to meaningfully describe a simulation object,
+its state and events.
+
+\subsection{VTime}\label{VTime}
+
+In defining this revision of \textsc{warped}, the developers had long
+discussions about {\tt VTime}.  {\tt VTime} is an interesting part of the
+system, as it is fundamental to just about every other piece and can have
+a profound impact on both ease of use and performance.  Many tradeoffs can
+be made with respect to {\tt VTime} and these were discussed at length by
+the developers.  Some of the discussion and tradeoffs have been summarized
+in this section.
+
+The definition that the developers decided on for {\tt VTime} is a
+compromise of flexibility and performance.  By default, a static
+definition of {\tt VTime} has been supplied which will be described in the
+next sub-section.  In addition, a mechanism for the application to define
+it's own {\tt VTime} has been provided.  However, unlike many other
+features of the new \textsc{warped} system, if the user wants to define a
+new {\tt VTime}, this must be done at compile time.  The mechanism for
+providing a user defined {\tt VTime} and the implications of such a choice
+will be discussed in sub-section~\ref{user-defined}.
+
+\subsubsection{Default VTime}
+
+\textsc{warped}'s default notion of {\tt VTime} is a compromise of
+flexibility and performance.  A simple integer definition of time would
+suffice for many applications, and would provide excellent performance.
+However, it would offer no flexibility.  A tuple of multiple integers can
+still provide good performance and offers a higher degree of flexibility
+than a simple integer.  After some experiments were done, it was decided
+that a two tuple of integers offers the best balance of flexibility and
+performance.  So, by default \textsc{warped} uses a two tuple of integers
+for {\tt VTime}.  The UML definition of the kernel supplied VTime can be
+found in Figure~\ref{fig:kernel-vtime-uml}.
+
+\begin{figure}[th]
+\begin{center}
+  \ \psfig{figure=figures/defaultVTime.eps,width=4in}
+\end{center}
+\caption{Kernel supplied definition of {\tt VTime}}\label{fig:kernel-vtime-uml} 
+\end{figure}
+
+The values returned by the {\tt getMinusInfinity()}, {\tt getZero()}, and
+{\tt getPositiveInfinity()} class methods will be referred to as {\tt
+MINFINITY}, {\tt ZERO}, and {\tt PINFINITY} for the duration of this
+document.
+
+Despite the fact that the interface described in
+Figure~\ref{fig:kernel-vtime-uml} defines methods like {\tt getMajor()}
+and {\tt getMinor()}, not all of these methods are used by the kernel
+itself.  These methods are provided as a convenience to the application
+writer.  This is significant because an application defining its own time
+need not define all of the methods --- it only needs to define those
+specified in section \ref{user-defined}.  See that section for more
+details on defining a new {\tt VTime}.
+
+\subsubsection{User VTime}\label{user-defined}
+
+Due to the static definition of VTime within the \textsc{warped} kernel,
+the application can't really derive a new class from it to use in a
+simulation and expect the kernel to be able to use it in any meaningful
+way.  Hence, we use the class name {\tt VTime} rather than {\tt
+VTimeBase}~\footnote{An alternative approach that defines a {\tt
+VTimeBase} class and one that enforces a derivative approach to defining
+virtual time is detailed in Appendix B.}.  However, a mechanism \emph{has}
+been provided for the user to insert their own time definition at compile
+time.  If the kernel-supplied definition of {\tt VTime} is insufficient
+for an application, the application programmer need only define the
+preprocessor macro {\it USE\_USER\_VTIME} during compilation, and {\tt
+\#define VTIME} to the appropriate class.  In addition to defining a time
+with data members appropriate to the application's needs, the
+\textsc{warped} kernel has requirements about the defined methods of the
+time type.  More specifically, the implementation of the time class must
+supply the following operators and data, either by default or through
+explicit instantiation:
+
+\begin{itemize}
+
+\item Assignment (=), Addition (+), and subtraction (--) operators.
+
+\item Equivalence and non-equivalence, via the $==$ and $!=$ operators.
+
+\item The relational operators: $>=$, $<=$, $>$, and $<$.
+
+\item Class methods to get minus infinity, positive infinity, and zero
+      constants for the class.  These methods are {\tt VTIME
+      \&getMinusInfinity()}, {\tt VTIME \&getPositiveInfinity()}, and {\tt
+      VTIME \&getZero()}, respectively. 
+
+\item The insertion operator ($<<$) for class ostream, for type {\tt
+      VTIME}. 
+
+\end{itemize}
+
+Since the user defines their {\tt VTIME} class through preprocessor macros
+at compile time, there is no inherent performance loss in defining a new
+time type.  However, the user must realize that if they compile a shared
+library of \textsc{warped} using a new time domain, this library will be
+\emph{incompatible} with all other applications that are defined with the
+kernel supplied {\tt VTime} class.  Also note that all references to the
+time class from this point on will refer to {\tt VTIME}, meaning the time
+class set at compile time to represent time.
+
+\subsection{Simulation Object}\label{simobjsection}
+
+\begin{figure}
+\begin{center}
+  \ \psfig{figure=figures/SimulationObjectBase.eps,width=6.5in,silent=}
+\end{center}
+\caption{The Simulation Object Interface}\label{fig:SimulationObject} 
+\end{figure}
+
+Simulation objects are the core of a discrete event simulation.  A
+simulation object represents an entity that can exchange (send and
+receive) events with other simulation objects.  As a result of these
+events, changes are made to the simulation object's internal state (and
+output may result).  Refer to Figure \ref{fig:SimulationObject} for a
+concise description of a simulation object's interface, as the application
+sees it (class {\tt SimulationObjectBase}). Methods depicted in italics
+are virtual and will have to be over-ridden by the user application.
+
+\begin{itemize}
+
+\item {\tt void sendEvent(const EventBase *) const} - This method is called 
+  with an event (events are discussed in detail in section \ref{events})
+  that the simulation object has allocated (\emph{Note:} No NULL events).
+  Once an event is given to the system, the application is not allowed to
+  modify or deallocate it until it is returned with {\tt reclaimEvent},
+  discussed later.  The timestamp of an event must be greater than the
+  simulation object's current simulation time. The receiver of an event
+  must be specified. The time at which the event is to be received must be
+  set before the method is called.  Refer to Figure~\ref{fig:eventBase} for
+  a description of the event interface.
+
+\item{\tt const EventBase *getEvent() const} - This method is called by
+  the application to get the next event at the current simulation time.
+  This method will return {\tt NULL} if it is called after all events for
+  the current simulation time have been received.  This method should be
+  used in conjunction with {\tt haveMoreEvents()} to process all events
+  during a call to {\tt executeProcess}.  Refer to the following example:
+
+\begin{verbatim}
+void executeProcess() {
+  while( haveMoreEvents() == true ){
+    MyEventType *currentEvent = dynamic_cast<MyEventType *>(getEvent());
+    doIt( currentEvent );
+  }
+}
+\end{verbatim}
+
+\item{\tt bool haveMoreEvents() const} - This method should be called by the 
+  application to find out if there are more events to be processed at the
+  current simulation time.  The first time this method is called within an
+  {\tt executeProcess} call, it will return {\tt true}.  Each subsequent
+  call will return {\tt true} if there is another event to process this
+  simulation cycle, and {\tt false} if there is not.
+
+\item{\tt const VTIME getSimulationTime() const} - During simulation
+  execution (\textit{i.e.} when the \texttt{executeProcess} method is being
+  executed), a call to {\tt getSimulationTime} will return the current
+  simulation time.  If called during {\tt initialize()}, {\tt MINFINITY} is
+  returned.  A call during {\tt finalize()} will return {\tt PINFINITY}.
+  
+\item{\tt StateBase *getState() const} - During simulation, a call to
+  this method will return a valid state corresponding to the current
+  simulation time.  A call to this method during object construction will
+  return {\tt NULL}.  A call to this method during {\tt initialize} will
+  return the object's initial state.  A call to this method during {\tt
+  finalize} will return the object's final state.  During simulation, the
+  application is allowed to modify the state returned by {\tt getState}.
+  In fact, this is the only way that the object should modify any dynamic
+  state that it has.  However, it should NOT deallocate the state.
+
+\item{\tt void reportError( char *, const Severity * ) const} - This call
+  can be used during the simulation to report than an error has occurred.
+  If the {\tt Severity} is {\tt WARNING}, the message will simply be
+  logged by the kernel with some kernel-dependent debug data.  If the {\tt
+  Severity} is {\tt FATAL}, the simulation will terminate immediately,
+  with a call to {\tt finalize()}.
+
+\end{itemize}
+
+The following methods are used by a simulation object to read and write
+data to and from files.  \emph{Note:} Section~\ref{fileio} describes in
+detail the file and console input/output interface used by the simulation
+object. The following methods are used exclusively for file input and
+output. Console input and output operations are defined next (and in
+Section~\ref{fileio}).
+
+\begin{itemize}
+
+\item {\tt istream \&getIFStream( const char *filename )} - Returns an {\tt 
+  istream} to the simulation object, opening the file for input to the
+  simulation.
+
+\item {\tt ostream \&getOFStream( const char *filename )} - Returns an {\tt 
+  ostream} to the simulation object, opening the file for output from the
+  simulation.
+
+\item {\tt iostream \&getIOFStream( const char *filename )} - Returns an {\tt 
+  ostream} to the simulation object, opening the file for input and output
+  to/from the simulation.
+
+\end{itemize}
+
+The following definitions occur in the namespace of each simulation
+object, and can be referenced and accessed during simulation for console
+input and output:
+
+\begin{itemize}
+
+\item{\tt ostream \&wout} - Connected to {\tt stdout} on the simulation
+  console.
+
+\item{\tt ostream \&werr} - Connected to {\tt stderr} on the simulation
+  console.
+
+\item{\tt istream \&win} -  Connected to {\tt stdin} on the simulation
+  console.
+\end{itemize}
+
+The user will have to override the following methods which the kernel will
+call at various times throughout the simulation:
+
+\begin{itemize}
+
+\item{\tt void initialize()} - This method gets called on each object
+  before the simulation begins.  This gives each object a chance to
+  perform any actions required for initialization (examples of what might
+  occur during initialization might include opening files, or source type
+  objects sending initial events).  At least one object in each simulation
+  should make a call to {\tt sendEvent} during the initialization phase
+  (If no events are sent during this phase, then no objects will have
+  events to process, and the simulation will complete before it ever
+  begins!). {\tt MINFINITY} will be returned when {\tt getSimulationTime}
+  is called during initialization. A call to {\tt getState} returns the
+  object's initial state.  A call to {\tt haveMoreEvents} will return {\tt
+  false}, and a call to {\tt getEvent} will return {\tt NULL}.  A call to
+  {\tt reportError} is OK during this phase, and will cause the simulation
+  to halt.
+
+\item{\tt void finalize()} - This method is called after the simulation has
+  ended.  This allows the simulation objects to ``clean up'' after
+  themselves, perform actions such as closing files, collecting
+  statistics, and producing output.  {\tt PINFINITY} will be returned when
+  {\tt getSimulationTime} is called during finalization. A call to {\tt
+  getState} will return the object's final state; a call to {\tt
+  haveMoreEvents} will return {\tt false}, a call to {\tt getEvent} will
+  return {\tt NULL}, and a call to {\tt reportError} will cause an error
+  to be logged.  Any events sent with {\tt sendEvent} during finalization
+  will {\bf not} be delivered.
+
+\item{\tt void executeProcess()} - The kernel calls this method on an
+  object when it has at least one event for the object to process.  During
+  a call to this method, the object should process {\bf all} events
+  available for it, or an error will be logged by the kernel (the
+  simulation won't halt).  During process execution, a simulation object
+  may not block for any reason.
+
+\item{\tt StateBase *allocateState()} - The ker\-nel calls this method
+  when it needs the simulation object to allocate a state on its behalf.
+  This method will be called at least once before the first call to {\tt
+  initialize}.  The application will know if a call to {\tt allocateState}
+  needs to initialize the new state as the object's initial state when
+  {\tt getSimulationTime} returns {\tt MINIFINITY}.  If a call to this
+  method returns {\bf anything else}, then the state need not be
+  initialized - the kernel is going to call {\tt StateBase::copyState()}
+  to initialize it with some other state, but the application need not
+  worry about this.
+
+\item{\tt void deallocateState(StateBase *)} - The kernel calls this
+  method to hand a state back to the application when it is done with it.
+  At this point, the application may deallocate it, or do whatever it
+  likes with it.  (It could just push it into a stack and give it back in
+  the next {\tt allocateState} call, hint hint.)
+
+\item{\tt SerializedInstance *serializeEvent(EventBase *)} -
+  The kernel calls this method to handle migration of events from one
+  process to another. It is the responsibility of the simulation object
+  that generated the event to serialize that event. If an application
+  generates different types of events then it is up to the application
+  writer to distinguish between the different events. A {\tt tag} field in
+  the serialization instance (See Section~\ref{SerializedInstance} for more
+  details) may be used for this purpose.
+
+  A good approach to do this would be to correspondingly overload the {\tt
+  serializeEvent} method in the {\tt EventBase} class to actually perform
+  the serialization of the event. During or after serialization the event
+  (or any of its constituents) should not be deleted or altered by the
+  process.
+
+\item{\tt EventBase *deserializeEvent(SerializedInstance *)} -  The kernel
+  calls this method to handle deserialization of serialized objects. It is
+  the responsibility of the application process to instantiate the right
+  type of event (a {\tt tag} field can be used for this). Having
+  instantiated the right event, the process must copy the corresponding
+  data from the serialized object to the event. A good mechanism to
+  implement this functionality would be to correspondingly overload the
+  {\tt deserializeEvent} method in the event class to actually copy the
+  data from the serialized object to the event.  The event generated from
+  deserialization should not be processed by the application.  Call to
+  deserialization does not mean that the process is being scheduled for
+  simulation.
+
+%\item{\tt void reclaimEvent(EventBase \&)} - This method is called to inform
+%  the user application that the kernel has no further use for this event.
+%  This method is provided so that the user may reuse the memory allocated
+%  for the event in future. It is up to the user to recycle the memory
+%  allocated for the event. In the simple case, the event is deleted. 
+
+%  Note: this is a note for us for future reference. Since we ourselves
+%  are undecided about these features, I (Ramanan) have commented it out.
+%  If we decide to support these features, we can put it back.
+
+%  Recycling events using a simple stack (for each type of event that the
+%  process generates) will reduce the memory allocation overheads and
+%  thereby reducing the overall simulation time.  This method may be called
+%  by the kernel to allow the process to reclaim the events that it created
+%  as a result of a call to {\tt deSerializeEvent} method. The process may
+%  once again choose to recycle the memory allocated (a Last-In-First-Out
+%  structure is strongly recommended for this purpose) or may merely delete
+%  it.
+
+%  \emph{Note:} Depending on what kind of performance benefits can be
+%  obtained, a second definition of {\tt reclaimEvents} that accepts a list
+%  of events as an input parameter is also being considered.
+
+%\item{\tt void reclaimState( StateBase \&)} - Like {\tt reclaimEvent}, this
+%  method is called to inform the application that the kernel has finished
+%  with the state and is passing it back.  Again, like events, it is up to
+%  the user to recycle the memory allocated for the state. In the simple
+%  case, the state is deleted.  
+
+%\item{\tt void reclaimSerializedInstance( SerializedInstance \& )} - Like
+%  {\tt reclaimEvent}, this method is called to inform the application that
+%  the kernel has finished with the serialized instance (serialized event).
+
+\end{itemize}
+
+\subsubsection{Source and Sink Simulation Objects}
+
+In a typical discrete-event simulation, very often there are certain
+simulation objects which do nothing else except create (\emph{source
+objects}) or consume events (\emph{sink objects}).  In in the past, we did
+not make any distinction between ordinary simulation objects and
+source/sink simulation objects.  However, significant performance gains
+(in the case of distributed simulation where intelligent partitioning
+plays an important role in performance) can be achieved by discriminating
+between ordinary simulation objects and source/sink objects.  Since
+source/sink objects do nothing else other than create and consume events,
+they form a special class of simulation objects that can be scheduled
+differently from conventional simulation objects.  For this reason, we
+introduce two new object classes (\texttt{SourceObjectBase} and
+\texttt{SinkObjectBase}) derived from the \texttt{SimulationObjectBase}
+class.  If the user application needs to define source and sink objects,
+then they can derive from the \texttt{SourceObjectBase} and
+\texttt{SinkObjectBase} classes.  Figure~\ref{fig:sourceAndSinkObjectBase}
+illustrates these two new class definitions.  In keeping with our goal of
+defensively defining the interface, note the following changes to the
+source/sink object class definitions: 
+
+\begin{figure}
+\begin{center}
+\ \psfig{figure=figures/sourceAndSinkObjectBase.eps,width=6in}
+\end{center}
+\caption{The {\tt SourceObjectBase} and {\tt SinkObjectBase} classes}\label{fig:sourceAndSinkObjectBase}
+\end{figure}
+
+\begin{itemize}
+
+\item In \texttt{SourceObjectBase} class:  Since a source object is ONLY a
+  generator of events, the only way to schedule this object for execution
+  is if the object informs the kernel to schedule it at an appropriate
+  time.  For this reason, during the start of the simulation, an object of
+  type \texttt{SourceObjectBase} \emph{must} be constructed with a
+  \texttt{VTIME} argument to inform the kernel when it will start.  During
+  simulation, the kernel will schedule the source object for execution and
+  will call the object's \texttt{executeProcess} method. However, for this
+  to happen regularly, the object \emph{has} to tell the kernel when to
+  schedule it next.  When the source object is finished generating events,
+  it sets an internal flag which the kernel accesses by calling the
+  \texttt{iAmDone} method.  If the \texttt{iAmDone} method returns true,
+  the source object is done and need not be scheduled for execution
+  anymore.  In addition, in order to intelligently partition simulation
+  objects in a distributed simulation, the kernel can call the source
+  object's \texttt{getFanouts} method to determine the set of simulation
+  objects that receive events from this source object.
+
+  Also note that the methods \texttt{sendEvent}, \texttt{getEvent}, and
+  \texttt{haveMoreEvents} (which are inherited from the
+  \texttt{SimulationObjectBase} class) are redefined and are private to
+  the \texttt{SourceObjectBase} class.  An error will be flagged if any of
+  these three methods is called on a source object.
+
+\item In \texttt{SinkObjectBase} class: The sink object is treated
+ in the same fashion as a source object. Similar to the source object, a
+ sink object must be constructed with a \texttt{VTIME} argument to inform
+ the kernel when it will start.  During simulation, the kernel will
+ schedule the sink object for execution and will call the object's
+ \texttt{executeProcess} method.  However, for this to happen regularly,
+ the object \emph{has} to tell the kernel when to schedule it next.  When
+ the sink object is finished consuming events, it sets an internal flag
+ which the kernel accesses by calling the \texttt{iAmDone} method.  If the
+ \texttt{iAmDone} method returns true, the sink object is done and need
+ not be scheduled for execution anymore.  In addition, in order to
+ intelligently partition simulation objects in a distributed simulation,
+ the kernel can call the sink object's \texttt{getFanins} method to
+ determine the set of simulation objects that send events to this sink
+ object.
+
+\end{itemize}
+
+\subsection{State}
+
+\begin{figure}
+\begin{center}
+\ \psfig{figure=figures/StateBase.eps,width=5in}
+\end{center}
+\caption{The {\tt StateBase} class}\label{fig:stateBase}
+\end{figure}
+
+Any simulation object of significance will have some state that needs to
+be defined.  The process will modify its state in response to various
+events.  This behavior is completely application specific and so the
+application must define certain methods related to state for the
+simulation kernel to call.  These methods include the creation,
+duplication, and reclamation of state.  State creation and reclamation is
+a function of the simulation object and was discussed in
+Section~\ref{simobjsection}.  See Figure~\ref{fig:stateBase} for a concise
+definition of the application's interface to state.  Following is a
+detailed description of the state interface:
+
+\begin{itemize}
+
+\item{\tt void copyState( const StateBase * )}\label{copyState} - The
+  kernel calls this method to copy the data from the {\tt StateBase}
+  instance passed into this newly created one.  If the application
+  contains pointers in its state, or objects that contain pointers, this
+  method will need to take appropriate actions to copy the pointers
+  ``correctly'', as defined by the needs of the application. Whether {\tt
+  copyState} gets called zero times, once, or many times during simulation
+  is a function of the simulation kernel.  If the application's definition
+  contains no pointers, a bitwise copy is adequate. In either case, this
+  method must be over-ridden by the user application state definition
+  (since this method is pure virtual in {\tt StateBase}).
+
+\end{itemize}
+
+\begin{figure}[th]
+\begin{center}
+\ \psfig{figure=figures/FlatState.eps,width=6in}
+\end{center}
+\caption{The {\tt FlatState} class}\label{fig:flatstate}
+\end{figure}
+
+However, if the user's application state only requires the default bitwise
+copy for its {\tt copyState} method, an implementation of {\tt StateBase}
+called {\tt FlatState} with a default implementation of {\tt copyState} is
+provided.  In this case, the user application's state can just be derived
+from {\tt FlatState} instead of deriving from {\tt StateBase}.
+Figure~\ref{fig:flatstate} illustrates the UML definition of {\tt
+FlatState}.  
+
+Note that for the class {\tt FlatState}, the method {\tt copyState} is
+private and the method {\tt getSize} is pure virtual requiring that the
+user must override the {\tt getSize} method (in order to return the size
+of the derived class). The following is an example of the intended use of
+this class:
+
+\begin{verbatim}
+
+ class ApplicationState : public FlatState{
+   int someData;
+
+   // don't need to define copyState() as application is satisfied 
+   // with the one defined in FlatState
+
+   // but we HAVE to define getSize()
+   unsigned int getSize() const { return sizeof(ApplicationState); }
+ }
+\end{verbatim}
+
+\subsection{Events}\label{events}
+
+\begin{figure}[th]
+\begin{center}
+\ \psfig{figure=figures/EventBase.eps,width=6in}
+\end{center}
+\caption{The {\tt EventBase} class}\label{fig:eventBase}
+\end{figure}
+
+Events represent the communication between simulation objects.  Every
+simulation should have at least one event class defined.  A concise
+definition of the interface to an event that an application sees is
+defined in Figure~\ref{fig:eventBase} (the {\tt EventBase} class).
+Following is a detailed description of the event interface. 
+
+%Again, should these methods be superseded by a constructor ONLY?
+
+The methods seen by the user and the kernel are as follows:
+
+\begin{itemize}
+
+\item{{\tt EventBase( unsigned int receiver,  VTIME \&receiveTime )}} -
+Allows the application to set the simulation id of the receiving object.
+Must be within the bounds of a valid simulation object, or an error will be
+logged.  Allows the application to set the time at which this event will be
+scheduled for execution.
+
+\item{{\tt const unsigned int getReceiver() const}} - returns the destination (receiver) of an event.
+
+\item{{\tt const VTIME \&getReceiveTime() const}} - returns the time at
+which an event is scheduled for execution. 
+
+\item{{\tt const SerializedInstance \&serialize() const}} - If the kernel 
+needs a serialized instance of an event, it will call this method to 
+serialize the event.
+
+\item{{\tt EventBase \&deserialize( const SerializedInstance \& )}} - This
+class method is called to deserialize a serialized instance to create the
+actual event.
+
+\end{itemize}
+
+An implementation of {\tt EventBase} called {\tt FlatEvent} with a default
+implementation of {\tt serialize} is provided.  Figure~\ref{fig:flatevent} 
+illustrates the UML definition of {\tt FlatEvent}.  We can also provide a
+deserialize if we can figure out how.
+
+\begin{figure}
+\begin{center}
+\ \psfig{figure=figures/FlatEvent.eps,width=6in}
+\end{center}
+\caption{The {\tt FlatEvent} class}\label{fig:flatevent}
+\end{figure}
+
+\subsection{The File Input/Output Interface}\label{fileio}
+
+As there is no specification for implementing file and console operations
+in a discrete-event simulation (to our knowledge), we have defined a
+stream-like interface with which simulation objects can read and write
+data (to and from files and the console). Reading and writing data from
+files or the console is accomplished with a set of six methods: 
+
+\begin{itemize}
+
+\item The {\tt getIFStream}, {\tt getOFStream}, and {\tt getIOFStream}
+  methods are defined as a part of the simulation object's interface so
+  that the application developer (who is developing simulation models in
+  C++) has a C++-like streams interface for reading and writing data
+  from/into files. From the user's perspective, this considerably
+  simplifies the usage of files in the simulation models. In previous
+  versions of \textsc{warped}, file I/O was handled with file
+  queues. Input and output operations to these file queues were
+  accomplished with insert and remove queue operations. While this
+  queue-type interface was useful in distributed simulation~\footnote{In
+  distributed simulations, it is often necessary to delay file output
+  operations until it is safe to flush the output out to the file. In this
+  case, the queue semantics are ideal.}, the sequential simulation
+  requires a much simpler interface. It is for this reason that a
+  stream-like interface is used. 
+
+\item The {\tt werr}, {\tt win}, and {wout} stream handles are defined in
+  the namespace of each simulation object and can be referenced or
+  accessed during simulation for console input and output. These stream
+  handles are connected to the standard stream operators ({\tt stderr},
+  {\tt stdin}, and {\tt stdout} respectively) but posses additional
+  functionality. Even in the sequential simulation case, two processes
+  may write to the console on the same simulation cycle. This implies that 
+  these I/O operators will have to serialize I/O in some fashion.
+
+\end{itemize}
+
+There are certain issues in file and console I/O that need to be resolved
+for both sequential and distributed simulation. Each simulation kernel may
+define certain semantics for file I/O specific to that kernel.  For
+instance, distributed kernels may have specific semantics defined for when
+a file appears on the console machine in a committed state that aren't the
+same as a sequential kernel.  Please see the kernel documentation for more
+details. Also note that the simulation kernels should make every attempt
+to make file input and output from unique files as straightforward as
+possible. So if an application has simple file semantics, hopefully there
+will be no surprises.
+
+
+
+\section{Issues related to Distributed Simulation}
+
+\subsection{SerializedInstance class}\label{SerializedInstance}
+
+To achieve full portability and inter-operability of the applications on a
+distributed network of workstations, serialization and de-serialization of
+events is necessary.  It is the responsibility of the application writer
+to implement the methods to serialize and deserialize the events.  To
+assist the developer, a simple {\tt Serialized\-Instance} class is defined
+(refer to Figure~\ref{fig:SerializedInstance}).  The methods in this class
+are as follows:
+
+\begin{figure}
+\begin{center}
+\ \psfig{figure=figures/SerializedInstance.eps,width=5in,silent=}
+\end{center}
+\caption{SerializedInstance class}\label{fig:SerializedInstance}
+\end{figure}
+
+\begin{itemize}
+
+\item {\tt const char *getData() const} - This method returns a string
+  representation of the event to the kernel.
+
+\item{\tt const unsigned int getSize() const} - This method returns 
+  the size of the serialized object's data string.  With this information,
+  {\tt NULL}s and other binary data can be safely embedded in the
+  string. Since event class definitions can not have pointers or virtual
+  functions, a call to {\tt getSize}() will always return the exact size of
+  the event.
+
+\item{\tt SerializedInstance(char *newData, const int newSize)} - This
+  constructor can be used to fill in the data and size fields contained in
+  a serialized instance class.
+
+\end{itemize}
+
+\subsection{The Simulation class} - objects register with the simulation.
+Various instances of the simulation partition accordingly.  This class also 
+is the starting point for configuration, etc.
+
+\newpage
+\section*{Appendix A - UML Class Diagrams}
+
+It is important to note that there are three perspectives with which you
+can use class diagrams: 
+
+\begin{itemize}
+
+\item Conceptual: If you take the conceptual perspective, the diagram
+represents the concepts in the domain under study. These concepts will
+naturally relate to the classes that implement them, but there is often no 
+direct mapping. Indeed, a conceptual model should be drawn with little or
+no regard for the software that might implement it, so it can be considered 
+language-independent.
+
+\item Specification: Now we are looking at software, but we are looking at 
+the interfaces of the software, not the implementation. We are thus
+looking at types rather than classes. 
+
+\item Implementation: In this view, we really do have classes and we are
+laying the implementation bare. 
+
+\end{itemize}
+
+While defining the class diagram for a particular class, it is often
+helpful to include the attributes and operations of the class as well.
+Depending on the detail in the diagram, the notation for an attribute is
+as follows: \emph{visibility name: type = defaultValue}.
+
+Operations are the processes that a class knows to carry out. They most
+obviously correspond to methods on a class. If the operations of a class
+appear in italics, then that class cannot be instantiated as the
+operations are abstract (pure virtual). The full UML syntax for
+operations is as follows:\\
+\begin{center}
+\emph{visibility name (parameter-list): return-type-expression {property-string}}
+\end{center}
+
+\noindent
+where
+
+\begin{itemize}
+
+\item \emph{visibility} is + (public), \# (protected), or -- (private)
+\item \emph{name} is a string
+\item \emph{parameter-list} contains (optional) arguments whose syntax
+      is the same as that of attributes
+\item \emph{return-type-expression} is an optional, language-dependent
+      specification 
+\item \emph{property-string} indicates property values that apply to the
+      given operation 
+\end{itemize}
+
+\newpage
+\section*{Appendix B - Virtual Time}\label{vtime}
+
+Handling the notion of virtual (simulation) time is a critical issue in
+the design and implementation of a discrete-event simulator. We have
+developed two specific ways of implementing time.
+
+\subsection*{Method 1: Two-tuple definition of Time}
+
+This is the same as the default definition of {\tt VTime} as described in
+Section~\ref{VTime}. Currently this is the method we implement in the
+\textsc{warped} simulation system. 
+
+\subsection*{Method 2: The {\tt VTimeBase} Class Approach}
+
+\begin{figure}
+\begin{center}
+\ \psfig{figure=figures/VTimeBase.eps,width=5in,silent=}
+\end{center}
+\caption{The {\tt VTimeBase} class}\label{fig:VTimeBase}
+\end{figure}
+
+In this approach, we defined the {\tt VTimeBase} class to be the base
+class for all time classes.  The decision to derive user defined
+simulation time classes from a single, central base class was made
+considering the trade-offs between runtime overheads and re-compilation
+time (to support different applications with different definitions for
+virtual time within the same library).  The {\tt VTimeBase} class defines
+the base class and interface for all simulation times used in the
+system. All default and user defined time classes must be derived from
+this class. Figure~\ref{fig:VTimeBase} illustrates the {\tt VTimeBase}
+class.  Time comparison functions play a critical role in the performance
+and working of the system. Care must be taken to implement these functions
+efficiently and ``correctly''.  The functionality of the various methods
+in the {\tt VTimeBase} class is enumerated below:
+
+\begin{itemize}
+
+\item{\tt void copyTime(const VTimeBase *)} - This method may be called by the
+  kernel or the application to copy the contents of the class. The
+  function should copy the data from the class passed as the parameter to
+  itself.
+
+\item{\tt bool equals(const VTimeBase *) const} - This method will be called by
+  the kernel to compare two time objects derived from the {\tt VTimeBase}
+  class. The method returns a boolean indicating if the contents of the
+  parameter passed to the function equals the {\tt VTimeBase} object
+  itself. This method must be overloaded by all classes derived from {\tt
+  VTimeBase}. If the parameter is equal, then the method should return
+  {\tt true} else it should return {\tt false}.  Calling this method with
+  a {\tt NULL} argument will result in a simulation failure.
+
+\item{\tt bool greaterThan(const VTimeBase *) const} - This method will be
+  called by the kernel to compare two time objects derived from the {\tt
+  VTimeBase} class.  The method returns {\tt true} if the passed-in
+  object's time is less than the calling object`s time; otherwise it
+  returns {\tt false}.  Calling this method with a {\tt NULL} argument
+  will result in a simulation failure.
+
+\item{\tt bool lessThan(const VTimeBase *) const} - This method will be
+  called by the kernel to compare two time objects derived from the {\tt
+  VTimeBase} class.  This method returns {\tt true} if the passed-in
+  object's time is greater than the calling object's time; otherwise it
+  returns {\tt false}.  Calling this method with a {\tt NULL} argument
+  will result in a simulation failure.
+
+\item {\tt VTimeBase \&getMinusInfinity()}, {\tt VTimeBase
+  \&getPositiveInfinity()}, and {\tt VTimeBase \&getZero()} are class
+  methods to get minus infinity, positive infinity, and zero constants
+  respectively, for the class. These constants are used to represent
+  simulation time at various stages in the simulation.
+
+\end{itemize}
+
+The decision to investigate this style of handling time was influenced by
+the overheads involved in memory allocation and to allow multiple
+implementations of virtual time to co-exist.  However, employing this
+method for handling time increases the overheads of time comparsions
+several fold (due to the indirection). Also, in order to efficiently
+implement such a scheme, application events would contain pointers to {\tt
+VTimeBase} instead of containing {\tt VTimeBase} objects. This meant that,
+events would now contain pointers and virtual methods, making
+serialization and deserializations considerably more expensive to
+implement. We decided to discontinue with this approach, for these
+reasons.
+
+% Removed for now - will fill in later (Ramanan).
+%\section*{Appendix C - Application Memory Management}
+%We need to desribe the stack classes we're providing, and show how to call
+%constructors with previously allocated memory.  Essentially, a detailed
+%implementation of {\tt reclaimState}.
+
+\bibliography{sim,ref}
+\bibliographystyle{acm}
+
+\end{document}
+
+

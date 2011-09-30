@@ -1,0 +1,28 @@
+#ifndef UDP_CONNECTION_INTERFACE_H
+#define UDP_CONNECTION_INTERFACE_H
+
+#include "eclmplCommonInclude.h"
+#include "SocketBasedConnectionInterface.h"
+
+class UDPConnectionInterface : public SocketBasedConnectionInterface {
+public:
+  UDPConnectionInterface(){}
+  UDPConnectionInterface(const unsigned int &mtuSize);
+  virtual ~UDPConnectionInterface(){}
+  virtual bool establishConnections(const int * const argc, 
+				    const char * const * const * const argv);
+  void send(const unsigned int &msgSize,  const char * const msg, const unsigned int &destinationId);
+  bool recv(unsigned int &msgSize, char * const msg,unsigned int &sourceId);
+
+  vector<eclmplSocket *> sendSocket;
+  vector<eclmplSocket *> recvSocket;
+protected:
+  void createAndDistributeRecvSocketVector(eclmplConfigFileTable &udpConnectionTable);
+  void createAndReceiveSendSocketVector(eclmplConfigFileTable &udpConnectionTable);
+  void closeTcpSockets();
+  void createSocketPtrVector();
+  void createSocketPtrVector(vector<eclmplSocket *> &socketVector);
+  void obtainAndBindUnusedPorts(vector<eclmplSocket *> &socketVector);
+};
+
+#endif

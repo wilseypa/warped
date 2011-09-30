@@ -1,0 +1,15 @@
+# Process this file with automake to produce Makefile.in
+
+# See copyright notice in file Copyright in the root directory of this archive.
+
+libvisualize_la_SOURCES= \
+	warped/visualize/DefaultVisualizationManager.cpp \
+	warped/visualize/NullVisualizationManager.cpp \
+	warped/visualize/TimeWarpSimMgrWithVisualization.cpp \
+	warped/visualize/VisualizationClient.cpp \
+	warped/visualize/VisualizationManager.cpp \
+	warped/visualize/DefaultVisualizationManager.h \
+	warped/visualize/NullVisualizationManager.h \
+	warped/visualize/TimeWarpSimMgrWithVisualization.h \
+	warped/visualize/VisualizationClient.h \
+	warped/visualize/VisualizationManager.h

@@ -1,0 +1,150 @@
+/** \mainpage warped Documentation index.
+
+\section intro Introduction
+
+\section codingGuidelines Coding Guidelines
+
+\section eventProcessing Event Processing
+
+Semantics of event execution in new WARPED:
+
+There are two general cases:
+
+[a] Forward Progress:
+
+   With a call to simulate() in the simulation manager, the simulation
+   is initiated. As the first step, objects participating in the
+   simulation are first initialized. Initialization results in the
+   following: (i) the objects are initialized and source objects send
+   themselves an event to schedule themselves for execution when the
+   simulation starts (due to a strict event driven execution
+   approach); (b) the state of the object is initialized and this
+   initial state is saved in the state queue; (c) during
+   initialization, the local virtual time of all objects are set to
+   zero. 
+
+   After initialization, the simulation manager asks the scheduler for
+   the next event to execute. The scheduler scans the set of objects
+   and picks the object with the lowest time-stamped event to execute
+   (typically this will be one of the source objects since they will
+   have events to execute at time greater than zero). The simulation
+   object scheduled for execution then sets its local virtual time to
+   the event it is going to execute. The scheduler method
+   runProcesses() is called which in turn causes the object's
+   executeProcess() method to be called. Before executeProcess is 
+   called, the object's state is saved. State save occurs before 
+   executeProcess because upon resuming execution from a rollback to
+   a previous state, the object calls executeProcess from that state.
+   When executeProcess() is called, the object iteratively executes 
+   all events at the current local virtual time by repeatedly calling 
+   the haveMoreEvents() method and depending on the boolean value 
+   returned by the haveMoreEvents() method, the object either halts 
+   execution or executes the next event at the current local virtual 
+   time (accessed by calling the getEvent() method. Execution is 
+   halted if haveMoreEvents() returns false (i.e there are no more 
+   events to execute at this time).
+
+   Execution of the current event may result in the generation of
+   output events which are transmitted by a call to the destination
+   object's receiveEvent() method (i.e the illusion is to "hand" over
+   the event to the receiver). In the case of non-local objects, a
+   call to receiveEvent() is routed to a simulation object proxy that
+   is resident locally.
+
+   [Note: here we have an implementation decision to make. Instead of
+   repeatedly calling haveMoreEvents() and getEvent() in a while loop,
+   we could just have getEvent() return a vector of events to execute
+   at the current execution time. This will eliminate the while loop
+   and the overhead of repeatedly calling haveMoreEvents() and
+   getEvent().
+
+   If all goes well and there are no rollbacks, then when the call to
+   runProcesses() in the scheduler returns, it is time to check for any 
+   kernel messages. This is necessary because if an object repeatedly 
+   sends events to itself, it will continue to execute those events
+   and no messages will can be received.
+   
+[b] Rollback Recovery Process:
+ 
+   During a call to the object's executeProcess(), events for other
+   objects may be generated. As mentioned before, these events are
+   handed over to the destination objects by calling the destination
+   object's receiveEvent() method. A call to the object's
+   receiveEvent() method results in an indirect call to the
+   receiveEvent() method in the simulation manager.
+
+   In the simulation manager's receiveEvent() method, the following
+   actions take place: 
+
+   (i) a handle to the event is inserted to the sending object's
+   output queue (for later use during a rollback). This is dependent
+   upon the type of output manager used. For the aggressive output 
+   manager, the event is always inserted into the sender's output queue.
+   For the lazy output manager, the event is inserted only if it has
+   not already been sent (the new event is the same as the one generated 
+   before a rollback). For the adaptive output manager, one of the two
+   previous manager's behavior is used.
+
+   (ii) check to see if the event is for a local or remote object. If
+   it is local, check to see if the event is a straggler by comparing the
+   event's timestamp with the destination object's local virtual
+   time. Note that we are changing convention here: we only rollback
+   on a per object basis; in old warped we rolled back the entire
+   simulation manager upon rollback. If it is for a remote object, send
+   the event to that object and then do the same procedure as is done for
+   a local object.
+   
+   So if the event's timestamp is <= the object's local virtual time,
+   a rollback is said to have occurred. A call to the rollback method
+   with the straggler event and the destination object results in the
+   following actions depending upon the type of the event.
+
+   (a) If the straggler is a positive message, then the following
+   actions take place: (i) state is restored to a time preceding the
+   time of the straggler event; (ii) the local virtual time of the
+   simulation object is reset to the time of the restored state (since
+   the local virtual time represents the time up to which the object
+   has correctly executed events). (iii) the event is inserted into
+   the destination object's input queue. The insertion will reset the
+   pointers in the input queue to correctly point to the next
+   unprocessed event to execute (normally, this would be the straggler
+   event itself; but if an infrequent state saving strategy is
+   employed, then the next event to execute would be the first event
+   that needs to be re-executed to generate the current state (the
+   coastforward process); (iv) roll back the file queues; (v) roll back
+   the output queue to the time of the rollback. For aggressive output
+   manager, send out anti-messages for any events in the output queue
+   with a timestamp greater than the rollback time. For the lazy output
+   manager, put these events into the lazy compare queue to check if
+   the events generated after the rollback are the same as the events
+   in this queue. and finally (vi) if an infrequent state saving 
+   strategy is employed, then invoke the coastforwarding phase;
+
+   (b) When an object receives a negative message, a slightly different 
+   process is used. The receiving object may or may not be already 
+   rolled back. If the negative message is a straggler, then the same 
+   rollback process described above is used. The main difference occurs 
+   after the coast forward phase. After the coastforward phase, the 
+   negative messages are sent to the input queue where they cancel out
+   their corresponding positive messages. Forward progress then resumes
+   as normal. It is necessary to rollback because only events in the input
+   queue can be cancelled.
+
+Note:
+
+The object's LVT represents the time of the event it has just
+executed. For objects that do not process any more messages, this LVT
+will not change and represents the time at which it last executed at
+event. For GVT estimation purposes, we ask the scheduler for the last
+scheduled event timestamp (since we use a LTSF scheduling policy) and
+calculate GVT based on the values provided by the scheduler. For
+termination purposes, we check to see if any of the objects have any
+events to execute, if no one has any events to execute, then the time
+of the simulation manager is set to POSITIVE INFINITY and the
+termination process is initiated.
+
+Note that the LVT of the object is NEVER set to POSITIVE
+INFINITY. This is because we need to retain the last executed event
+timestamp to determine if we need to rollback an object or not.
+
+\section

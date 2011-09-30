@@ -1,0 +1,9 @@
+4 2 2
+Disk1 FUJITSU
+Disk2 FUJITSU
+Disk3 FUJITSU
+Disk4 FUJITSU
+Fork1 4 Disk1 Disk2 Disk3 Disk4 1
+Fork2 4 Disk1 Disk2 Disk3 Disk4 1
+Source1 Fork1 FUJITSU 6005 1
+Source2 Fork2 FUJITSU 6009 1

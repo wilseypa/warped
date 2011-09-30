@@ -1,0 +1,174 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: /home/ramanan/research/new-warped/doc/umlFigures/defaultVTime
+%%Creator: Dia v0.40
+%%CreationDate: Wed Sep  8 22:22:06 1999
+%%For: ramanan
+%%Magnification: 1.0000
+%%Orientation: Portrait
+%%BoundingBox: 0 0 493 468
+%%Pages: 1
+%%BeginSetup
+%%EndSetup
+%%EndComments
+/cp {closepath} bind def
+/c {curveto} bind def
+/f {fill} bind def
+/a {arc} bind def
+/ef {eofill} bind def
+/ex {exch} bind def
+/gr {grestore} bind def
+/gs {gsave} bind def
+/sa {save} bind def
+/rs {restore} bind def
+/l {lineto} bind def
+/m {moveto} bind def
+/rm {rmoveto} bind def
+/n {newpath} bind def
+/s {stroke} bind def
+/sh {show} bind def
+/slc {setlinecap} bind def
+/slj {setlinejoin} bind def
+/slw {setlinewidth} bind def
+/srgb {setrgbcolor} bind def
+/rot {rotate} bind def
+/sc {scale} bind def
+/sd {setdash} bind def
+/ff {findfont} bind def
+/sf {setfont} bind def
+/scf {scalefont} bind def
+/sw {stringwidth pop} bind def
+/tr {translate} bind def
+
+/ellipsedict 8 dict def
+ellipsedict /mtrx matrix put
+/ellipse
+{ ellipsedict begin
+   /endangle exch def
+   /startangle exch def
+   /yrad exch def
+   /xrad exch def
+   /y exch def
+   /x exch def   /savematrix mtrx currentmatrix def
+   x y tr xrad yrad sc
+   0 0 1 startangle endangle arc
+   savematrix setmatrix
+   end
+} def
+
+/colortogray {
+/rgbdata exch store
+rgbdata length 3 idiv
+/npixls exch store
+/rgbindx 0 store
+0 1 npixls 1 sub {
+grays exch
+rgbdata rgbindx       get 20 mul
+rgbdata rgbindx 1 add get 32 mul
+rgbdata rgbindx 2 add get 12 mul
+add add 64 idiv
+put
+/rgbindx rgbindx 3 add store
+} for
+grays 0 npixls getinterval
+} bind def
+/mergeprocs {
+dup length
+3 -1 roll
+dup
+length
+dup
+5 1 roll
+3 -1 roll
+add
+array cvx
+dup
+3 -1 roll
+0 exch
+putinterval
+dup
+4 2 roll
+putinterval
+} bind def
+/colorimage {
+pop pop
+{colortogray} mergeprocs
+image
+} bind def
+
+28.346000 -28.346000 scale
+-1.000000 -18.500000 translate
+%%EndProlog
+
+
+0.100000 slw
+[] 0 sd
+1.000000 1.000000 1.000000 srgb
+n 1.050000 2.050000 m 1.050000 3.450000 l 18.333200 3.450000 l 18.333200 2.050000 l f
+0.000000 0.000000 0.000000 srgb
+n 1.050000 2.050000 m 1.050000 3.450000 l 18.333200 3.450000 l 18.333200 2.050000 l cp s
+/Helvetica-Bold ff 1.000000 scf sf
+0.000000 0.000000 0.000000 srgb
+(VTime) dup sw 2 div 9.691600 ex sub 3.050000 m gs 1 -1 sc sh gr
+1.000000 1.000000 1.000000 srgb
+n 1.050000 3.450000 m 1.050000 3.850000 l 18.333200 3.850000 l 18.333200 3.450000 l f
+0.000000 0.000000 0.000000 srgb
+n 1.050000 3.450000 m 1.050000 3.850000 l 18.333200 3.850000 l 18.333200 3.450000 l cp s
+1.000000 1.000000 1.000000 srgb
+n 1.050000 3.850000 m 1.050000 18.450000 l 18.333200 18.450000 l 18.333200 3.850000 l f
+0.000000 0.000000 0.000000 srgb
+n 1.050000 3.850000 m 1.050000 18.450000 l 18.333200 18.450000 l 18.333200 3.850000 l cp s
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+VTime\(major:int,minor:int\)) 1.200000 4.544690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+VTime\(major:int\)) 1.200000 5.344690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+VTime\(init:VTime &\)) 1.200000 6.144690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+getMajor\(\): int) 1.200000 6.944690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+getMinor\(\): int) 1.200000 7.744690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+operator=\(from:VTime &\): VTime & ) 1.200000 8.544690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+operator+\(right:VTime &\): VTime) 1.200000 9.344690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+operator-\(right:VTime &\): VTime) 1.200000 10.144690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+operator<\(right:VTime &\): bool) 1.200000 10.944690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+operator>\(right:VTime &\): bool) 1.200000 11.744690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+operator==\(right:VTime &\): bool) 1.200000 12.544690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+operator!=\(right:VTime &\): bool) 1.200000 13.344690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+operator<=\(right:VTime &\): bool) 1.200000 14.144690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+operator>=\(right:VTime &\): bool) 1.200000 14.944690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+getMinusInfinity\(\): VTime &) 1.200000 15.744690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+getZero\(\): VTime &) 1.200000 16.544690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(+getPositiveInfinity\(\): VTime &) 1.200000 17.344690 m gs 1 -1 sc sh gr
+/Courier ff 0.800000 scf sf
+0.000000 0.000000 0.000000 srgb
+(-VTime\(\)) 1.200000 18.144690 m gs 1 -1 sc sh gr
+showpage

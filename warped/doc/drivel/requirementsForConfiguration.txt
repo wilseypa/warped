@@ -1,0 +1,118 @@
+Requirements Definition For Implementing a Configuration Manager
+----------------------------------------------------------------
+[0] Scope - configuration refers to:
+    a) Mode of simulation - i.e. picking between various sequential
+       kernels, distributed kernels, etc.
+    b) Configuration of kernel specific options, like algorithmic and data
+       structure optimization.
+    c) Platform issues probably have to be determined statically by a
+       configure script as opposed to at runtime.
+
+[1] What is the right level for configuration ?
+	-- Simulation level, Cluster Level, Logical Process Level
+
+[2] Configuration of each element of the system is the responsibility 
+    of the element itself.
+
+[3] Configuration shall occur at runtime and be interactive/non-interative,
+    or optionally either?
+
+[3.5] If file based configuration and interactive configuration are both
+      supported, the code implementing both will be shared to the largest
+      extent possible.  For instance, interactive configuration will
+      produce a configuration file, which will be used to configure the
+      system.
+ 
+[4] Configuration options that are in conflict with each other will not be
+    offered by the configurer.
+
+[5] To the largest extent possible, configuration will be enforced by
+    the system and not done in an ad hoc manner.  A configuration framework
+    will be designed and all configurable entities will adhere to it.
+
+---- end of requirements ----- begin drivel ---------------------------
+
+
+What specific elements of a simulation kernel are potentially configurable ?
+
+Not Related to Time Warp or distributed simulation:
+---------------------------------------------------
+Scheduling, Memory Mgmt, Event Queues, File I/O.
+
+Related to distributed simulation:
+----------------------------------
+Communication and commn. related optimizations, Termination Detection.
+Distributed File I/O, how to start the simulation, i.e. rsh, ssh, daemon
+based, etc.
+
+Time Warp Related:
+------------------
+GVT Estimation, Cancellation, Fossil Collection, Rollback Relaxation, State
+Management & Checkpointing.
+
+
+My attempt at a configuration tree (with dependencies):
+
+Note: 
+	(a) it is not Time Warp specific (IMHO)
+        (b) some elements may be configured at two levels (or more)
+	(c) more elements may be identified and need to be added
+
+Simulation Level:
+-----------------
+
+       Invoke configuration manager
+                     |
+       -----------------------------
+      |    	                    |
+  Sequential			Parallel
+                                    |
+                          ---------------------
+                         |                     |
+                    Distributed               SMP
+                         |                     |
+                          ---------------------
+                                    |
+                         -----------------------   
+                        |                       | 
+                   Communication              Memory
+                                            Management 
+
+
+
+Cluster Level:
+--------------
+
+		  Invoke configuration manager
+				|
+      --------------------------------------------------------------- 
+     |         |           |           |	        |            |
+   Event     State       Fossil     Scheduling   GVT/Termination    Stats 
+  Queues   Management  Collection                  Detection       Collection
+
+
+Logical Process Level:
+----------------------
+
+	         Invoke configuration manager
+		              |
+	      ----------------------------------- 
+	     |            |            |         |
+	   Event        State       Fossil      Stats
+	  Queues      Management   Collection  Collection
+
+
+
+Note:
+
+(a) For Time Warp based simulators, depending on the platform and the type 
+    of Communication Manager selected, we can configure the Cancellation
+    Strategies, Message Aggregation Strategies, and GVT Estimation
+    algorithms at the simulation level itself or hold off till to
+    configure these elements at the cluster level or the logical process
+    level.
+
+(b) Event Queues, State Management, Fossil Collection, and Stats
+    collection can be configured at the Cluster Level as well as the
+    Logical Process Level (it also depends on the algorithm/data structure
+    you are using).
