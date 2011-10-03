@@ -2,7 +2,7 @@
 
 #include "AdaptTestEvent.h"
 #include <cstdlib>
-#include <clutils/AllocatorStack.h>
+#include <utils/AllocatorStack.h>
 #include <warped/SerializedInstance.h>
 
 void 

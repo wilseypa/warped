@@ -1,7 +1,7 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include <string>
-#include <clutils/StringUtilities.h>
+#include <utils/StringUtilities.h>
 #include "AdaptTestEvent.h"
 #include "AdaptTestObject.h"
 #include "AdaptTestObjectState.h"
