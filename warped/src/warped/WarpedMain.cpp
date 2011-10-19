@@ -155,15 +155,10 @@ WarpedMain::doSlaveInit( const vector<string> &commandLineArgs ){
   // if i am a slave process, then i have to read the command line
   // parameters from a file instead of reading it from argc and
   // args as MPI hasn't sent us the simulation command line
-  // parameters yet. So we are forced to read this from a file
-  // called "mpich-args".
-
-  // the following is for constructing the path to the mpich-args
-  // file. MPI gives us the whole path to the executable in
-  // args[0]. By ignoring the executable name in the path, we can
-  // obtain the path to the file this slave needs to read.
-
-  // array of parameters that slaves need
+  // parameters yet. So we are forced to read this from slaveArgumentFile.
+  // the master process writes slaveArgumentFile to its run directory;
+  // you may have to copy it to the directory where the slave is spawned from;
+  // i.e. your home directory
   return readSlaveArguments( commandLineArgs );
 }
 
@@ -186,7 +181,7 @@ WarpedMain::writeSlaveArguments( const vector<string> &masterArgs ){
 vector<string>
 WarpedMain::doMasterInit( const vector<string> &masterArgs ){
   cerr << "doMasterInit called" << endl;
-  // if i am the master, i should create the mpich-args file so
+  // if i am the master, i should create the slaveArgumentFile file so
   // that user doesn't have to do this. The reason I need to do
   // this is because only I have complete access to the
   // simulation's command line parameters (at this point; before a
