@@ -132,6 +132,12 @@ public:
 
   bool getOptFossilCollRiskFactor( double &riskFactor );
 
+  bool getClockFreqManagerType(string& type) const;
+
+  bool getClockFreqManagerPeriod(int& period) const;
+
+  bool getClockFreqManagerCPUs(int& numCPUs) const;
+
   /**
      Returns the list of nodes that it has been requested that this
      simulation execute on.

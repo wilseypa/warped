@@ -65,6 +65,10 @@ public:
   bool getOptFossilCollDefaultLength( unsigned int &defaultLength );
   bool getOptFossilCollRiskFactor( double &riskFactor );
 
+  bool getClockFreqManagerType(string& type) const;
+  bool getClockFreqManagerPeriod(int& period) const;
+  bool getClockFreqManagerCPUs(int& numCPUs) const;
+
   vector<string> getNodes() const;
   const string getBinaryName() const;
 
@@ -170,6 +174,11 @@ private:
      Returns ConfigurationScope for TimeWarp::OptFossilCollectionManager
   */
   const ConfigurationScope *getOptFossilCollManagerScope() const;
+
+  /**
+     Returns ConfigurationScope for TimeWarp::OptFossilCollectionManager
+  */
+  const ConfigurationScope *getClockFrequencyManagerScope() const;
 
   const ConfigurationValue *getNodesValue() const;
 
@@ -387,6 +396,21 @@ SimulationConfiguration::getOptFossilCollRiskFactor( double &riskFactor ){
   return _impl->getOptFossilCollRiskFactor( riskFactor );
 }
 
+bool
+SimulationConfiguration::getClockFreqManagerType(string& type) const {
+  return _impl->getClockFreqManagerType(type);
+}
+
+bool
+SimulationConfiguration::getClockFreqManagerPeriod(int& period) const {
+  return _impl->getClockFreqManagerPeriod(period);
+}
+
+bool
+SimulationConfiguration::getClockFreqManagerCPUs(int& numCPUs) const {
+  return _impl->getClockFreqManagerCPUs(numCPUs);
+}
+
 vector<string>
 SimulationConfiguration::getNodes() const {
   return _impl->getNodes();
@@ -544,6 +568,13 @@ SimulationConfiguration::Implementation::getOptFossilCollManagerScope() const {
     retval = getTimeWarpScope()->findScope( "OptFossilCollManager" );
   }
   return retval;
+}
+
+const ConfigurationScope*
+SimulationConfiguration::Implementation::getClockFrequencyManagerScope() const {
+  if(const ConfigurationScope* twScope = getTimeWarpScope())
+    return twScope->findScope("ClockFrequencyManager");
+  return NULL;
 }
 
 const string &
@@ -945,6 +976,39 @@ SimulationConfiguration::Implementation::getOptFossilCollRiskFactor( double &ris
     }
   }
   return retval;
+}
+
+bool
+SimulationConfiguration::Implementation::getClockFreqManagerType(string& type) const {
+  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) {
+    if(cfmScope->findChoice("Type")) {
+      type = stringToUpper(cfmScope->getStringValue("Type"));
+      return true;
+    }
+  }
+  return false;
+}
+
+bool
+SimulationConfiguration::Implementation::getClockFreqManagerPeriod(int& period) const {
+  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) {
+    if(cfmScope->findChoice("Period")) {
+      period = cfmScope->getIntValue("Period");
+      return true;
+    }
+  }
+  return false;
+}
+
+bool
+SimulationConfiguration::Implementation::getClockFreqManagerCPUs(int& numCPUs) const {
+  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) {
+    if(cfmScope->findChoice("NumCPUs")) {
+      numCPUs = cfmScope->getIntValue("NumCPUs");
+      return true;
+    }
+  }
+  return false;
 }
 
 const ConfigurationValue *

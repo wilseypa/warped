@@ -34,9 +34,15 @@ WARPED_H_FILES = \
 	warped/AdaptiveStateManagerBase.h \
 	warped/AggressiveOutputManager.h \
 	warped/Application.h \
+	warped/CentralizedClockFrequencyManager.h \
 	warped/CentralizedEventSetSchedulingManager.h \
+	warped/CFRollbackAverageMessage.h \
+	warped/CFRollbackVectorMessage.h \
 	warped/ChebyFossilCollManager.h \
 	warped/CirculateInitializationMessage.h \
+	warped/ClockFrequencyManager.h \
+	warped/ClockFrequencyManagerFactory.h \
+	warped/ClockFrequencyManagerImplementationBase.h \
 	warped/CommunicatingEntity.h \
 	warped/CommunicationManager.h \
 	warped/CommunicationManagerFactory.h \
@@ -59,6 +65,7 @@ WARPED_H_FILES = \
 	warped/DefaultTimeWarpEventContOneAntiMsg.h \
 	warped/IntVTime.h \
 	warped/DeserializerManager.h \
+	warped/DistributedClockFrequencyManager.h \
 	warped/Event.h \
 	warped/EventFunctors.h \
 	warped/EventId.h \
@@ -204,9 +211,14 @@ libwarped_la_SOURCES = \
 	warped/AdaptiveOutputManager.cpp \
 	warped/AdaptiveStateManagerBase.cpp \
 	warped/AggressiveOutputManager.cpp \
+	warped/CentralizedClockFrequencyManager.cpp \
 	warped/CentralizedEventSetSchedulingManager.cpp \
+	warped/CFRollbackAverageMessage.cpp \
+	warped/CFRollbackVectorMessage.cpp \
 	warped/ChebyFossilCollManager.cpp \
 	warped/CirculateInitializationMessage.cpp \
+	warped/ClockFrequencyManagerFactory.cpp \
+	warped/ClockFrequencyManagerImplementationBase.cpp \
 	warped/CommunicationManager.cpp \
 	warped/CommunicationManagerImplementationBase.cpp \
 	warped/CommunicationManagerFactory.cpp \
@@ -225,6 +237,7 @@ libwarped_la_SOURCES = \
 	warped/DefaultTimeWarpEventContainer.cpp \
 	warped/DefaultTimeWarpEventContOneAntiMsg.cpp \
 	warped/DeserializerManager.cpp \
+	warped/DistributedClockFrequencyManager.cpp \
 	warped/Event.cpp \
 	warped/EventMessage.cpp \
 	warped/EventMessageBase.cpp \
@@ -236,8 +249,8 @@ libwarped_la_SOURCES = \
 	warped/GVTManagerImplementationBase.cpp \
 	warped/GVTUpdateMessage.cpp \
 	warped/InFileQueue.cpp \
-	warped/IntVTime.cpp \
 	warped/InitializationMessage.cpp \
+	warped/IntVTime.cpp \
 	warped/KernelMessage.cpp \
 	warped/LazyOutputManager.cpp \
 	warped/MatternGVTManager.cpp \

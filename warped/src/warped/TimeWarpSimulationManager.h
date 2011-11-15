@@ -17,6 +17,7 @@ class Application;
 class CommunicationManager;
 class GVTManager;
 class OptFossilCollManager;
+class ClockFrequencyManager;
 class OutputManager;
 class SchedulingData;
 class SchedulingManager;
@@ -385,6 +386,9 @@ public:
 	void restoreFileQueues(std::ifstream* outFile, const ObjectID &objId,
 			unsigned int restoreTime);
 
+	/// Returns the number of rollbacks
+	unsigned int getRollbacks() { return numberOfRollbacks; }
+
 	//@} // End of Public Class Methods of TimeWarpSimulationManager.
 
 protected:
@@ -494,6 +498,9 @@ protected:
 
 	/// This is a handle to a termination manager
 	TerminationManager *myTerminationManager;
+
+	/// handle to the clock frequency manager
+	ClockFrequencyManager *myClockFrequencyManager;
 
 	/// map of objects where each object can have several output file queues
 	vector<vector<TimeWarpSimulationStream*> > outFileQueues;

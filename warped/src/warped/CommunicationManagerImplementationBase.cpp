@@ -157,7 +157,7 @@ CommunicationManagerImplementationBase::waitForInitialization(unsigned int numEx
 	new InitializationMessage( mySimulationManagerID, 
 				   count,
 				   *objectNames,
-				   numberOfSimulationManagers );
+				   numberOfSimulationManagers);
       sendMessage(messageToSend, count);
     }
   }

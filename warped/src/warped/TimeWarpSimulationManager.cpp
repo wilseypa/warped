@@ -25,6 +25,8 @@
 #include "EventFunctors.h"
 #include "OptFossilCollManager.h"
 #include "OptFossilCollManagerFactory.h"
+#include "ClockFrequencyManager.h"
+#include "ClockFrequencyManagerFactory.h"
 #include <utils/Debug.h>
 #include <algorithm>
 #include <sstream>
@@ -278,14 +280,13 @@ void TimeWarpSimulationManager::registerSimulationObjectProxies(
 // InitializationMessage, StartMessage, EventMessage, NegativeEventMessage,
 // CheckIdleMessage, AbortSimulationMessage
 void TimeWarpSimulationManager::registerWithCommunicationManager() {
-
-	const int numberOfMessageTypes = 6;
-	string messageType[numberOfMessageTypes] = { "InitializationMessage",
+	const char* messageTypes[] = { "InitializationMessage",
 			"StartMessage", "EventMessage", "NegativeEventMessage",
 			"CheckIdleMessage", "AbortSimulationMessage" };
 	ASSERT(myCommunicationManager != NULL);
+	int numberOfMessageTypes = sizeof(messageTypes) / sizeof(const char*);
 	for (int count = 0; count < numberOfMessageTypes; count++) {
-		myCommunicationManager->registerMessageType(messageType[count], this);
+		myCommunicationManager->registerMessageType(messageTypes[count], this);
 	}
 }
 
@@ -348,6 +349,10 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 
 	while (nextEvent != 0 && !pastSimulationCompleteTime && !inRecovery) {
 		hadAtLeastOne = true;
+
+		if (myClockFrequencyManager) {
+		  myClockFrequencyManager->poll();
+		}
 
 		SimulationObject *nextObject =
 				getObjectHandle(nextEvent->getReceiver());
@@ -433,6 +438,7 @@ void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 		while (inRecovery) {
 			getMessages();
 		}
+
 		ASSERT(mySchedulingManager != NULL);
 		if (executeObjects(simulateUntil)) {
 			myTerminationManager->setStatusActive();
@@ -1268,6 +1274,14 @@ void TimeWarpSimulationManager::configure(
 	} else {
 		usingOptFossilCollection = false;
 	}
+
+	// setup and configure clock frequency manager
+	const ClockFrequencyManagerFactory* myClockFreqMgrFactory =
+	    ClockFrequencyManagerFactory::instance();
+	myClockFrequencyManager = dynamic_cast<ClockFrequencyManager*>(
+	    myClockFreqMgrFactory->allocate(configuration, this));
+	if(myClockFrequencyManager)
+    myClockFrequencyManager->configure(configuration);
 
 	registerSimulationObjects();
 
