@@ -46,6 +46,11 @@ public:
 	/** Remove and return the next event in the event set.
 	 *  @return The removed event.
 	 */
+	const Event *getEventWhileRollback(SimulationObject *simObj, int threadId);
+
+	/** Remove and return the next event in the event set.
+	 *  @return The removed event.
+	 */
 	const Event* getEventIfStraggler(SimulationObject *simObj, int threadId);
 
 	/** Remove and return the next event in the event set.
@@ -141,7 +146,9 @@ public:
 	//Peek the first Event and Lock the Unprocessed Queue for that Object
 	const Event* peekEventLockUnprocessed(SimulationObject *simObj,
 			int threadId);
-
+	//Peek the first Event and Lock the Unprocessed Queue for that Object while Coasting
+	const Event* peekEventLockUnprocessed(SimulationObject *simObj,
+			const VTime &minimumTime, int threadId);
 	const VTime* getMinEventTime(unsigned int threadId, unsigned int objId);
 
 private:

@@ -85,7 +85,7 @@ public:
 
 	void updateLVTArray(unsigned int threadId, unsigned int objId);
 
-	void updateSendMinTime(unsigned int threadId, const VTime* sendTime);
+	inline void updateSendMinTime(unsigned int threadId, const VTime* sendTime);
 
 	void decrementLVTFlag(unsigned int threadId);
 

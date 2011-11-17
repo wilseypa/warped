@@ -37,31 +37,33 @@ const VTime & DTTimeWarpMultiSetSchedulingManager::getLastEventScheduledTime() {
 	if (nextEventTime != NULL && *minTime > *nextEventTime)
 		minTime = nextEventTime;
 
-	const VTime *executeTime =
-			(mySimulationManager->getPositiveInfinity().clone());
-	utils::debug << "(" << mySimulationManager->getSimulationManagerID()
-			<< ")" << "Unprocessed Min Time : " << *minTime << endl;
-	this->getExecuteLock(0); // Its hard coded as 0 as only the master thread would be accessing it.
-	executeQueueIterator = executeQueue.begin();
-	while (executeQueueIterator != executeQueue.end()) {
-		if ((*executeQueueIterator) != NULL)
-			if (((*executeQueueIterator)-> getReceiveTime()) < (*executeTime))
-				executeTime = (*executeQueueIterator)->getReceiveTime().clone();
-		executeQueueIterator++;
-	}
-	this->releaseExecuteLock(0);
+	/*const VTime *executeTime =
+	 (mySimulationManager->getPositiveInfinity().clone());
+	 utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+	 << ")" << "Unprocessed Min Time : " << *minTime << endl;
+	 this->getExecuteLock(0); // Its hard coded as 0 as only the master thread would be accessing it.
+	 executeQueueIterator = executeQueue.begin();
+	 while (executeQueueIterator != executeQueue.end()) {
+	 if ((*executeQueueIterator) != NULL)
+	 if (((*executeQueueIterator)-> getReceiveTime()) < (*executeTime))
+	 executeTime = (*executeQueueIterator)->getReceiveTime().clone();
+	 executeQueueIterator++;
+	 }
+	 this->releaseExecuteLock(0);
 
-	if (*minTime == mySimulationManager->getPositiveInfinity()) {
-		//assert(false);
-		minTime = &(mySimulationManager->getGVTManager()->getGVT());
-	}
+	 if (*minTime == mySimulationManager->getPositiveInfinity()) {
+	 //assert(false);
+	 minTime = &(mySimulationManager->getGVTManager()->getGVT());
+	 }
 
-	lastScheduledTime = (*minTime) > (*executeTime) ? (*executeTime).clone()
-			: (*minTime).clone();
-	//lastScheduledTime = minTime->clone();
+	 lastScheduledTime = (*minTime) > (*executeTime) ? (*executeTime).clone()
+	 : (*minTime).clone();
+	 utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+	 << ")" << "Execute & Schedule Min Time : " << *executeTime << endl;
+	 */
+	lastScheduledTime = minTime->clone();
 	ASSERT( lastScheduledTime != 0 );
-	utils::debug << "(" << mySimulationManager->getSimulationManagerID()
-			<< ")" << "Execute & Schedule Min Time : " << *executeTime << endl;
+
 	return *lastScheduledTime;
 }
 
