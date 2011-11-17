@@ -1,5 +1,8 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
+#ifndef AtomicState_H_
+#define AtomicState_H_
+
 #include <iostream>
 using namespace std;
 
@@ -37,3 +40,5 @@ public:
 private:
 	int lockOwner;
 };
+
+#endif /* AtomicState_H_ */
