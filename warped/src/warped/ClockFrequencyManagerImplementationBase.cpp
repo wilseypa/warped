@@ -83,12 +83,6 @@ ClockFrequencyManagerImplementationBase::setGovernorMode(const char* governor) {
 
 void
 ClockFrequencyManagerImplementationBase::setCPUFrequency(int cpu_idx, const char* freq) {
-  if(cpu_idx != myCPU && !iAmMaster()) {
-    utils::debug << "Non-master node " << mySimulationManagerID << " on CPU "
-        << myCPU << " trying to set frequency of CPU " << cpu_idx << endl;
-    return;
-  }
-
   ostringstream path;
   path << "/sys/devices/system/cpu/cpu" << cpu_idx << "/cpufreq/scaling_setspeed";
 
