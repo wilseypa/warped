@@ -1290,9 +1290,10 @@ void TimeWarpSimulationManager::configure(
 	// messages and wait for all initialization messages to arrive
 	// note: we dont need an initialization message from ourself; and
 	// hence the n - 1.
-	myCommunicationManager->waitForInitialization(
-			numberOfSimulationManagers - 1);
-
+	if (numberOfSimulationManagers > 1) {
+    myCommunicationManager->waitForInitialization(
+        numberOfSimulationManagers - 1);
+	}
 }
 
 bool TimeWarpSimulationManager::contains(const string &object) const {
