@@ -40,6 +40,12 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
     return NULL;
   }
 
+  if( geteuid() !=  0 ) {
+      utils::debug << "ClockFrequencyManager: To use clock frequency modulation, WARPED " 
+        << " must be run as root" << endl;
+    return NULL;
+  }
+
   int systemCPUs = CPUCount();
   if(confCPUs > systemCPUs) {
     std::ostringstream err;
