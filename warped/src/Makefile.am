@@ -13,7 +13,7 @@ lib_LTLIBRARIES = libwarped.la
 if USE_TIMEWARP
 
 if HAVE_MPICH
-libwarped_la_LIBADD = -lutils -lmpich -lpmpich -lpthread
+libwarped_la_LIBADD = -lutils -lmpich -lmpl -lpthread
 else 
 if HAVE_MPI
 libwarped_la_LIBADD = -lutils -lmpi -lpthread
