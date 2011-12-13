@@ -154,13 +154,13 @@ WarpedMain::initializeSimulation( vector<string> &commandLineArgs ){
   registerKernelDeserializers();
   myApplication->registerDeserializers();
 
+  ArgumentParser ap( getArgumentList( *this ));
+  ap.checkArgs( commandLineArgs, false );
+
   if( debugFlag == true ){
     utils::enableDebug();
     utils::debug << "Debug output enabled with -debug" << endl;
   }
-
-  ArgumentParser ap( getArgumentList( *this ));
-  ap.checkArgs( commandLineArgs, false );
 
   SimulationConfiguration *configuration =
           readConfiguration( configurationFileName, commandLineArgs );

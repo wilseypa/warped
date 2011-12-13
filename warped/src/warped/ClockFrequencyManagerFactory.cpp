@@ -1,12 +1,13 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
+#include <utils/Debug.h>
 #include "ClockFrequencyManagerFactory.h"
 #include "CentralizedClockFrequencyManager.h"
 #include "DistributedClockFrequencyManager.h"
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
-#include <utils/Debug.h>
 
+using std::cout;
 using std::cerr;
 using std::endl;
 
@@ -34,14 +35,14 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
     return NULL;
   }
   else if(confCPUs <= 1) {
-    utils::debug << "ClockFrequencyManager: To use clock frequency modulation, you must "
+    cout << "ClockFrequencyManager: To use clock frequency modulation, you must "
         << "specify 'NumCPUs: n' s.t. n > 1." << endl
         << "Disabling ClockFrequencyManager" << endl;
     return NULL;
   }
 
   if( geteuid() !=  0 ) {
-      utils::debug << "ClockFrequencyManager: To use clock frequency modulation, WARPED " 
+      cout << "ClockFrequencyManager: To use clock frequency modulation, WARPED " 
         << " must be run as root" << endl;
     return NULL;
   }
@@ -56,7 +57,7 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
   }
 
   if(type == "CENTRALIZED") {
-    utils::debug << "("
+    cout << "("
         << mySimulationManager->getSimulationManagerID()
         << ") configured a Centralized Clock Frequency Manager with period = "
         << p << " using " << confCPUs << " CPUs" << std::endl;
@@ -65,7 +66,7 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
   }
   else if(type == "DISTRIBUTED") {
 
-    utils::debug << "("
+    cout << "("
         << mySimulationManager->getSimulationManagerID()
         << ") configured a Distributed Clock Frequency Manager with period = "
         << p << " using " << confCPUs << " CPUs" << std::endl;
@@ -74,7 +75,7 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
   }
   else {
     std::ostringstream err;
-    err << "ClockFrequencyManager: invalid type '" << type << "'." << endl
+    cerr << "ClockFrequencyManager: invalid type '" << type << "'." << endl
         << "Valid types are: None, Centralized, Distributed";
     mySimulationManager->shutdown(err.str());
   }

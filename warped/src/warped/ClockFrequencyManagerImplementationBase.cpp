@@ -13,6 +13,7 @@ ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase
   :mySimulationManager(simMgr)
   ,myMeasurementPeriod(measurementPeriod)
   ,myMeasurementCounter(0)
+  ,myAmMaster(false)
   ,myNumCPUs(numCPUs) {
 
   ASSERT(mySimulationManager);
@@ -20,9 +21,8 @@ ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase
   ASSERT(myCommunicationManager);
 
   mySimulationManagerID = mySimulationManager->getSimulationManagerID();
+  myAmMaster = (mySimulationManagerID == 0);
   myNumSimulationManagers = mySimulationManager->getNumberOfSimulationManagers();
-
-  myCPU = mySimulationManagerID % myNumCPUs;
 }
 
 ClockFrequencyManagerImplementationBase::~ClockFrequencyManagerImplementationBase() {
@@ -38,30 +38,23 @@ ClockFrequencyManagerImplementationBase::poll() {
 
 bool
 ClockFrequencyManagerImplementationBase::checkMeasurementPeriod() {
-  // only the master may initiate the measurement process
-  if (!iAmMaster())
-    return false;
-
   if (++myMeasurementCounter == myMeasurementPeriod)
-    myMeasurementCounter = 0;
-
-  return (myMeasurementCounter == 0);
+    return true;
+  return false;
 }
 
 void
 ClockFrequencyManagerImplementationBase::configure(SimulationConfiguration &configuration){
   registerWithCommunicationManager();
-  cpu_set_t mask;
-  CPU_ZERO(&mask);
-  CPU_SET(myCPU, &mask);
-  sched_setaffinity((pid_t)getpid(), sizeof(cpu_set_t), &mask);
-
+  myCPU = sched_getcpu();
+  if(myCPU != mySimulationManagerID)
+    cout << "WARNING: simulation manager id (" << mySimulationManagerID << ") differs from CPU id (" << myCPU << ")" << endl;
   setGovernorMode("userspace");
 }
 
 void
 ClockFrequencyManagerImplementationBase::setGovernorMode(const char* governor) {
-  if(!iAmMaster()) {
+  if(!isMaster()) {
     return;
   }
 
@@ -90,6 +83,9 @@ ClockFrequencyManagerImplementationBase::setCPUFrequency(int cpu_idx, const char
   if(fp.is_open()) {
     fp << freq;
     fp.close();
+
+    cout << "(" << mySimulationManagerID << ") setting frequency of cpu "
+      << cpu_idx << " to " << freq << endl;
   }
   else {
     cerr << "Unable to set frequency: " << path.str() << " does not exist" << endl;
@@ -121,11 +117,18 @@ ClockFrequencyManagerImplementationBase::populateAvailableFrequencies() {
       myAvailableFreqs = intersect;
 
       fp.close();
-    }
-    else {
+    } else {
       cerr << "Unable to get available frequencies: " << path.str() << " does not exist" << endl;
       abort();
     }
+  }
+
+  if(isMaster()) {
+    std::vector<string>::iterator it(myAvailableFreqs.begin()); 
+    std::cout << "frequencies:";
+    for(; it != myAvailableFreqs.end(); ++it)
+      std::cout << " [" << *it << "]";
+    std::cout << std::endl;
   }
 }
 

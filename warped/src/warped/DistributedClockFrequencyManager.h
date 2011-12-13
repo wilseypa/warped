@@ -4,6 +4,7 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
+#include <deque>
 #include "ClockFrequencyManagerImplementationBase.h"
 
 class TimeWarpSimulationManager;
@@ -39,6 +40,10 @@ public:
 
 private:
   void adjustFrequency(double avgRollbacks, unsigned int min, unsigned int max);
+  std::deque<unsigned int> myRollbacks;
+  unsigned int myLastRollbacks;
+  unsigned int myRba;
+  int myFreqidx;
 
 };
 #endif //DISTRIBUTED_CLOCK_FREQUENCY_MANAGER_H

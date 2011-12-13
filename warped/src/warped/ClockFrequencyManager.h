@@ -42,7 +42,7 @@ protected:
   virtual bool checkMeasurementPeriod() = 0;
    
   /// Determines whether this manager initiates communication with other nodes
-  virtual bool iAmMaster() = 0;
+  virtual bool isMaster() = 0;
 
   //@} // End of Protected Class Methods of GVTManager.
 };

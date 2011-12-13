@@ -32,6 +32,8 @@ public:
   /// from Configurable
   virtual void configure(SimulationConfiguration &configuration);
 
+  void resetMeasurementCounter() { myMeasurementCounter = 0;}
+
   //@} // End of Public Class Methods of ClockFrequencyManager.
 
 protected:
@@ -42,7 +44,8 @@ protected:
   /// Determines whether a measurement cycle has lapsed
   virtual bool checkMeasurementPeriod();
 
-  virtual bool iAmMaster() { return mySimulationManagerID == 0; }
+  virtual bool isMaster() { return myAmMaster; }
+  void setMaster(bool m) { myAmMaster = m; }
 
   void populateAvailableFrequencies();
 
@@ -64,6 +67,7 @@ private:
 
   int myMeasurementPeriod;
   int myMeasurementCounter;
+  bool myAmMaster;
 
   void setGovernorMode(const char* governor);
 

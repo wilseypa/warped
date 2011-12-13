@@ -96,6 +96,8 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
 	delete myStateManager;
 	delete localArrayOfSimObjPtrs;
 	delete mySimulationObjectQueue;
+  if (myClockFrequencyManager)
+    delete myClockFrequencyManager;
 }
 
 const VTime &
@@ -319,7 +321,7 @@ void TimeWarpSimulationManager::restoreFileQueues(ifstream* inFile,
 bool TimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
 	bool retval = false;
 	if (myGVTManager->getGVT() >= simulateUntil) {
-		utils::debug << "(" << getSimulationManagerID() << ") GVT = "
+		cout << "(" << getSimulationManagerID() << ") GVT = "
 				<< myGVTManager->getGVT() << ", >= " << simulateUntil << endl;
 		retval = true;
 	} else if (myTerminationManager->terminateSimulation()) {

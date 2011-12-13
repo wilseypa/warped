@@ -4,6 +4,7 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
+#include <deque>
 #include "ClockFrequencyManagerImplementationBase.h"
 
 class TimeWarpSimulationManager;
@@ -35,18 +36,33 @@ public:
   // from Configurable
   virtual void configure(SimulationConfiguration& configuration);
 
+  // from ClockFrequencyManagerImplementationBase
+  //virtual bool checkMeasurementPeriod();
+
   //@} // End of Public Class Methods of ClockFrequencyManager.
 
 private:
 
   struct Rollback {
     int CPU;
-    double average;
+    int average;
 
     bool operator<(const Rollback& rhs) const { return average < rhs.average; }
   };
 
-  void adjustFrequencies(std::vector<int>& lpRollbacks);
+  std::vector<int> myLastRollbacks;
+  std::vector<std::deque<int> > myRollbackFIR;
+  std::vector<int> myAverageRollbacks;
+  std::vector<Rollback> myRollbacks;
+  bool myFirstTime;
+  bool myStartedRound;
+  bool myDoAdjust;
+  int myRound;
+
+  int variance(vector<int>&);
+  int averageRollbacks(int lp);
+  void updateRollbacks(std::vector<int>& rollbacks);
+  void adjustFrequencies();
 
 };
 #endif //CENTRALIZED_CLOCK_FREQUENCY_MANAGER_H
