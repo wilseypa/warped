@@ -43,26 +43,34 @@ public:
 
 private:
 
-  struct Rollback {
-    int CPU;
-    int average;
+  class FIRFilter {
+  public: 
+    FIRFilter(int size) 
+      :myInput(0)
+      ,mySize(size)
+      ,myAverage(0) {}
+    void update(int);
+    int getAverage() { return myAverage; }
+    int getLast() { return myInput.front(); }
+    bool operator<(const FIRFilter& rhs) const { return myAverage < rhs.myAverage; }
 
-    bool operator<(const Rollback& rhs) const { return average < rhs.average; }
+  private:
+    std::deque<int> myInput;
+    int mySize;
+    int myAverage;
   };
 
-  std::vector<int> myLastRollbacks;
-  std::vector<std::deque<int> > myRollbackFIR;
-  std::vector<int> myAverageRollbacks;
-  std::vector<Rollback> myRollbacks;
+  std::vector<FIRFilter> myRollbackFilters;
   bool myFirstTime;
   bool myStartedRound;
-  bool myDoAdjust;
+  int myLastRollbacks;
   int myRound;
 
-  int variance(vector<int>&);
-  int averageRollbacks(int lp);
-  void updateRollbacks(std::vector<int>& rollbacks);
+  int variance(vector<FIRFilter>&);
   void adjustFrequencies();
 
 };
+
+
+
 #endif //CENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

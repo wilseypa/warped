@@ -8,15 +8,28 @@
 
 using namespace std;
 
+void CentralizedClockFrequencyManager::FIRFilter::update(int n) {
+  myInput.push_front(n);
+  if(myInput.size() > mySize) {
+    int b = myInput.back();
+    myAverage -= (int)((float)b / (float)mySize);
+    myAverage += (int)((float)n / (float)mySize);
+    myInput.pop_back();
+  }
+  else {
+    myAverage = 0;
+    for(std::deque<int>::iterator it(myInput.begin()); it!=myInput.end(); ++it)
+      myAverage += *it;
+    myAverage /= myInput.size();
+  }
+}
+
 CentralizedClockFrequencyManager::CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs)
   :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, numCPUs)
-  ,myLastRollbacks(myNumSimulationManagers)
-  ,myRollbackFIR(myNumSimulationManagers)
-  ,myAverageRollbacks(myNumSimulationManagers)
-  ,myRollbacks(myNumSimulationManagers)
+  ,myRollbackFilters(myNumSimulationManagers, 16)
   ,myFirstTime(true)
   ,myStartedRound(false)
-  ,myDoAdjust(false)
+  ,myLastRollbacks(0)
   ,myRound(0)
    {}
 
@@ -39,57 +52,90 @@ CentralizedClockFrequencyManager::registerWithCommunicationManager() {
   myCommunicationManager->registerMessageType(CFRollbackVectorMessage::dataType(), this);
 }
 
+// 2 experimental ways to set frequencies...
+// first sends one round, LP0 always sets the frequencies
+// second sends two rounds, slowest LP always sets the freqs
 void
 CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   resetMeasurementCounter();
-  myRound++;
 
-//  if(!(myRound == 2 && myStartedRound)) {
   CFRollbackVectorMessage* msg = dynamic_cast<CFRollbackVectorMessage*>(kMsg);
   ASSERT(msg);
 
-  std::vector<int> data;
-  msg->getData(data);
-//    if(myRound == 1 && myStartedRound)
-//      data[mySimulationManagerID] = mySimulationManager->getRollbacks();
-//
-//    if(data[mySimulationManagerID]) {
-//      updateRollbacks(data);
-//      if(myStartedRound && !myFirstTime) {
-//        adjustFrequencies();
-//        setMaster(false);
-//      }
-//      
-//      if(myFirstTime)
-//        myFirstTime = false;
-//      else {
-//        setMaster(mySimulationManagerID == mySlowestCPU);
-//        if(isMaster())
-//          cout << "set master to " << mySimulationManagerID << endl;
-//      }
-//    }
-//    else {
-//      data[mySimulationManagerID] = mySimulationManager->getRollbacks();
-//    }
+  std::vector<int> dat;
+  msg->getData(dat);
 
-  data[mySimulationManagerID] = mySimulationManager->getRollbacks();
+  int r = mySimulationManager->getRollbacks();
+  dat[mySimulationManagerID] = r - myLastRollbacks;
+  myLastRollbacks = r;
   if(isMaster()) {
-    updateRollbacks(data);
+    for(int i = 0; i < dat.size(); ++i)
+      myRollbackFilters[i].update(dat[i]);
     adjustFrequencies();
   }
   else {
 
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
     CFRollbackVectorMessage* newMsg = new CFRollbackVectorMessage(mySimulationManagerID, dest, myNumSimulationManagers);
-    newMsg->setData(data);
+    newMsg->setData(dat);
     myCommunicationManager->sendMessage(newMsg, dest);
   }
-//  else {
-//    myStartedRound = false;
-//  }
 
   delete kMsg;
 }
+
+
+//void
+//CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
+//  resetMeasurementCounter();
+//  myRound++;
+//
+//  if(!(myRound == 2 && myStartedRound)) {
+//    CFRollbackVectorMessage* msg = dynamic_cast<CFRollbackVectorMessage*>(kMsg);
+//    ASSERT(msg);
+//
+//    std::vector<int> dat;
+//    msg->getData(dat);
+//    if(myRound == 1 && myStartedRound) {
+//      int r = mySimulationManager->getRollbacks();
+//      dat[mySimulationManagerID] = r - myLastRollbacks;
+//      myLastRollbacks = r;
+//    }
+//
+//    if(dat[mySimulationManagerID]) {
+//      for(int i = 0; i < dat.size(); ++i)
+//        myRollbackFilters[i].update(dat[i]);
+//      if(myStartedRound && !myFirstTime) {
+//        adjustFrequencies();
+//        setMaster(false);
+//      }
+//
+//      if(myFirstTime)
+//        myFirstTime = false;
+//      else {
+//        vector<FIRFilter>::iterator itmax = max_element(myRollbackFilters.begin(), myRollbackFilters.end());
+//        setMaster(mySimulationManagerID == itmax - myRollbackFilters.begin());
+//        if(isMaster())
+//          cout << "set master to " << mySimulationManagerID << endl;
+//      }
+//    }
+//    else {
+//      int r = mySimulationManager->getRollbacks();
+//      dat[mySimulationManagerID] = r - myLastRollbacks;
+//      myLastRollbacks = r;
+//    }
+//
+//    int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
+//    CFRollbackVectorMessage* newMsg = new CFRollbackVectorMessage(mySimulationManagerID, dest, myNumSimulationManagers);
+//    newMsg->setData(dat);
+//    myCommunicationManager->sendMessage(newMsg, dest);
+//  }
+//  else {
+//    myStartedRound = false;
+//  }
+//
+//  delete kMsg;
+//}
 
 
 void
@@ -102,103 +148,51 @@ CentralizedClockFrequencyManager::configure(SimulationConfiguration &configurati
   }
 }
 
-
-//bool
-//CentralizedClockFrequencyManager::checkMeasurementPeriod() {
-//  // only the master may initiate the measurement process
-//  if (!isMaster())
-//    return false;
-//  return ClockFrequencyManagerImplementationBase::checkMeasurementPeriod();
-//}
-
 int
-CentralizedClockFrequencyManager::variance(vector<int>& x) {
+CentralizedClockFrequencyManager::variance(vector<FIRFilter>& x) {
   float avg = 0.f;
   float v = 0.f;
   float n = (float)x.size();
-  for(vector<int>::iterator it(x.begin()); it!=x.end(); ++it)
-    avg += (float)*it;
+  for(vector<FIRFilter>::iterator it(x.begin()); it!=x.end(); ++it)
+    avg += (float)(*it).getAverage();
   avg /= n;
 
-  for(vector<int>::iterator it(x.begin()); it!=x.end(); ++it) {
-    float d = (float)*it - avg;
+  for(vector<FIRFilter>::iterator it(x.begin()); it!=x.end(); ++it) {
+    float d = (float)(*it).getAverage() - avg;
     v += d * d;
   }
   v /= n - 1;
   return (int)v;
 }
 
-int
-CentralizedClockFrequencyManager::averageRollbacks(int lp) {
-  double avg = 0.f;
-  float size = (float)myRollbackFIR[lp].size();
-  std::deque<int>::iterator it(myRollbackFIR[lp].begin());
-  for(; it != myRollbackFIR[lp].end(); ++it)
-    avg += (double)*it / size;
-  return (int)avg;
-}
-
-void
-CentralizedClockFrequencyManager::updateRollbacks(std::vector<int>& r) {
-  for(int i = 0; i < r.size(); ++i) {
-    myRollbackFIR[i].push_front(r[i] - myLastRollbacks[i]);
-    if(myRollbackFIR[i].size() > 3)
-      myRollbackFIR[i].pop_back();
-    myAverageRollbacks[i] = averageRollbacks(i);
-    myRollbacks[i].CPU = i;
-    myRollbacks[i].average = myAverageRollbacks[i];
-  }
-  myLastRollbacks = r;
-  sort(myRollbacks.begin(), myRollbacks.end());
-}
-
 void
 CentralizedClockFrequencyManager::adjustFrequencies() {
   int freqs[] = {1,1,1,1};
 
-  if(variance(myAverageRollbacks) > 50) {
-    freqs[myRollbacks[0].CPU] = 0;
-    freqs[myRollbacks[1].CPU] = 1;
-    freqs[myRollbacks[2].CPU] = 1;
-    freqs[myRollbacks[3].CPU] = 2;
-  }
+//  so far haven't seen any help from checking the variance...
+//  if(variance(myRollbackFilters) > 50) {
+  vector<FIRFilter>::iterator itmin = min_element(myRollbackFilters.begin(), myRollbackFilters.end());
+  vector<FIRFilter>::iterator itmax = max_element(myRollbackFilters.begin(), myRollbackFilters.end());
+  freqs[itmin - myRollbackFilters.begin()] = 0;
+  freqs[itmax - myRollbackFilters.begin()] = 2;
+//  }
 
   cout << "rollbacks:";
-  for(int i = 0; i < myAverageRollbacks.size(); ++i) {
-    cout << " [" << myAverageRollbacks[i] << "]";
+  for(int i = 0; i < myRollbackFilters.size(); ++i) {
+    ostringstream path;
+    path << "rollbacks_lp" << i;
+
+    ofstream fp(path.str().c_str(), ios_base::app);
+    if(fp.is_open()) {
+      fp << myRollbackFilters[i].getLast() << endl;
+      fp.close();
+    }
+
+    cout << " [" << myRollbackFilters[i].getAverage() << "]";
   }
   cout << endl;
   
-  for(int i = 0; i < myAverageRollbacks.size(); ++i)
+  for(int i = 0; i < myRollbackFilters.size(); ++i)
     setCPUFrequency(i, myAvailableFreqs[freqs[i]].c_str());
 
-//  cout << "rollbacks:";
-//  // if multiple LPs share a CPU, use average rollbacks
-//  for(int i = 0; i < lpRollbacks.size(); ++i) {
-//    rollbacks[i].CPU = i;
-//    rollbacks[i].average = myCurrentRollbacks[i] - myLastRollbacks[i];
-//    cout << " [" << rollbacks[i].average << "]";
-//    rollbacks[i].average = 0.f;
-//    int k = 0;
-//    for(int j = 0; j < lpRollbacks.size(); j += myNumCPUs) {
-//      rollbacks[i].average += lpRollbacks[j];
-//      k++;
-//    }
-//    rollbacks[i].average /= (double)k;
-//  }
-//  cout << endl;
-
-
-//  sort(rollbacks.begin(), rollbacks.end());
-//  for(int i = 0; i < rollbacks.size(); ++i) {
-////    int maxfreqidx = myAvailableFreqs.size() - 1;
-////    int freqidx = MIN_FUNC(i, maxfreqidx);
-//    int freqidx = i == 0 ? 0 :
-//      i == 3 ? 2 : 1;
-//
-//    cout << "(" << mySimulationManagerID << ") setting frequency of cpu "
-//        << rollbacks[i].CPU << " to " << myAvailableFreqs[freqidx] << endl;
-//
-//    setCPUFrequency(rollbacks[i].CPU, myAvailableFreqs[freqidx].c_str());
-//  }
 }
