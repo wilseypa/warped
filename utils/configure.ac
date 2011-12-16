@@ -56,11 +56,7 @@ dnl Check for cppunit for unit testing
 AM_CONFIG_HEADER([src/utils/utils-config.h])
 AC_CONFIG_HEADERS([src/utils/UtilsConfig.h:src/utils/UtilsConfig.h.in])
 
-AC_OUTPUT(Makefile \
-	documentation/Makefile \
-	src/Makefile \
-	test/Makefile \
-	test/plugins/Makefile )
+AC_OUTPUT(Makefile documentation/Makefile src/Makefile test/Makefile test/plugins/Makefile)
 
 echo "Ready to build"
 
