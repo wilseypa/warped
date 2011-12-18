@@ -5,7 +5,7 @@ AC_CONFIG_HEADERS([src/warped/WarpedConfig.h])
 
 AC_CONFIG_SRCDIR([src/warped/Event.cpp])
 AM_INIT_AUTOMAKE
-AC_PREREQ(2.65)
+AC_PREREQ(2.61)
 
 AC_SUBST(WARPED_VERSION, [2.0-pre031216])
 
@@ -14,6 +14,7 @@ AC_LANG(C++)
 
 dnl AC_CONFIG_MACRO_DIR([m4])
 dnl Checks for programs.
+AC_PROG_LIBTOOL
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_INSTALL
@@ -166,9 +167,7 @@ AC_SUBST(LDFLAGS)
 AC_SUBST(LIBS)
 AC_SUBST(CXX)
 AC_SUBST(MAKEDEPEND)
-AC_CONFIG_FILES([Makefile \
-	src/Makefile \
-	test/Makefile ])
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
 AC_OUTPUT
 
 echo "You have now configured the warped system for building with dlg, antlr,\
