@@ -6,6 +6,7 @@
 #include "warped.h"
 #include <deque>
 #include "ClockFrequencyManagerImplementationBase.h"
+#include "controlkit/FIRFilter.h"
 
 class TimeWarpSimulationManager;
 
@@ -43,31 +44,14 @@ public:
 
 private:
 
-  class FIRFilter {
-  public: 
-    FIRFilter(int size) 
-      :myInput(0)
-      ,mySize(size)
-      ,myAverage(0) {}
-    void update(int);
-    int getAverage() { return myAverage; }
-    int getLast() { return myInput.front(); }
-    bool operator<(const FIRFilter& rhs) const { return myAverage < rhs.myAverage; }
-
-  private:
-    std::deque<int> myInput;
-    int mySize;
-    int myAverage;
-  };
-
-  std::vector<FIRFilter> myRollbackFilters;
+  std::vector<FIRFilter<int> > myRollbackFilters;
   bool myFirstTime;
   bool myStartedRound;
   int myLastRollbacks;
   int myRound;
 
-  int variance(vector<FIRFilter>&);
-  void adjustFrequencies();
+  //int variance(vector<FIRFilter>&);
+  void adjustFrequencies(std::vector<int>&);
 
 };
 

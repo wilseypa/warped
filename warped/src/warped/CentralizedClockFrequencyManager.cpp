@@ -8,21 +8,11 @@
 
 using namespace std;
 
-void CentralizedClockFrequencyManager::FIRFilter::update(int n) {
-  myInput.push_front(n);
-  if(myInput.size() > mySize) {
-    int b = myInput.back();
-    myAverage -= (int)((float)b / (float)mySize);
-    myAverage += (int)((float)n / (float)mySize);
-    myInput.pop_back();
-  }
-  else {
-    myAverage = 0;
-    for(std::deque<int>::iterator it(myInput.begin()); it!=myInput.end(); ++it)
-      myAverage += *it;
-    myAverage /= myInput.size();
-  }
-}
+struct compfir {
+	int operator()(FIRFilter<int>& a, FIRFilter<int>& b) const {
+		return a.getData() < b.getData();
+	}
+};
 
 CentralizedClockFrequencyManager::CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs)
   :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, numCPUs)
@@ -71,7 +61,7 @@ CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   if(isMaster()) {
     for(int i = 0; i < dat.size(); ++i)
       myRollbackFilters[i].update(dat[i]);
-    adjustFrequencies();
+    adjustFrequencies(dat);
   }
   else {
 
@@ -141,13 +131,13 @@ CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 void
 CentralizedClockFrequencyManager::configure(SimulationConfiguration &configuration) {
   ClockFrequencyManagerImplementationBase::configure(configuration);
-  populateAvailableFrequencies();
+  //populateAvailableFrequencies();
   if(isMaster()) {
-    for(int i=0; i < myNumSimulationManagers; ++i)
-      setCPUFrequency(i, myAvailableFreqs[1].c_str());
+//    for(int i=0; i < myNumSimulationManagers; ++i)
+//      setCPUFrequency(i, myAvailableFreqs[1].c_str());
   }
 }
-
+/*
 int
 CentralizedClockFrequencyManager::variance(vector<FIRFilter>& x) {
   float avg = 0.f;
@@ -164,15 +154,16 @@ CentralizedClockFrequencyManager::variance(vector<FIRFilter>& x) {
   v /= n - 1;
   return (int)v;
 }
+*/
 
 void
-CentralizedClockFrequencyManager::adjustFrequencies() {
+CentralizedClockFrequencyManager::adjustFrequencies(vector<int>& d) {
   int freqs[] = {1,1,1,1};
 
 //  so far haven't seen any help from checking the variance...
 //  if(variance(myRollbackFilters) > 50) {
-  vector<FIRFilter>::iterator itmin = min_element(myRollbackFilters.begin(), myRollbackFilters.end());
-  vector<FIRFilter>::iterator itmax = max_element(myRollbackFilters.begin(), myRollbackFilters.end());
+  vector<FIRFilter<int> >::iterator itmin = min_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
+  vector<FIRFilter<int> >::iterator itmax = max_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
   freqs[itmin - myRollbackFilters.begin()] = 0;
   freqs[itmax - myRollbackFilters.begin()] = 2;
 //  }
@@ -180,19 +171,19 @@ CentralizedClockFrequencyManager::adjustFrequencies() {
   cout << "rollbacks:";
   for(int i = 0; i < myRollbackFilters.size(); ++i) {
     ostringstream path;
-    path << "rollbacks_lp" << i;
+    path << "rollbacks_lp" << i << ".csv";
 
     ofstream fp(path.str().c_str(), ios_base::app);
     if(fp.is_open()) {
-      fp << myRollbackFilters[i].getLast() << endl;
+      fp << d[i] << endl;
       fp.close();
     }
 
-    cout << " [" << myRollbackFilters[i].getAverage() << "]";
+    cout << " [" << myRollbackFilters[i].getData() << "]";
   }
   cout << endl;
   
-  for(int i = 0; i < myRollbackFilters.size(); ++i)
-    setCPUFrequency(i, myAvailableFreqs[freqs[i]].c_str());
+//  for(int i = 0; i < myRollbackFilters.size(); ++i)
+//    setCPUFrequency(i, myAvailableFreqs[freqs[i]].c_str());
 
 }

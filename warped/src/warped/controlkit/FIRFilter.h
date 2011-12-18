@@ -86,7 +86,7 @@ inline FIRFilter<Type>::FIRFilter(int n){
   current_sum = 0;
   index = 0;
   
-  fir_array.reserve(size);
+  fir_array.resize(size);
   for(unsigned int i = 0; i < size; i++){
     fir_array[i] = 0;
   }
