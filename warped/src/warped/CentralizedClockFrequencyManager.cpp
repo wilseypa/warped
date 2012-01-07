@@ -14,13 +14,11 @@ struct compfir {
 	}
 };
 
-CentralizedClockFrequencyManager::CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs)
-  :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, numCPUs)
-  ,myRollbackFilters(myNumSimulationManagers, 16)
-  ,myFirstTime(true)
+CentralizedClockFrequencyManager::CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy)
+  :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, numCPUs, firsize, dummy)
+  ,myLastFreqs(myNumSimulationManagers, 1)
   ,myStartedRound(false)
-  ,myLastRollbacks(0)
-  ,myRound(0)
+  ,myFirstTime(true)
    {}
 
 void
@@ -131,59 +129,63 @@ CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 void
 CentralizedClockFrequencyManager::configure(SimulationConfiguration &configuration) {
   ClockFrequencyManagerImplementationBase::configure(configuration);
-  //populateAvailableFrequencies();
+  populateAvailableFrequencies();
   if(isMaster()) {
-//    for(int i=0; i < myNumSimulationManagers; ++i)
-//      setCPUFrequency(i, myAvailableFreqs[1].c_str());
+    for(int i=0; i < myNumSimulationManagers; ++i)
+      setCPUFrequency(i, myAvailableFreqs[1]);
   }
 }
-/*
+
 int
-CentralizedClockFrequencyManager::variance(vector<FIRFilter>& x) {
+CentralizedClockFrequencyManager::variance(vector<FIRFilter<int> >& x) {
   float avg = 0.f;
   float v = 0.f;
   float n = (float)x.size();
-  for(vector<FIRFilter>::iterator it(x.begin()); it!=x.end(); ++it)
-    avg += (float)(*it).getAverage();
+  for(vector<FIRFilter<int> >::iterator it(x.begin()); it!=x.end(); ++it)
+    avg += (float)(*it).getData();
   avg /= n;
 
-  for(vector<FIRFilter>::iterator it(x.begin()); it!=x.end(); ++it) {
-    float d = (float)(*it).getAverage() - avg;
+  for(vector<FIRFilter<int> >::iterator it(x.begin()); it!=x.end(); ++it) {
+    float d = (float)(*it).getData() - avg;
     v += d * d;
   }
   v /= n - 1;
   return (int)v;
 }
-*/
+
 
 void
 CentralizedClockFrequencyManager::adjustFrequencies(vector<int>& d) {
-  int freqs[] = {1,1,1,1};
+  vector<int> freqs(myNumSimulationManagers, 1);
 
 //  so far haven't seen any help from checking the variance...
-//  if(variance(myRollbackFilters) > 50) {
-  vector<FIRFilter<int> >::iterator itmin = min_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
-  vector<FIRFilter<int> >::iterator itmax = max_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
-  freqs[itmin - myRollbackFilters.begin()] = 0;
-  freqs[itmax - myRollbackFilters.begin()] = 2;
-//  }
-
-  cout << "rollbacks:";
-  for(int i = 0; i < myRollbackFilters.size(); ++i) {
-    ostringstream path;
-    path << "rollbacks_lp" << i << ".csv";
-
-    ofstream fp(path.str().c_str(), ios_base::app);
-    if(fp.is_open()) {
-      fp << d[i] << endl;
-      fp.close();
-    }
-
-    cout << " [" << myRollbackFilters[i].getData() << "]";
+  if(variance(myRollbackFilters) > 50000 && !myIsDummy) {
+//  if(!myIsDummy) {
+    vector<FIRFilter<int> >::iterator itmin = min_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
+    vector<FIRFilter<int> >::iterator itmax = max_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
+    freqs[itmin - myRollbackFilters.begin()] = 0;
+    freqs[itmax - myRollbackFilters.begin()] = 2;
   }
-  cout << endl;
-  
-//  for(int i = 0; i < myRollbackFilters.size(); ++i)
-//    setCPUFrequency(i, myAvailableFreqs[freqs[i]].c_str());
 
+  for(int i = 0; i < myRollbackFilters.size(); ++i) {
+    writeCSVRow(mySimulationManagerID, d[i], myRollbackFilters[i].getData(), myAvailableFreqs[freqs[i]]);
+  }
+
+  for(int i = 0; i < myRollbackFilters.size(); ++i) {
+    if(freqs[i] != myLastFreqs[i] && !myIsDummy) {
+      setCPUFrequency(i, myAvailableFreqs[freqs[i]]);
+      myLastFreqs[i] = freqs[i];
+    }
+  }
+}
+
+string
+CentralizedClockFrequencyManager::toString() {
+  ostringstream out;
+  if(myIsDummy)
+    out << "Dummy";
+  else
+    out << "Centralized";
+   out << " CFM, Period = " << getPeriod() << ", FIR size = " << myFIRSize;
+  return out.str();
 }

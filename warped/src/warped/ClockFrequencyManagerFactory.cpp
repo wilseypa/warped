@@ -27,9 +27,12 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
   string type;
   int p = 0;
   int confCPUs = 0;
+  int firsize = 16;
   configuration.getClockFreqManagerType(type);
   configuration.getClockFreqManagerPeriod(p);
   configuration.getClockFreqManagerCPUs(confCPUs);
+  configuration.getClockFreqManagerFIRSize(firsize);
+  bool dummy = configuration.getClockFreqManagerDummy();
 
   if(type == "NONE") {
     return NULL;
@@ -59,19 +62,19 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
   if(type == "CENTRALIZED") {
     cout << "("
         << mySimulationManager->getSimulationManagerID()
-        << ") configured a Centralized Clock Frequency Manager with period = "
-        << p << " using " << confCPUs << " CPUs" << std::endl;
+        << ") configured a Centralized Clock Frequency Manager with a period = "
+        << p << " and FIR size of " << firsize << " using " << confCPUs << " CPUs" << std::endl;
 
-    return new CentralizedClockFrequencyManager(mySimulationManager, p, confCPUs);
+    return new CentralizedClockFrequencyManager(mySimulationManager, p, confCPUs, firsize, dummy);
   }
   else if(type == "DISTRIBUTED") {
 
     cout << "("
         << mySimulationManager->getSimulationManagerID()
         << ") configured a Distributed Clock Frequency Manager with period = "
-        << p << " using " << confCPUs << " CPUs" << std::endl;
+        << p << " and FIR size of " << firsize << " using " << confCPUs << " CPUs" << std::endl;
 
-    return new DistributedClockFrequencyManager(mySimulationManager, p, confCPUs);
+    return new DistributedClockFrequencyManager(mySimulationManager, p, confCPUs, firsize, dummy);
   }
   else {
     std::ostringstream err;

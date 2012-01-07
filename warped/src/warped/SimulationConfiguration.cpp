@@ -68,6 +68,8 @@ public:
   bool getClockFreqManagerType(string& type) const;
   bool getClockFreqManagerPeriod(int& period) const;
   bool getClockFreqManagerCPUs(int& numCPUs) const;
+  bool getClockFreqManagerFIRSize(int& size) const;
+  bool getClockFreqManagerDummy() const;
 
   vector<string> getNodes() const;
   const string getBinaryName() const;
@@ -409,6 +411,16 @@ SimulationConfiguration::getClockFreqManagerPeriod(int& period) const {
 bool
 SimulationConfiguration::getClockFreqManagerCPUs(int& numCPUs) const {
   return _impl->getClockFreqManagerCPUs(numCPUs);
+}
+
+bool
+SimulationConfiguration::getClockFreqManagerFIRSize(int& size) const {
+  return _impl->getClockFreqManagerFIRSize(size);
+}
+   
+bool
+SimulationConfiguration::getClockFreqManagerDummy() const {
+  return _impl->getClockFreqManagerDummy();
 }
 
 vector<string>
@@ -1008,6 +1020,24 @@ SimulationConfiguration::Implementation::getClockFreqManagerCPUs(int& numCPUs) c
       return true;
     }
   }
+  return false;
+}
+
+bool
+SimulationConfiguration::Implementation::getClockFreqManagerFIRSize(int& size) const {
+  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) {
+    if(cfmScope->findChoice("FIRSize")) {
+      size = cfmScope->getIntValue("FIRSize");
+      return true;
+    }
+  }
+  return false;
+}
+
+bool
+SimulationConfiguration::Implementation::getClockFreqManagerDummy() const {
+  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) 
+    return stringToUpper(cfmScope->getStringValue("Dummy")) == "TRUE";
   return false;
 }
 

@@ -5,6 +5,7 @@
 
 #include "warped.h"
 #include "ClockFrequencyManager.h"
+#include "controlkit/FIRFilter.h"
 
 class TimeWarpSimulationManager;
 class CommunicationManager;
@@ -21,7 +22,7 @@ public:
   //@{
 
   /// Constructor
-  ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs);
+  ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy);
 
   /// Destructor
   virtual ~ClockFrequencyManagerImplementationBase();
@@ -47,9 +48,13 @@ protected:
   virtual bool isMaster() { return myAmMaster; }
   void setMaster(bool m) { myAmMaster = m; }
 
+  virtual void writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq);
+
+  int getPeriod() { return myMeasurementPeriod; }
+
   void populateAvailableFrequencies();
 
-  void setCPUFrequency(int cpu_idx, const char* freq);
+  void setCPUFrequency(int cpu_idx, int freq);
 
   //@} // End of Protected Class Methods of GVTManager.
 
@@ -59,9 +64,14 @@ protected:
   int myNumSimulationManagers;
   int myNumCPUs;
   int myCPU;
+  int myFIRSize;
+  int myLastRollbacks;
+  int myRound;
+  bool myIsDummy;
+  std::vector<FIRFilter<int> > myRollbackFilters;
 
   // begin() == fastest, end() == slowest
-  std::vector<string> myAvailableFreqs;
+  std::vector<int> myAvailableFreqs;
 
 private:
 
@@ -72,4 +82,6 @@ private:
   void setGovernorMode(const char* governor);
 
 };
+
+
 #endif //CLOCK_FREQUENCY_MANAGER_IMPLEMENTATION_BASE_H

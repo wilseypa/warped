@@ -138,6 +138,10 @@ public:
 
   bool getClockFreqManagerCPUs(int& numCPUs) const;
 
+  bool getClockFreqManagerFIRSize(int& size) const;
+
+  bool getClockFreqManagerDummy() const;
+
   /**
      Returns the list of nodes that it has been requested that this
      simulation execute on.

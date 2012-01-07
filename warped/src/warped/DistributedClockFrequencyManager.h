@@ -3,7 +3,6 @@
 
 // See copyright notice in file Copyright in the root directory of this archive.
 
-#include "warped.h"
 #include <deque>
 #include "ClockFrequencyManagerImplementationBase.h"
 
@@ -20,7 +19,7 @@ public:
   //@{
 
   /// Constructor
-  DistributedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs);
+  DistributedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy);
 
   /// Destructor
   virtual ~DistributedClockFrequencyManager() {}
@@ -36,14 +35,18 @@ public:
   // from Configurable
   virtual void configure(SimulationConfiguration &configuration);
 
+  virtual string toString();
+
+  virtual int getNominalDelay() { return (myNumAvailableDelays - 1) / 2; }
+
   //@} // End of Public Class Methods of ClockFrequencyManager.
 
+  static const int myAvailableDelays[];
 private:
-  void adjustFrequency(double avgRollbacks, unsigned int min, unsigned int max);
-  std::deque<unsigned int> myRollbacks;
-  unsigned int myLastRollbacks;
-  unsigned int myRba;
-  int myFreqidx;
+  int myNumAvailableDelays;
+
+  void adjustFrequency();
 
 };
+
 #endif //DISTRIBUTED_CLOCK_FREQUENCY_MANAGER_H

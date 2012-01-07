@@ -27,6 +27,7 @@
 #include "OptFossilCollManagerFactory.h"
 #include "ClockFrequencyManager.h"
 #include "ClockFrequencyManagerFactory.h"
+#include "SimulationConfiguration.h"
 #include <utils/Debug.h>
 #include <algorithm>
 #include <sstream>
@@ -42,7 +43,7 @@ TimeWarpSimulationManager::TimeWarpSimulationManager(
 			mySchedulingData(new SchedulingData()), myTerminationManager(0),
 			myApplication(initApplication), myFossilCollManager(0),
 			usingOneAntiMsg(false), usingOptFossilCollection(false),
-			inRecovery(false), numberOfRollbacks(0) {
+			inRecovery(false), numberOfRollbacks(0), myDelayUs(25) {
 }
 
 TimeWarpSimulationManager::~TimeWarpSimulationManager() {
@@ -368,6 +369,9 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 					nextEvent->getReceiveTime());
 		}
 
+		// mimick fine-grain frequency control
+		usleep(myDelayUs);
+
 		nextObject->setSimulationTime(nextEvent->getReceiveTime());
 		myStateManager->saveState(nextEvent->getReceiveTime(), nextObject);
 		nextObject->executeProcess();
@@ -428,8 +432,19 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 }
 
 void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
-	StopWatch stopwatch;
 	stopwatch.start();
+
+  ostringstream str1, str2;
+  str1 << "rollbacks_lp" << mySimulationManagerID << ".csv";
+  str2 << "cfmoutput_lp" << mySimulationManagerID << ".csv";
+  ofstream file1(str1.str().c_str(), ios_base::app);
+  ofstream file2(str2.str().c_str(), ios_base::app);
+  if(file1.is_open() && file2.is_open()) {
+    file1 << " -simulateUntil " << simulateUntil << endl;
+    file2 << " -simulateUntil " << simulateUntil << endl;
+    file1.close();
+    file2.close();
+  }
 
 	cout << "SimulationManager(" << mySimulationManagerID
 			<< "): Starting simulation - End time: " << simulateUntil << ")"
@@ -455,6 +470,16 @@ void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 	cout << "(" << getSimulationManagerID() << ") Simulation complete ("
 			<< stopwatch.elapsed() << " secs), Number of Rollbacks: ("
 			<< numberOfRollbacks << ")" << endl;
+
+  ofstream file3(str1.str().c_str(), ios_base::app);
+  ofstream file4(str2.str().c_str(), ios_base::app);
+  if(file3.is_open() && file4.is_open()) {
+    file3 << stopwatch.elapsed() << endl;
+    file4 << stopwatch.elapsed() << endl;
+    file3.close();
+    file4.close();
+  }
+
 
 	// This is commented out by default. It is used along with the testParallelWarped script
 	// to provide a quick and easy way to do large amounts of tests. Make sure to change the
@@ -793,6 +818,14 @@ void TimeWarpSimulationManager::rollback(SimulationObject *object,
 	utils::debug << "(" << mySimulationManagerID << ")" << object->getName()
 			<< " rollback from " << object->getSimulationTime() << " to "
 			<< rollbackTime << endl;
+
+  ostringstream str;
+  str << "rollbacks_lp" << mySimulationManagerID << ".csv";
+  ofstream file(str.str().c_str(), ios_base::app);
+  if(file.is_open()) {
+    file << (long)(1000*stopwatch.elapsed()) << endl;
+    file.close();
+  }
 
 	if (rollbackTime < myGVTManager->getGVT()) {
 		cerr << object->getName() << " Rollback beyond the Global Virtual Time"
@@ -1296,6 +1329,32 @@ void TimeWarpSimulationManager::configure(
     myCommunicationManager->waitForInitialization(
         numberOfSimulationManagers - 1);
 	}
+
+  ostringstream str1, str2;
+  str1 << "rollbacks_lp" << mySimulationManagerID << ".csv";
+  str2 << "cfmoutput_lp" << mySimulationManagerID << ".csv";
+  ofstream file1(str1.str().c_str(), ios_base::app);
+  ofstream file2(str2.str().c_str(), ios_base::app);
+
+  if(file1.is_open() && file2.is_open()) {
+    if(myClockFrequencyManager) {
+      file1 << *myClockFrequencyManager;
+      file2 << *myClockFrequencyManager;
+    }
+    else {
+      file1 << "No CFM";
+      file2 << "No CFM";
+    }
+    file1 << "; ";
+    file2 << "; ";
+    const vector<string>& args = configuration.getArguments();
+    for(int i=0; i < args.size(); ++i) {
+      file1 << " " << args[i];
+      file2 << " " << args[i];
+    }
+    file1.close();
+    file2.close();
+  }
 }
 
 bool TimeWarpSimulationManager::contains(const string &object) const {

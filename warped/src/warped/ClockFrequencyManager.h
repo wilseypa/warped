@@ -28,6 +28,8 @@ public:
   // each manager should implement this to register its own type of kernel message
   virtual void registerWithCommunicationManager() = 0;
 
+  virtual string toString() = 0;
+  virtual int getNominalDelay() = 0;
   //@} // End of Public Class Methods of ClockFrequencyManager.
 
 protected:
@@ -44,7 +46,12 @@ protected:
   /// Determines whether this manager initiates communication with other nodes
   virtual bool isMaster() = 0;
 
+  virtual void writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq) = 0;
+
   //@} // End of Protected Class Methods of GVTManager.
 };
+
+ostream& operator<<(ostream& out, ClockFrequencyManager& cfm);
+
 #endif //CLOCK_FREQUENCY_MANAGER_H
 

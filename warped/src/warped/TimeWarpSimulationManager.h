@@ -3,6 +3,7 @@
 
 // See copyright notice in file Copyright in the root directory of this archive.
 
+#include "StopWatch.h"
 #include "warped.h"
 #include "SimulationStream.h"
 #include "CommunicatingEntity.h"
@@ -12,6 +13,7 @@
 #include "NegativeEvent.h"
 #include <map>
 #include <fstream>
+#include <time.h>
 
 class Application;
 class CommunicationManager;
@@ -389,6 +391,8 @@ public:
 	/// Returns the number of rollbacks
 	unsigned int getRollbacks() { return numberOfRollbacks; }
 
+	void setDelayUs(int delay) { myDelayUs = delay; }
+
 	//@} // End of Public Class Methods of TimeWarpSimulationManager.
 
 protected:
@@ -570,7 +574,11 @@ protected:
 	virtual bool executeObjects(const VTime &simulateUntil);
 
 	Application *myApplication;
+  StopWatch stopwatch;
 
+  // time to delay during event execution, mimicking fine-grained
+  // clock frequency adjustments
+  int myDelayUs;
 
 
 	//@} // End of Protected Class Methods of TimeWarpSimulationManager.

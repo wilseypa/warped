@@ -4,9 +4,7 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
-#include <deque>
 #include "ClockFrequencyManagerImplementationBase.h"
-#include "controlkit/FIRFilter.h"
 
 class TimeWarpSimulationManager;
 
@@ -21,7 +19,7 @@ public:
   //@{
 
   /// Constructor
-  CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs);
+  CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy);
 
   /// Destructor
   virtual ~CentralizedClockFrequencyManager() {}
@@ -37,6 +35,10 @@ public:
   // from Configurable
   virtual void configure(SimulationConfiguration& configuration);
 
+  virtual string toString();
+
+  virtual int getNominalDelay() { return 0; }
+
   // from ClockFrequencyManagerImplementationBase
   //virtual bool checkMeasurementPeriod();
 
@@ -44,13 +46,11 @@ public:
 
 private:
 
-  std::vector<FIRFilter<int> > myRollbackFilters;
-  bool myFirstTime;
+  std::vector<int> myLastFreqs;
   bool myStartedRound;
-  int myLastRollbacks;
-  int myRound;
+  bool myFirstTime;
 
-  //int variance(vector<FIRFilter>&);
+  int variance(vector<FIRFilter<int> >&);
   void adjustFrequencies(std::vector<int>&);
 
 };

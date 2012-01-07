@@ -5,25 +5,27 @@
 #include <set>
 #include <sched.h>
 #include <stdio.h>
+#include <utils/Debug.h>
 
 using namespace std;
 
-ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr,
-    int measurementPeriod, int numCPUs)
+ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy)
   :mySimulationManager(simMgr)
+  ,myCommunicationManager(simMgr->getCommunicationManager())
+  ,mySimulationManagerID(simMgr->getSimulationManagerID())
+  ,myNumSimulationManagers(simMgr->getNumberOfSimulationManagers())
+  ,myNumCPUs(numCPUs)
+  ,myCPU(0)
+  ,myFIRSize(firsize)
+  ,myLastRollbacks(0)
+  ,myRound(0)
+  ,myIsDummy(dummy) 
+  ,myRollbackFilters(myNumSimulationManagers, myFIRSize)
+  ,myAvailableFreqs(0)
   ,myMeasurementPeriod(measurementPeriod)
   ,myMeasurementCounter(0)
-  ,myAmMaster(false)
-  ,myNumCPUs(numCPUs) {
-
-  ASSERT(mySimulationManager);
-  myCommunicationManager = mySimulationManager->getCommunicationManager();
-  ASSERT(myCommunicationManager);
-
-  mySimulationManagerID = mySimulationManager->getSimulationManagerID();
-  myAmMaster = (mySimulationManagerID == 0);
-  myNumSimulationManagers = mySimulationManager->getNumberOfSimulationManagers();
-}
+  ,myAmMaster(mySimulationManagerID == 0)
+{}
 
 ClockFrequencyManagerImplementationBase::~ClockFrequencyManagerImplementationBase() {
   setGovernorMode("ondemand");
@@ -42,6 +44,22 @@ ClockFrequencyManagerImplementationBase::checkMeasurementPeriod() {
     return true;
   return false;
 }
+
+void
+ClockFrequencyManagerImplementationBase::writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq) {
+  utils::debug << "(" << node << ") rollbacks: ";
+  ostringstream path;
+  path << "cfmoutput_lp" << node << ".csv";
+
+  ofstream fp(path.str().c_str(), ios_base::app);
+  if(fp.is_open()) {
+    fp << currentRollbacks << "," << avgRollbacks << "," << freq << endl;
+    fp.close();
+  }
+
+  utils::debug << " [" << avgRollbacks << "]";
+  utils::debug << endl;
+} 
 
 void
 ClockFrequencyManagerImplementationBase::configure(SimulationConfiguration &configuration){
@@ -75,7 +93,7 @@ ClockFrequencyManagerImplementationBase::setGovernorMode(const char* governor) {
 }
 
 void
-ClockFrequencyManagerImplementationBase::setCPUFrequency(int cpu_idx, const char* freq) {
+ClockFrequencyManagerImplementationBase::setCPUFrequency(int cpu_idx, int freq) {
   ostringstream path;
   path << "/sys/devices/system/cpu/cpu" << cpu_idx << "/cpufreq/scaling_setspeed";
 
@@ -100,13 +118,13 @@ ClockFrequencyManagerImplementationBase::populateAvailableFrequencies() {
     path << "/sys/devices/system/cpu/cpu" << i << "/cpufreq/scaling_available_frequencies";
 
     ifstream fp(path.str().c_str());
-    string freq;
+    int freq;
     if(fp.is_open()) {
-      vector<string> f1;
-      vector<string> intersect;
+      vector<int> f1;
+      vector<int> intersect;
 
       while(fp >> freq)
-          f1.push_back(freq.c_str());
+          f1.push_back(freq);
 
       if(i == 0)
         myAvailableFreqs = f1;
@@ -124,11 +142,16 @@ ClockFrequencyManagerImplementationBase::populateAvailableFrequencies() {
   }
 
   if(isMaster()) {
-    std::vector<string>::iterator it(myAvailableFreqs.begin()); 
+    std::vector<int>::iterator it(myAvailableFreqs.begin()); 
     std::cout << "frequencies:";
     for(; it != myAvailableFreqs.end(); ++it)
       std::cout << " [" << *it << "]";
     std::cout << std::endl;
   }
+}
+
+ostream& operator<<(ostream& out, ClockFrequencyManager& cfm) {
+  out << cfm.toString();
+  return out;
 }
 
