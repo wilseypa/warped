@@ -43,7 +43,7 @@ TimeWarpSimulationManager::TimeWarpSimulationManager(
 			mySchedulingData(new SchedulingData()), myTerminationManager(0),
 			myApplication(initApplication), myFossilCollManager(0),
 			usingOneAntiMsg(false), usingOptFossilCollection(false),
-			inRecovery(false), numberOfRollbacks(0), myDelayUs(25) {
+			inRecovery(false), numberOfRollbacks(0), myDelayUs(0) {
 }
 
 TimeWarpSimulationManager::~TimeWarpSimulationManager() {

@@ -68,6 +68,7 @@ ClockFrequencyManagerImplementationBase::configure(SimulationConfiguration &conf
   if(myCPU != mySimulationManagerID)
     cout << "WARNING: simulation manager id (" << mySimulationManagerID << ") differs from CPU id (" << myCPU << ")" << endl;
   setGovernorMode("userspace");
+  mySimulationManager->setDelayUs(getNominalDelay());
 }
 
 void

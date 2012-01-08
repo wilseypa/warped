@@ -168,7 +168,7 @@ CentralizedClockFrequencyManager::adjustFrequencies(vector<int>& d) {
   }
 
   for(int i = 0; i < myRollbackFilters.size(); ++i) {
-    writeCSVRow(mySimulationManagerID, d[i], myRollbackFilters[i].getData(), myAvailableFreqs[freqs[i]]);
+    writeCSVRow(i, myRollbackFilters[i].getData(), d[i], myAvailableFreqs[freqs[i]]);
   }
 
   for(int i = 0; i < myRollbackFilters.size(); ++i) {

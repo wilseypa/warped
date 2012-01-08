@@ -51,7 +51,7 @@ DistributedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   else if(myRound == 2) {
     for(int i = 0; i < dat.size(); ++i)
       myRollbackFilters[i].update(dat[i]);
-    adjustFrequency();
+    adjustFrequency(dat);
     myRound = 0;
   }
 
@@ -73,7 +73,7 @@ DistributedClockFrequencyManager::configure(SimulationConfiguration &configurati
 }
 
 void
-DistributedClockFrequencyManager::adjustFrequency() {
+DistributedClockFrequencyManager::adjustFrequency(vector<int>& rb) {
   int min = myRollbackFilters[0].getData();
   int max = min;
   float avg = (float)min / (float)myNumSimulationManagers;
@@ -102,7 +102,7 @@ DistributedClockFrequencyManager::adjustFrequency() {
     }
     mySimulationManager->setDelayUs(delay);
   }
-  writeCSVRow(mySimulationManagerID, rollbacks, mySimulationManager->getRollbacks(), delay);
+  writeCSVRow(mySimulationManagerID, rollbacks, rb[mySimulationManagerID], delay);
 }
 
 string
