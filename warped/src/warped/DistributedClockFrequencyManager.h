@@ -32,9 +32,6 @@ public:
   /// from CommunicatingEntity
   virtual void receiveKernelMessage(KernelMessage* msg);
 
-  // from Configurable
-  virtual void configure(SimulationConfiguration &configuration);
-
   virtual string toString();
 
   virtual int getNominalDelay() { return myAvailableDelays[(myNumAvailableDelays - 1) / 2]; }
@@ -44,6 +41,7 @@ public:
   static const int myAvailableDelays[];
 private:
   int myNumAvailableDelays;
+  int myDelay;
 
   void adjustFrequency(std::vector<int>& rollbacks);
 

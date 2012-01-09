@@ -32,9 +32,6 @@ public:
   /// from CommunicatingEntity
   virtual void receiveKernelMessage(KernelMessage* msg);
 
-  // from Configurable
-  virtual void configure(SimulationConfiguration& configuration);
-
   virtual string toString();
 
   virtual int getNominalDelay() { return 0; }

@@ -7,24 +7,22 @@
 #include "CFRollbackVectorMessage.h"
 #include "CommunicationManager.h"
 
-const int DistributedClockFrequencyManager::myAvailableDelays[] = {20,25,30};
+const int DistributedClockFrequencyManager::myAvailableDelays[] = {24,25,26};
 
 DistributedClockFrequencyManager::DistributedClockFrequencyManager(TimeWarpSimulationManager* simMgr,
     int measurementPeriod, int numCPUs, int firsize, bool dummy)
   :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, numCPUs, firsize, dummy)
 {
   myNumAvailableDelays = sizeof(myAvailableDelays) / sizeof(int);
+  myDelay = 25000;
 }
 
 void
 DistributedClockFrequencyManager::poll() {
   if(checkMeasurementPeriod()) {
-    if(isMaster()) {
-      resetMeasurementCounter();
-      int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-      CFRollbackVectorMessage* msg = new CFRollbackVectorMessage(mySimulationManagerID, dest, myNumSimulationManagers);
-      myCommunicationManager->sendMessage(msg, dest);
-    }
+    int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
+    CFRollbackVectorMessage* msg = new CFRollbackVectorMessage(mySimulationManagerID, dest, myNumSimulationManagers);
+    myCommunicationManager->sendMessage(msg, dest);
   }
 }
 
@@ -45,7 +43,6 @@ DistributedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   if(myRound == 1) {
     int r = mySimulationManager->getRollbacks();
     dat[mySimulationManagerID] = r - myLastRollbacks;
-    //cout << "stuffing dat[" << mySimulationManagerID << "] with " << r - myLastRollbacks << endl;
     myLastRollbacks = r;
   }
   else if(myRound == 2) {
@@ -66,13 +63,6 @@ DistributedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 }
 
 void
-DistributedClockFrequencyManager::configure(SimulationConfiguration &configuration) {
-  ClockFrequencyManagerImplementationBase::configure(configuration);
-  populateAvailableFrequencies();
-  setCPUFrequency(myCPU, myAvailableFreqs[0]);
-}
-
-void
 DistributedClockFrequencyManager::adjustFrequency(vector<int>& rb) {
   int min = myRollbackFilters[0].getData();
   int max = min;
@@ -86,28 +76,30 @@ DistributedClockFrequencyManager::adjustFrequency(vector<int>& rb) {
   int rollbacks = myRollbackFilters[mySimulationManagerID].getData();
   int delay = getNominalDelay();
   if(!myIsDummy){
-    if(rollbacks == min) {
-  //    cout << ". speeding up...";
-  //    if(!myIsDummy)
-  //      mySimulationManager->speedup();
-      cout << ". speeding up";
-      delay = myAvailableDelays[0];
+    //if(rollbacks == min) {
+    if(rollbacks < avg) {
+      //delay = myAvailableDelays[0];
+      myDelay -= 1000;
+      if(myDelay < 0)
+        myDelay = 0;
     }
-    else if(rollbacks == max) {
-  //    cout << ". slowing down...";
-  //    if(!myIsDummy)
-  //      mySimulationManager->slowdown();
-      cout << ". slowing down";
-      delay = myAvailableDelays[myNumAvailableDelays - 1];
+    //else if(rollbacks == max) {
+    else if(rollbacks > avg) {
+      //delay = myAvailableDelays[myNumAvailableDelays - 1];
+      myDelay += 1000;
     }
-    mySimulationManager->setDelayUs(delay);
+    //mySimulationManager->setDelayUs(delay);
+    mySimulationManager->setDelayUs(myDelay);
   }
-  writeCSVRow(mySimulationManagerID, rollbacks, rb[mySimulationManagerID], delay);
+  //writeCSVRow(mySimulationManagerID, rollbacks, rb[mySimulationManagerID], delay);
+  writeCSVRow(mySimulationManagerID, rollbacks, rb[mySimulationManagerID], myDelay);
 }
 
 string
 DistributedClockFrequencyManager::toString() {
   ostringstream out;
+  if(myIsDummy)
+    out << "Dummy ";
   out << "Distributed CFM, Period = " << getPeriod();
   return out.str();
 }

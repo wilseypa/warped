@@ -31,6 +31,7 @@
 #include <utils/Debug.h>
 #include <algorithm>
 #include <sstream>
+#include <time.h>
 using std::istringstream;
 
 TimeWarpSimulationManager::TimeWarpSimulationManager(
@@ -370,7 +371,9 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 		}
 
 		// mimick fine-grain frequency control
-		usleep(myDelayUs);
+		//usleep(myDelayUs);
+    timespec ts = {0, myDelayUs};
+    nanosleep(&ts, NULL);
 
 		nextObject->setSimulationTime(nextEvent->getReceiveTime());
 		myStateManager->saveState(nextEvent->getReceiveTime(), nextObject);

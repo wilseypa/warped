@@ -40,8 +40,10 @@ ClockFrequencyManagerImplementationBase::poll() {
 
 bool
 ClockFrequencyManagerImplementationBase::checkMeasurementPeriod() {
-  if (++myMeasurementCounter == myMeasurementPeriod)
+  if (isMaster() && ++myMeasurementCounter == myMeasurementPeriod) {
+    myMeasurementCounter = 0;
     return true;
+  }
   return false;
 }
 
@@ -68,6 +70,13 @@ ClockFrequencyManagerImplementationBase::configure(SimulationConfiguration &conf
   if(myCPU != mySimulationManagerID)
     cout << "WARNING: simulation manager id (" << mySimulationManagerID << ") differs from CPU id (" << myCPU << ")" << endl;
   setGovernorMode("userspace");
+
+  populateAvailableFrequencies();
+  if(isMaster()) {
+    for(int i=0; i < myNumSimulationManagers; ++i)
+      setCPUFrequency(i, myAvailableFreqs[0]);
+  }
+
   mySimulationManager->setDelayUs(getNominalDelay());
 }
 

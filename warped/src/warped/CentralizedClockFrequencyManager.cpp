@@ -125,17 +125,6 @@ CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 //  delete kMsg;
 //}
 
-
-void
-CentralizedClockFrequencyManager::configure(SimulationConfiguration &configuration) {
-  ClockFrequencyManagerImplementationBase::configure(configuration);
-  populateAvailableFrequencies();
-  if(isMaster()) {
-    for(int i=0; i < myNumSimulationManagers; ++i)
-      setCPUFrequency(i, myAvailableFreqs[1]);
-  }
-}
-
 int
 CentralizedClockFrequencyManager::variance(vector<FIRFilter<int> >& x) {
   float avg = 0.f;
@@ -183,9 +172,7 @@ string
 CentralizedClockFrequencyManager::toString() {
   ostringstream out;
   if(myIsDummy)
-    out << "Dummy";
-  else
-    out << "Centralized";
-   out << " CFM, Period = " << getPeriod() << ", FIR size = " << myFIRSize;
+    out << "Dummy ";
+   out << "Centralized CFM, Period = " << getPeriod() << ", FIR size = " << myFIRSize;
   return out.str();
 }
