@@ -11,10 +11,17 @@
    Functor.  Compares two events to see if one has a receive time less than
    the other.
 */
-struct receiveTimeLessThan : public std::binary_function<const Event *, 
+struct receiveTimeLessThan : public std::binary_function<const Event *,
 	    const Event *, bool > {
   bool operator()( const Event *a, const Event *b ){
     return a->getReceiveTime() < b->getReceiveTime();
+  }
+};
+
+struct sendTimeLessThan : public std::binary_function<const Event *,
+	    const Event *, bool > {
+  bool operator()( const Event *a, const Event *b ){
+    return a->getSendTime() < b->getSendTime();
   }
 };
 
@@ -22,10 +29,10 @@ struct receiveTimeLessThan : public std::binary_function<const Event *,
    Functor.  Compares two events to see if one has a receive time greater
    than or equal to the other.
 */
-class receiveTimeGreaterThanEqual : 
+class receiveTimeGreaterThanEqual :
   public std::unary_function<const Event *, bool > {
 public:
-  receiveTimeGreaterThanEqual( const VTime &initCompareTime ) : 
+  receiveTimeGreaterThanEqual( const VTime &initCompareTime ) :
     compareTime( initCompareTime ){}
   bool operator()( const Event *a ){
     return a->getReceiveTime() >= compareTime;
@@ -38,10 +45,10 @@ private:
    Functor.  Compares two events to see if one has a send time greater
    than or equal to the other.
 */
-class sendTimeGreaterThanEqual : 
+class sendTimeGreaterThanEqual :
   public std::unary_function<const Event *, bool > {
 public:
-  sendTimeGreaterThanEqual( const VTime &initCompareTime ) : 
+  sendTimeGreaterThanEqual( const VTime &initCompareTime ) :
     compareTime( initCompareTime ){}
   bool operator()( const Event *a ){
     return a->getSendTime() >= compareTime;
@@ -54,10 +61,10 @@ private:
    Functor.  Compares two events to see if one has a send time less
    than or equal to the other.
 */
-class sendTimeLessThanEqual : 
+class sendTimeLessThanEqual :
   public std::unary_function<const Event *, bool > {
 public:
-  sendTimeLessThanEqual( const VTime &initCompareTime ) : 
+  sendTimeLessThanEqual( const VTime &initCompareTime ) :
     compareTime( initCompareTime ){}
   bool operator()( const Event *a ){
     return a->getSendTime() <= compareTime;
@@ -70,26 +77,26 @@ private:
    Functor.  Compares two events to see if one has a send time less
    than the other.
 */
-class sendTimeLessThan : 
+/*class sendTimeLessThan :
   public std::unary_function<const Event *, bool > {
 public:
-  sendTimeLessThan( const VTime &initCompareTime ) : 
+  sendTimeLessThan( const VTime &initCompareTime ) :
     compareTime( initCompareTime ){}
   bool operator()( const Event *a ){
     return a->getSendTime() < compareTime;
   }
 private:
   const VTime &compareTime;
-};
+};*/
 
 /**
    Functor.  Compares two events to see if one has a receive time less than
    or equal to the other.
 */
-class receiveTimeLessThanEqual : 
+class receiveTimeLessThanEqual :
   public std::unary_function<const Event *, bool > {
 public:
-  receiveTimeLessThanEqual( const VTime &initCompareTime ) : 
+  receiveTimeLessThanEqual( const VTime &initCompareTime ) :
     compareTime( initCompareTime ){}
   bool operator()( const Event *a ){
     return a->getReceiveTime() <= compareTime;
@@ -120,7 +127,26 @@ public:
       else{
         return a->getSender() < b->getSender();
       }
-    }    
+    }
   }
 };
-#endif
+
+  class sendTimeLessThanEventIdLessThan :
+    public std::binary_function<const Event *, const Event *, bool > {
+  public:
+    bool operator()( const Event *a, const Event *b ){
+      if(a->getSendTime() != b->getSendTime()){
+        return a->getSendTime() < b->getSendTime();
+      }
+      else{
+        if(a->getEventId() != b->getEventId()){
+          return a->getEventId() < b->getEventId();
+        }
+        else{
+          return a->getSender() < b->getSender();
+        }
+      }
+    }
+  };
+  #endif
+
