@@ -9,6 +9,7 @@
 #include "DTOutputManager.h"
 #include "DTStateManager.h"
 #include "DTTimeWarpEventSet.h"
+#include "DTOptFossilCollManager.h"
 
 class Application;
 //class ThreadedSchedulingManager;
@@ -17,6 +18,7 @@ class LocalKernelMessage;
 class VTime;
 class WorkerInformation;
 class AtomicState;
+class DTOptFossilCollManager;
 
 template<class element> class LockedQueue;
 class DTTimeWarpSimulationManager: public TimeWarpSimulationManager {
@@ -30,6 +32,14 @@ public:
 	 */
 	DTStateManager *getStateManagerNew() {
 		return myStateManager;
+	}
+
+	 /* Return a handle to the Fossil Collection manager.
+
+	 @return A handle to the Fossil Collection manager.
+	 */
+	DTOptFossilCollManager *getOptFossilCollManagerNew() {
+		return myrealFossilCollManager;
 	}
 
 	/* Return a handle to the event set factory.
@@ -137,9 +147,40 @@ protected:
 
 	 @param event A pointer to the received event.
 	 */
+public:
 	void handleEvent(const Event *event);
+
+	/** call fossil collect on the file queues. This one passes in an integer
+	 and should only be used with the optimistic fossil collection manager.
+
+	 @param fossilCollectTime time upto which fossil collect is performed.
+	 */
+	virtual void fossilCollectFileQueues(SimulationObject *object,
+			int fossilCollectTime);
+
+	/// Used in optimistic fossil collection to checkpoint the file queues.
+	void saveFileQueuesCheckpoint(std::ofstream* outFile,
+			const ObjectID &objId, unsigned int saveTime);
+
+	void restoreFileQueues(ifstream* inFile,
+			const ObjectID &objId, unsigned int restoreTime);
+
 	void handleEventReceiver(SimulationObject *currObject, const Event *event,
 			int threadID);
+
+	/// Return true when recovering from a catastrophic rollback during
+	/// optimimistic fossil collection.
+	bool getRecoveringFromCheckpoint() {
+		return inRecovery;
+	}
+
+	/// Set true when recovering from a catastrophic rollback during
+	/// optimimistic fossil collection.
+	void setRecoveringFromCheckpoint(bool inRec) {
+		inRecovery = inRec;
+	}
+
+protected:
 
 	void cancelEventsReceiver(SimulationObject *curObject,
 			vector<const NegativeEvent *> &cancelObjectIt, int threadID);
@@ -223,6 +264,10 @@ protected:
 	}
 
 private:
+	//Handle to the new OptFossilCollManager
+	DTOptFossilCollManager *myrealFossilCollManager;
+	OptFossilCollManager *myFossilCollManager;
+
 	///This is the handle to the set of events
 	DTTimeWarpEventSet *myEventSet;
 
@@ -245,6 +290,10 @@ private:
 
 	/// Time up to which coast forwarding should be done.
 	vector<const VTime *> coastForwardTime;
+
+	/// Used to determine when the optimistic fossil collection manager is
+	/// recovery from a catastrophic rollback.
+	bool inRecovery;
 
 	/// Put all arguments in one object to be passed to StartThread as void*
 	class thread_args {

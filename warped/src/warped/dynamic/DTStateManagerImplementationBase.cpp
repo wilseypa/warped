@@ -96,7 +96,7 @@ DTStateManagerImplementationBase::restoreState(const VTime &rollbackTime,
 						<< ": Current Simulation Time is "
 						<< object->getSimulationTime() << endl;
 
-				mySimulationManager->getFossilCollManager()->startRecovery(
+				mySimulationManager->getOptFossilCollManagerNew()->startRecovery(
 						objId, rollbackTime.getApproximateIntTime());
 			}
 		} else {

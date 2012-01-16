@@ -1,7 +1,7 @@
+// See copyright notice in file Copyright in the root directory of this archive.
+
 #ifndef DTOUTPUTEVENTS_H_
 #define DTOUTPUTEVENTS_H_
-
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "AtomicState.h"
 #include "warped.h"
@@ -149,7 +149,7 @@ private:
 	bool removedEventToRemove;
 
 	/// A handle to the simulation manager.
-	TimeWarpSimulationManager *mySimulationManager;
+	DTTimeWarpSimulationManager *mySimulationManager;
 
 	///Lock Definitions
 	AtomicState* localQueueLock;

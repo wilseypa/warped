@@ -17,7 +17,11 @@ if USE_TIMEWARP
 		warped/dynamic/DTTimeWarpEventSet.h \
 		warped/dynamic/DTTimeWarpMultiSetSchedulingManager.h \
 		warped/dynamic/DTTimeWarpSimulationManager.h\
-		warped/dynamic/StragglerEvent.h
+		warped/dynamic/StragglerEvent.h\
+		warped/dynamic/DTOptFossilCollManager.h\
+		warped/dynamic/DTChebyFossilCollManager.h\
+		warped/dynamic/DTLazyOutputManager.h\
+		warped/dynamic/DTMatternGVTManager.h
 
     DYNAMICTHREADED_SRC = \
         warped/dynamic/DTOutputEvents.cpp \
@@ -29,7 +33,11 @@ if USE_TIMEWARP
         warped/dynamic/DTTimeWarpEventSet.cpp \
         warped/dynamic/DTTimeWarpMultiSetSchedulingManager.cpp \
         warped/dynamic/DTTimeWarpSimulationManager.cpp\
-        warped/dynamic/StragglerEvent.cpp
+        warped/dynamic/StragglerEvent.cpp\
+        warped/dynamic/DTOptFossilCollManager.cpp\
+        warped/dynamic/DTChebyFossilCollManager.cpp\
+	warped/dynamic/DTLazyOutputManager.cpp\
+	warped/dynamic/DTMatternGVTManager.cpp
         
         
 else

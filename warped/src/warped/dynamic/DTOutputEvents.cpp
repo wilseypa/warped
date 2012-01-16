@@ -32,7 +32,7 @@ DTOutputEvents::getEventsSentAtOrAfter(const VTime &searchTime, int threadID) {
 			if (mySimulationManager->getOptFossilColl()) {
 				int
 						lastTime =
-								mySimulationManager->getFossilCollManager()->getLastCollectTime(
+								mySimulationManager->getOptFossilCollManagerNew()->getLastCollectTime(
 										(*out)->getReceiverID());
 				int recvTime =
 						(*out)->getSecondaryTime().getApproximateIntTime();
@@ -41,7 +41,7 @@ DTOutputEvents::getEventsSentAtOrAfter(const VTime &searchTime, int threadID) {
 							<< mySimulationManager->getSimulationManagerID()
 							<< " - Cata Rollback in outputevents: " << recvTime
 							<< ", " << lastTime << std::endl;
-					mySimulationManager->getFossilCollManager()->startRecovery(
+					mySimulationManager->getOptFossilCollManagerNew()->startRecovery(
 							(*out)->getReceiverID(),
 							(*out)->getMainTime().getApproximateIntTime());
 					break;
@@ -364,7 +364,7 @@ void DTOutputEvents::saveOutputCheckpoint(ofstream* outFile,
 
 			int
 					lastTime =
-							mySimulationManager->getFossilCollManager()->getLastCollectTime(
+							mySimulationManager->getOptFossilCollManagerNew()->getLastCollectTime(
 									(*outLoc)->getReceiverID());
 			int recvTime =
 					(*outLoc)->getSecondaryTime().getApproximateIntTime();
@@ -372,7 +372,7 @@ void DTOutputEvents::saveOutputCheckpoint(ofstream* outFile,
 				utils::debug << mySimulationManager->getSimulationManagerID()
 						<< " - Cata Rollback in DTOutputEvents::checkpoint: "
 						<< recvTime << ", " << lastTime << std::endl;
-				mySimulationManager->getFossilCollManager()->startRecovery(
+				mySimulationManager->getOptFossilCollManagerNew()->startRecovery(
 						(*outLoc)->getReceiverID(),
 						(*outLoc)->getMainTime().getApproximateIntTime());
 				break;

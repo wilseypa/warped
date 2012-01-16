@@ -29,7 +29,7 @@ DTTimeWarpMultiSet::DTTimeWarpMultiSet(
 	//	unProcessedQueueArray = new MS[NUMBER_OF_OBJECTS];
 	int threadCount = initSimulationManager->getNumberofThreads();
 	//Iterators for each threads
-	vectorIterator = new vIterate[initSimulationManager->getNumberofThreads()];
+	vectorIterator = new vIterate[threadCount];
 	multisetIterator = new mIterate[threadCount];
 	//Initializing Unprocessed Event Queue
 	for (int i = 0; i < objectCount; i++) {
@@ -487,9 +487,9 @@ void DTTimeWarpMultiSet::fossilCollect(SimulationObject *object,
 
 	// Removed the processed events with time less than the collect time.
 	this->getProcessedLock(threadId, objId);
-	vector<const Event*>::iterator it = processedQueue[objId]->begin();
+	vectorIterator[threadId] = processedQueue[objId]->begin();
 	while (vectorIterator[threadId] != processedQueue[objId]->end()
-			&& (*(vectorIterator[threadId]))->getReceiveTime().getApproximateIntTime()
+			&& ((*(vectorIterator[threadId]))->getReceiveTime()).getApproximateIntTime()
 					< fossilCollectTime) {
 		object->reclaimEvent(*(vectorIterator[threadId]));
 		vectorIterator[threadId]++;
