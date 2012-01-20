@@ -3,9 +3,10 @@ AC_INIT([warped],[3.0])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_HEADERS([src/warped/WarpedConfig.h])
 
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/warped/Event.cpp])
 AM_INIT_AUTOMAKE
-AC_PREREQ(2.65)
+AC_PREREQ(2.61)
 
 AC_SUBST(WARPED_VERSION, [2.0-pre031216])
 
