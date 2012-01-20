@@ -286,15 +286,14 @@ void DTTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 		 }*/
 		//Clear message Buffer
 		sendPendingMessages();
-		if (dynamic_cast<DTTimeWarpMultiSet*> (myEventSet)->getMessageCount(0)
-				> 0) {
+		if (!dynamic_cast<DTTimeWarpMultiSet*> (myEventSet)->isScheduleQueueEmpty(0))
+			 {
 			if (WorkerInformation::getStillBusyCount() < numberOfWorkerThreads) {
 				for (unsigned int threadIndex = 1; threadIndex
 						< numberOfWorkerThreads; threadIndex++) {
 					workerStatus[threadIndex]->resume();
 				}
 			}
-			myTerminationManager->setStatusActive();
 		}
 		// Set Termination Manager according to busycount
 		if (WorkerInformation::getStillBusyCount() > 0) {
@@ -1230,12 +1229,12 @@ void DTTimeWarpSimulationManager::printObjectMaaping() {
 	}
 }
 bool DTTimeWarpSimulationManager::checkTermination() {
-	if (dynamic_cast<DTTimeWarpMultiSet*> (myEventSet)->getMessageCount(0) == 0)
+	if (dynamic_cast<DTTimeWarpMultiSet*> (myEventSet)->isScheduleQueueEmpty(0))
 		terminationCheckCount++;
 	else
 		terminationCheckCount = 0;
 
-	if (terminationCheckCount == 50)
+	if (terminationCheckCount == 1)
 		return true;
 	else
 		return false;

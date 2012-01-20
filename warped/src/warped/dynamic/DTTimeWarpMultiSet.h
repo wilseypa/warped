@@ -37,6 +37,7 @@ public:
 	 * @return Pending EventCount
 	 */
 	int getMessageCount(int threadId);
+    bool isScheduleQueueEmpty(int threadId);
 
 	/** Remove and return the next event in the event set.
 	 *  @return The removed event.

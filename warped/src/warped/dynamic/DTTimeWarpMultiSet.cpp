@@ -364,7 +364,7 @@ bool DTTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) {
 					<= mySimulationManager->getNumberOfSimulationObjects());
 	return false;//Old Code Always Returns False-- Check why?
 }
-// Heavily Lock based Counting -- Don't Use it
+// Lock based Counting -- Don't Use it a loop
 int DTTimeWarpMultiSet::getMessageCount(int threadId) {
 	int count = 0;
 	/*for (int i = 0; i < objectCount; i++) {
@@ -377,6 +377,13 @@ int DTTimeWarpMultiSet::getMessageCount(int threadId) {
 	releaseScheduleQueueLock(threadId);
 	//utils::debug << "Unprocessed Event Count :: " << count << "\n";
 	return count;
+}
+bool DTTimeWarpMultiSet::isScheduleQueueEmpty(int threadId){
+    bool ret=false;
+    getScheduleQueueLock(threadId);
+    ret = scheduleQueue->empty();
+    releaseScheduleQueueLock(threadId);
+    return ret;
 }
 //This Function will be called by the worker when the object has been scheduled, so no need to update schedule queue(need to verify this)
 bool DTTimeWarpMultiSet::handleAntiMessage(SimulationObject *simObj,
