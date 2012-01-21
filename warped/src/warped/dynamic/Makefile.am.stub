@@ -9,8 +9,6 @@ if USE_TIMEWARP
 		warped/dynamic/DTAggressiveOutputManager.h \
 		warped/dynamic/DTTimeWarpMultiSet.h \
 		warped/dynamic/DTStateManagerImplementationBase.h \
-		warped/dynamic/DTTimeWarpMultiSet.h \
-		warped/dynamic/DTStateManagerImplementationBase.h \
 		warped/dynamic/DTPeriodicStateManager.h \
 		warped/dynamic/DTOutputManager.h \
 		warped/dynamic/DTStateManager.h \
@@ -21,7 +19,9 @@ if USE_TIMEWARP
 		warped/dynamic/DTOptFossilCollManager.h\
 		warped/dynamic/DTChebyFossilCollManager.h\
 		warped/dynamic/DTLazyOutputManager.h\
-		warped/dynamic/DTMatternGVTManager.h
+		warped/dynamic/DTMatternGVTManager.h\
+		warped/dynamic/DTCostAdaptiveStateManager.h\
+		warped/dynamic/DTAdaptiveStateManagerBase.h
 
     DYNAMICTHREADED_SRC = \
         warped/dynamic/DTOutputEvents.cpp \
@@ -36,8 +36,10 @@ if USE_TIMEWARP
         warped/dynamic/StragglerEvent.cpp\
         warped/dynamic/DTOptFossilCollManager.cpp\
         warped/dynamic/DTChebyFossilCollManager.cpp\
-	warped/dynamic/DTLazyOutputManager.cpp\
-	warped/dynamic/DTMatternGVTManager.cpp
+		warped/dynamic/DTLazyOutputManager.cpp\
+		warped/dynamic/DTMatternGVTManager.cpp\
+		warped/dynamic/DTCostAdaptiveStateManager.cpp\
+		warped/dynamic/DTAdaptiveStateManagerBase.cpp
         
         
 else

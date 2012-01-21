@@ -13,6 +13,7 @@
 #include "NegativeEvent.h"
 #include "NegativeEventMessage.h"
 #include "SingleTerminationManager.h"
+#include "DTCostAdaptiveStateManager.h"
 #include "DTOptFossilCollManager.h"
 #include "DTTimeWarpMultiSet.h"
 #include "InitializationMessage.h"
@@ -35,13 +36,14 @@ DTTimeWarpSimulationManager::DTTimeWarpSimulationManager(
 		unsigned int numProcessors, unsigned int numberOfWorkerThreads,
 		Application *initApplication) :
 	numberOfWorkerThreads(numberOfWorkerThreads), masterID(0),
-			coastForwardTime(0), myrealFossilCollManager(0),
+			coastForwardTime(0), myrealFossilCollManager(0), myStateManager(0),
 			messageBuffer(new LockedQueue<KernelMessage*> ),
 			workerStatus(new WorkerInformation*[numberOfWorkerThreads + 1]),
 			myOutputManager(0), mySchedulingManager(0), checkGVT(false),
 			GVTTimePeriodLock(new AtomicState()), terminationCheckCount(0),
 			LVTFlag(numberOfWorkerThreads), LVTFlagLock(new AtomicState()),
-			computeLVTStatus(new bool*[numberOfWorkerThreads + 1]), inRecovery(false),
+			computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
+			inRecovery(false),
 			TimeWarpSimulationManager(numProcessors, initApplication) {
 	LVT = &getZero();
 	LVTArray = new const VTime *[numberOfWorkerThreads + 1];
@@ -286,8 +288,8 @@ void DTTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 		 }*/
 		//Clear message Buffer
 		sendPendingMessages();
-		if (!dynamic_cast<DTTimeWarpMultiSet*> (myEventSet)->isScheduleQueueEmpty(0))
-			 {
+		if (!dynamic_cast<DTTimeWarpMultiSet*> (myEventSet)->isScheduleQueueEmpty(
+				0)) {
 			if (WorkerInformation::getStillBusyCount() < numberOfWorkerThreads) {
 				for (unsigned int threadIndex = 1; threadIndex
 						< numberOfWorkerThreads; threadIndex++) {
@@ -756,10 +758,9 @@ void DTTimeWarpSimulationManager::coastForward(
 	stopWatch.stop();
 
 	if (stateMgrType == ADAPTIVESTATE) {
-		//waiting for sanchit's input
-		/*		CostAdaptiveStateManager *CAStateManager =
-		 static_cast<CostAdaptiveStateManager *> (myStateManager);
-		 CAStateManager->coastForwardTiming(objId, stopWatch.elapsed());*/
+		DTCostAdaptiveStateManager *CAStateManager =
+				static_cast<DTCostAdaptiveStateManager *> (myStateManager);
+		CAStateManager->coastForwardTiming(objId, stopWatch.elapsed());
 	}
 
 	utils::debug << "(" << mySimulationManagerID << " T " << threadID
