@@ -288,8 +288,8 @@ void DTTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 		 }*/
 		//Clear message Buffer
 		sendPendingMessages();
-		if (!dynamic_cast<DTTimeWarpMultiSet*> (myEventSet)->isScheduleQueueEmpty(
-				0)) {
+		if (!myEventSet->isScheduleQueueEmpty(0))
+         {
 			if (WorkerInformation::getStillBusyCount() < numberOfWorkerThreads) {
 				for (unsigned int threadIndex = 1; threadIndex
 						< numberOfWorkerThreads; threadIndex++) {
@@ -1230,7 +1230,7 @@ void DTTimeWarpSimulationManager::printObjectMaaping() {
 	}
 }
 bool DTTimeWarpSimulationManager::checkTermination() {
-	if (dynamic_cast<DTTimeWarpMultiSet*> (myEventSet)->isScheduleQueueEmpty(0))
+	if (myEventSet->isScheduleQueueEmpty(0))
 		terminationCheckCount++;
 	else
 		terminationCheckCount = 0;

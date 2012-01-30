@@ -167,6 +167,8 @@ public:
 
 	//A Temp Function to find min of Schedule Queue, will be replaced by GVT calc Function
 	virtual const VTime* nextEventToBeScheduledTime(int)=0;
+    //Function to check whether schedule queue is empty or not
+    virtual bool  isScheduleQueueEmpty(int)=0;
 protected:
 	/**@name Protected Class Methods of DTTimeWarpEventSet. */
 	//@{
