@@ -34,7 +34,7 @@ public:
 		return myStateManager;
 	}
 
-	 /* Return a handle to the Fossil Collection manager.
+	/* Return a handle to the Fossil Collection manager.
 
 	 @return A handle to the Fossil Collection manager.
 	 */
@@ -113,6 +113,14 @@ public:
 
 	const VTime* getLVT();
 
+	void updateCurrentExec(unsigned int threadId, unsigned int objId);
+
+	void updateCurrentExecFromArray();
+
+	void resetCurrentExecArray();
+
+	const VTime* getMinCurrentExecTime();
+
 protected:
 	/**@name Protected Class Methods of DTTimeWarpSimulationManager. */
 	//@{
@@ -162,8 +170,8 @@ public:
 	void saveFileQueuesCheckpoint(std::ofstream* outFile,
 			const ObjectID &objId, unsigned int saveTime);
 
-	void restoreFileQueues(ifstream* inFile,
-			const ObjectID &objId, unsigned int restoreTime);
+	void restoreFileQueues(ifstream* inFile, const ObjectID &objId,
+			unsigned int restoreTime);
 
 	void handleEventReceiver(SimulationObject *currObject, const Event *event,
 			int threadID);
@@ -182,8 +190,8 @@ public:
 
 protected:
 
-	void cancelEventsReceiver(SimulationObject *curObject,
-			vector<const NegativeEvent *> &cancelObjectIt, int threadID);
+	void cancelEventsReceiver(SimulationObject *curObject, vector<
+			const NegativeEvent *> &cancelObjectIt, int threadID);
 	/**
 	 Used to route local events.
 	 */
@@ -328,6 +336,12 @@ private:
 	bool** computeLVTStatus;
 
 	const VTime* LVT;
+
+	const VTime** CurrentExecArray;
+
+	const VTime* MinCurrentExecTime;
+
+	bool logCurrentEvent;
 };
 
 #endif /* DTTIMEWARPSIMULATIONMANAGER_H_ */

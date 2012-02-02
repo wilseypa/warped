@@ -8,8 +8,8 @@ class DTTimeWarpEventSet;
 
 DTTimeWarpMultiSetSchedulingManager::DTTimeWarpMultiSetSchedulingManager(
 		DTTimeWarpSimulationManager *initSimulationManager) :
-	mySimulationManager(initSimulationManager),
-			lastScheduledTime(initSimulationManager->getZero().clone()) {
+	mySimulationManager(initSimulationManager), lastScheduledTime(
+			initSimulationManager->getZero().clone()) {
 	int num_threads = mySimulationManager->getNumberofThreads();
 	executeQueue.resize(num_threads); // Allocate the no. of threads initialized
 	executeQueueLock = new AtomicState();
@@ -34,6 +34,9 @@ const VTime & DTTimeWarpMultiSetSchedulingManager::getLastEventScheduledTime() {
 	/*	const VTime *minTime =
 	 &(dynamic_cast<DTTimeWarpMultiSet*> (eventSet)->getMinimumOfAll(0));*/
 	const VTime *minTime = mySimulationManager->getLVT();
+	const VTime *minTime1 = mySimulationManager->getMinCurrentExecTime();
+	if (*minTime1 < *minTime)
+		minTime = minTime1;
 	if (nextEventTime != NULL && *minTime > *nextEventTime)
 		minTime = nextEventTime;
 
