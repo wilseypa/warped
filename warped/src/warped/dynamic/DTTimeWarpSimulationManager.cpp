@@ -334,7 +334,7 @@ void DTTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 			<< dynamic_cast<DTTimeWarpMultiSet*> (myEventSet)->getMessageCount(
 					0) << endl;
 	// checking lazy functionality
-	dynamic_cast<DTLazyOutputManager *> (myOutputManager)->printAll();
+//	dynamic_cast<DTLazyOutputManager *> (myOutputManager)->printAll();
 	stopwatch.stop();
 	//kill all Workers
 	WorkerInformation::killWorkerThreads();
