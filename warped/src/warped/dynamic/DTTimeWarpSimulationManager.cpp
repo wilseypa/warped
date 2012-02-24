@@ -2,6 +2,7 @@
 
 #include "DTTimeWarpSimulationManager.h"
 #include "DefaultSchedulingManager.h"
+#include "DTLazyOutputManager.h"
 #include "StopWatch.h"
 #include "ObjectStub.h"
 #include "SimulationObjectProxy.h"
@@ -49,10 +50,13 @@ DTTimeWarpSimulationManager::DTTimeWarpSimulationManager(
 	LVT = &getZero();
 	LVTArray = new const VTime *[numberOfWorkerThreads + 1];
 	sendMinTimeArray = new const VTime *[numberOfWorkerThreads + 1];
+	MinCurrentExecTime = &(getPositiveInfinity());
+	CurrentExecArray = new const VTime *[numberOfWorkerThreads + 1];
 	for (int i = 0; i < numberOfWorkerThreads + 1; i++) {
 		computeLVTStatus[i] = new bool(0);
 		*(computeLVTStatus[i]) = 1;
 		sendMinTimeArray[i] = NULL;
+		CurrentExecArray[i] = &(getPositiveInfinity());
 	}
 	//used 0, since manager object has been constructed using the master
 	pthread_key_create(&threadKey, NULL);
@@ -188,6 +192,15 @@ bool DTTimeWarpSimulationManager::executeObjects(const unsigned int &threadId) {
 			nextEvent =
 					dynamic_cast<DTTimeWarpMultiSet*>(myEventSet)->peekEventLockUnprocessed(
 							nextObject, threadId);
+			if (outMgrType == LAZYMGR) {
+				DTLazyOutputManager *myLazyOutputManager =
+						dynamic_cast<DTLazyOutputManager *> (myOutputManager);
+				ASSERT(myLazyOutputManager != NULL);
+				if (nextEvent != NULL) {
+					myLazyOutputManager->emptyLazyQueue(nextObject,
+							nextEvent->getReceiveTime(), threadId);
+				}
+			}
 			if (nextEvent != NULL) {
 				nextObject->setSimulationTime(nextEvent->getReceiveTime());
 				/*				utils::debug << nextObject->getName()
@@ -388,11 +401,11 @@ void DTTimeWarpSimulationManager::handleEvent(const Event *event) {
 			if (outMgrType == AGGRMGR) {
 				myOutputManager->insert(event, threadID);
 			} else if (outMgrType == LAZYMGR) {
-				//Need Sanchit's input
-				/*				LazyOutputManager *myLazyOutputManager =
-				 static_cast<LazyOutputManager *> (myOutputManager);
-				 ASSERT(myLazyOutputManager != NULL);
-				 shouldHandleEvent = !myLazyOutputManager->lazyCancel(event);*/
+				DTLazyOutputManager *myLazyOutputManager =
+						static_cast<DTLazyOutputManager *> (myOutputManager);
+				ASSERT(myLazyOutputManager != NULL);
+				shouldHandleEvent = !myLazyOutputManager->lazyCancel(event,
+						threadID);
 			} else if (outMgrType == ADAPTIVEMGR) {
 				/*				DynamicOutputManager *myDynamicOutputManager =
 				 static_cast<DynamicOutputManager *> (myOutputManager);
@@ -453,8 +466,8 @@ void DTTimeWarpSimulationManager::handleRemoteEvent(const Event *event,
 	}
 }
 
-void DTTimeWarpSimulationManager::cancelLocalEvents(
-		const vector<const NegativeEvent *> &eventsToCancel, int threadID) {
+void DTTimeWarpSimulationManager::cancelLocalEvents(const vector<
+		const NegativeEvent *> &eventsToCancel, int threadID) {
 	const NegativeEvent *curEvent = NULL;
 	const VTime *lowTime = &(eventsToCancel[0]->getReceiveTime());
 
@@ -554,8 +567,8 @@ void DTTimeWarpSimulationManager::cancelRemoteEvents(
 	 delete eventsToCancel[i];*/
 }
 
-void DTTimeWarpSimulationManager::handleNegativeEvents(
-		const vector<const Event*> &negativeEvents, int threadID) {
+void DTTimeWarpSimulationManager::handleNegativeEvents(const vector<
+		const Event*> &negativeEvents, int threadID) {
 	cancelEvents(negativeEvents);
 }
 
@@ -578,24 +591,22 @@ void DTTimeWarpSimulationManager::cancelEvents(
 		cancelObjectIt = cancelEventObjects.find(
 				getObjectHandle((*cancelEventIt)->getReceiver()));
 		if (cancelObjectIt != cancelEventObjects.end()) {
-			(*cancelObjectIt).second.push_back(
-					new NegativeEvent((*cancelEventIt)->getSendTime(),
-							(*cancelEventIt)->getReceiveTime(),
-							(*cancelEventIt)->getSender(),
-							(*cancelEventIt)->getReceiver(),
-							(*cancelEventIt)->getEventId()));
+			(*cancelObjectIt).second.push_back(new NegativeEvent(
+					(*cancelEventIt)->getSendTime(),
+					(*cancelEventIt)->getReceiveTime(),
+					(*cancelEventIt)->getSender(),
+					(*cancelEventIt)->getReceiver(),
+					(*cancelEventIt)->getEventId()));
 		} else {
 			vector<const NegativeEvent *> evntVec;
-			evntVec.push_back(
-					new NegativeEvent((*cancelEventIt)->getSendTime(),
-							(*cancelEventIt)->getReceiveTime(),
-							(*cancelEventIt)->getSender(),
-							(*cancelEventIt)->getReceiver(),
-							(*cancelEventIt)->getEventId()));
-			cancelEventObjects.insert(
-					std::make_pair(
-							getObjectHandle((*cancelEventIt)->getReceiver()),
-							evntVec));
+			evntVec.push_back(new NegativeEvent(
+					(*cancelEventIt)->getSendTime(),
+					(*cancelEventIt)->getReceiveTime(),
+					(*cancelEventIt)->getSender(),
+					(*cancelEventIt)->getReceiver(),
+					(*cancelEventIt)->getEventId()));
+			cancelEventObjects.insert(std::make_pair(getObjectHandle(
+					(*cancelEventIt)->getReceiver()), evntVec));
 		}
 	}
 	//This function is replaced when using the ThreadedSimulationManager
@@ -1041,8 +1052,8 @@ void DTTimeWarpSimulationManager::configure(
 	// messages and wait for all initialization messages to arrive
 	// note: we dont need an initialization message from ourself; and
 	// hence the n - 1.
-	myCommunicationManager->waitForInitialization(
-			numberOfSimulationManagers - 1);
+	myCommunicationManager->waitForInitialization(numberOfSimulationManagers
+			- 1);
 
 }
 
@@ -1287,6 +1298,9 @@ void DTTimeWarpSimulationManager::decrementLVTFlag(unsigned int threadId) {
 	utils::debug << "(" << mySimulationManagerID << " T " << threadId << " )"
 			<< "Decrementing LVTFlag .. Current value :: " << LVTFlag << endl;
 	assert(LVTFlag >= 0);
+	if (LVTFlag == 0 && numberOfWorkerThreads > 2) {
+		logCurrentEvent = true;
+	}
 	releaseLVTFlagLock(threadId);
 }
 

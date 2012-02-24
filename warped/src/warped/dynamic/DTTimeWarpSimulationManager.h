@@ -115,6 +115,14 @@ public:
 
 	const VTime* getLVT();
 
+	void updateCurrentExec(unsigned int threadId, unsigned int objId);
+
+	void updateCurrentExecFromArray();
+
+	void resetCurrentExecArray();
+
+	const VTime* getMinCurrentExecTime();
+
 protected:
 	/**@name Protected Class Methods of DTTimeWarpSimulationManager. */
 	//@{
@@ -192,8 +200,8 @@ public:
 	virtual void fossilCollect(const VTime &fossilCollectTime);
 protected:
 
-	void cancelEventsReceiver(SimulationObject *curObject,
-			vector<const NegativeEvent *> &cancelObjectIt, int threadID);
+	void cancelEventsReceiver(SimulationObject *curObject, vector<
+			const NegativeEvent *> &cancelObjectIt, int threadID);
 	/**
 	 Used to route local events.
 	 */
