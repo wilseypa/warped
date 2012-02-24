@@ -34,9 +34,6 @@ const VTime & DTTimeWarpMultiSetSchedulingManager::getLastEventScheduledTime() {
 	/*	const VTime *minTime =
 	 &(dynamic_cast<DTTimeWarpMultiSet*> (eventSet)->getMinimumOfAll(0));*/
 	const VTime *minTime = mySimulationManager->getLVT();
-	const VTime *minTime1 = mySimulationManager->getMinCurrentExecTime();
-	if (*minTime1 < *minTime)
-		minTime = minTime1;
 	if (nextEventTime != NULL && *minTime > *nextEventTime)
 		minTime = nextEventTime;
 

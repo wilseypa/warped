@@ -50,13 +50,10 @@ DTTimeWarpSimulationManager::DTTimeWarpSimulationManager(
 	LVT = &getZero();
 	LVTArray = new const VTime *[numberOfWorkerThreads + 1];
 	sendMinTimeArray = new const VTime *[numberOfWorkerThreads + 1];
-	MinCurrentExecTime = &(getPositiveInfinity());
-	CurrentExecArray = new const VTime *[numberOfWorkerThreads + 1];
 	for (int i = 0; i < numberOfWorkerThreads + 1; i++) {
 		computeLVTStatus[i] = new bool(0);
 		*(computeLVTStatus[i]) = 1;
 		sendMinTimeArray[i] = NULL;
-		CurrentExecArray[i] = &(getPositiveInfinity());
 	}
 	//used 0, since manager object has been constructed using the master
 	pthread_key_create(&threadKey, NULL);
@@ -1298,9 +1295,6 @@ void DTTimeWarpSimulationManager::decrementLVTFlag(unsigned int threadId) {
 	utils::debug << "(" << mySimulationManagerID << " T " << threadId << " )"
 			<< "Decrementing LVTFlag .. Current value :: " << LVTFlag << endl;
 	assert(LVTFlag >= 0);
-	if (LVTFlag == 0 && numberOfWorkerThreads > 2) {
-		logCurrentEvent = true;
-	}
 	releaseLVTFlagLock(threadId);
 }
 
