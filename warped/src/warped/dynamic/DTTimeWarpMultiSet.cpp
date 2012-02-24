@@ -242,7 +242,7 @@ const VTime* DTTimeWarpMultiSet::nextEventToBeScheduledTime(int threadID) {
 	const VTime* ret = NULL;
 	this->getScheduleQueueLock(threadID);
 	if (scheduleQueue->size() > 0)
-		ret = (*scheduleQueue->begin())->getReceiveTime().clone();
+		ret = &((*scheduleQueue->begin())->getReceiveTime());
 	this->releaseScheduleQueueLock(threadID);
 	return (ret);
 }
@@ -331,18 +331,18 @@ bool DTTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) {
 	unsigned int objId = receivedEvent->getReceiver().getSimulationObjectID();
 	this->getunProcessedLock(threadId, objId);
 	unProcessedQueue[objId]->insert(receivedEvent);
-	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
-			<< " ) " << mySimulationManager->getObjectHandle(
-			receivedEvent->getReceiver())->getName()
-			<< " has received an Event ::: " << receivedEvent->getReceiveTime()
-			<< " - " << threadId << "\n";
+//	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
+//			<< " ) " << mySimulationManager->getObjectHandle(
+//			receivedEvent->getReceiver())->getName()
+//			<< " has received an Event ::: " << receivedEvent->getReceiveTime()
+//			<< " - " << threadId << "\n";
 	multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator itee;
-	multisetIterator[threadId] = unProcessedQueue[objId]->begin();
+	itee= unProcessedQueue[objId]->begin();
 	this->releaseunProcessedLock(threadId, objId);
 	// The event was just inserted at the beginning, so update the Schedule Queue
 	this->getScheduleQueueLock(threadId);
 	if (!this->isObjectScheduled(objId)) {
-		if (receivedEvent == *(multisetIterator[threadId])) {
+		if (receivedEvent == *(itee)) {
 			// Do not erase the first time.
 			if (lowestObjectPosition[objId] != scheduleQueue->end()) {
 				scheduleQueue->erase(lowestObjectPosition[objId]);
@@ -463,8 +463,8 @@ void DTTimeWarpMultiSet::fossilCollect(SimulationObject *simObj,
 	while (vectorIterator[threadId] != processedQueue[objId]->end()
 			&& (*(vectorIterator[threadId]))->getReceiveTime()
 					< fossilCollectTime) {
-		//object->reclaimEvent(*(vectorIterator[threadId]));
-		delete *(vectorIterator[threadId]);//Replace this by a reclaim function from object
+		simObj->reclaimEvent(*(vectorIterator[threadId]));
+		//delete *(vectorIterator[threadId]);//Replace this by a reclaim function from object
 		vectorIterator[threadId]++;
 	}
 	processedQueue[objId]->erase(processedQueue[objId]->begin(),
@@ -479,8 +479,8 @@ void DTTimeWarpMultiSet::fossilCollect(SimulationObject *simObj,
 			const Event *eventToReclaim = *(vectorIterator[threadId]);
 			vectorIterator[threadId] = removedEventQueue[objId]->erase(
 					vectorIterator[threadId]);
-			//object->reclaimEvent(eventToReclaim);
-			delete eventToReclaim;//Replace this by a reclaim function from object
+			simObj->reclaimEvent(eventToReclaim);
+		//	delete eventToReclaim;//Replace this by a reclaim function from object
 		} else {
 			vectorIterator[threadId]++;
 		}

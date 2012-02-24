@@ -4,11 +4,8 @@
 #define DTMATTERNGVTMANAGER_H_
 
 #include "MatternGVTManager.h"
-#include "GVTManagerImplementationBase.h"
+class MatternGVTMessage;
 class DTTimeWarpSimulationManager;
-class MatternObjectRecord;
-class SchedulingManager;
-class CommunicationManager;
 
 /** The DTMatternGVTManager class.
 
@@ -18,13 +15,25 @@ class CommunicationManager;
 class DTMatternGVTManager: public MatternGVTManager {
 public:
 	/// Default Constructor
-	DTMatternGVTManager(TimeWarpSimulationManager *simMgr, unsigned int period);
+	DTMatternGVTManager(DTTimeWarpSimulationManager *simMgr,
+			unsigned int period);
 	/// Special Constructor for defining objectRecord elsewhere when using this manager as a base class
-	DTMatternGVTManager(TimeWarpSimulationManager *simMgr, unsigned int period,
-			bool objectRecordDefined);
+	DTMatternGVTManager(DTTimeWarpSimulationManager *simMgr,
+			unsigned int period, bool objectRecordDefined);
 	/// Destructor
 	~DTMatternGVTManager();
 
 	const VTime *getEarliestEventTime(const VTime *lowEventTime);
+	void receiveKernelMessage(KernelMessage *msg);
+
+	void sendPendingGVTToken();
+private:
+	const MatternGVTMessage* pendingGVTMessage;
+
+	const VTime* GVTMessageLastScheduledEventTime;
+
+	const VTime* GVTMessageMinimumTimeStamp;
+
+	DTTimeWarpSimulationManager* mySimulationManager;
 };
 #endif /* DTMATTERNGVTMANAGER_H_ */

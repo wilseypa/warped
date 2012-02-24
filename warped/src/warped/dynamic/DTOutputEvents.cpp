@@ -17,6 +17,10 @@ DTOutputEvents::DTOutputEvents(DTTimeWarpSimulationManager *simMgr) :
 }
 
 DTOutputEvents::~DTOutputEvents() {
+
+    delete localQueueLock;
+    delete remoteQueueLock;
+    delete removedListLock;
 }
 
 vector<const Event *> *

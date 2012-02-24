@@ -34,7 +34,7 @@ public:
 		return myStateManager;
 	}
 
-	 /* Return a handle to the Fossil Collection manager.
+	/* Return a handle to the Fossil Collection manager.
 
 	 @return A handle to the Fossil Collection manager.
 	 */
@@ -109,14 +109,15 @@ public:
 
 	void resetComputeLVTStatus();
 
-	void updateLVTfromArray();
+	void setComputeLVTStatus();
+
+	bool updateLVTfromArray();
 
 	const VTime* getLVT();
 
 protected:
 	/**@name Protected Class Methods of DTTimeWarpSimulationManager. */
 	//@{
-
 	//Main simulation function
 	void simulate(const VTime& simulateUntil);
 
@@ -159,11 +160,11 @@ public:
 			int fossilCollectTime);
 
 	/// Used in optimistic fossil collection to checkpoint the file queues.
-	void saveFileQueuesCheckpoint(std::ofstream* outFile,
-			const ObjectID &objId, unsigned int saveTime);
+	void saveFileQueuesCheckpoint(std::ofstream* outFile, const ObjectID &objId,
+			unsigned int saveTime);
 
-	void restoreFileQueues(ifstream* inFile,
-			const ObjectID &objId, unsigned int restoreTime);
+	void restoreFileQueues(ifstream* inFile, const ObjectID &objId,
+			unsigned int restoreTime);
 
 	void handleEventReceiver(SimulationObject *currObject, const Event *event,
 			int threadID);
@@ -180,6 +181,15 @@ public:
 		inRecovery = inRec;
 	}
 
+	bool initiateLocalGVT();
+
+	bool setGVTTokenPending();
+	bool resetGVTTokenPending();
+	/** call fossil collect on the state, output, input queue, and file queues.
+
+	 @param fossilCollectTime time upto which fossil collect is performed.
+	 */
+	virtual void fossilCollect(const VTime &fossilCollectTime);
 protected:
 
 	void cancelEventsReceiver(SimulationObject *curObject,
@@ -224,18 +234,12 @@ protected:
 
 	/// call coastforward if an infrequent state saving strategy is used
 	void
-			coastForward(const VTime &coastForwardFromTime,
-					const VTime &rollbackToTime, SimulationObject *object,
-					int threadID);
+	coastForward(const VTime &coastForwardFromTime, const VTime &rollbackToTime,
+			SimulationObject *object, int threadID);
 
 	/*@param msg The message to receive.
 	 */
 	virtual void receiveKernelMessage(KernelMessage *msg);
-	/** call fossil collect on the state, output, input queue, and file queues.
-
-	 @param fossilCollectTime time upto which fossil collect is performed.
-	 */
-	virtual void fossilCollect(const VTime &fossilCollectTime);
 
 	/// initialize the simulation objects before starting the simulation.
 	void initialize();
@@ -299,7 +303,7 @@ private:
 	class thread_args {
 	public:
 		thread_args(DTTimeWarpSimulationManager *simManager, int threadIndex) :
-			simManager(simManager), threadIndex(threadIndex) {
+				simManager(simManager), threadIndex(threadIndex) {
 		}
 		DTTimeWarpSimulationManager *simManager;
 		unsigned int threadIndex;
@@ -328,6 +332,8 @@ private:
 	bool** computeLVTStatus;
 
 	const VTime* LVT;
+
+	bool GVTTokenPending;
 };
 
 #endif /* DTTIMEWARPSIMULATIONMANAGER_H_ */
