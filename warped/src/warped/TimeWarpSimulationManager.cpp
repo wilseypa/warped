@@ -666,9 +666,9 @@ void TimeWarpSimulationManager::cancelRemoteEvents(
 	}
 
 	// The negative events are no longer needed so reclaim them now.
-	for (int i = 0; i < eventsToCancel.size(); i++) {
-		delete eventsToCancel[i];
-	}
+//	for (int i = 0; i < eventsToCancel.size(); i++) {
+//		delete eventsToCancel[i];
+//	}
 }
 
 inline void TimeWarpSimulationManager::sendMessage(KernelMessage *msg,
