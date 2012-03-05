@@ -370,11 +370,6 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 					nextEvent->getReceiveTime());
 		}
 
-		// mimick fine-grain frequency control
-		//usleep(myDelayUs);
-    timespec ts = {0, myDelayUs};
-    nanosleep(&ts, NULL);
-
 		nextObject->setSimulationTime(nextEvent->getReceiveTime());
 		myStateManager->saveState(nextEvent->getReceiveTime(), nextObject);
 		nextObject->executeProcess();
@@ -507,6 +502,14 @@ TimeWarpSimulationManager::getEvent(SimulationObject *object) {
 	} else {
 		retval = myEventSet->getEvent(object);
 	}
+
+  if(retval)
+  {
+		// mimick fine-grain frequency control
+		//usleep(myDelayUs);
+    timespec ts = {0, myDelayUs};
+    nanosleep(&ts, NULL);
+  }
 
 	return retval;
 }

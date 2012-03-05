@@ -48,7 +48,8 @@ protected:
   virtual bool isMaster() { return myAmMaster; }
   void setMaster(bool m) { myAmMaster = m; }
 
-  virtual void writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq);
+  virtual void writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq, int hystlow,
+                           int hysthigh);
 
   int getPeriod() { return myMeasurementPeriod; }
 

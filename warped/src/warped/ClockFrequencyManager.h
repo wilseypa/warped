@@ -46,7 +46,7 @@ protected:
   /// Determines whether this manager initiates communication with other nodes
   virtual bool isMaster() = 0;
 
-  virtual void writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq) = 0;
+  virtual void writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq, int hystlow, int hysthigh) = 0;
 
   //@} // End of Protected Class Methods of GVTManager.
 };

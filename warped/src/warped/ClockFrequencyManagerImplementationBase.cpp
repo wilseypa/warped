@@ -48,14 +48,15 @@ ClockFrequencyManagerImplementationBase::checkMeasurementPeriod() {
 }
 
 void
-ClockFrequencyManagerImplementationBase::writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq) {
+ClockFrequencyManagerImplementationBase::writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq, int hystlow, int hysthigh) {
   utils::debug << "(" << node << ") rollbacks: ";
   ostringstream path;
   path << "cfmoutput_lp" << node << ".csv";
 
   ofstream fp(path.str().c_str(), ios_base::app);
   if(fp.is_open()) {
-    fp << currentRollbacks << "," << avgRollbacks << "," << freq << endl;
+    fp << currentRollbacks << "," << avgRollbacks << "," << freq << "," 
+       << hystlow << "," << hysthigh << endl;
     fp.close();
   }
 
@@ -74,7 +75,7 @@ ClockFrequencyManagerImplementationBase::configure(SimulationConfiguration &conf
   populateAvailableFrequencies();
   if(isMaster()) {
     for(int i=0; i < myNumSimulationManagers; ++i)
-      setCPUFrequency(i, myAvailableFreqs[0]);
+      setCPUFrequency(i, myAvailableFreqs[1]);
   }
 
   mySimulationManager->setDelayUs(getNominalDelay());

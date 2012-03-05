@@ -147,24 +147,45 @@ void
 CentralizedClockFrequencyManager::adjustFrequencies(vector<int>& d) {
   vector<int> freqs(myNumSimulationManagers, 1);
 
-//  so far haven't seen any help from checking the variance...
-  if(variance(myRollbackFilters) > 50000 && !myIsDummy) {
-//  if(!myIsDummy) {
-    vector<FIRFilter<int> >::iterator itmin = min_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
-    vector<FIRFilter<int> >::iterator itmax = max_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
-    freqs[itmin - myRollbackFilters.begin()] = 0;
-    freqs[itmax - myRollbackFilters.begin()] = 2;
+  int rollbacks = myRollbackFilters[mySimulationManagerID].getData();
+  int delay = getNominalDelay();
+  float min = myRollbackFilters[0].getData();
+  float max = min;
+  float avg = (float)min / (float)myNumSimulationManagers;
+  for(int i = 1; i < myNumSimulationManagers; ++i) {
+    float dat = myRollbackFilters[i].getData();
+    min = MIN_FUNC(min,dat);
+    max = MAX_FUNC(max,dat);
+    avg += (float)dat / (float)myNumSimulationManagers;
   }
 
-  for(int i = 0; i < myRollbackFilters.size(); ++i) {
-    writeCSVRow(i, myRollbackFilters[i].getData(), d[i], myAvailableFreqs[freqs[i]]);
-  }
+  float hyst = (max-min)*.1;
+  int hystlow = avg - hyst/2;
+  int hysthigh = hystlow + hyst;
 
-  for(int i = 0; i < myRollbackFilters.size(); ++i) {
-    if(freqs[i] != myLastFreqs[i] && !myIsDummy) {
-      setCPUFrequency(i, myAvailableFreqs[freqs[i]]);
-      myLastFreqs[i] = freqs[i];
+  //  if(!myIsDummy) {
+  //    vector<FIRFilter<int> >::iterator itmin = min_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
+  //    vector<FIRFilter<int> >::iterator itmax = max_element(myRollbackFilters.begin(), myRollbackFilters.end(), compfir());
+  //    freqs[itmin - myRollbackFilters.begin()] = 0;
+  //    freqs[itmax - myRollbackFilters.begin()] = 2;
+  //  }
+
+  if(!myIsDummy) {
+    for(int i = 0; i < myRollbackFilters.size(); ++i) {
+        if(myRollbackFilters[i].getData() < hystlow)
+          freqs[i] = 0;
+        else if(myRollbackFilters[i].getData() > hysthigh)
+          freqs[i] = 2;
+        else
+          freqs[i] = myLastFreqs[i];
+        if(freqs[i] != myLastFreqs[i])
+          setCPUFrequency(i, myAvailableFreqs[freqs[i]]);
+        myLastFreqs[i] = freqs[i];
     }
+  }
+
+  for(int i = 0; i < myRollbackFilters.size(); ++i) {
+    writeCSVRow(i, myRollbackFilters[i].getData(), d[i], myAvailableFreqs[freqs[i]], hystlow, hysthigh);
   }
 }
 
