@@ -36,8 +36,8 @@ TimeWarpSimulationManager::TimeWarpSimulationManager(
 			mySimulationManagerID(0), simulationCompleteFlag(false),
 			coastForwardTime(0), messageAggregation(false), myStateManager(0),
 			myGVTManager(0), myCommunicationManager(0), mySchedulingManager(0),
-			myOutputManager(0), myEventSet(0),
-			mySchedulingData(new SchedulingData()), myTerminationManager(0),
+			myOutputManager(0), myEventSet(0), mySchedulingData(
+					new SchedulingData()), myTerminationManager(0),
 			myApplication(initApplication), myFossilCollManager(0),
 			usingOneAntiMsg(false), usingOptFossilCollection(false),
 			inRecovery(false), numberOfRollbacks(0) {
@@ -234,9 +234,8 @@ TimeWarpSimulationManager::getSimulationObjectNames() {
 // of which is passed in as a parameter for a specific simulation
 // manager)
 
-void TimeWarpSimulationManager::registerSimulationObjectProxies(
-		const vector<string> *arrayOfObjectProxies,
-		unsigned int sourceSimulationManagerID,
+void TimeWarpSimulationManager::registerSimulationObjectProxies(const vector<
+		string> *arrayOfObjectProxies, unsigned int sourceSimulationManagerID,
 		unsigned int destSimulationManagerID) {
 	// allocate space of the second dimension of this 2-D array.
 	globalArrayOfSimObjIDs[destSimulationManagerID].resize(
@@ -363,7 +362,14 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 
 		nextObject->setSimulationTime(nextEvent->getReceiveTime());
 		myStateManager->saveState(nextEvent->getReceiveTime(), nextObject);
-		nextObject->executeProcess();
+
+		/* Moving the function nextObject->executeProcess() after the calculateGVT() function
+		 * of the SimulationManager with Id = 0. This is done to make LVT Calculation independent
+		 * of the lowest timestamp of all events in the lazy queues. For more details see Sanchit
+		 * Saxena's thesis.
+		 */
+
+		//	nextObject->executeProcess();
 
 		// Only the master sim manager starts the GVT calculation process.
 		// Fossil collection occurs when a new GVT value is set.
@@ -375,6 +381,8 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 				}
 			}
 		}
+
+		nextObject->executeProcess();
 
 		// Clear any event from the lazy cancel queues that have lower timestamps than the
 		// next event.
@@ -569,8 +577,8 @@ void TimeWarpSimulationManager::handleRemoteEvent(const Event *event) {
 	}
 }
 
-void TimeWarpSimulationManager::cancelLocalEvents(
-		const vector<const NegativeEvent *> &eventsToCancel) {
+void TimeWarpSimulationManager::cancelLocalEvents(const vector<
+		const NegativeEvent *> &eventsToCancel) {
 	const NegativeEvent *curEvent = NULL;
 	const VTime *lowTime = &(eventsToCancel[0]->getReceiveTime());
 
@@ -594,8 +602,8 @@ void TimeWarpSimulationManager::cancelLocalEvents(
 	if (!inRecovery) {
 		for (vector<const NegativeEvent *>::const_iterator i =
 				eventsToCancel.begin(); i < eventsToCancel.end(); i++) {
-			utils::debug << mySimulationManagerID << " - Cancelling: "
-					<< *(*i) << "\n";
+			utils::debug << mySimulationManagerID << " - Cancelling: " << *(*i)
+					<< "\n";
 			ASSERT( (*i)->getReceiveTime() >= receiver->getSimulationTime() );
 
 			//If the event was found and the sender is remote, delete the negative event
@@ -608,8 +616,8 @@ void TimeWarpSimulationManager::cancelLocalEvents(
 	}
 }
 
-void TimeWarpSimulationManager::cancelRemoteEvents(
-		const vector<const NegativeEvent *> &eventsToCancel) {
+void TimeWarpSimulationManager::cancelRemoteEvents(const vector<
+		const NegativeEvent *> &eventsToCancel) {
 	ASSERT( eventsToCancel.size() > 0 );
 	const ObjectID &receiverId = eventsToCancel[0]->getReceiver();
 	const SimulationObject *forObject = getObjectHandle(receiverId);
@@ -666,9 +674,9 @@ void TimeWarpSimulationManager::cancelRemoteEvents(
 	}
 
 	// The negative events are no longer needed so reclaim them now.
-//	for (int i = 0; i < eventsToCancel.size(); i++) {
-//		delete eventsToCancel[i];
-//	}
+	//	for (int i = 0; i < eventsToCancel.size(); i++) {
+	//		delete eventsToCancel[i];
+	//	}
 }
 
 inline void TimeWarpSimulationManager::sendMessage(KernelMessage *msg,
@@ -704,10 +712,9 @@ void TimeWarpSimulationManager::cancelEvents(
 				!= eventsToCancelNonConst.end(); it++) {
 			antiMsgAlreadyAdded.insert((*it)->getReceiver());
 			if (antiMsgAlreadyAdded.size() > oldSize) {
-				negEvents.push_back(
-						new NegativeEvent((*it)->getSendTime(),
-								(*it)->getReceiveTime(), (*it)->getSender(),
-								(*it)->getReceiver(), (*it)->getEventId()));
+				negEvents.push_back(new NegativeEvent((*it)->getSendTime(),
+						(*it)->getReceiveTime(), (*it)->getSender(),
+						(*it)->getReceiver(), (*it)->getEventId()));
 
 				oldSize = antiMsgAlreadyAdded.size();
 			}
@@ -734,27 +741,25 @@ void TimeWarpSimulationManager::cancelEvents(
 
 		for (vector<const Event *>::const_iterator cancelEventIt =
 				eventsToCancel.begin(); cancelEventIt != eventsToCancel.end(); cancelEventIt++) {
-			cancelObjectIt = cancelEventObjects.find(
-					getObjectHandle((*cancelEventIt)->getReceiver()));
+			cancelObjectIt = cancelEventObjects.find(getObjectHandle(
+					(*cancelEventIt)->getReceiver()));
 			if (cancelObjectIt != cancelEventObjects.end()) {
-				(*cancelObjectIt).second.push_back(
-						new NegativeEvent((*cancelEventIt)->getSendTime(),
-								(*cancelEventIt)->getReceiveTime(),
-								(*cancelEventIt)->getSender(),
-								(*cancelEventIt)->getReceiver(),
-								(*cancelEventIt)->getEventId()));
+				(*cancelObjectIt).second.push_back(new NegativeEvent(
+						(*cancelEventIt)->getSendTime(),
+						(*cancelEventIt)->getReceiveTime(),
+						(*cancelEventIt)->getSender(),
+						(*cancelEventIt)->getReceiver(),
+						(*cancelEventIt)->getEventId()));
 			} else {
 				vector<const NegativeEvent *> evntVec;
-				evntVec.push_back(
-						new NegativeEvent((*cancelEventIt)->getSendTime(),
-								(*cancelEventIt)->getReceiveTime(),
-								(*cancelEventIt)->getSender(),
-								(*cancelEventIt)->getReceiver(),
-								(*cancelEventIt)->getEventId()));
-				cancelEventObjects.insert(
-						std::make_pair(
-								getObjectHandle((*cancelEventIt)->getReceiver()),
-								evntVec));
+				evntVec.push_back(new NegativeEvent(
+						(*cancelEventIt)->getSendTime(),
+						(*cancelEventIt)->getReceiveTime(),
+						(*cancelEventIt)->getSender(),
+						(*cancelEventIt)->getReceiver(),
+						(*cancelEventIt)->getEventId()));
+				cancelEventObjects.insert(std::make_pair(getObjectHandle(
+						(*cancelEventIt)->getReceiver()), evntVec));
 			}
 		}
 
@@ -1276,8 +1281,8 @@ void TimeWarpSimulationManager::configure(
 	// messages and wait for all initialization messages to arrive
 	// note: we dont need an initialization message from ourself; and
 	// hence the n - 1.
-	myCommunicationManager->waitForInitialization(
-			numberOfSimulationManagers - 1);
+	myCommunicationManager->waitForInitialization(numberOfSimulationManagers
+			- 1);
 
 }
 
