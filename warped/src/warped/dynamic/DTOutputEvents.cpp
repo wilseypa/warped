@@ -5,7 +5,7 @@
 #include "Serializable.h"
 #include "SerializedInstance.h"
 #include "SetObject.h"
-#include "OptFossilCollManager.h"
+#include "DTOptFossilCollManager.h"
 #include <algorithm>
 
 DTOutputEvents::DTOutputEvents(DTTimeWarpSimulationManager *simMgr) :
@@ -17,10 +17,9 @@ DTOutputEvents::DTOutputEvents(DTTimeWarpSimulationManager *simMgr) :
 }
 
 DTOutputEvents::~DTOutputEvents() {
-
-    delete localQueueLock;
-    delete remoteQueueLock;
-    delete removedListLock;
+	delete localQueueLock;
+	delete remoteQueueLock;
+	delete removedListLock;
 }
 
 vector<const Event *> *
@@ -45,7 +44,7 @@ DTOutputEvents::getEventsSentAtOrAfter(const VTime &searchTime, int threadID) {
 							<< mySimulationManager->getSimulationManagerID()
 							<< " - Cata Rollback in outputevents: " << recvTime
 							<< ", " << lastTime << std::endl;
-					mySimulationManager->getOptFossilCollManagerNew()->startRecovery(
+					mySimulationManager->getOptFossilCollManagerNew()->setRecovery(
 							(*out)->getReceiverID(),
 							(*out)->getMainTime().getApproximateIntTime());
 					break;
@@ -98,9 +97,32 @@ DTOutputEvents::getEventsSentAtOrAfterAndRemove(const VTime &searchTime,
 
 		while (out != outputEventsLocal.begin() && (*out)->getMainTime()
 				>= searchTime) {
-			retval->push_back((*out)->getElement());
-			delete (*out);
-			out = outputEventsLocal.erase(out);
+			if (mySimulationManager->getOptFossilColl()) {
+				int
+						lastTime =
+								mySimulationManager->getOptFossilCollManagerNew()->getLastCollectTime(
+										(*out)->getReceiverID());
+				int recvTime =
+						(*out)->getSecondaryTime().getApproximateIntTime();
+				if (recvTime <= lastTime) {
+					utils::debug
+							<< mySimulationManager->getSimulationManagerID()
+							<< " - Cata Rollback in outputevents: " << recvTime
+							<< ", " << lastTime << std::endl;
+					mySimulationManager->getOptFossilCollManagerNew()->setRecovery(
+							(*out)->getReceiverID(),
+							(*out)->getMainTime().getApproximateIntTime());
+					break;
+				} else {
+					retval->push_back((*out)->getElement());
+					delete (*out);
+					out = outputEventsLocal.erase(out);
+				}
+			} else {
+				retval->push_back((*out)->getElement());
+				delete (*out);
+				out = outputEventsLocal.erase(out);
+			}
 			out--;
 		}
 
@@ -345,7 +367,6 @@ void DTOutputEvents::saveOutputCheckpoint(ofstream* outFile,
 		if ((*outRem)->getSendTime().getApproximateIntTime() < saveTime
 				&& (*outRem)->getReceiveTime().getApproximateIntTime()
 						>= saveTime) {
-
 			toWrite = new SerializedInstance((*outRem)->getDataType());
 			(*outRem)->serialize(toWrite);
 			charPtr = &toWrite->getData()[0];
@@ -358,14 +379,12 @@ void DTOutputEvents::saveOutputCheckpoint(ofstream* outFile,
 		outRem++;
 	}
 	this->releaseRemoteLock(threadID);
-
 	this->getLocalLock(threadID);
 	vector<SetObject<Event>*>::iterator outLoc = outputEventsLocal.begin();
 	while (outLoc != outputEventsLocal.end()) {
 		if ((*outLoc)->getMainTime().getApproximateIntTime() < saveTime
 				&& (*outLoc)->getSecondaryTime().getApproximateIntTime()
 						>= saveTime) {
-
 			int
 					lastTime =
 							mySimulationManager->getOptFossilCollManagerNew()->getLastCollectTime(
@@ -376,7 +395,7 @@ void DTOutputEvents::saveOutputCheckpoint(ofstream* outFile,
 				utils::debug << mySimulationManager->getSimulationManagerID()
 						<< " - Cata Rollback in DTOutputEvents::checkpoint: "
 						<< recvTime << ", " << lastTime << std::endl;
-				mySimulationManager->getOptFossilCollManagerNew()->startRecovery(
+				mySimulationManager->getOptFossilCollManagerNew()->setRecovery(
 						(*outLoc)->getReceiverID(),
 						(*outLoc)->getMainTime().getApproximateIntTime());
 				break;

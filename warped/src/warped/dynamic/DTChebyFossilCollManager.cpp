@@ -89,6 +89,6 @@ DTChebyFossilCollManager::sampleRollback(SimulationObject *object, const VTime &
       << " - Catastrophic Rollback: Last collection time: " << lastCollectTimes[objId]
       << ", Rollback Time: " << rollbackTime << ", Starting Recovery." << endl;
 
-    startRecovery(objId, rollbackTime);
+    setRecovery(objId, rollbackTime);
   }
 }

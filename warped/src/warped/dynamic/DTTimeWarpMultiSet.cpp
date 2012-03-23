@@ -679,7 +679,7 @@ void DTTimeWarpMultiSet::ofcPurge(int threadId) {
 		}
 		this->releaseunProcessedLock(threadId, i);
 		this->getScheduleQueueLock(threadId);
-		cout << " ofCPurge is called" << endl;
+		// cout << " ofCPurge is called" << endl;
 		lowestObjectPosition[i] = scheduleQueue->end();
 		this->releaseScheduleQueueLock(threadId);
 		//	insertObjPos[i] = unprocessedObjEvents[i]->end();
@@ -748,4 +748,16 @@ const VTime* DTTimeWarpMultiSet::getMinEventTime(unsigned int threadId,
 	}
 	releaseunProcessedLock(threadId, objId);
 	return ret;
+}
+
+void DTTimeWarpMultiSet::releaseObjectLocksRecovery() {
+	for (int objNum = 0; objNum
+			< mySimulationManager->getNumberOfSimulationObjects(); objNum++) {
+		if (objectStatusLock[objNum]->isLocked()) {
+			objectStatusLock[objNum]->releaseLock(
+					objectStatusLock[objNum]->whoHasLock());
+			utils::debug << "Releasing Object " << objNum
+					<< " during recovery." << endl;
+		}
+	}
 }

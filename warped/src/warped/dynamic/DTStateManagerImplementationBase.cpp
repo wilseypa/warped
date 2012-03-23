@@ -87,6 +87,7 @@ DTStateManagerImplementationBase::restoreState(const VTime &rollbackTime,
 		// There are no states to be restored. If using optimistic fossil collection, rollback to a saved
 		// checkpoint. This should never happen when not using optimistic fossil collection, so it will
 		// result in a fatal error.
+		this->releaseStateQueueLock(threadID, objId);
 		if (mySimulationManager->getOptFossilColl()) {
 			if (!mySimulationManager->getRecoveringFromCheckpoint()) {
 				utils::debug << mySimulationManager->getSimulationManagerID()
@@ -96,7 +97,7 @@ DTStateManagerImplementationBase::restoreState(const VTime &rollbackTime,
 						<< ": Current Simulation Time is "
 						<< object->getSimulationTime() << endl;
 
-				mySimulationManager->getOptFossilCollManagerNew()->startRecovery(
+				mySimulationManager->getOptFossilCollManagerNew()->setRecovery(
 						objId, rollbackTime.getApproximateIntTime());
 			}
 		} else {
