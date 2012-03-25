@@ -115,7 +115,7 @@ DefaultTimeWarpEventSet::fossilCollect( SimulationObject *object, int collectTim
 void
 DefaultTimeWarpEventSet::rollback( SimulationObject *object,
 				   const VTime &rollbackTime ){
-  getEventContainer( object->getObjectID() ).rollback( rollbackTime );
+  getEventContainer( object->getObjectID() ).rollback( rollbackTime, object );
 }
 
 bool

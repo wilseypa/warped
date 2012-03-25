@@ -123,10 +123,15 @@ bool DefaultTimeWarpEventContainer::handleAntiMessage(SimulationObject *reclaime
   return foundMatch;
 }
 
-void DefaultTimeWarpEventContainer::rollback(const VTime &rollbackTime) {
+void DefaultTimeWarpEventContainer::rollback(const VTime &rollbackTime,
+                                             SimulationObject* o/*=NULL*/) {
   vector<const Event *>::iterator newEnd = processedEvents.begin();
-  while(newEnd != processedEvents.end() && (*newEnd)->getReceiveTime() < rollbackTime){
-    newEnd++;
+  vector<const Event *>::iterator it = newEnd;
+  for(; it != processedEvents.end(); ++it){
+    if((*it)->getReceiveTime() < rollbackTime)
+      newEnd++;
+    else if(o)
+      (*it)->subtractEffectiveWork(o);
   }
 
   unprocessedEvents.insert(unprocessedEvents.end(), newEnd, processedEvents.end());

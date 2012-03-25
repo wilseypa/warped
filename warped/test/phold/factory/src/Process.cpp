@@ -94,6 +94,8 @@ Process::executeProcess(){
          newRequest->eventNumber = recvEvent->eventNumber;
 
          computationGrain();
+         addEffectiveWork(compGrain);
+         recvEvent->setWork(compGrain);
 
          receiver->receiveEvent(newRequest);
          myState->eventSent();

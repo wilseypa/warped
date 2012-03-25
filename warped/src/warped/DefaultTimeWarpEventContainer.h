@@ -73,7 +73,7 @@ class DefaultTimeWarpEventContainer {
 
        @param VTime The rollback time.
     */
-    void rollback( const VTime & );
+    void rollback( const VTime &, SimulationObject* o = NULL  );
 
     /**
        For debugging purposes.

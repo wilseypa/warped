@@ -59,7 +59,8 @@ DistributedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 
   if(!(isMaster() && myRound == 0)) {
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-    CFRollbackVectorMessage* newMsg = new CFRollbackVectorMessage(mySimulationManagerID, dest, myNumSimulationManagers);
+    CFRollbackVectorMessage* newMsg = new CFRollbackVectorMessage(
+                mySimulationManagerID, dest, myNumSimulationManagers);
     newMsg->setData(dat);
     myCommunicationManager->sendMessage(newMsg, dest);
   }
@@ -136,6 +137,10 @@ DistributedClockFrequencyManager::adjustFrequency(vector<int>& rb) {
   }
 
   mySimulationManager->setDelayUs(myDelay);
+
+  cout << "effective utilization: " << mySimulationManager->effectiveUtilization()
+          << endl;
+
   writeCSVRow(mySimulationManagerID, rollbacks, rb[mySimulationManagerID], myDelay, hystlow, hysthigh);
   //writeCSVRow(mySimulationManagerID, rollbacks, rb[mySimulationManagerID], myDelay);
 }

@@ -320,6 +320,20 @@ void TimeWarpSimulationManager::restoreFileQueues(ifstream* inFile,
 	}
 }
 
+double TimeWarpSimulationManager::effectiveUtilization() {
+    vector<SimulationObject*> *objs = getElementVector(localArrayOfSimObjPtrs);
+    vector<SimulationObject*>::iterator it = objs->begin();
+    double effectiveWork = 0;
+    double totalWork = 0;
+    for (; it != objs->end(); ++it) {
+        SimulationObject* o = *it;
+        effectiveWork += o->getEffectiveWork();
+        totalWork += o->getTotalWork();
+        o->resetEffectiveWork();
+    }
+    return effectiveWork / totalWork;
+}
+
 bool TimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
 	bool retval = false;
 	if (myGVTManager->getGVT() >= simulateUntil) {
@@ -430,53 +444,54 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 }
 
 void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
-	stopwatch.start();
+    stopwatch.start();
 
-  ostringstream str1, str2;
-  str1 << "rollbacks_lp" << mySimulationManagerID << ".csv";
-  str2 << "cfmoutput_lp" << mySimulationManagerID << ".csv";
-  ofstream file1(str1.str().c_str(), ios_base::app);
-  ofstream file2(str2.str().c_str(), ios_base::app);
-  if(file1.is_open() && file2.is_open()) {
+    ostringstream str1, str2;
+    str1 << "rollbacks_lp" << mySimulationManagerID << ".csv";
+    str2 << "cfmoutput_lp" << mySimulationManagerID << ".csv";
+    ofstream file1(str1.str().c_str(), ios_base::app);
+    ofstream file2(str2.str().c_str(), ios_base::app);
+    if(file1.is_open() && file2.is_open()) {
     file1 << " -simulateUntil " << simulateUntil << endl;
     file2 << " -simulateUntil " << simulateUntil << endl;
     file1.close();
     file2.close();
-  }
+    }
 
-	cout << "SimulationManager(" << mySimulationManagerID
-			<< "): Starting simulation - End time: " << simulateUntil << ")"
-			<< endl;
 
-	while (!simulationComplete(simulateUntil)) {
-		getMessages();
-		while (inRecovery) {
-			getMessages();
-		}
+    cout << "SimulationManager(" << mySimulationManagerID
+                    << "): Starting simulation - End time: " << simulateUntil << ")"
+                    << endl;
 
-		ASSERT(mySchedulingManager != NULL);
-		if (executeObjects(simulateUntil)) {
-			myTerminationManager->setStatusActive();
-		} else if (getNumberOfSimulationManagers() == 1) {
-			dynamic_cast<SingleTerminationManager*> (myTerminationManager)->simulationComplete();
-		} else {
-			myTerminationManager->setStatusPassive();
-		}
-	}
-	stopwatch.stop();
+    while (!simulationComplete(simulateUntil)) {
+            getMessages();
+            while (inRecovery) {
+                    getMessages();
+            }
 
-	cout << "(" << getSimulationManagerID() << ") Simulation complete ("
-			<< stopwatch.elapsed() << " secs), Number of Rollbacks: ("
-			<< numberOfRollbacks << ")" << endl;
+            ASSERT(mySchedulingManager != NULL);
+            if (executeObjects(simulateUntil)) {
+                    myTerminationManager->setStatusActive();
+            } else if (getNumberOfSimulationManagers() == 1) {
+                    dynamic_cast<SingleTerminationManager*> (myTerminationManager)->simulationComplete();
+            } else {
+                    myTerminationManager->setStatusPassive();
+            }
+    }
+    stopwatch.stop();
 
-  ofstream file3(str1.str().c_str(), ios_base::app);
-  ofstream file4(str2.str().c_str(), ios_base::app);
-  if(file3.is_open() && file4.is_open()) {
+    cout << "(" << getSimulationManagerID() << ") Simulation complete ("
+                    << stopwatch.elapsed() << " secs), Number of Rollbacks: ("
+                    << numberOfRollbacks << ")" << endl;
+
+    ofstream file3(str1.str().c_str(), ios_base::app);
+    ofstream file4(str2.str().c_str(), ios_base::app);
+    if(file3.is_open() && file4.is_open()) {
     file3 << stopwatch.elapsed() << endl;
     file4 << stopwatch.elapsed() << endl;
     file3.close();
     file4.close();
-  }
+    }
 
 
 	// This is commented out by default. It is used along with the testParallelWarped script
@@ -825,13 +840,13 @@ void TimeWarpSimulationManager::rollback(SimulationObject *object,
 			<< " rollback from " << object->getSimulationTime() << " to "
 			<< rollbackTime << endl;
 
-  ostringstream str;
-  str << "rollbacks_lp" << mySimulationManagerID << ".csv";
-  ofstream file(str.str().c_str(), ios_base::app);
-  if(file.is_open()) {
-    file << (long)(1000*stopwatch.elapsed()) << endl;
-    file.close();
-  }
+    ostringstream str;
+    str << "rollbacks_lp" << mySimulationManagerID << ".csv";
+    ofstream file(str.str().c_str(), ios_base::app);
+    if(file.is_open()) {
+      file << (long)(1000*stopwatch.elapsed()) << endl;
+      file.close();
+    }
 
 	if (rollbackTime < myGVTManager->getGVT()) {
 		cerr << object->getName() << " Rollback beyond the Global Virtual Time"
