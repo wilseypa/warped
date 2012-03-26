@@ -2,7 +2,7 @@
 
 #include <utils/Debug.h>
 #include "warped.h"
-#include "DistributedClockFrequencyManager.h"
+#include "DecentralizedClockFrequencyManager.h"
 #include "TimeWarpSimulationManager.h"
 #include "CFRollbackVectorMessage.h"
 #include "CommunicationManager.h"
@@ -14,7 +14,7 @@ struct compfir {
 	}
 };
 
-DistributedClockFrequencyManager::DistributedClockFrequencyManager(TimeWarpSimulationManager* simMgr,
+DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr,
     int measurementPeriod, int numCPUs, int firsize, bool dummy)
   :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, numCPUs, firsize, dummy)
   ,myNominalDelay(5 * 1000)
@@ -23,21 +23,22 @@ DistributedClockFrequencyManager::DistributedClockFrequencyManager(TimeWarpSimul
 {}
 
 void
-DistributedClockFrequencyManager::poll() {
+DecentralizedClockFrequencyManager::poll() {
   if(checkMeasurementPeriod()) {
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
     CFRollbackVectorMessage* msg = new CFRollbackVectorMessage(mySimulationManagerID, dest, myNumSimulationManagers);
+    cout << "beginning measurement" << endl;
     myCommunicationManager->sendMessage(msg, dest);
   }
 }
 
 void
-DistributedClockFrequencyManager::registerWithCommunicationManager() {
+DecentralizedClockFrequencyManager::registerWithCommunicationManager() {
   myCommunicationManager->registerMessageType(CFRollbackVectorMessage::dataType(), this);
 }
 
 void
-DistributedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
+DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   myRound++;
 
   CFRollbackVectorMessage* msg = dynamic_cast<CFRollbackVectorMessage*>(kMsg);
@@ -64,6 +65,8 @@ DistributedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
     newMsg->setData(dat);
     myCommunicationManager->sendMessage(newMsg, dest);
   }
+  else
+    cout << "ending measurement" << endl;
 
   delete kMsg;
 }
@@ -78,7 +81,7 @@ struct Rollback {
 
 
 void
-DistributedClockFrequencyManager::adjustFrequency(vector<int>& rb) {
+DecentralizedClockFrequencyManager::adjustFrequency(vector<int>& rb) {
   /*
   vector<Rollback> tmp(4);
   tmp[0].cpu = 0;
@@ -138,18 +141,15 @@ DistributedClockFrequencyManager::adjustFrequency(vector<int>& rb) {
 
   mySimulationManager->setDelayUs(myDelay);
 
-  cout << "effective utilization: " << mySimulationManager->effectiveUtilization()
-          << endl;
-
   writeCSVRow(mySimulationManagerID, rollbacks, rb[mySimulationManagerID], myDelay, hystlow, hysthigh);
   //writeCSVRow(mySimulationManagerID, rollbacks, rb[mySimulationManagerID], myDelay);
 }
 
 string
-DistributedClockFrequencyManager::toString() {
+DecentralizedClockFrequencyManager::toString() {
   ostringstream out;
   if(myIsDummy)
     out << "Dummy ";
-  out << "Distributed CFM, Period = " << getPeriod() << ", FIR size = " << myFIRSize;
+  out << "Decentralized CFM, Period = " << getPeriod() << ", FIR size = " << myFIRSize;
   return out.str();
 }

@@ -65,7 +65,7 @@ WARPED_H_FILES = \
 	warped/DefaultTimeWarpEventContOneAntiMsg.h \
 	warped/IntVTime.h \
 	warped/DeserializerManager.h \
-	warped/DistributedClockFrequencyManager.h \
+	warped/DecentralizedClockFrequencyManager.h \
 	warped/Event.h \
 	warped/EventFunctors.h \
 	warped/EventId.h \
@@ -237,7 +237,7 @@ libwarped_la_SOURCES = \
 	warped/DefaultTimeWarpEventContainer.cpp \
 	warped/DefaultTimeWarpEventContOneAntiMsg.cpp \
 	warped/DeserializerManager.cpp \
-	warped/DistributedClockFrequencyManager.cpp \
+	warped/DecentralizedClockFrequencyManager.cpp \
 	warped/Event.cpp \
 	warped/EventMessage.cpp \
 	warped/EventMessageBase.cpp \

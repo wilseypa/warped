@@ -3,7 +3,7 @@
 #include <utils/Debug.h>
 #include "ClockFrequencyManagerFactory.h"
 #include "CentralizedClockFrequencyManager.h"
-#include "DistributedClockFrequencyManager.h"
+#include "DecentralizedClockFrequencyManager.h"
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
 
@@ -67,19 +67,19 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
 
     return new CentralizedClockFrequencyManager(mySimulationManager, p, confCPUs, firsize, dummy);
   }
-  else if(type == "DISTRIBUTED") {
+  else if(type == "DECENTRALIZED") {
 
     cout << "("
         << mySimulationManager->getSimulationManagerID()
-        << ") configured a Distributed Clock Frequency Manager with period = "
+        << ") configured a Decentralized Clock Frequency Manager with period = "
         << p << " and FIR size of " << firsize << " using " << confCPUs << " CPUs" << std::endl;
 
-    return new DistributedClockFrequencyManager(mySimulationManager, p, confCPUs, firsize, dummy);
+    return new DecentralizedClockFrequencyManager(mySimulationManager, p, confCPUs, firsize, dummy);
   }
   else {
     std::ostringstream err;
     cerr << "ClockFrequencyManager: invalid type '" << type << "'." << endl
-        << "Valid types are: None, Centralized, Distributed";
+        << "Valid types are: None, Centralized, Decentralized";
     mySimulationManager->shutdown(err.str());
   }
   return NULL;

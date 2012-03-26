@@ -55,8 +55,11 @@ ClockFrequencyManagerImplementationBase::writeCSVRow(int node, int avgRollbacks,
 
   ofstream fp(path.str().c_str(), ios_base::app);
   if(fp.is_open()) {
-    fp << currentRollbacks << "," << avgRollbacks << "," << freq << "," 
-       << hystlow << "," << hysthigh << endl;
+    //fp << currentRollbacks << "," << avgRollbacks << "," << freq << ","
+    //   << hystlow << "," << hysthigh << endl;
+
+    fp << currentRollbacks << "," << mySimulationManager->effectiveUtilization()
+       << endl;
     fp.close();
   }
 

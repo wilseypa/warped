@@ -7,7 +7,8 @@ void
 CFRollbackVectorMessage::serialize( SerializedInstance *serialized ) const {
   KernelMessage::serialize( serialized );
   serialized->addUnsigned(numSimulationManagers);
-  for (std::vector<int>::const_iterator it(myData.begin()); it != myData.end(); ++it) {
+  std::vector<int>::const_iterator it = myData.begin();
+  for (; it != myData.end(); ++it) {
     serialized->addInt(*it);
   }
 }
@@ -24,7 +25,8 @@ CFRollbackVectorMessage::deserialize( SerializedInstance *data ){
     d[i] = data->getInt();
   }
 
-  CFRollbackVectorMessage *retMsg = new CFRollbackVectorMessage(sender, dest, nSimMgrs);
+  CFRollbackVectorMessage *retMsg =
+          new CFRollbackVectorMessage(sender, dest, nSimMgrs);
   retMsg->setData(d);
   retMsg->setIncarnationNumber(incNum);
 

@@ -1,5 +1,5 @@
-#ifndef DISTRIBUTED_CLOCK_FREQUENCY_MANAGER_H
-#define DISTRIBUTED_CLOCK_FREQUENCY_MANAGER_H
+#ifndef DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H
+#define DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H
 
 // See copyright notice in file Copyright in the root directory of this archive.
 
@@ -12,17 +12,17 @@ class TimeWarpSimulationManager;
 
     Controls the frequencies of each process from a single simulation manager
 */
-class DistributedClockFrequencyManager : public ClockFrequencyManagerImplementationBase {
+class DecentralizedClockFrequencyManager : public ClockFrequencyManagerImplementationBase {
 public:
    
   /**@name Public Class Methods of CentralizedClockFrequencyManager. */
   //@{
 
   /// Constructor
-  DistributedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy);
+  DecentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy);
 
   /// Destructor
-  virtual ~DistributedClockFrequencyManager() {}
+  virtual ~DecentralizedClockFrequencyManager() {}
 
   /// to be called from the simulation manager's simulation loop
   virtual void poll();
@@ -47,4 +47,4 @@ private:
 
 };
 
-#endif //DISTRIBUTED_CLOCK_FREQUENCY_MANAGER_H
+#endif //DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H
