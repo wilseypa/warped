@@ -2,6 +2,7 @@
 #include "../include/RAIDFork.h"
 #include "../include/RAIDForkState.h"
 #include "IntVTime.h"
+#include "StopWatch.h"
 
 RAIDFork::RAIDFork(string &myName, int numOutputs, vector<string> outNames,
 		   int disks, int startDisk)  : 
@@ -39,10 +40,13 @@ RAIDFork::executeProcess() {
   IntVTime ldelayBkp(sendTime + timeDelay++);
   int receiveDisk;
 
+  StopWatch sw;
   while(true == haveMoreEvents()) {
     recvEvent = (RAIDRequest *) getEvent();
     
     if ( recvEvent != NULL ) {
+      sw.reset();
+      sw.start();
       myState = (RAIDForkState*) getState();
       newEvent = new RAIDRequest(sendTime, ldelay, this, this);
       *newEvent = *recvEvent; 
@@ -138,7 +142,14 @@ RAIDFork::executeProcess() {
 	  }// for (count = 0; count < newEvent->sizeRead; count++)
 	  delete newEvent; // Get rid of last unsent message
 	} // if (read)
-      } // if (sender == source) 
+      } // if (sender == source)
+
+      // get wall time to process event
+      sw.stop();
+      double elapsed = sw.elapsed();
+      recvEvent->setWork(elapsed);
+      addEffectiveWork(elapsed);
+
     } // End of if (event != null)
   } // End of while "have more events" loop
 } // End of executePRocess()

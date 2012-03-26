@@ -126,7 +126,7 @@ public:
   // based on reiher and jefferson (1990)
   // called when event is undone
   virtual void subtractEffectiveWork(SimulationObject* o) const {}
-  virtual void setWork(int) {}
+  virtual void setWork(double) {}
 
 private:
   // No longer using these for optimistic fossil collection.

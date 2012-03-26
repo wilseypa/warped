@@ -27,7 +27,7 @@ public:
   }
 
   void subtractEffectiveWork(SimulationObject* o) const { o->undoEffectiveWork(work); }
-  void setWork(int w) { work = w; }
+  void setWork(double w) { work = w; }
 
   //@} // End of Event Public Class Methods.
 
@@ -92,7 +92,7 @@ private:
 
   // for effective work estimator
   // reiher and jefferson (1990)
-  int work;
+  double work;
 
   //@} // End of Event Private Class Methods.
 };

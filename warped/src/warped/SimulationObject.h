@@ -320,13 +320,13 @@ public:
 
   // functions for effective work estimation
   // based on reiher and jefferson (1990)
-  void addEffectiveWork(int work) {
+  void addEffectiveWork(double work) {
       myEffectiveWork += work;
       myTotalWork += work;
   }
-  void undoEffectiveWork(int work) { myEffectiveWork -= work; }
-  int getEffectiveWork() { return myEffectiveWork; }
-  int getTotalWork() { return myTotalWork; }
+  void undoEffectiveWork(double work) { myEffectiveWork -= work; }
+  double getEffectiveWork() { return myEffectiveWork; }
+  double getTotalWork() { return myTotalWork; }
   void resetEffectiveWork() {
       myEffectiveWork = 0;
       myTotalWork = 0;
@@ -374,8 +374,8 @@ private:
 
   // functions for effective work estimation
   // based on reiher and jefferson (1990)
-  int myEffectiveWork;
-  int myTotalWork;
+  double myEffectiveWork;
+  double myTotalWork;
    
    //@} // End of Private Class Attributes of SimulationObject.
 };

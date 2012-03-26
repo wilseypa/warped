@@ -5,6 +5,7 @@
 #include "../include/RAIDDisk.h"
 #include "../include/RAIDDiskState.h"
 #include "IntVTime.h"
+#include "StopWatch.h"
 
 RAIDDisk::RAIDDisk(string &myName, DISK_TYPE theDisk) :
   objectName(myName) {
@@ -67,10 +68,13 @@ RAIDDisk::executeProcess() {
 
   myState = (RAIDDiskState *) getState();
 
+  StopWatch sw;
   while(true == haveMoreEvents()) {
     recvEvent = (RAIDRequest*) getEvent();
 
     if ( recvEvent != NULL ) {
+      sw.reset();
+      sw.start();
       SimulationObject *recvr = getObjectHandle( recvEvent->getSourceObject() );
 
       tmpEvent = new RAIDRequest(sendTime, sendTime+1, this, recvr);
@@ -85,22 +89,22 @@ RAIDDisk::executeProcess() {
       myState = (RAIDDiskState*) getState(); 
 
       if ( seekDist < 0) {
-	seekDist = abs(seekDist);
+        seekDist = abs(seekDist);
       }
       if ( seekDist != 0) {
-	a = (-10*minSeekTime + 15*avgSeekTime - 5*maxSeekTime)/(3*sqrt(numCylinders));
-	b = (7*minSeekTime - 15*avgSeekTime + 8*maxSeekTime)/(3*numCylinders);
-	c = minSeekTime;
-	if (a > 0 && b > 0) {
-	  seekTime = a*sqrt(seekDist -1) + b*(seekDist -1) + c;
-	}
-	else {
-	  cerr << "Disk Model parameters are not correct for model" << endl;
-	  seekTime = 0;
-	}
-      } 
+        a = (-10*minSeekTime + 15*avgSeekTime - 5*maxSeekTime)/(3*sqrt(numCylinders));
+        b = (7*minSeekTime - 15*avgSeekTime + 8*maxSeekTime)/(3*numCylinders);
+        c = minSeekTime;
+        if (a > 0 && b > 0) {
+          seekTime = a*sqrt(seekDist -1) + b*(seekDist -1) + c;
+        }
+        else {
+          cerr << "Disk Model parameters are not correct for model" << endl;
+          seekTime = 0;
+        }
+      }
       else {
-	seekTime = 0;
+        seekTime = 0;
       }
 
       recvTime = sendTime + int(seekTime + 0.5*revolutionTime);
@@ -118,6 +122,12 @@ RAIDDisk::executeProcess() {
 
       // Send event back to source.
       recvr->receiveEvent(newEvent);
+
+      // get wall time to process event
+      sw.stop();
+      double elapsed = sw.elapsed();
+      recvEvent->setWork(elapsed);
+      addEffectiveWork(elapsed);
     } // End of if (event != null)
   } // End of while "have more events" loop
 }
