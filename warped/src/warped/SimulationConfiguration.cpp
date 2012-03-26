@@ -67,7 +67,6 @@ public:
 
   bool getClockFreqManagerType(string& type) const;
   bool getClockFreqManagerPeriod(int& period) const;
-  bool getClockFreqManagerCPUs(int& numCPUs) const;
   bool getClockFreqManagerFIRSize(int& size) const;
   bool getClockFreqManagerDummy() const;
 
@@ -406,11 +405,6 @@ SimulationConfiguration::getClockFreqManagerType(string& type) const {
 bool
 SimulationConfiguration::getClockFreqManagerPeriod(int& period) const {
   return _impl->getClockFreqManagerPeriod(period);
-}
-
-bool
-SimulationConfiguration::getClockFreqManagerCPUs(int& numCPUs) const {
-  return _impl->getClockFreqManagerCPUs(numCPUs);
 }
 
 bool
@@ -1006,17 +1000,6 @@ SimulationConfiguration::Implementation::getClockFreqManagerPeriod(int& period) 
   if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) {
     if(cfmScope->findChoice("Period")) {
       period = cfmScope->getIntValue("Period");
-      return true;
-    }
-  }
-  return false;
-}
-
-bool
-SimulationConfiguration::Implementation::getClockFreqManagerCPUs(int& numCPUs) const {
-  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) {
-    if(cfmScope->findChoice("NumCPUs")) {
-      numCPUs = cfmScope->getIntValue("NumCPUs");
       return true;
     }
   }

@@ -15,8 +15,8 @@ struct compfir {
 };
 
 DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr,
-    int measurementPeriod, int numCPUs, int firsize, bool dummy)
-  :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, numCPUs, firsize, dummy)
+    int measurementPeriod, int firsize, bool dummy)
+  :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, firsize, dummy)
   ,myNominalDelay(5 * 1000)
   ,myDelayStep(3 * 1000)
   ,myDelay(myNominalDelay)

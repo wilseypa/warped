@@ -42,9 +42,6 @@ public:
   static const ClockFrequencyManagerFactory *instance();
    
   //@} // End of Public Class Methods of OutputManagerFactory.
-
-private:
-  static int CPUCount();
 };
 
 #endif //CLOCK_FREQUENCY_MANAGER_FACTORY_H

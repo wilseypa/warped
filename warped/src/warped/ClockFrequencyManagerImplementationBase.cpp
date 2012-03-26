@@ -9,12 +9,11 @@
 
 using namespace std;
 
-ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy)
+ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr, int measurementPeriod, int firsize, bool dummy)
   :mySimulationManager(simMgr)
   ,myCommunicationManager(simMgr->getCommunicationManager())
   ,mySimulationManagerID(simMgr->getSimulationManagerID())
   ,myNumSimulationManagers(simMgr->getNumberOfSimulationManagers())
-  ,myNumCPUs(numCPUs)
   ,myCPU(0)
   ,myFIRSize(firsize)
   ,myLastRollbacks(0)
@@ -68,11 +67,13 @@ ClockFrequencyManagerImplementationBase::writeCSVRow(int node, int avgRollbacks,
 } 
 
 void
-ClockFrequencyManagerImplementationBase::configure(SimulationConfiguration &configuration){
+ClockFrequencyManagerImplementationBase::configure(
+        SimulationConfiguration &configuration) {
   registerWithCommunicationManager();
   myCPU = sched_getcpu();
   if(myCPU != mySimulationManagerID)
-    cout << "WARNING: simulation manager id (" << mySimulationManagerID << ") differs from CPU id (" << myCPU << ")" << endl;
+    cout << "WARNING: simulation manager id (" << mySimulationManagerID
+         << ") differs from CPU id (" << myCPU << ")" << endl;
   setGovernorMode("userspace");
 
   populateAvailableFrequencies();
@@ -86,23 +87,19 @@ ClockFrequencyManagerImplementationBase::configure(SimulationConfiguration &conf
 
 void
 ClockFrequencyManagerImplementationBase::setGovernorMode(const char* governor) {
-  if(!isMaster()) {
-    return;
+  ostringstream path;
+  path << "/sys/devices/system/cpu/cpu" << myCPU
+       << "/cpufreq/scaling_governor";
+
+  ofstream fp(path.str().c_str());
+  if(fp.is_open()) {
+    fp << governor;
+    fp.close();
   }
-
-  for ( int i = 0; i < myNumCPUs; i++ ) {
-    ostringstream path;
-    path << "/sys/devices/system/cpu/cpu" << i << "/cpufreq/scaling_governor";
-
-    ofstream fp(path.str().c_str());
-    if(fp.is_open()) {
-      fp << governor;
-      fp.close();
-    }
-    else {
-      cerr << "Unable to set governor: " << path.str() << " does not exist" << endl;
-      abort();
-    }
+  else {
+    cerr << "Unable to set governor: " << path.str()
+         << " does not exist" << endl;
+    abort();
   }
 }
 
@@ -127,32 +124,19 @@ ClockFrequencyManagerImplementationBase::setCPUFrequency(int cpu_idx, int freq) 
 
 void
 ClockFrequencyManagerImplementationBase::populateAvailableFrequencies() {
-  for ( int i = 0; i < myNumCPUs; i++ ) {
-    ostringstream path;
-    path << "/sys/devices/system/cpu/cpu" << i << "/cpufreq/scaling_available_frequencies";
+  ostringstream path;
+  path << "/sys/devices/system/cpu/cpu" << myCPU
+       << "/cpufreq/scaling_available_frequencies";
 
-    ifstream fp(path.str().c_str());
-    int freq;
-    if(fp.is_open()) {
-      vector<int> f1;
-      vector<int> intersect;
-
-      while(fp >> freq)
-          f1.push_back(freq);
-
-      if(i == 0)
-        myAvailableFreqs = f1;
-
-      // should be the same for each cpu, but just in case
-      set_intersection(f1.begin(), f1.end(), myAvailableFreqs.begin(),
-          myAvailableFreqs.end(), back_inserter(intersect));
-      myAvailableFreqs = intersect;
-
-      fp.close();
-    } else {
-      cerr << "Unable to get available frequencies: " << path.str() << " does not exist" << endl;
-      abort();
-    }
+  ifstream fp(path.str().c_str());
+  int freq;
+  if(fp.is_open()) {
+    while(fp >> freq)
+      myAvailableFreqs.push_back(freq);
+    fp.close();
+  } else {
+    cerr << "Unable to get available frequencies: " << path.str() << " does not exist" << endl;
+    abort();
   }
 
   if(isMaster()) {

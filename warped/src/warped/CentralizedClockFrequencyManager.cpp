@@ -14,8 +14,8 @@ struct compfir {
 	}
 };
 
-CentralizedClockFrequencyManager::CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy)
-  :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, numCPUs, firsize, dummy)
+CentralizedClockFrequencyManager::CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int firsize, bool dummy)
+  :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, firsize, dummy)
   ,myLastFreqs(myNumSimulationManagers, 1)
   ,myStartedRound(false)
   ,myFirstTime(true)

@@ -22,7 +22,7 @@ public:
   //@{
 
   /// Constructor
-  ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy);
+  ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr, int measurementPeriod, int firsize, bool dummy);
 
   /// Destructor
   virtual ~ClockFrequencyManagerImplementationBase();
@@ -63,7 +63,6 @@ protected:
   CommunicationManager* myCommunicationManager;
   int mySimulationManagerID;
   int myNumSimulationManagers;
-  int myNumCPUs;
   int myCPU;
   int myFIRSize;
   int myLastRollbacks;

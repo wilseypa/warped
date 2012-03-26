@@ -19,7 +19,7 @@ public:
   //@{
 
   /// Constructor
-  DecentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int numCPUs, int firsize, bool dummy);
+  DecentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int firsize, bool dummy);
 
   /// Destructor
   virtual ~DecentralizedClockFrequencyManager() {}

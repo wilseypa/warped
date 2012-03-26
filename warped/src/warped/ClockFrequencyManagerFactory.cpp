@@ -26,21 +26,13 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
 
   string type;
   int p = 0;
-  int confCPUs = 0;
   int firsize = 16;
   configuration.getClockFreqManagerType(type);
   configuration.getClockFreqManagerPeriod(p);
-  configuration.getClockFreqManagerCPUs(confCPUs);
   configuration.getClockFreqManagerFIRSize(firsize);
   bool dummy = configuration.getClockFreqManagerDummy();
 
   if(type == "NONE") {
-    return NULL;
-  }
-  else if(confCPUs <= 1) {
-    cout << "ClockFrequencyManager: To use clock frequency modulation, you must "
-        << "specify 'NumCPUs: n' s.t. n > 1." << endl
-        << "Disabling ClockFrequencyManager" << endl;
     return NULL;
   }
 
@@ -50,31 +42,22 @@ ClockFrequencyManagerFactory::allocate( SimulationConfiguration &configuration,
     return NULL;
   }
 
-  int systemCPUs = CPUCount();
-  if(confCPUs > systemCPUs) {
-    std::ostringstream err;
-    err << "ClockFrequencyManager: " << confCPUs << " CPUs specified in configuration, "
-        << "but only " << systemCPUs << " CPU(s) found in /proc/cpuinfo!" << endl
-        << "shutting down...";
-    mySimulationManager->shutdown(err.str());
-  }
-
   if(type == "CENTRALIZED") {
     cout << "("
         << mySimulationManager->getSimulationManagerID()
         << ") configured a Centralized Clock Frequency Manager with a period = "
-        << p << " and FIR size of " << firsize << " using " << confCPUs << " CPUs" << std::endl;
+        << p << " and FIR size of " << firsize << std::endl;
 
-    return new CentralizedClockFrequencyManager(mySimulationManager, p, confCPUs, firsize, dummy);
+    return new CentralizedClockFrequencyManager(mySimulationManager, p, firsize, dummy);
   }
   else if(type == "DECENTRALIZED") {
 
     cout << "("
         << mySimulationManager->getSimulationManagerID()
         << ") configured a Decentralized Clock Frequency Manager with period = "
-        << p << " and FIR size of " << firsize << " using " << confCPUs << " CPUs" << std::endl;
+        << p << " and FIR size of " << firsize << std::endl;
 
-    return new DecentralizedClockFrequencyManager(mySimulationManager, p, confCPUs, firsize, dummy);
+    return new DecentralizedClockFrequencyManager(mySimulationManager, p, firsize, dummy);
   }
   else {
     std::ostringstream err;
@@ -89,22 +72,4 @@ const ClockFrequencyManagerFactory *
 ClockFrequencyManagerFactory::instance(){
   static ClockFrequencyManagerFactory *singleton = new ClockFrequencyManagerFactory();
   return singleton;
-}
-
-int ClockFrequencyManagerFactory::CPUCount() {
-    FILE *fp;
-    char res[128];
-    memset ( res, 0, sizeof ( res ) );
-    fp = popen ( "/bin/cat /proc/cpuinfo | grep -c '^processor'", "r" );
-    fread ( res, 1, sizeof ( res ) - 1, fp );
-    fclose ( fp );
-
-    for ( int i = 0; i < 128; ++i ) {
-        if ( res[i] < '0' || res[i] > '9' ) {
-            res[i] = ( char ) 0;
-            break;
-        }
-    }
-
-    return atoi ( res );
 }
