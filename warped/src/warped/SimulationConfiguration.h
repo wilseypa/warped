@@ -136,8 +136,6 @@ public:
 
   bool getClockFreqManagerPeriod(int& period) const;
 
-  bool getClockFreqManagerCPUs(int& numCPUs) const;
-
   bool getClockFreqManagerFIRSize(int& size) const;
 
   bool getClockFreqManagerDummy() const;
