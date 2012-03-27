@@ -5,7 +5,7 @@
 #include "../include/RAIDDisk.h"
 #include "../include/RAIDDiskState.h"
 #include "IntVTime.h"
-#include "StopWatch.h"
+#include "TimeWarpSimulationManager.h"
 
 RAIDDisk::RAIDDisk(string &myName, DISK_TYPE theDisk) :
   objectName(myName) {
@@ -72,7 +72,11 @@ RAIDDisk::executeProcess() {
     recvEvent = (RAIDRequest*) getEvent();
 
     if ( recvEvent != NULL ) {
-      warped64_t util_start = rdtsc();
+      warped64_t util_start;
+      TimeWarpSimulationManager* twsm =
+              dynamic_cast<TimeWarpSimulationManager*>(mySimulationManager);
+      if(twsm)
+        util_start = rdtsc();
 
       SimulationObject *recvr = getObjectHandle( recvEvent->getSourceObject() );
 
@@ -106,6 +110,14 @@ RAIDDisk::executeProcess() {
         seekTime = 0;
       }
 
+      if(twsm) {
+        int util = rdtsc() - util_start;
+        //cout << "disk util: " << util << endl;
+        twsm->doDelay(util);
+        recvEvent->setWork(util);
+        addEffectiveWork(util);
+      }
+
       recvTime = sendTime + int(seekTime + 0.5*revolutionTime);
       newEvent = new RAIDRequest(sendTime, recvTime, this, recvr);
 #if 0
@@ -122,9 +134,8 @@ RAIDDisk::executeProcess() {
       // Send event back to source.
       recvr->receiveEvent(newEvent);
 
-      int util = util_start - rdtsc();
-      recvEvent->setWork(util);
-      addEffectiveWork(util);
+
+
     } // End of if (event != null)
   } // End of while "have more events" loop
 }

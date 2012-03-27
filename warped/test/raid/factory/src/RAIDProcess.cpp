@@ -3,6 +3,7 @@
 #include "../include/RAIDProcess.h"
 #include "../include/RAIDProcessState.h"
 #include "IntVTime.h"
+#include "TimeWarpSimulationManager.h"
 
 // maxdisks == # of total disks in the simulation
 RAIDProcess::RAIDProcess(string &myName, string &outName, int maxdisks, 
@@ -69,7 +70,12 @@ RAIDProcess::executeProcess(){
     recvEvent = (RAIDRequest*) getEvent();
     //int senderSimObjID = getObjectHandle(recvEvent->getSender())->getObjectID()->getSimulationObjectID();
     if (recvEvent != NULL) {
-      warped64_t util_start = rdtsc();
+      warped64_t util_start;
+      TimeWarpSimulationManager* twsm =
+              dynamic_cast<TimeWarpSimulationManager*>(mySimulationManager);
+      if(twsm)
+        util_start = rdtsc();
+
 /*#if WHATISTHEPURPOSEOFTHIS
       if ( myState->getStopProcessing() == true) {
 	return;
@@ -142,9 +148,14 @@ RAIDProcess::executeProcess(){
 	} // size and parity size is not equal to zero
       } // else (write)
 
-      int util = rdtsc() - util_start;
-      recvEvent->setWork(util);
-      addEffectiveWork(util);
+      if(twsm) {
+        int util = rdtsc() - util_start;
+        //cout << "process: util = " << util << endl;
+        twsm->doDelay(util);
+        recvEvent->setWork(util);
+        addEffectiveWork(util);
+      }
+
     }
   } // while (haveMoreEvents() == true)
 }

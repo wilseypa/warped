@@ -2,6 +2,7 @@
 #include "../include/RAIDFork.h"
 #include "../include/RAIDForkState.h"
 #include "IntVTime.h"
+#include "TimeWarpSimulationManager.h"
 
 RAIDFork::RAIDFork(string &myName, int numOutputs, vector<string> outNames,
 		   int disks, int startDisk)  : 
@@ -43,11 +44,16 @@ RAIDFork::executeProcess() {
     recvEvent = (RAIDRequest *) getEvent();
     
     if ( recvEvent != NULL ) {
-      warped64_t util_start = rdtsc();
+      warped64_t util_start;
+      TimeWarpSimulationManager* twsm =
+              dynamic_cast<TimeWarpSimulationManager*>(mySimulationManager);
+      if(twsm)
+        util_start = rdtsc();
+
       myState = (RAIDForkState*) getState();
       newEvent = new RAIDRequest(sendTime, ldelay, this, this);
       *newEvent = *recvEvent; 
-     
+
       int firstStripeUnit = newEvent->getStartStripe();
       
       ObjectID sourceObjId = *(getObjectHandle(recvEvent->getSourceObject())->getObjectID());
@@ -141,10 +147,13 @@ RAIDFork::executeProcess() {
 	} // if (read)
       } // if (sender == source)
 
-      // get wall time to process event
-      int util = util_start - rdtsc();
-      recvEvent->setWork(util);
-      addEffectiveWork(util);
+      if(twsm) {
+        int util = rdtsc() - util_start;
+        //cout << "fork: util = " << util << endl;
+        twsm->doDelay(util);
+        recvEvent->setWork(util);
+        addEffectiveWork(util);
+      }
 
     } // End of if (event != null)
   } // End of while "have more events" loop

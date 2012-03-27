@@ -15,9 +15,13 @@ struct compfir {
 	}
 };
 
-DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr,
+DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(
+    TimeWarpSimulationManager* simMgr,
     int measurementPeriod, int firsize, bool dummy)
-  :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, firsize, dummy)
+  :ClockFrequencyManagerImplementationBase(simMgr,
+                                           measurementPeriod,
+                                           firsize,
+                                           dummy)
   ,mySimulatedFrequencyIdx(4) // index of simulatedFrequencies
 {}
 
@@ -25,7 +29,9 @@ void
 DecentralizedClockFrequencyManager::poll() {
   if(checkMeasurementPeriod()) {
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-    UtilizationMessage* msg = new UtilizationMessage(mySimulationManagerID, dest, myNumSimulationManagers);
+    UtilizationMessage* msg = new UtilizationMessage(mySimulationManagerID,
+                                                     dest,
+                                                     myNumSimulationManagers);
     cout << "beginning measurement" << endl;
     myCommunicationManager->sendMessage(msg, dest);
   }
@@ -33,7 +39,8 @@ DecentralizedClockFrequencyManager::poll() {
 
 void
 DecentralizedClockFrequencyManager::registerWithCommunicationManager() {
-  myCommunicationManager->registerMessageType(UtilizationMessage::dataType(), this);
+  myCommunicationManager->registerMessageType(UtilizationMessage::dataType(),
+                                              this);
 }
 
 void
@@ -78,35 +85,38 @@ struct Utilization {
 
 void
 DecentralizedClockFrequencyManager::adjustFrequency() {
-    vector<Utilization> utils(0);
-    vector<FIRFilter<double> >::iterator it = myUtilFilters.begin();
-    int i = 0;
-    for(; it != myUtilFilters.end(); ++it) {
-        Utilization u;
-        u.cpu = i;
-        u.util = (*it).getData();
-        utils.push_back(u);
-        ++i;
+  vector<Utilization> utils(0);
+  for(int i = 0; i < myUtilFilters.size(); i++) {
+      Utilization u;
+      u.cpu = i;
+      u.util = myUtilFilters[i].getData();
+      utils.push_back(u);
+  }
+
+  sort(utils.begin(), utils.end(), Utilization());
+
+  int top = utils.size() / 2;
+  int bottom = top - 1;
+  int offset = 0;
+  bool speedup = false;
+  while(top < utils.size()) {
+    if(fabs(utils[top].util - utils[bottom].util) > .1)
+      offset++;
+    if(utils[top].cpu == myCPU) {
+      speedup = true;
+      break;
     }
-    sort(utils.begin(), utils.end(), Utilization());
-    vector<Utilization>::iterator utilit = utils.begin();
-    i = 0;
-    for(; utilit != utils.end(); ++utilit) {
-        if((*utilit).cpu == myCPU)
-            break;
-        ++i;
+    else if(utils[bottom].cpu == myCPU) {
+      speedup = false;
+      break;
     }
-    double me = utils[i].util;
-    double match = utils[myNumSimulationManagers - i - 1].util;
-    double utildiff = fabs(me - match);
-    if(utildiff > 0.1) {
-        if(me > match)
-            //take the faster freq
-            mySimulatedFrequencyIdx = 1 + match;
-        else
-            //take the slower freq
-            mySimulatedFrequencyIdx = 1 + me;
+    else {
+      bottom--;
+      top++;
     }
+  }
+  if(offset > 0)
+    mySimulatedFrequencyIdx = speedup ? 4 - offset : 4 + offset;
 }
 
 string
@@ -114,20 +124,29 @@ DecentralizedClockFrequencyManager::toString() {
   ostringstream out;
   if(myIsDummy)
     out << "Dummy ";
-  out << "Decentralized CFM, Period = " << getPeriod() << ", FIR size = " << myFIRSize;
+  out << "Decentralized CFM, Period = " << getPeriod() << ", FIR size = "
+      << myFIRSize;
   return out.str();
 }
 
 void
 DecentralizedClockFrequencyManager::delay(int cycles) {
   long ns = cycles * (1./simulatedFrequencies[mySimulatedFrequencyIdx] -
-                      1./myAvailableFreqs[0]);
+                      1./myAvailableFreqs[0]) * 1000000000;
   timespec ts;
   ts.tv_nsec = ns;
   ts.tv_sec = 0;
   nanosleep(&ts, NULL);
+  //cout << "slept " << ns << " nanoseconds, util was " << cycles << endl;
 }
 
 const int DecentralizedClockFrequencyManager::simulatedFrequencies[] =
-{2100000, 2000000, 1900000, 1800000, 1700000, 1600000, 1500000, 1400000,
- 1300000};
+  {2100000,
+   2000000,
+   1900000,
+   1800000,
+   1700000,
+   1600000,
+   1500000,
+   1400000,
+   1300000};
