@@ -274,7 +274,7 @@ void DTTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 	//pthread_setspecific(threadKey, (void*) &masterID);
 	unsigned int threadID = *((unsigned int*) pthread_getspecific(threadKey));
 	//cout << threadID << endl;
-	while (!simulationComplete(simulateUntil)) {
+	while (!simulationComplete(simulateUntil) || inRecovery) {
 		if (inRecovery) {
 			numCatastrophicRollbacks++;
 			if (numberOfSimulationManagers > 1) {

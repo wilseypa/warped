@@ -445,7 +445,7 @@ void DTOptFossilCollManager::purgeQueuesAndRecover() {
 	// Wait for all the worker threads to stop execution
 	utils::debug << "Waiting for all the worker threads" << endl;
 	while (mySimManager->workerStatus[0]->getStillBusyCount() > 0)
-		;
+		cout << mySimManager->workerStatus[0]->getStillBusyCount() << endl;
 	utils::debug << "Stopped all the threads." << endl;
 
 	// Release all the Object locks
@@ -708,7 +708,7 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							<< "Waiting for all the worker threads" << endl;
 					while (mySimManager->workerStatus[0]->getStillBusyCount()
 							> 0)
-						;
+						utils::debug << mySimManager->workerStatus[0]->getStillBusyCount() << endl;
 
 					// Release all the Object locks
 					mySimManager->releaseObjectLocksRecovery();
