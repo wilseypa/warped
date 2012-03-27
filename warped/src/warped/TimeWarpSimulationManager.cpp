@@ -44,7 +44,7 @@ TimeWarpSimulationManager::TimeWarpSimulationManager(
 			mySchedulingData(new SchedulingData()), myTerminationManager(0),
 			myApplication(initApplication), myFossilCollManager(0),
 			usingOneAntiMsg(false), usingOptFossilCollection(false),
-			inRecovery(false), numberOfRollbacks(0), myDelayUs(0) {
+            inRecovery(false), numberOfRollbacks(0) {
 }
 
 TimeWarpSimulationManager::~TimeWarpSimulationManager() {
@@ -334,6 +334,11 @@ double TimeWarpSimulationManager::effectiveUtilization() {
     return effectiveWork / totalWork;
 }
 
+void TimeWarpSimulationManager::doDelay(int util) {
+    if(myClockFrequencyManager)
+        myClockFrequencyManager->delay(util);
+}
+
 bool TimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
 	bool retval = false;
 	if (myGVTManager->getGVT() >= simulateUntil) {
@@ -517,14 +522,6 @@ TimeWarpSimulationManager::getEvent(SimulationObject *object) {
 	} else {
 		retval = myEventSet->getEvent(object);
 	}
-
-  if(retval)
-  {
-		// mimick fine-grain frequency control
-		//usleep(myDelayUs);
-    timespec ts = {0, myDelayUs};
-    nanosleep(&ts, NULL);
-  }
 
 	return retval;
 }

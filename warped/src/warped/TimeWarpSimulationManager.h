@@ -391,10 +391,9 @@ public:
 	/// Returns the number of rollbacks
 	unsigned int getRollbacks() { return numberOfRollbacks; }
 
-	void setDelayUs(int delay) { myDelayUs = delay; }
-
     // effective utilizaiton estimator, based on reiher and jefferson (1990)
     double effectiveUtilization();
+    void doDelay(int);
 
 	//@} // End of Public Class Methods of TimeWarpSimulationManager.
 
@@ -578,10 +577,6 @@ protected:
 
 	Application *myApplication;
   StopWatch stopwatch;
-
-  // time to delay during event execution, mimicking fine-grained
-  // clock frequency adjustments
-  int myDelayUs;
 
 
 	//@} // End of Protected Class Methods of TimeWarpSimulationManager.

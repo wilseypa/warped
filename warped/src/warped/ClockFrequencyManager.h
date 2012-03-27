@@ -29,7 +29,11 @@ public:
   virtual void registerWithCommunicationManager() = 0;
 
   virtual string toString() = 0;
-  virtual int getNominalDelay() = 0;
+
+  // delay by amount necessary to simulate different clock frequency
+  // using clock cycles
+  virtual void delay(int) = 0;
+
   //@} // End of Public Class Methods of ClockFrequencyManager.
 
 protected:
@@ -47,6 +51,7 @@ protected:
   virtual bool isMaster() = 0;
 
   virtual void writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq, int hystlow, int hysthigh) = 0;
+
 
   //@} // End of Protected Class Methods of GVTManager.
 };

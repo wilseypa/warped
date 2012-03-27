@@ -8,9 +8,9 @@
    Allows a vector of integers to be passed among nodes
 */
 
-class CFRollbackVectorMessage : public KernelMessage {
+class UtilizationMessage : public KernelMessage {
 public:
-  CFRollbackVectorMessage(unsigned int source,
+  UtilizationMessage(unsigned int source,
 			    unsigned int dest, int nSimMgrs) :
     KernelMessage(source, dest),
     numSimulationManagers(nSimMgrs),
@@ -21,8 +21,8 @@ public:
   static Serializable *deserialize( SerializedInstance *data );
 
   const string &getDataType() const { return dataType(); }
-  void getData(std::vector<int>& data) const { data = myData; }
-  void setData(std::vector<int>& data) { myData = data; }
+  void getData(std::vector<double>& data) const { data = myData; }
+  void setData(std::vector<double>& data) { myData = data; }
 
   static const string& dataType();
 
@@ -32,13 +32,13 @@ private:
   /**
      Default constructor - to be used only by the deserializer.
   */
-  CFRollbackVectorMessage() :
+  UtilizationMessage() :
     numSimulationManagers(0),
     myData(0)
   {}
 
   const unsigned int numSimulationManagers;
-  std::vector<int> myData;
+  std::vector<double> myData;
 };
 
 #endif //CF_ROLLBACK_VECTOR_MESSAGE_H

@@ -16,10 +16,9 @@ ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase
   ,myNumSimulationManagers(simMgr->getNumberOfSimulationManagers())
   ,myCPU(0)
   ,myFIRSize(firsize)
-  ,myLastRollbacks(0)
   ,myRound(0)
   ,myIsDummy(dummy) 
-  ,myRollbackFilters(myNumSimulationManagers, myFIRSize)
+  ,myUtilFilters(myNumSimulationManagers, myFIRSize)
   ,myAvailableFreqs(0)
   ,myMeasurementPeriod(measurementPeriod)
   ,myMeasurementCounter(0)
@@ -79,10 +78,8 @@ ClockFrequencyManagerImplementationBase::configure(
   populateAvailableFrequencies();
   if(isMaster()) {
     for(int i=0; i < myNumSimulationManagers; ++i)
-      setCPUFrequency(i, myAvailableFreqs[1]);
+      setCPUFrequency(i, myAvailableFreqs[0]);
   }
-
-  mySimulationManager->setDelayUs(getNominalDelay());
 }
 
 void

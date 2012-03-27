@@ -35,6 +35,8 @@ public:
 
   void resetMeasurementCounter() { myMeasurementCounter = 0;}
 
+  virtual void delay(int) {}
+
   //@} // End of Public Class Methods of ClockFrequencyManager.
 
 protected:
@@ -65,10 +67,9 @@ protected:
   int myNumSimulationManagers;
   int myCPU;
   int myFIRSize;
-  int myLastRollbacks;
   int myRound;
   bool myIsDummy;
-  std::vector<FIRFilter<int> > myRollbackFilters;
+  std::vector<FIRFilter<double> > myUtilFilters;
 
   // begin() == fastest, end() == slowest
   std::vector<int> myAvailableFreqs;

@@ -34,16 +34,15 @@ public:
 
   virtual string toString();
 
-  virtual int getNominalDelay() { return myNominalDelay; }
+  virtual void delay(int);
 
   //@} // End of Public Class Methods of ClockFrequencyManager.
 
-private:
-  int myNominalDelay;
-  int myDelayStep;
-  int myDelay;
+  static const int simulatedFrequencies[];
 
-  void adjustFrequency(std::vector<int>& rollbacks);
+private:
+  int mySimulatedFrequencyIdx;
+  void adjustFrequency();
 
 };
 

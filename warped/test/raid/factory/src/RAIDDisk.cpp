@@ -68,13 +68,12 @@ RAIDDisk::executeProcess() {
 
   myState = (RAIDDiskState *) getState();
 
-  StopWatch sw;
   while(true == haveMoreEvents()) {
     recvEvent = (RAIDRequest*) getEvent();
 
     if ( recvEvent != NULL ) {
-      sw.reset();
-      sw.start();
+      warped64_t util_start = rdtsc();
+
       SimulationObject *recvr = getObjectHandle( recvEvent->getSourceObject() );
 
       tmpEvent = new RAIDRequest(sendTime, sendTime+1, this, recvr);
@@ -123,11 +122,9 @@ RAIDDisk::executeProcess() {
       // Send event back to source.
       recvr->receiveEvent(newEvent);
 
-      // get wall time to process event
-      sw.stop();
-      double elapsed = sw.elapsed();
-      recvEvent->setWork(elapsed);
-      addEffectiveWork(elapsed);
+      int util = util_start - rdtsc();
+      recvEvent->setWork(util);
+      addEffectiveWork(util);
     } // End of if (event != null)
   } // End of while "have more events" loop
 }

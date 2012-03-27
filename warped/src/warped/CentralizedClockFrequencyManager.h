@@ -34,8 +34,6 @@ public:
 
   virtual string toString();
 
-  virtual int getNominalDelay() { return 0; }
-
   // from ClockFrequencyManagerImplementationBase
   //virtual bool checkMeasurementPeriod();
 
@@ -47,8 +45,7 @@ private:
   bool myStartedRound;
   bool myFirstTime;
 
-  int variance(vector<FIRFilter<int> >&);
-  void adjustFrequencies(std::vector<int>&);
+  void adjustFrequencies(std::vector<double>&);
 
 };
 

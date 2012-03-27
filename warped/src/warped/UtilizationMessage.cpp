@@ -1,32 +1,32 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
-#include "CFRollbackVectorMessage.h"
+#include "UtilizationMessage.h"
 #include "DeserializerManager.h"
 
 void 
-CFRollbackVectorMessage::serialize( SerializedInstance *serialized ) const {
+UtilizationMessage::serialize( SerializedInstance *serialized ) const {
   KernelMessage::serialize( serialized );
   serialized->addUnsigned(numSimulationManagers);
-  std::vector<int>::const_iterator it = myData.begin();
+  std::vector<double>::const_iterator it = myData.begin();
   for (; it != myData.end(); ++it) {
-    serialized->addInt(*it);
+    serialized->addDouble(*it);
   }
 }
 
 Serializable *
-CFRollbackVectorMessage::deserialize( SerializedInstance *data ){
+UtilizationMessage::deserialize( SerializedInstance *data ){
   unsigned int sender = data->getUnsigned();
   unsigned int dest = data->getUnsigned();
   unsigned int incNum = data->getUnsigned();
 
   unsigned int nSimMgrs = data->getUnsigned();
-  std::vector<int> d(nSimMgrs);
+  std::vector<double> d(nSimMgrs);
   for (int i = 0; i < nSimMgrs; ++i) {
-    d[i] = data->getInt();
+    d[i] = data->getDouble();
   }
 
-  CFRollbackVectorMessage *retMsg =
-          new CFRollbackVectorMessage(sender, dest, nSimMgrs);
+  UtilizationMessage *retMsg =
+          new UtilizationMessage(sender, dest, nSimMgrs);
   retMsg->setData(d);
   retMsg->setIncarnationNumber(incNum);
 
@@ -34,13 +34,13 @@ CFRollbackVectorMessage::deserialize( SerializedInstance *data ){
 }
 
 void 
-CFRollbackVectorMessage::registerDeserializer(){
+UtilizationMessage::registerDeserializer(){
   DeserializerManager::instance()->registerDeserializer( dataType(),
 							 &deserialize );
 }
 
 const string&
-CFRollbackVectorMessage::dataType() {
-  static const string dt = "CFRollbackVectorMessage";
+UtilizationMessage::dataType() {
+  static const string dt = "UtilizationMessage";
   return dt;
 }

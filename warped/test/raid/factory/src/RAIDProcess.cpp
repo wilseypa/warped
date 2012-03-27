@@ -3,7 +3,6 @@
 #include "../include/RAIDProcess.h"
 #include "../include/RAIDProcessState.h"
 #include "IntVTime.h"
-#include "StopWatch.h"
 
 // maxdisks == # of total disks in the simulation
 RAIDProcess::RAIDProcess(string &myName, string &outName, int maxdisks, 
@@ -66,13 +65,11 @@ RAIDProcess::executeProcess(){
   RAIDProcessState *myState = (RAIDProcessState*) getState();
   RAIDRequest* recvEvent;
   
-  StopWatch sw;
   while(true == haveMoreEvents()) {
     recvEvent = (RAIDRequest*) getEvent();
     //int senderSimObjID = getObjectHandle(recvEvent->getSender())->getObjectID()->getSimulationObjectID();
     if (recvEvent != NULL) {
-      sw.reset();
-      sw.start();
+      warped64_t util_start = rdtsc();
 /*#if WHATISTHEPURPOSEOFTHIS
       if ( myState->getStopProcessing() == true) {
 	return;
@@ -145,11 +142,9 @@ RAIDProcess::executeProcess(){
 	} // size and parity size is not equal to zero
       } // else (write)
 
-      // get wall time to process event
-      sw.stop();
-      double elapsed = sw.elapsed();
-      recvEvent->setWork(elapsed);
-      addEffectiveWork(elapsed);
+      int util = rdtsc() - util_start;
+      recvEvent->setWork(util);
+      addEffectiveWork(util);
     }
   } // while (haveMoreEvents() == true)
 }

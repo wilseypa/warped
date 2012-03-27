@@ -37,7 +37,6 @@ WARPED_H_FILES = \
 	warped/CentralizedClockFrequencyManager.h \
 	warped/CentralizedEventSetSchedulingManager.h \
 	warped/CFRollbackAverageMessage.h \
-	warped/CFRollbackVectorMessage.h \
 	warped/ChebyFossilCollManager.h \
 	warped/CirculateInitializationMessage.h \
 	warped/ClockFrequencyManager.h \
@@ -164,6 +163,7 @@ WARPED_H_FILES = \
 	warped/TimeWarpSimulationStream.h \
 	warped/Transceiver.h \
 	warped/TreeElement.h \
+	warped/UtilizationMessage.h \
 	warped/VTime.h \
 	warped/version.h \
 	warped/warped.h \
@@ -214,7 +214,6 @@ libwarped_la_SOURCES = \
 	warped/CentralizedClockFrequencyManager.cpp \
 	warped/CentralizedEventSetSchedulingManager.cpp \
 	warped/CFRollbackAverageMessage.cpp \
-	warped/CFRollbackVectorMessage.cpp \
 	warped/ChebyFossilCollManager.cpp \
 	warped/CirculateInitializationMessage.cpp \
 	warped/ClockFrequencyManagerFactory.cpp \
@@ -308,6 +307,7 @@ libwarped_la_SOURCES = \
 	warped/TimeWarpSimulationStream.cpp \
 	warped/TokenPassingTerminationManager.cpp \
 	warped/Transceiver.cpp \
+	warped/UtilizationMessage.cpp \
 	warped/VTime.cpp \
 	warped/WarpedMain.cpp \
 	warped/warped.cpp
