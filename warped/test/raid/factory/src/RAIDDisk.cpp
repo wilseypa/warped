@@ -110,14 +110,6 @@ RAIDDisk::executeProcess() {
         seekTime = 0;
       }
 
-      if(twsm) {
-        int util = rdtsc() - util_start;
-        //cout << "disk util: " << util << endl;
-        twsm->doDelay(util);
-        recvEvent->setWork(util);
-        addEffectiveWork(util);
-      }
-
       recvTime = sendTime + int(seekTime + 0.5*revolutionTime);
       newEvent = new RAIDRequest(sendTime, recvTime, this, recvr);
 #if 0
@@ -134,7 +126,13 @@ RAIDDisk::executeProcess() {
       // Send event back to source.
       recvr->receiveEvent(newEvent);
 
-
+      if(twsm) {
+        int util = rdtsc() - util_start;
+        //cout << "disk util: " << util << endl;
+        twsm->doDelay(util);
+        recvEvent->setWork(util);
+        addEffectiveWork(util);
+      }
 
     } // End of if (event != null)
   } // End of while "have more events" loop

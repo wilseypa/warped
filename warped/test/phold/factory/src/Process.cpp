@@ -4,6 +4,7 @@
 #include "../include/Process.h"
 #include "../include/ProcessState.h"
 #include "SimulationManager.h"
+#include "TimeWarpSimulationManager.h"
 #include "IntVTime.h"
 #include <iostream>
 #include <sstream>
@@ -74,6 +75,12 @@ Process::executeProcess(){
       PHOLDEvent* recvEvent = (PHOLDEvent*) getEvent();
     
       if( recvEvent != NULL ){
+        warped64_t util_start;
+        TimeWarpSimulationManager* twsm =
+                dynamic_cast<TimeWarpSimulationManager*>(mySimulationManager);
+        if(twsm)
+          util_start = rdtsc();
+
          ProcessState* myState = (ProcessState *) getState();
          myState->eventReceived();
 
@@ -94,8 +101,12 @@ Process::executeProcess(){
          newRequest->eventNumber = recvEvent->eventNumber;
 
          computationGrain();
-         addEffectiveWork(compGrain);
-         recvEvent->setWork(compGrain);
+         if(twsm) {
+           int util = rdtsc() - util_start;
+           twsm->doDelay(util);
+           recvEvent->setWork(util);
+           addEffectiveWork(util);
+         }
 
          receiver->receiveEvent(newRequest);
          myState->eventSent();

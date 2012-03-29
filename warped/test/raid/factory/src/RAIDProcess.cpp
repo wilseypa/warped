@@ -124,6 +124,7 @@ RAIDProcess::executeProcess(){
 	    myState->diskRequests[i] = 0;
 	  }
 	  
+
 	  if (myState->getNumRequests() < maxRequests){
 	    newMsg();
           }
@@ -150,12 +151,10 @@ RAIDProcess::executeProcess(){
 
       if(twsm) {
         int util = rdtsc() - util_start;
-        //cout << "process: util = " << util << endl;
         twsm->doDelay(util);
         recvEvent->setWork(util);
         addEffectiveWork(util);
       }
-
     }
   } // while (haveMoreEvents() == true)
 }
