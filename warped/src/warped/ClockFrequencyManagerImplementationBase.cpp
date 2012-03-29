@@ -4,7 +4,7 @@
 #include "TimeWarpSimulationManager.h"
 #include <set>
 #include <sched.h>
-#include <stdio.h>
+#include <cstdio>
 #include <utils/Debug.h>
 
 using namespace std;
@@ -23,7 +23,10 @@ ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase
   ,myMeasurementPeriod(measurementPeriod)
   ,myMeasurementCounter(0)
   ,myAmMaster(mySimulationManagerID == 0)
-{}
+{
+  if(isMaster())
+    myStopwatch.start();
+}
 
 ClockFrequencyManagerImplementationBase::~ClockFrequencyManagerImplementationBase() {
   setGovernorMode("ondemand");
@@ -38,31 +41,31 @@ ClockFrequencyManagerImplementationBase::poll() {
 
 bool
 ClockFrequencyManagerImplementationBase::checkMeasurementPeriod() {
-  if (isMaster() && ++myMeasurementCounter == myMeasurementPeriod) {
+/*  if (isMaster() && ++myMeasurementCounter == myMeasurementPeriod) {
     myMeasurementCounter = 0;
     return true;
   }
   return false;
+  */
+  if(isMaster() && myStopwatch.elapsed() > myMeasurementPeriod) {
+    myStopwatch.reset();
+    myStopwatch.start();
+    return true;
+  }
+  return false;
+
 }
 
 void
-ClockFrequencyManagerImplementationBase::writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq, int hystlow, int hysthigh) {
-  utils::debug << "(" << node << ") rollbacks: ";
+ClockFrequencyManagerImplementationBase::writeCSVRow(int node,
+                                                     double util,
+                                                     int freq) {
   ostringstream path;
   path << "cfmoutput_lp" << node << ".csv";
 
   ofstream fp(path.str().c_str(), ios_base::app);
-  if(fp.is_open()) {
-    //fp << currentRollbacks << "," << avgRollbacks << "," << freq << ","
-    //   << hystlow << "," << hysthigh << endl;
-
-    fp << currentRollbacks << "," << mySimulationManager->effectiveUtilization()
-       << endl;
-    fp.close();
-  }
-
-  utils::debug << " [" << avgRollbacks << "]";
-  utils::debug << endl;
+  if(fp)
+    fp << util << "," << freq << endl;
 } 
 
 void
@@ -76,10 +79,7 @@ ClockFrequencyManagerImplementationBase::configure(
   setGovernorMode("userspace");
 
   populateAvailableFrequencies();
-  if(isMaster()) {
-    for(int i=0; i < myNumSimulationManagers; ++i)
-      setCPUFrequency(i, myAvailableFreqs[0]);
-  }
+  setCPUFrequency(myCPU, myAvailableFreqs[0]);
 }
 
 void

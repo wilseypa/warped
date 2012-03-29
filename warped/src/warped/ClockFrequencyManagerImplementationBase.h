@@ -6,6 +6,7 @@
 #include "warped.h"
 #include "ClockFrequencyManager.h"
 #include "controlkit/FIRFilter.h"
+#include "StopWatch.h"
 
 class TimeWarpSimulationManager;
 class CommunicationManager;
@@ -50,8 +51,7 @@ protected:
   virtual bool isMaster() { return myAmMaster; }
   void setMaster(bool m) { myAmMaster = m; }
 
-  virtual void writeCSVRow(int node, int avgRollbacks, int currentRollbacks, int freq, int hystlow,
-                           int hysthigh);
+  virtual void writeCSVRow(int, double, int);
 
   int getPeriod() { return myMeasurementPeriod; }
 
@@ -75,8 +75,8 @@ protected:
   std::vector<int> myAvailableFreqs;
 
 private:
-
   int myMeasurementPeriod;
+  StopWatch myStopwatch;
   int myMeasurementCounter;
   bool myAmMaster;
 

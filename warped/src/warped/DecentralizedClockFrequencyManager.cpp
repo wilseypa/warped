@@ -23,7 +23,12 @@ DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(
                                            firsize,
                                            dummy)
   ,mySimulatedFrequencyIdx(4) // index of simulatedFrequencies
-{}
+{
+  ostringstream path;
+  path << "cfmoutput_lp" << mySimulationManagerID << ".csv";
+
+  myFile.open(path.str().c_str(), ios_base::app);
+}
 
 void
 DecentralizedClockFrequencyManager::poll() {
@@ -32,7 +37,7 @@ DecentralizedClockFrequencyManager::poll() {
     UtilizationMessage* msg = new UtilizationMessage(mySimulationManagerID,
                                                      dest,
                                                      myNumSimulationManagers);
-    cout << "beginning measurement" << endl;
+    utils::debug << "beginning measurement" << endl;
     myCommunicationManager->sendMessage(msg, dest);
   }
 }
@@ -52,12 +57,28 @@ DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 
   std::vector<double> dat;
   msg->getData(dat);
-  if(myRound == 1)
+  if(myRound == 1) {
     dat[mySimulationManagerID] = mySimulationManager->effectiveUtilization();
+    if(isMaster()) {
+      for(int i = 0; i < dat.size(); i++) {
+        myUtilFilters[i].update(dat[i]);
+        if(myIsDummy)
+          writeCSVRow(i, dat[i], simulatedFrequencies[4]);
+      }
+      if(myIsDummy)
+        return;
+
+      std::vector<double> utils(dat);
+      adjustFrequency(dat);
+      for(int i = 0; i < dat.size(); i++)
+        writeCSVRow(i, utils[i], simulatedFrequencies[static_cast<int>(dat[i])]);
+
+      // update the master's simulated frequency first
+      mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
+    }
+  }
   else if(myRound == 2) {
-    for(int i = 0; i < dat.size(); ++i)
-      myUtilFilters[i].update(dat[i]);
-    adjustFrequency();
+    mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
     myRound = 0;
   }
 
@@ -69,13 +90,13 @@ DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
     myCommunicationManager->sendMessage(newMsg, dest);
   }
   else
-    cout << "ending measurement" << endl;
+    utils::debug << "ending measurement" << endl;
 
   delete kMsg;
 }
 
 struct Utilization {
-  int cpu;
+  int node;
   double util;
   bool operator()(const Utilization& a, const Utilization& b) const {
       return a.util < b.util;
@@ -84,39 +105,50 @@ struct Utilization {
 
 
 void
-DecentralizedClockFrequencyManager::adjustFrequency() {
+DecentralizedClockFrequencyManager::adjustFrequency(vector<double>& d) {
+  const int slowIdx = 5;
+  const int fastIdx = 3;
+  const int medIdx = 4;
+  const float dist = 0.05;
+
   vector<Utilization> utils(0);
-  for(int i = 0; i < myUtilFilters.size(); i++) {
-      Utilization u;
-      u.cpu = i;
-      u.util = myUtilFilters[i].getData();
-      utils.push_back(u);
+  double avg = 0.;
+  int i = 0;
+  int n = myUtilFilters.size();
+  for(; i < n; i++) {
+    Utilization u;
+    u.node = i;
+    u.util = myUtilFilters[i].getData();
+    avg += u.util;
+    utils.push_back(u);
+    d[i] = medIdx;
   }
+  avg /= n;
 
   sort(utils.begin(), utils.end(), Utilization());
-
-  int top = utils.size() / 2;
-  int bottom = top - 1;
-  int offset = 0;
-  bool speedup = false;
-  while(top < utils.size()) {
-    if(fabs(utils[top].util - utils[bottom].util) > .1)
-      offset++;
-    if(utils[top].cpu == myCPU) {
-      speedup = true;
+  i = 0;
+  int high = n;
+  int low = -1;
+  for(; i < utils.size(); i++) {
+    if(utils[i].util < avg - dist)
+      low = i;
+    else if(utils[i].util > avg + dist)
       break;
-    }
-    else if(utils[bottom].cpu == myCPU) {
-      speedup = false;
-      break;
-    }
-    else {
-      bottom--;
-      top++;
-    }
   }
-  if(offset > 0)
-    mySimulatedFrequencyIdx = speedup ? 4 - offset : 4 + offset;
+  high = i;
+
+  while(low >= 0 && high < n) {
+    d[utils[low--].node] = slowIdx;
+    d[utils[high++].node] = fastIdx;
+  }
+
+  //myFile << myUtilFilters[mySimulationManagerID].getData() << ','
+  //       << simulatedFrequencies[mySimulatedFrequencyIdx] << endl;
+
+  //cout << "(" << myCPU << "): " << utils[speedup ? top : bottom].util
+  //     << ", " << simulatedFrequencies[mySimulatedFrequencyIdx] << endl;
+
+
 }
 
 string
@@ -132,14 +164,16 @@ DecentralizedClockFrequencyManager::toString() {
 void
 DecentralizedClockFrequencyManager::delay(int cycles) {
   long ns = cycles * (1./simulatedFrequencies[mySimulatedFrequencyIdx] -
-                      1./myAvailableFreqs[0]) * 1000000000;
+                      1./myAvailableFreqs[0]) * 1000000;
   timespec ts;
   ts.tv_nsec = ns;
   ts.tv_sec = 0;
-  nanosleep(&ts, NULL);
+  if(nanosleep(&ts, NULL))
+    cout << "nanosleep error" << endl;
   //cout << "slept " << ns << " nanoseconds, util was " << cycles << endl;
 }
 
+const int DecentralizedClockFrequencyManager::numSimulatedFrequencies = 9;
 const int DecentralizedClockFrequencyManager::simulatedFrequencies[] =
   {2100000,
    2000000,

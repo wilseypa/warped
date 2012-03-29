@@ -3,8 +3,9 @@
 
 // See copyright notice in file Copyright in the root directory of this archive.
 
-#include <deque>
 #include "ClockFrequencyManagerImplementationBase.h"
+#include <deque>
+#include <fstream>
 
 class TimeWarpSimulationManager;
 
@@ -39,10 +40,12 @@ public:
   //@} // End of Public Class Methods of ClockFrequencyManager.
 
   static const int simulatedFrequencies[];
+  static const int numSimulatedFrequencies;
 
 private:
   int mySimulatedFrequencyIdx;
-  void adjustFrequency();
+  std::ofstream myFile;
+  void adjustFrequency(vector<double>& d);
 
 };
 

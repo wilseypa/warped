@@ -1334,7 +1334,7 @@ void TimeWarpSimulationManager::configure(
 	myClockFrequencyManager = dynamic_cast<ClockFrequencyManager*>(
 	    myClockFreqMgrFactory->allocate(configuration, this));
 	if(myClockFrequencyManager)
-    myClockFrequencyManager->configure(configuration);
+      myClockFrequencyManager->configure(configuration);
 
 	registerSimulationObjects();
 
@@ -1354,7 +1354,7 @@ void TimeWarpSimulationManager::configure(
   ofstream file1(str1.str().c_str(), ios_base::app);
   ofstream file2(str2.str().c_str(), ios_base::app);
 
-  if(file1.is_open() && file2.is_open()) {
+  if(file1 && file2) {
     if(myClockFrequencyManager) {
       file1 << *myClockFrequencyManager;
       file2 << *myClockFrequencyManager;
@@ -1370,8 +1370,6 @@ void TimeWarpSimulationManager::configure(
       file1 << " " << args[i];
       file2 << " " << args[i];
     }
-    file1.close();
-    file2.close();
   }
 }
 
