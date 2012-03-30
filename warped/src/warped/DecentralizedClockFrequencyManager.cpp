@@ -65,20 +65,21 @@ DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
         if(myIsDummy)
           writeCSVRow(i, dat[i], simulatedFrequencies[4]);
       }
-      if(myIsDummy)
-        return;
 
-      std::vector<double> utils(dat);
-      adjustFrequency(dat);
-      for(int i = 0; i < dat.size(); i++)
-        writeCSVRow(i, utils[i], simulatedFrequencies[static_cast<int>(dat[i])]);
+      if(!myIsDummy) {
+        std::vector<double> utils(dat);
+        adjustFrequency(dat);
+        for(int i = 0; i < dat.size(); i++)
+          writeCSVRow(i, utils[i], simulatedFrequencies[static_cast<int>(dat[i])]);
 
-      // update the master's simulated frequency first
-      mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
+        // update the master's simulated frequency first
+        mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
+      }
     }
   }
   else if(myRound == 2) {
-    mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
+    if(!myIsDummy)
+      mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
     myRound = 0;
   }
 
@@ -163,24 +164,23 @@ DecentralizedClockFrequencyManager::toString() {
 
 void
 DecentralizedClockFrequencyManager::delay(int cycles) {
-  long ns = cycles * (1./simulatedFrequencies[mySimulatedFrequencyIdx] -
-                      1./myAvailableFreqs[0]) * 1000000;
-  timespec ts;
-  ts.tv_nsec = ns;
-  ts.tv_sec = 0;
-  if(nanosleep(&ts, NULL))
-    cout << "nanosleep error" << endl;
-  //cout << "slept " << ns << " nanoseconds, util was " << cycles << endl;
+  warped64_t extracycles = cycles * (static_cast<double>(myAvailableFreqs[0]) /
+                            simulatedFrequencies[mySimulatedFrequencyIdx] - 1);
+
+  warped64_t start = rdtsc();
+  warped64_t stop = start;
+  while(stop - start < extracycles)
+    stop = rdtsc();
 }
 
 const int DecentralizedClockFrequencyManager::numSimulatedFrequencies = 9;
 const int DecentralizedClockFrequencyManager::simulatedFrequencies[] =
-  {2100000,
-   2000000,
-   1900000,
-   1800000,
-   1700000,
-   1600000,
-   1500000,
-   1400000,
-   1300000};
+  {2.1e6,
+   2e6,
+   1.9e6,
+   1.8e6,
+   1.7e6,
+   1.6e6,
+   1.5e6,
+   1.4e6,
+   1.3e6};

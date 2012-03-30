@@ -44,7 +44,8 @@ Process::initialize() {
    int eventNumberBase = numberOfTokens * processNumber;
    for(int i = 1; i <= numberOfTokens; i++ ) {
       IntVTime sendTime = dynamic_cast<const IntVTime&>(getSimulationTime());
-      PHOLDEvent *event = new PHOLDEvent(sendTime, sendTime + 1, this, this);
+      int ldelay = msgDelay();
+      PHOLDEvent *event = new PHOLDEvent(sendTime, sendTime + 1 + ldelay, this, this);
       event->eventNumber = eventNumberBase + i;
 
       receiveEvent(event);
