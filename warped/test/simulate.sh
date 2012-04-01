@@ -1,30 +1,38 @@
 #!/bin/bash
 
-TEMP=`getopt -o d:n: -l help -n "$0" -- "$@"`
-eval set -- "$TEMP"
+# default batch arguments
+DATADIR=measurements
+RUNS=1
+PAUSE=500
 
-while true; do
-  case "$1" in
-    -d) DATADIR=${2%/}; shift 2;;
-    -n) NODES=$2; shift 2;;
-    --help) echo "Usage: $0 -n nodes -d directory"; exit;;
-    --) shift; break;;
-  esac
-done
-
-if [ ! -d "$DATADIR" ]; then echo "error: invalid directory '$DATADIR'"; ERROR=1; fi
-if [ -n "$NODES" ] && ! [[ "$NODES" =~ ^[0-9]+$ ]]; then echo "error: invalid nodes '$NODES'"; ERROR=1; fi
-if [ -n "$ERROR" ]; then exit; fi
-
-if [ -z "$NODES" ]; then NODES=`cat /proc/cpuinfo | grep processor | wc -l`; fi
-
-DOWNTIME=800
+# default simulation arguments
+NODES=`cat /proc/cpuinfo | grep processor | wc -l`
 MODEL=pholdSim
 MODEL_CONFIGURATION=phold/LargePHOLD
 SIMULATION_CONFIGURATION=parallel.config
 # comment out to omit this argument
-SIMULATE_UNTIL=5000
+SIMULATE_UNTIL=100
 
+# get batch arguments
+TEMP=`getopt -o d:n:p: -l help -n "$0" -- "$@"`
+eval set -- "$TEMP"
+while true; do
+  case "$1" in
+    -d) DATADIR=${2%/}; shift 2;;
+    -n) RUNS=$2; shift 2;;
+    -p) PAUSE=$2; shift 2;;
+    --help) echo "Usage: $0 -n runs -d directory -p pause_interval"; exit;;
+    --) shift; break;;
+  esac
+done
+
+# sanity check on batch arguments
+if [ ! -d "$DATADIR" ]; then echo "error: invalid directory '$DATADIR'"; ERROR=1; fi
+if ! [[ "$RUNS" =~ ^[0-9]+$ ]]; then echo "error: invalid # runs '$RUNS'"; ERROR=1; fi
+if ! [[ "$PAUSE" =~ ^[0-9]+$ ]]; then echo "error: invalid pause interval '$PAUSE'"; ERROR=1; fi
+if [ -n "$ERROR" ]; then exit; fi
+
+# make sure we have the model executable and configuration files
 if [ ! -x "$MODEL" ] || 
    [ ! -e "$MODEL_CONFIGURATION" ] || 
    [ ! -e "$SIMULATION_CONFIGURATION" ]
@@ -33,24 +41,28 @@ then
   exit
 fi
 
-ARGS="-simulate $MODEL_CONFIGURATION -configuration $SIMULATION_CONFIGURATION"
+# build simulation command
+CMD="mpiexec.hydra -n "$NODES" -binding cpu:cores ./"$MODEL" \
+  -simulate $MODEL_CONFIGURATION -configuration $SIMULATION_CONFIGURATION"
 if [ -n "$SIMULATE_UNTIL" ]
 then
-  ARGS="$ARGS -simulateUntil $SIMULATE_UNTIL"
+  CMD="$CMD -simulateUntil $SIMULATE_UNTIL"
 fi
 
-for i in `seq 1 "$2"`
+for i in `seq 1 "$RUNS"`
 do
   RUN=`printf "%02d" $i`
   CSVDIR="$DATADIR/$RUN"
 
-  echo "$RUN"; exit
+  # build directory structure
+  if [ ! -d "$CSVDIR" ]
+  then
+    mkdir "$CSVDIR"
+  fi
 
-  echo "waiting $DOWNTIME seconds before next simulation run..."
-  sleep $DOWNTIME
-
+  # do simulation run
   echo "beginning simulation run \#$RUN"
-  mpiexec.hydra -n "$NODES" -binding cpu:cores ./"$MODEL" "$ARGS"
+  $CMD
 
   # extract runtime and rollback info from the CSVs
   RUNTIME=0
@@ -64,12 +76,12 @@ do
   echo "$RUNTIME,$ROLLBACKS" >> "$DATADIR/data.csv"
 
   # copy the CSVs to a dir for their run
-  if [ ! -d "$CSVDIR" ]
-  then
-    mkdir "$CSVDIR"
-  fi
-
   mv *.csv "$CSVDIR"
-  exit
+
+  # let the CPU cool down for $PAUSE seconds
+  if [ "$i" -ne "$RUNS" ]; then
+    echo "waiting $PAUSE seconds before next simulation run..."
+    sleep $DOWNTIME
+  fi
 
 done
