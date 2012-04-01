@@ -79,10 +79,6 @@ DTOptFossilCollManager::DTOptFossilCollManager(
 	} else {
 		mkdir(ckptFilePath.c_str(), 0777);
 	}
-	// No longer used.
-	//StateManagerImplementationBase *stateMan =
-	//  dynamic_cast<StateManagerImplementationBase*>(sim->getStateManager());
-	//stateQueue = stateMan->myStateQueue;
 }
 
 DTOptFossilCollManager::~DTOptFossilCollManager() {
@@ -108,29 +104,6 @@ DTOptFossilCollManager::~DTOptFossilCollManager() {
 		}
 	}
 	rmdir(ckptFilePath.c_str());
-
-	// No longer used for memory management.
-	/*  map<int, vector<Event*> *>::iterator m;
-	 vector<Event*>::iterator i;
-
-	 vector<NegativeEvent*>::iterator y;
-	 for(y = inUseNegEventMem.begin(); y != inUseNegEventMem.end(); y++){
-	 ::delete (*y);
-	 }
-
-	 char *c;
-	 for(y = availableNegEventMem.begin(); y != availableNegEventMem.end(); y++){
-	 c = (char*)(*y);
-	 // The event destuctor has already been called so just release the memory.
-	 delete []c;
-	 }
-
-	 vector<State*>::iterator it;
-	 for(int n = 0; n < availableStateMem.size(); n++){
-	 for(it = availableStateMem[n].begin(); it != availableStateMem[n].end(); it++){
-	 ::delete (*it);
-	 }
-	 }*/
 }
 
 void DTOptFossilCollManager::checkpoint(const VTime &checkTime,
@@ -144,8 +117,7 @@ void DTOptFossilCollManager::checkpoint(const VTime &checkTime,
 
 	while (time >= nextCheckpointTime[id]) {
 		utils::debug << mySimManager->getSimulationManagerID()
-				<< " - Checkpoint: " << nextCheckpointTime[id] << endl;
-
+				<< " - Checkpointing object " << id << " at " << time << endl;
 		int highestNextCheckpointTime = nextCheckpointTime[0];
 		for (int iter = 1; iter < mySimManager->getNumberOfSimulationObjects(); iter++) {
 			if (nextCheckpointTime[iter] > highestNextCheckpointTime)
@@ -200,114 +172,6 @@ void DTOptFossilCollManager::checkpoint(const VTime &checkTime,
 		mySimManager->getOutputManagerNew()->saveOutputCheckpoint(&ckFile,
 				objId, lastCheckpointTime[id], threadId);
 		ckFile.close();
-
-		/*
-		 if (mySimManager->checkpointing != true) {
-		 mySimManager->checkpointing = true;
-		 utils::debug << "Checkpointing object " << id << " at time "
-		 << time << endl;
-		 }
-		 cout << "Waiting for threads to pause " << mySimManager->pausedThreads
-		 << " " << mySimManager->getNumberofThreads() - 1 << endl;
-		 threadtowait = mySimManager->pausedThreads
-		 - (mySimManager->getNumberofThreads() - 1);
-		 while (threadtowait != 0)
-		 threadtowait = mySimManager->pausedThreads
-		 - (mySimManager->getNumberofThreads() - 1);
-		 utils::debug << "All other threads in pause state"
-		 << mySimManager->pausedThreads << " "
-		 << mySimManager->getNumberofThreads() - 1 << endl;
-		 */
-		/*	vector<State *> *states;
-		 map<int, vector<State*>*>::iterator it = checkpointedStates.find(
-		 nextCheckpointTime[id]);
-		 if (it != checkpointedStates.end()) {
-		 // The checkpoint has been reached once but a rollback is causing it to be made
-		 // again. Only update the state for the object that rolled back.
-
-		 utils::debug << "checkpoint only for this object " << endl;
-
-		 int id = objId.getSimulationObjectID();
-		 states = it->second;
-		 SimulationObject *object = mySimManager->getObjectHandle(objId);
-
-		 // Save the state of the object at the checkpoint time.
-		 State *newState = object->allocateState();
-		 newState->copyState(object->getState());
-		 (*states)[id] = newState;
-
-		 lastCheckpointTime[id] = nextCheckpointTime[id];
-		 nextCheckpointTime[id] += checkpointPeriod;
-
-		 stringstream filename;
-		 filename << ckptFilePath << "LP"
-		 << mySimManager->getSimulationManagerID() << "."
-		 << lastCheckpointTime[id] << "." << id;
-
-		 ofstream ckFile(filename.str().c_str(), ofstream::binary);
-		 if (!ckFile.is_open()) {
-		 cerr << mySimManager->getSimulationManagerID()
-		 << " - Could not open file: " << filename.str()
-		 << ", aborting simulation." << endl;
-		 abort();
-		 }
-
-
-		 mySimManager->saveFileQueuesCheckpoint(&ckFile, objId,
-		 lastCheckpointTime[id]);
-
-		 mySimManager->getOutputManagerNew()->saveOutputCheckpoint(&ckFile,
-		 objId, lastCheckpointTime[id], threadId);
-		 ckFile.close();
-		 } else {
-		 // This is the first time the checkpoint has been made. Save the state of all
-		 // of the objects.
-
-		 utils::debug << "checkpoint for all the objects " << endl;
-
-		 states = new vector<State*> (
-		 mySimManager->getNumberOfSimulationObjects(), NULL);
-		 checkpointedStates.insert(
-		 pair<int, vector<State*> *> (nextCheckpointTime[id], states));
-
-		 unsigned int simMgrID = mySimManager->getSimulationManagerID();
-		 for (int i = 0; i < mySimManager->getNumberOfSimulationObjects(); i++) {
-		 SimulationObject *object = mySimManager->getObjectHandle(
-		 ObjectID(i, simMgrID));
-
-		 // Save the state of the object at the checkpoint time.
-		 State *newState = object->allocateState();
-		 newState->copyState(object->getState());
-		 (*states)[i] = newState;
-
-		 lastCheckpointTime[i] = nextCheckpointTime[i];
-		 nextCheckpointTime[i] += checkpointPeriod;
-
-		 stringstream fname;
-		 fname << ckptFilePath << "LP" << simMgrID << "."
-		 << lastCheckpointTime[i] << "." << i;
-
-		 ofstream ckptFile(fname.str().c_str(), ofstream::binary);
-		 if (!ckptFile.is_open()) {
-		 cerr << simMgrID << " - Could not open file: "
-		 << fname.str() << ", aborting simulation." << endl;
-		 abort();
-		 }
-
-		 // Save the file queues.
-
-		 mySimManager->saveFileQueuesCheckpoint(&ckptFile,
-		 ObjectID(i, simMgrID), lastCheckpointTime[i]);
-
-
-		 // Save the output events.
-		 mySimManager->getOutputManagerNew()->saveOutputCheckpoint(
-		 &ckptFile, ObjectID(i, simMgrID),
-		 lastCheckpointTime[i], threadId);
-
-		 ckptFile.close();
-		 }
-		 }*/
 	}
 }
 
@@ -318,9 +182,6 @@ void DTOptFossilCollManager::restoreCheckpoint(unsigned int restoredTime) {
 	}
 	utils::debug << mySimManager->getSimulationManagerID()
 			<< " - Restoring to checkpoint: " << restoredTime << endl;
-
-	// Reset the GVT.
-	mySimManager->getGVTManager()->setGVT(mySimManager->getZero());
 
 	// Restore the states to the objects. The actual state queue will be filled
 	// after all of the events have been transmitted
@@ -370,6 +231,9 @@ void DTOptFossilCollManager::restoreCheckpoint(unsigned int restoredTime) {
 			delete serEvent;
 
 			restoredEvents.push_back(restoredEvent);
+			utils::debug << "restoring to objID "
+					<< restoredEvent->getSender().getSimulationObjectID()
+					<< endl;
 		}
 
 		ckFile.close();
@@ -387,7 +251,7 @@ void DTOptFossilCollManager::restoreCheckpoint(unsigned int restoredTime) {
 
 	// Set recovering to false
 	mySimManager->setRecoveringFromCheckpoint(false);
-	myCommManager->setRecoveringFromCheckpoint(false);
+	//myCommManager->setRecoveringFromCheckpoint(false);
 
 	utils::debug << mySimManager->getSimulationManagerID()
 			<< " - Done with restore process, " << restoredTime << endl;
@@ -445,7 +309,8 @@ void DTOptFossilCollManager::purgeQueuesAndRecover() {
 	// Wait for all the worker threads to stop execution
 	utils::debug << "Waiting for all the worker threads" << endl;
 	while (mySimManager->workerStatus[0]->getStillBusyCount() > 0)
-		cout << mySimManager->workerStatus[0]->getStillBusyCount() << endl;
+		utils::debug << mySimManager->workerStatus[0]->getStillBusyCount()
+				<< endl;
 	utils::debug << "Stopped all the threads." << endl;
 
 	// Release all the Object locks
@@ -470,8 +335,8 @@ void DTOptFossilCollManager::purgeQueuesAndRecover() {
 			<< endl;
 
 	// Clean any received messages -- Not needed
-	while (myCommManager->checkPhysicalLayerForMessages(1000) == 1000)
-		;
+	//while (myCommManager->checkPhysicalLayerForMessages(1000) == 1000)
+	//	;
 
 	// Purge all the Queues
 	threadID = *((unsigned int*) pthread_getspecific(threadKey));
@@ -479,7 +344,7 @@ void DTOptFossilCollManager::purgeQueuesAndRecover() {
 	mySimManager->getEventSetManagerNew()->ofcPurge(threadID);
 	mySimManager->getStateManagerNew()->ofcPurge(threadID);
 	mySimManager->getGVTManager()->setGVT(mySimManager->getZero());
-	cout << "Purged all the queues." << endl;
+	utils::debug << "Purged all the queues." << endl;
 
 	// Reset the last collect times.
 	for (int i = 0; i < mySimManager->getNumberOfSimulationObjects(); i++) {
@@ -487,7 +352,7 @@ void DTOptFossilCollManager::purgeQueuesAndRecover() {
 	}
 	utils::debug << "Reseted the last collect times." << endl;
 
-	mySimManager->getGVTManager()->ofcReset();
+	//mySimManager->getGVTManager()->ofcReset();
 	mySimManager->getTerminationManager()->ofcReset();
 	utils::debug << "Set recovery to false and about to continue execution"
 			<< endl;
@@ -500,18 +365,32 @@ void DTOptFossilCollManager::purgeQueuesAndRecover() {
 void DTOptFossilCollManager::setRecovery(unsigned int objId,
 		unsigned int rollbackTime) {
 	// Enter recovery mode.
-	if (mySimManager->getRecoveringFromCheckpoint() == false) {
-		mySimManager->setRecoveringFromCheckpoint(true);
-		myCommManager->setRecoveringFromCheckpoint(true);
+	if (mySimManager->getNumberOfSimulationManagers() == 1) {
+		if (mySimManager->getRecoveringFromCheckpoint() == false) {
+			myCommManager->setRecoveringFromCheckpoint(true);
+			mySimManager->setRecoveringFromCheckpoint(true);
 
-		cout << mySimManager->getSimulationManagerID()
-				<< " - In Recovery Mode, rollback to " << rollbackTime << endl;
+			// Increase the active history length of this object.
+			activeHistoryLength[objId] = activeHistoryLength[objId] * 1.3;
+			restoreRollbackTime = rollbackTime;
+			mySimManager->setInitiatedRecovery(true);
+		}
+	} else {
+		if (mySimManager->getRecoveringFromCheckpoint() == false
+				&& myCommManager->getRecoveringFromCheckpoint() == false) {
+			myCommManager->setRecoveringFromCheckpoint(true);
+			mySimManager->setRecoveringFromCheckpoint(true);
 
-		// Increase the active history length of this object.
-		activeHistoryLength[objId] = activeHistoryLength[objId] * 1.3;
-		restoreRollbackTime = rollbackTime;
-		mySimManager->setInitiatedRecovery(true);
+			// Increase the active history length of this object.
+			activeHistoryLength[objId] = activeHistoryLength[objId] * 1.3;
+			restoreRollbackTime = rollbackTime;
+			mySimManager->setInitiatedRecovery(true);
+		} else {
+			myCommManager->setRecoveringFromCheckpoint(true);
+			mySimManager->setRecoveringFromCheckpoint(true);
+		}
 	}
+	cout << "Catastrophic Rollback to time " << rollbackTime << endl;
 }
 
 void DTOptFossilCollManager::startRecovery() {
@@ -519,7 +398,7 @@ void DTOptFossilCollManager::startRecovery() {
 	unsigned int dest = 0;
 	int checkpt;
 
-	cout << mySimManager->getSimulationManagerID()
+	utils::debug << mySimManager->getSimulationManagerID()
 			<< " - Started Recovery to rollback time " << restoreRollbackTime
 			<< "; checkpoint at " << lastCheckpointTime[0] << endl;
 
@@ -541,24 +420,21 @@ void DTOptFossilCollManager::startRecovery() {
 
 	// If we aren't the master, send a message to the master to initiate recovery.
 	if (mySimManager->getSimulationManagerID() != 0) {
-		utils::debug << mySimManager->getSimulationManagerID()
-				<< " - Message to master to initiate restoration " << checkpt
-				<< endl;
 		dest = 0;
 		restoreMsg = new RestoreCkptMessage(
 				mySimManager->getSimulationManagerID(), dest, checkpt,
 				RestoreCkptMessage::SEND_TO_MASTER, false);
-		utils::debug << "Peer: Recovery sent to master" << endl;
+		utils::debug << mySimManager->getSimulationManagerID()
+				<< " - Sent message to master" << endl;
 	} else {
 		dest = myPeer;
 		recovering = true;
 		myCommManager->incrementNumRecoveries();
-		utils::debug << mySimManager->getSimulationManagerID()
-				<< " - Message from master to pass first cycle " << checkpt
-				<< " destination " << dest << endl;
 		restoreMsg = new RestoreCkptMessage(
 				mySimManager->getSimulationManagerID(), dest, checkpt,
 				RestoreCkptMessage::FIRST_CYCLE, false);
+		utils::debug << mySimManager->getSimulationManagerID()
+				<< " - Sent the FIRST_CYCLE message " << endl;
 	}
 	myCommManager->sendMessage(restoreMsg, dest);
 }
@@ -574,7 +450,8 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 			switch (restoreMsg->getTokenState()) {
 			case RestoreCkptMessage::SEND_TO_MASTER:
 				if (!recovering) {
-					utils::debug << "Master: SEND_TO_MASTER received." << endl;
+					utils::debug << mySimManager->getSimulationManagerID()
+							<< " - SEND_TO_MASTER received." << endl;
 
 					// Master receiving a message from another manager.
 					// Start round one of the process.
@@ -582,8 +459,6 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					myCommManager->setRecoveringFromCheckpoint(true);
 					myCommManager->incrementNumRecoveries();
 					recovering = true;
-
-					utils::debug << "Master: Recovery Initiated" << endl;
 
 					// Wait for all the worker threads to stop execution
 					utils::debug << mySimManager->getSimulationManagerID()
@@ -593,7 +468,6 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 						utils::debug
 								<< mySimManager->workerStatus[0]->getStillBusyCount()
 								<< endl;
-					utils::debug << "Master: All threads sleeping" << endl;
 
 					sendMsg = new RestoreCkptMessage(
 							mySimManager->getSimulationManagerID(), myPeer,
@@ -601,16 +475,20 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							RestoreCkptMessage::FIRST_CYCLE, false);
 
 					myCommManager->sendMessage(sendMsg, myPeer);
-					utils::debug << "Master: Message sent to peers" << endl;
+					utils::debug << mySimManager->getSimulationManagerID()
+							<< " - Sent the FIRST_CYCLE message " << endl;
 				}
 				break;
 			case RestoreCkptMessage::FIRST_CYCLE:
 				if (recovering) {
 					utils::debug << mySimManager->getSimulationManagerID()
-							<< " - Master: FIRST_CYCLE received." << endl;
+							<< " - FIRST_CYCLE received." << endl;
 
 					// Release all the Object locks
 					mySimManager->releaseObjectLocksRecovery();
+
+					// Clear the message buffer
+					mySimManager->clearMessageBuffer();
 
 					// Clean any received messages
 					while (myCommManager->checkPhysicalLayerForMessages(1000)
@@ -623,8 +501,8 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					mySimManager->getOutputManagerNew()->ofcPurge(threadID);
 					mySimManager->getEventSetManagerNew()->ofcPurge(threadID);
 					mySimManager->getStateManagerNew()->ofcPurge(threadID);
-					mySimManager->getGVTManager()->setGVT(
-							mySimManager->getZero());
+					/*mySimManager->getGVTManager()->setGVT(
+					 mySimManager->getZero());*/
 
 					// Reset the last collect times.
 					for (int i = 0; i
@@ -643,21 +521,21 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 						checkpt = restoreMsg->getCheckpointTime();
 					}
 
-					utils::debug
-							<< "Purged all queues going to send a message; checkpoint: "
-							<< checkpt << endl;
-
 					// Start the second round.
 					sendMsg = new RestoreCkptMessage(
 							mySimManager->getSimulationManagerID(), myPeer,
 							checkpt, RestoreCkptMessage::SECOND_CYCLE, false);
+
+					utils::debug << mySimManager->getSimulationManagerID()
+							<< " - Sent the SECOND_CYCLE message " << endl;
 
 					myCommManager->sendMessage(sendMsg, myPeer);
 				}
 				break;
 			case RestoreCkptMessage::SECOND_CYCLE:
 				if (recovering) {
-					utils::debug << "Master: SECOND_CYCLE received." << endl;
+					utils::debug << mySimManager->getSimulationManagerID()
+							<< " - SECOND_CYCLE received." << endl;
 
 					// Now send around the message informing the other managers of the
 					// checkpoint to use. This is the third round.
@@ -668,14 +546,16 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 								restoreMsg->getCheckpointTime(),
 								RestoreCkptMessage::THIRD_CYCLE, true);
 
+						utils::debug << mySimManager->getSimulationManagerID()
+								<< " - Sent the THIRD_CYCLE message " << endl;
+
 						myCommManager->sendMessage(sendMsg, dest);
 					}
 
-					/*
-					 mySimManager->setRecoveringFromCheckpoint(false);
-					 myCommManager->setRecoveringFromCheckpoint(false);
-					 */
-					mySimManager->getGVTManager()->ofcReset();
+					//mySimManager->setRecoveringFromCheckpoint(false);
+					myCommManager->setRecoveringFromCheckpoint(false);
+
+					/*mySimManager->getGVTManager()->ofcReset();*/
 					mySimManager->getTerminationManager()->ofcReset();
 					recovering = false;
 
@@ -708,10 +588,15 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							<< "Waiting for all the worker threads" << endl;
 					while (mySimManager->workerStatus[0]->getStillBusyCount()
 							> 0)
-						utils::debug << mySimManager->workerStatus[0]->getStillBusyCount() << endl;
+						utils::debug
+								<< mySimManager->workerStatus[0]->getStillBusyCount()
+								<< endl;
 
 					// Release all the Object locks
 					mySimManager->releaseObjectLocksRecovery();
+
+					// Clear the message buffer
+					mySimManager->clearMessageBuffer();
 
 					// Clean any received messages
 					while (myCommManager->checkPhysicalLayerForMessages(1000)
@@ -724,8 +609,8 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					mySimManager->getOutputManagerNew()->ofcPurge(threadID);
 					mySimManager->getEventSetManagerNew()->ofcPurge(threadID);
 					mySimManager->getStateManagerNew()->ofcPurge(threadID);
-					mySimManager->getGVTManager()->setGVT(
-							mySimManager->getZero());
+					/*mySimManager->getGVTManager()->setGVT(
+					 mySimManager->getZero());*/
 
 					// Reset the last collect times.
 					for (int i = 0; i
@@ -741,6 +626,8 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							restoreMsg->getCheckpointConsensus());
 
 					myCommManager->sendMessage(sendMsg, myPeer);
+					utils::debug << mySimManager->getSimulationManagerID()
+							<< " - Sent the FIRST_CYCLE" << endl;
 				}
 				break;
 			case RestoreCkptMessage::SECOND_CYCLE:
@@ -770,6 +657,9 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							checkpt, restoreMsg->getTokenState(),
 							restoreMsg->getCheckpointConsensus());
 
+					utils::debug << mySimManager->getSimulationManagerID()
+							<< " - Sent the SECOND_CYCLE message " << endl;
+
 					myCommManager->sendMessage(sendMsg, myPeer);
 				}
 				break;
@@ -779,11 +669,11 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							<< " - THIRD_CYCLE received." << endl;
 
 					// Exit checkpoint recovery mode.
-					/*
-					 mySimManager->setRecoveringFromCheckpoint(false);
-					 myCommManager->setRecoveringFromCheckpoint(false);
-					 */
-					mySimManager->getGVTManager()->ofcReset();
+
+					//mySimManager->setRecoveringFromCheckpoint(false);
+					myCommManager->setRecoveringFromCheckpoint(false);
+
+					/*mySimManager->getGVTManager()->ofcReset();*/
 					mySimManager->getTerminationManager()->ofcReset();
 					recovering = false;
 
@@ -826,7 +716,6 @@ void DTOptFossilCollManager::fossilCollect(SimulationObject *object,
 				 utils::debug << "Fossil Collecting Obj " << objId
 				 << " at time " << collectTime << " now at " << intCurTime << endl;
 				 */
-				/*				mySimManager->fossilCollectFileQueues(object, collectTime);*/
 			}
 		}
 		fossilPeriod[objId] = 0;

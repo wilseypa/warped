@@ -136,6 +136,9 @@ public:
 	// Releases all the locks that the workers have on the objects  (Called during a catastrophic rollback)
 	void releaseObjectLocksRecovery();
 
+	// Empty the message buffer
+	void clearMessageBuffer();
+
 protected:
 	/**@name Protected Class Methods of DTTimeWarpSimulationManager. */
 	//@{
