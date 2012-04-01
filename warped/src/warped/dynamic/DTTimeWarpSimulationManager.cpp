@@ -30,7 +30,7 @@
 
 static pthread_key_t threadKey;
 DTTimeWarpSimulationManager::DTTimeWarpSimulationManager(
-		unsigned int numProcessors, unsigned int numberOfWorkerThreads,
+        unsigned int numberOfWorkerThreads,
 		Application *initApplication) :
 	numberOfWorkerThreads(numberOfWorkerThreads), masterID(0),
 			coastForwardTime(0),
@@ -40,7 +40,7 @@ DTTimeWarpSimulationManager::DTTimeWarpSimulationManager(
 			GVTTimePeriodLock(new AtomicState()), terminationCheckCount(0),
 			LVTFlag(0), LVTFlagLock(new AtomicState()),
 			computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
-			TimeWarpSimulationManager(numProcessors, initApplication) {
+            TimeWarpSimulationManager(initApplication) {
 	LVT = &getZero();
 	LVTArray = new const VTime *[numberOfWorkerThreads + 1];
 	sendMinTimeArray = new const VTime *[numberOfWorkerThreads + 1];
@@ -872,6 +872,7 @@ void DTTimeWarpSimulationManager::configure(
 
 	myCommunicationManager->configure(configuration);
 	mySimulationManagerID = myCommunicationManager->getId();
+    numberOfSimulationManagers = myCommunicationManager->getSize();
 
 	ASSERT( myApplication != 0 );
 	//setNumberOfObjects( myApplication->getNumberOfSimulationObjects(mySimulationManagerID) );

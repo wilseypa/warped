@@ -19,21 +19,13 @@ ThreadedTimeWarpSimulationManagerFactory::allocate( SimulationConfiguration &con
 					    Configurable *parent ) const {
   ThreadedTimeWarpSimulationManager *retval = 0;
 
-  //Count the number of simulation managers
-  unsigned int numberOfSimulationManagers = 0;
-  if( !configuration.getNumberOfSimulationManagers( numberOfSimulationManagers ) ){
-    cerr << "Could not find number of simulation managers!" << endl;
-    abort();
-  }
-
   //Count the number of threads, if none specified try reading the proc file
   unsigned int numberOfWorkerThreads = 0;
   if( !configuration.getWorkerThreadCount( numberOfWorkerThreads ) ){
 	  numberOfWorkerThreads = GetProcCount();
   }
 
-  retval = new ThreadedTimeWarpSimulationManager(numberOfSimulationManagers,
-												  numberOfWorkerThreads,
+  retval = new ThreadedTimeWarpSimulationManager( numberOfWorkerThreads,
 												  (Application *)parent );
   return retval;
 }

@@ -34,9 +34,8 @@
 #include <time.h>
 using std::istringstream;
 
-TimeWarpSimulationManager::TimeWarpSimulationManager(
-		unsigned int numProcessors, Application *initApplication) :
-	SimulationManagerImplementationBase(numProcessors),
+TimeWarpSimulationManager::TimeWarpSimulationManager(Application *initApplication) :
+    SimulationManagerImplementationBase(),
 			mySimulationManagerID(0), simulationCompleteFlag(false),
 			coastForwardTime(0), messageAggregation(false), myStateManager(0),
 			myGVTManager(0), myCommunicationManager(0), mySchedulingManager(0),
@@ -1212,6 +1211,9 @@ void TimeWarpSimulationManager::configure(
 			= dynamic_cast<CommunicationManager *> (myCommFactory->allocate(
 					configuration, this));
 	ASSERT( myCommunicationManager != 0 );
+    // update the number of the simulation managers with the number
+    // provided by the physical communication layer
+    numberOfSimulationManagers = myCommunicationManager->getSize();
 
 	myCommunicationManager->configure(configuration);
 	mySimulationManagerID = myCommunicationManager->getId();

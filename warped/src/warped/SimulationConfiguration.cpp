@@ -50,8 +50,6 @@ public:
   bool schedulerTypeIs( const string &testValue ) const;
   const string getSchedulerType() const;
 
-  bool getNumberOfSimulationManagers( unsigned int &number ) const;
-
   bool stateManagerTypeIs( const string &testValue ) const;
   const string getStateManagerType() const;
 
@@ -350,11 +348,6 @@ SimulationConfiguration::schedulerTypeIs( const string &testValue ) const {
 const string
 SimulationConfiguration::getSchedulerType() const {
   return _impl->getSchedulerType();
-}
-
-bool
-SimulationConfiguration::getNumberOfSimulationManagers( unsigned int &number ){
-  return _impl->getNumberOfSimulationManagers( number );
 }
 
 bool
@@ -1068,33 +1061,6 @@ SimulationConfiguration::Implementation::getBinaryName() const {
   string retval = "";
   if( !myArguments.empty() ){
     retval = myArguments[0];
-  }
-  return retval;
-}
-
-bool
-SimulationConfiguration::Implementation::getNumberOfSimulationManagers( unsigned int &numManagers ) const {
-  bool retval = false;
-  const ConfigurationScope *scope = getCommunicationManagerScope();
-  if( scope != 0 ){
-    const ConfigurationChoice *nodesList = scope->findChoice( "Nodes" );
-    if( nodesList != 0 ){
-      if( dynamic_cast<const VectorConfigurationValue *>(nodesList->getConfigurationValue()) ){
-        // Have to add ourself in...
-        numManagers =
-          dynamic_cast<const VectorConfigurationValue *>(nodesList->getConfigurationValue())->getVectorValue()->size() + 1;
-        retval = true;
-      }
-      else if( dynamic_cast<const StringConfigurationValue *>(nodesList->getConfigurationValue()) ){
-        numManagers = 1 + 1; // Have to add yourself in...
-        retval = true;
-      }
-    }
-    else{
-      //We are all alone here
-      numManagers=1;
-      retval = true;
-    }
   }
   return retval;
 }

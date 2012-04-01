@@ -21,8 +21,8 @@ class AtomicState;
 template<class element> class LockedQueue;
 class DTTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
-	DTTimeWarpSimulationManager(unsigned int numProcessors,
-			unsigned int numberOfWorkerThreads, Application *initApplication);
+    DTTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
+                                Application *initApplication);
 	virtual ~DTTimeWarpSimulationManager();
 	/** Return a handle to the state manager.
 

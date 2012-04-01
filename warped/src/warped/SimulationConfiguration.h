@@ -113,8 +113,6 @@ public:
   bool schedulerTypeIs( const string &testValue ) const;
   const string getSchedulerType() const;
 
-  bool getNumberOfSimulationManagers( unsigned int &number );
-
   bool stateManagerTypeIs( const string &testValue ) const;
   const string getStateManagerType() const;
 

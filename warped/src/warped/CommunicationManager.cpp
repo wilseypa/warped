@@ -22,6 +22,11 @@ CommunicationManager::finalize(){
   myPhysicalCommunicationLayer->physicalFinalize();
 }
 
+int
+CommunicationManager::getSize(){
+  myPhysicalCommunicationLayer->physicalGetSize();
+}
+
 void
 CommunicationManager::registerMessageType( const string &messageType,
 					   CommunicatingEntity *entity ){

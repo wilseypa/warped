@@ -61,8 +61,7 @@ public:
 	 @param initApplication The application that we're going to start up.
 
 	 */
-	TimeWarpSimulationManager(unsigned int numProcessors,
-			Application *initApplication);
+    TimeWarpSimulationManager(Application *initApplication);
 
 	/// Destructor.
 	virtual ~TimeWarpSimulationManager();

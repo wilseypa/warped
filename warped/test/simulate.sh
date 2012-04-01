@@ -20,6 +20,15 @@ fi
 
 DOWNTIME=800
 DATADIR=${1%/}
+MODEL=pholdSim
+NODES=8
+PARAMETERS="-simulate phold/LargePHOLD -configuration parallel.config -simulateUntil 5000"
+
+if [ ! -x "$MODEL" ]
+then
+  echo "$0 must be run from the warped test (model) directory"
+  exit
+fi
 
 for i in `seq 1 "$2"`
 do

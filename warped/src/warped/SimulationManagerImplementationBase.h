@@ -28,7 +28,7 @@ public:
 
   @param numProcessors Number of processors in the simulation.
   */
-  SimulationManagerImplementationBase (unsigned int numProcessors);
+  SimulationManagerImplementationBase ();
 
   /// Destructor.
   virtual ~SimulationManagerImplementationBase ();
