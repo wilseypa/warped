@@ -1,33 +1,42 @@
 #!/bin/bash
 
-if [ "$#" -ne 2 ]
-then
-  echo "usage: $0 <directory> <number of runs>"
-  exit
-fi
+TEMP=`getopt -o d:n: -l help -n "$0" -- "$@"`
+eval set -- "$TEMP"
 
-if [ -z $1 ]
-then
-  echo "usage: $0 <directory>"
-  exit
-fi
+while true; do
+  case "$1" in
+    -d) DATADIR=${2%/}; shift 2;;
+    -n) NODES=$2; shift 2;;
+    --help) echo "Usage: $0 -n nodes -d directory"; exit;;
+    --) shift; break;;
+  esac
+done
 
-if [ ! -d $1 ]
-then
-  echo "$1 does not exist"
-  exit
-fi
+if [ ! -d "$DATADIR" ]; then echo "error: invalid directory '$DATADIR'"; ERROR=1; fi
+if [ -n "$NODES" ] && ! [[ "$NODES" =~ ^[0-9]+$ ]]; then echo "error: invalid nodes '$NODES'"; ERROR=1; fi
+if [ -n "$ERROR" ]; then exit; fi
+
+if [ -z "$NODES" ]; then NODES=`cat /proc/cpuinfo | grep processor | wc -l`; fi
 
 DOWNTIME=800
-DATADIR=${1%/}
 MODEL=pholdSim
-NODES=8
-PARAMETERS="-simulate phold/LargePHOLD -configuration parallel.config -simulateUntil 5000"
+MODEL_CONFIGURATION=phold/LargePHOLD
+SIMULATION_CONFIGURATION=parallel.config
+# comment out to omit this argument
+SIMULATE_UNTIL=5000
 
-if [ ! -x "$MODEL" ]
+if [ ! -x "$MODEL" ] || 
+   [ ! -e "$MODEL_CONFIGURATION" ] || 
+   [ ! -e "$SIMULATION_CONFIGURATION" ]
 then
   echo "$0 must be run from the warped test (model) directory"
   exit
+fi
+
+ARGS="-simulate $MODEL_CONFIGURATION -configuration $SIMULATION_CONFIGURATION"
+if [ -n "$SIMULATE_UNTIL" ]
+then
+  ARGS="$ARGS -simulateUntil $SIMULATE_UNTIL"
 fi
 
 for i in `seq 1 "$2"`
@@ -41,7 +50,7 @@ do
   sleep $DOWNTIME
 
   echo "beginning simulation run \#$RUN"
-  mpiexec.hydra -n 8 -binding cpu:cores ./pholdSim -simulate phold/LargePHOLD -configuration parallel.config -simulateUntil 5000
+  mpiexec.hydra -n "$NODES" -binding cpu:cores ./"$MODEL" "$ARGS"
 
   # extract runtime and rollback info from the CSVs
   RUNTIME=0
