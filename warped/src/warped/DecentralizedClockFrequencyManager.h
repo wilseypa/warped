@@ -44,9 +44,9 @@ public:
 
 private:
   int mySimulatedFrequencyIdx;
-  std::ofstream myFile;
-  void adjustFrequency(vector<double>& d);
-
+  vector<double> myFrequencyIdxs;
+  ofstream myFile;
+  bool adjustFrequency(vector<double>& d);
 };
 
 #endif //DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

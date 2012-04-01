@@ -10,11 +10,17 @@
 
 class UtilizationMessage : public KernelMessage {
 public:
+  enum MessageRound {
+    COLLECT,
+    SETFREQ
+  };
+
   UtilizationMessage(unsigned int source,
-			    unsigned int dest, int nSimMgrs) :
+                unsigned int dest, int nSimMgrs, MessageRound r) :
     KernelMessage(source, dest),
     numSimulationManagers(nSimMgrs),
-    myData(nSimMgrs)
+    myData(nSimMgrs),
+    myRound(r)
   {}
   
   void serialize( SerializedInstance * ) const;
@@ -23,6 +29,8 @@ public:
   const string &getDataType() const { return dataType(); }
   void getData(std::vector<double>& data) const { data = myData; }
   void setData(std::vector<double>& data) { myData = data; }
+  MessageRound getRound() const { return myRound; }
+  void setRound(MessageRound mr) { myRound = mr; }
 
   static const string& dataType();
 
@@ -34,11 +42,13 @@ private:
   */
   UtilizationMessage() :
     numSimulationManagers(0),
-    myData(0)
+    myData(0),
+    myRound(COLLECT)
   {}
 
   const unsigned int numSimulationManagers;
   std::vector<double> myData;
+  MessageRound myRound;
 };
 
 #endif //CF_ROLLBACK_VECTOR_MESSAGE_H

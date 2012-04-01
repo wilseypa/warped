@@ -11,6 +11,7 @@ UtilizationMessage::serialize( SerializedInstance *serialized ) const {
   for (; it != myData.end(); ++it) {
     serialized->addDouble(*it);
   }
+  serialized->addInt(myRound);
 }
 
 Serializable *
@@ -24,9 +25,10 @@ UtilizationMessage::deserialize( SerializedInstance *data ){
   for (int i = 0; i < nSimMgrs; ++i) {
     d[i] = data->getDouble();
   }
+  MessageRound round = static_cast<MessageRound>(data->getInt());
 
   UtilizationMessage *retMsg =
-          new UtilizationMessage(sender, dest, nSimMgrs);
+          new UtilizationMessage(sender, dest, nSimMgrs, round);
   retMsg->setData(d);
   retMsg->setIncarnationNumber(incNum);
 

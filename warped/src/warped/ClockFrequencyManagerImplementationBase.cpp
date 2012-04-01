@@ -16,7 +16,6 @@ ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase
   ,myNumSimulationManagers(simMgr->getNumberOfSimulationManagers())
   ,myCPU(0)
   ,myFIRSize(firsize)
-  ,myRound(0)
   ,myIsDummy(dummy) 
   ,myUtilFilters(myNumSimulationManagers, myFIRSize)
   ,myAvailableFreqs(0)
@@ -79,7 +78,7 @@ ClockFrequencyManagerImplementationBase::configure(
   setGovernorMode("userspace");
 
   populateAvailableFrequencies();
-  setCPUFrequency(myCPU, myAvailableFreqs[0]);
+  setCPUFrequency(myCPU, myAvailableFreqs[7]);
 }
 
 void

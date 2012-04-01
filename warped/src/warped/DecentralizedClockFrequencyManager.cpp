@@ -23,6 +23,7 @@ DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(
                                            firsize,
                                            dummy)
   ,mySimulatedFrequencyIdx(4) // index of simulatedFrequencies
+  ,myFrequencyIdxs(myNumSimulationManagers, 4)
 {
   ostringstream path;
   path << "cfmoutput_lp" << mySimulationManagerID << ".csv";
@@ -36,8 +37,9 @@ DecentralizedClockFrequencyManager::poll() {
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
     UtilizationMessage* msg = new UtilizationMessage(mySimulationManagerID,
                                                      dest,
-                                                     myNumSimulationManagers);
-    utils::debug << "beginning measurement" << endl;
+                                                     myNumSimulationManagers,
+                                                     UtilizationMessage::COLLECT);
+    //cout << "beginning measurement" << endl;
     myCommunicationManager->sendMessage(msg, dest);
   }
 }
@@ -50,48 +52,53 @@ DecentralizedClockFrequencyManager::registerWithCommunicationManager() {
 
 void
 DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
-  myRound++;
-
   UtilizationMessage* msg = dynamic_cast<UtilizationMessage*>(kMsg);
   ASSERT(msg);
 
   std::vector<double> dat;
+  UtilizationMessage::MessageRound round = msg->getRound();
+  bool adjust = true;
   msg->getData(dat);
-  if(myRound == 1) {
+  if(round == UtilizationMessage::COLLECT) {
     dat[mySimulationManagerID] = mySimulationManager->effectiveUtilization();
     if(isMaster()) {
-      for(int i = 0; i < dat.size(); i++) {
+      for(int i = 0; i < dat.size(); i++)
         myUtilFilters[i].update(dat[i]);
-        if(myIsDummy)
-          writeCSVRow(i, dat[i], simulatedFrequencies[4]);
-      }
 
-      if(!myIsDummy) {
-        std::vector<double> utils(dat);
-        adjustFrequency(dat);
-        for(int i = 0; i < dat.size(); i++)
-          writeCSVRow(i, utils[i], simulatedFrequencies[static_cast<int>(dat[i])]);
+      if(!myIsDummy)
+        adjust = adjustFrequency(dat);
 
-        // update the master's simulated frequency first
-        mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
-      }
+      for(int i = 0; i < dat.size(); i++)
+        writeCSVRow(i,
+                    myUtilFilters[i].getData(),
+                    simulatedFrequencies[myIsDummy ? 4 : static_cast<int>(dat[i])]);
     }
   }
-  else if(myRound == 2) {
-    if(!myIsDummy)
-      mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
-    myRound = 0;
+  else if(round == UtilizationMessage::SETFREQ && !myIsDummy)
+  {
+    mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
+    //cout << "simulated frequency idx: " << mySimulatedFrequencyIdx << endl;
   }
 
-  if(!(isMaster() && myRound == 0)) {
+  // forward message to next node unless we're the master and either
+  // we just received a set frequency message or we're not adjusting frequencies
+  if(!(isMaster() && (round == UtilizationMessage::SETFREQ || !adjust))) {
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-    UtilizationMessage* newMsg = new UtilizationMessage(
-                mySimulationManagerID, dest, myNumSimulationManagers);
+    UtilizationMessage::MessageRound newRound =
+        isMaster() ? UtilizationMessage::SETFREQ : round;
+    //cout << "sending " << (newRound == UtilizationMessage::SETFREQ ? "set freq" : "collect")
+    //     << " message from " << mySimulationManagerID << " to " << dest << endl;
+
+    UtilizationMessage* newMsg = new UtilizationMessage(mySimulationManagerID,
+                                                        dest,
+                                                        myNumSimulationManagers,
+                                                        newRound);
+
     newMsg->setData(dat);
     myCommunicationManager->sendMessage(newMsg, dest);
   }
-  else
-    utils::debug << "ending measurement" << endl;
+  //else
+  //  cout << "ending measurement" << endl;
 
   delete kMsg;
 }
@@ -105,12 +112,9 @@ struct Utilization {
 };
 
 
-void
+bool
 DecentralizedClockFrequencyManager::adjustFrequency(vector<double>& d) {
-  const int slowIdx = 5;
-  const int fastIdx = 3;
-  const int medIdx = 4;
-  const float dist = 0.05;
+  const float dist = 0.01;
 
   vector<Utilization> utils(0);
   double avg = 0.;
@@ -122,7 +126,6 @@ DecentralizedClockFrequencyManager::adjustFrequency(vector<double>& d) {
     u.util = myUtilFilters[i].getData();
     avg += u.util;
     utils.push_back(u);
-    d[i] = medIdx;
   }
   avg /= n;
 
@@ -130,7 +133,7 @@ DecentralizedClockFrequencyManager::adjustFrequency(vector<double>& d) {
   i = 0;
   int high = n;
   int low = -1;
-  for(; i < utils.size(); i++) {
+  for(; i < n; i++) {
     if(utils[i].util < avg - dist)
       low = i;
     else if(utils[i].util > avg + dist)
@@ -138,18 +141,22 @@ DecentralizedClockFrequencyManager::adjustFrequency(vector<double>& d) {
   }
   high = i;
 
+  bool adjust = false;
   while(low >= 0 && high < n) {
-    d[utils[low--].node] = slowIdx;
-    d[utils[high++].node] = fastIdx;
+    // skip over any nodes that are already at the extremes
+    while(low >= 0 && myFrequencyIdxs[utils[low].node] == n - 1)
+      low--;
+    while(high < n && myFrequencyIdxs[utils[high].node] == 0)
+      high++;
+    if(low >= 0 && high < n) {
+      myFrequencyIdxs[utils[low--].node]++;
+      myFrequencyIdxs[utils[high++].node]--;
+      adjust = true;
+    }
   }
 
-  //myFile << myUtilFilters[mySimulationManagerID].getData() << ','
-  //       << simulatedFrequencies[mySimulatedFrequencyIdx] << endl;
-
-  //cout << "(" << myCPU << "): " << utils[speedup ? top : bottom].util
-  //     << ", " << simulatedFrequencies[mySimulatedFrequencyIdx] << endl;
-
-
+  d = myFrequencyIdxs;
+  return adjust;
 }
 
 string
@@ -164,7 +171,7 @@ DecentralizedClockFrequencyManager::toString() {
 
 void
 DecentralizedClockFrequencyManager::delay(int cycles) {
-  warped64_t extracycles = cycles * (static_cast<double>(myAvailableFreqs[0]) /
+  warped64_t extracycles = cycles * (static_cast<double>(myAvailableFreqs[7]) /
                             simulatedFrequencies[mySimulatedFrequencyIdx] - 1);
 
   warped64_t start = rdtsc();
@@ -175,12 +182,12 @@ DecentralizedClockFrequencyManager::delay(int cycles) {
 
 const int DecentralizedClockFrequencyManager::numSimulatedFrequencies = 9;
 const int DecentralizedClockFrequencyManager::simulatedFrequencies[] =
-  {2.1e6,
-   2e6,
-   1.9e6,
-   1.8e6,
-   1.7e6,
-   1.6e6,
-   1.5e6,
+  {1.5e6,
    1.4e6,
-   1.3e6};
+   1.3e6,
+   1.2e6,
+   1.1e6,
+   1.0e6,
+   0.9e6,
+   0.8e6,
+   0.7e6};

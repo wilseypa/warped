@@ -67,7 +67,6 @@ protected:
   int myNumSimulationManagers;
   int myCPU;
   int myFIRSize;
-  int myRound;
   bool myIsDummy;
   std::vector<FIRFilter<double> > myUtilFilters;
 

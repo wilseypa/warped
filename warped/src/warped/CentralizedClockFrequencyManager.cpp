@@ -27,9 +27,11 @@ CentralizedClockFrequencyManager::poll() {
     // initiate the measurement cycle
     if(isMaster()) {
       myStartedRound = true;
-      myRound = 0;
       int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-      UtilizationMessage* msg = new UtilizationMessage(mySimulationManagerID, dest, myNumSimulationManagers);
+      UtilizationMessage* msg = new UtilizationMessage(mySimulationManagerID,
+                                                       dest,
+                                                       myNumSimulationManagers,
+                                                       UtilizationMessage::COLLECT);
       myCommunicationManager->sendMessage(msg, dest);
     }
   }
@@ -62,7 +64,10 @@ CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   else {
 
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-    UtilizationMessage* newMsg = new UtilizationMessage(mySimulationManagerID, dest, myNumSimulationManagers);
+    UtilizationMessage* newMsg = new UtilizationMessage(mySimulationManagerID,
+                                                        dest,
+                                                        myNumSimulationManagers,
+                                                        UtilizationMessage::COLLECT);
     newMsg->setData(dat);
     myCommunicationManager->sendMessage(newMsg, dest);
   }
