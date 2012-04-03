@@ -3,7 +3,7 @@
 # default batch arguments
 DATADIR=measurements
 RUNS=1
-PAUSE=500
+PAUSE=200
 
 # default simulation arguments
 NODES=`cat /proc/cpuinfo | grep processor | wc -l`
@@ -11,7 +11,7 @@ MODEL=pholdSim
 MODEL_CONFIGURATION=phold/LargePHOLD
 SIMULATION_CONFIGURATION=parallel.config
 # comment out to omit this argument
-SIMULATE_UNTIL=100
+SIMULATE_UNTIL=50000
 
 # get batch arguments
 TEMP=`getopt -o d:n:p: -l help -n "$0" -- "$@"`
@@ -81,7 +81,7 @@ do
   # let the CPU cool down for $PAUSE seconds
   if [ "$i" -ne "$RUNS" ]; then
     echo "waiting $PAUSE seconds before next simulation run..."
-    sleep $DOWNTIME
+    sleep $PAUSE
   fi
 
 done

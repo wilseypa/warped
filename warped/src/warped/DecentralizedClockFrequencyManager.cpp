@@ -22,8 +22,8 @@ DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(
                                            measurementPeriod,
                                            firsize,
                                            dummy)
-  ,mySimulatedFrequencyIdx(4) // index of simulatedFrequencies
-  ,myFrequencyIdxs(myNumSimulationManagers, 4)
+  ,mySimulatedFrequencyIdx(numSimulatedFrequencies / 2)
+  ,myFrequencyIdxs(myNumSimulationManagers, numSimulatedFrequencies / 2)
 {
   ostringstream path;
   path << "cfmoutput_lp" << mySimulationManagerID << ".csv";
@@ -57,7 +57,7 @@ DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 
   std::vector<double> dat;
   UtilizationMessage::MessageRound round = msg->getRound();
-  bool adjust = true;
+  bool adjust = false;
   msg->getData(dat);
   if(round == UtilizationMessage::COLLECT) {
     dat[mySimulationManagerID] = mySimulationManager->effectiveUtilization();
@@ -71,7 +71,8 @@ DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
       for(int i = 0; i < dat.size(); i++)
         writeCSVRow(i,
                     myUtilFilters[i].getData(),
-                    simulatedFrequencies[myIsDummy ? 4 : static_cast<int>(dat[i])]);
+                    simulatedFrequencies[myIsDummy ? 
+                      numSimulatedFrequencies / 2 : static_cast<int>(dat[i])]);
     }
   }
   else if(round == UtilizationMessage::SETFREQ && !myIsDummy)
@@ -130,6 +131,13 @@ DecentralizedClockFrequencyManager::adjustFrequency(vector<double>& d) {
   avg /= n;
 
   sort(utils.begin(), utils.end(), Utilization());
+
+  /*
+  for(int j=0; j < n; j++)
+    cout << j << " (" << utils[j].node << ") " << utils[j].util << "freqidx: " << myFrequencyIdxs[utils[j].node] << endl;
+  cout << "average: " << avg << endl;
+  */
+
   i = 0;
   int high = n;
   int low = -1;
@@ -141,16 +149,21 @@ DecentralizedClockFrequencyManager::adjustFrequency(vector<double>& d) {
   }
   high = i;
 
+  //cout << "low: " << low << "; high: " << high << endl;
+
   bool adjust = false;
-  while(low >= 0 && high < n) {
+  int l = 0;
+  int h = n - 1;
+  while(l <= low && h >= high) {
     // skip over any nodes that are already at the extremes
-    while(low >= 0 && myFrequencyIdxs[utils[low].node] == n - 1)
-      low--;
-    while(high < n && myFrequencyIdxs[utils[high].node] == 0)
-      high++;
-    if(low >= 0 && high < n) {
-      myFrequencyIdxs[utils[low--].node]++;
-      myFrequencyIdxs[utils[high++].node]--;
+    while(l <= low && myFrequencyIdxs[utils[l].node] == numSimulatedFrequencies - 1)
+      l++;
+    while(h >= high && myFrequencyIdxs[utils[h].node] == 0)
+      h--;
+    if(l <= low && h >= high) {
+      //cout << "(" << utils[l].node << ") freqidx up, (" << utils[h].node << ") freqidx down" << endl ;
+      myFrequencyIdxs[utils[l++].node]++;
+      myFrequencyIdxs[utils[h--].node]--;
       adjust = true;
     }
   }
@@ -171,7 +184,7 @@ DecentralizedClockFrequencyManager::toString() {
 
 void
 DecentralizedClockFrequencyManager::delay(int cycles) {
-  warped64_t extracycles = cycles * (static_cast<double>(myAvailableFreqs[7]) /
+  warped64_t extracycles = cycles * (static_cast<double>(myAvailableFreqs[0]) /
                             simulatedFrequencies[mySimulatedFrequencyIdx] - 1);
 
   warped64_t start = rdtsc();
@@ -180,14 +193,28 @@ DecentralizedClockFrequencyManager::delay(int cycles) {
     stop = rdtsc();
 }
 
-const int DecentralizedClockFrequencyManager::numSimulatedFrequencies = 9;
 const int DecentralizedClockFrequencyManager::simulatedFrequencies[] =
-  {1.5e6,
+  {2.8e6,
+   2.7e6,
+   2.6e6,
+   2.5e6,
+   2.4e6,
+   2.3e6,
+   2.2e6,
+   2.1e6,
+   2.0e6,
+   1.9e6,
+   1.8e6,
+   1.7e6,
+   1.6e6,
+   1.5e6,
    1.4e6,
    1.3e6,
    1.2e6,
    1.1e6,
    1.0e6,
    0.9e6,
-   0.8e6,
-   0.7e6};
+   0.8e6
+};
+const int DecentralizedClockFrequencyManager::numSimulatedFrequencies = 
+  sizeof(simulatedFrequencies) / sizeof(int);

@@ -78,7 +78,7 @@ ClockFrequencyManagerImplementationBase::configure(
   setGovernorMode("userspace");
 
   populateAvailableFrequencies();
-  setCPUFrequency(myCPU, myAvailableFreqs[7]);
+  setCPUFrequency(myCPU, myAvailableFreqs[0]);
 }
 
 void
