@@ -44,6 +44,12 @@ public:
 	 @param currentTime Time at which the state is saved.
 	 @param object The object whose state is saved.
 	 */
+	virtual void saveState(const VTime &currentTime, unsigned int eventNumber,
+			SimulationObject* object, const ObjectID senderId, int threadID);
+
+	virtual void updateStateWhileCoastForward(const VTime &currentTime,
+			unsigned int eventNumber, SimulationObject* object,const ObjectID senderId, int threadID);
+
 	virtual void saveState(const VTime &currentTime, SimulationObject* object,
 			int threadID);
 
@@ -109,6 +115,13 @@ public:
 
 	void initStateQueueLocks(DTTimeWarpSimulationManager *simMgr);
 
+	const unsigned int getEventIdForRollback(int threadId, int objId);
+
+	const unsigned int  getSenderObjectIdForRollback(int threadId, int objId);
+
+	const unsigned int  getSenderObjectSimIdForRollback(int threadId, int objId);
+
+
 protected:
 
 	/**@name Protected Class Attributes of DTStateManagerImplementationBase. */
@@ -130,6 +143,14 @@ protected:
 	multiset<SetObject<State> > *myStateQueue;
 
 	AtomicState** stateQueueLock;
+
+	vector<unsigned int> rollbackEventNumber;
+
+	vector<const VTime*> lastRollbackTime;
+
+	vector<unsigned int> lastRollbackSenderObjectId;
+
+	vector<unsigned int> lastRollbackSenderObjectSimId;
 
 	//@} // End of Protected Class Attributes of DTStateManagerImplementationBase.
 };

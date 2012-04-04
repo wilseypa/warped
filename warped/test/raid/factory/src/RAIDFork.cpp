@@ -4,7 +4,7 @@
 #include "IntVTime.h"
 
 RAIDFork::RAIDFork(string &myName, int numOutputs, vector<string> outNames,
-		   int disks, int startDisk)  : 
+		   int disks, int startDisk)  :
   objectName(myName), numberOfOutputs(numOutputs), outputNames(outNames),
   numDisks(disks), startDiskId(startDisk) {
 } // End of RAIDFork()
@@ -36,28 +36,25 @@ RAIDFork::executeProcess() {
 
   int timeDelay = 1;
   IntVTime ldelay(sendTime + timeDelay++);
-  IntVTime ldelayBkp(sendTime + timeDelay++);
   int receiveDisk;
 
   while(true == haveMoreEvents()) {
     recvEvent = (RAIDRequest *) getEvent();
-    
+
     if ( recvEvent != NULL ) {
       myState = (RAIDForkState*) getState();
       newEvent = new RAIDRequest(sendTime, ldelay, this, this);
-      *newEvent = *recvEvent; 
-     
+      *newEvent = *recvEvent;
+
       int firstStripeUnit = newEvent->getStartStripe();
-      
+
       ObjectID sourceObjId = *(getObjectHandle(recvEvent->getSourceObject())->getObjectID());
       if ( recvEvent->getSender() == sourceObjId ) {
 	if (recvEvent->getRead() == true) {
 	  int parityDiskId;
-	  //cout << "Read Request" << endl;
 	  for (int count = 0; count < recvEvent->getSizeRead(); count++) {
-		  ldelay=ldelay+30;
 	    newEvent->setStartStripe(firstStripeUnit + count);
-	    
+
 	    calculateStripeInfo(newEvent, parityDiskId, receiveDisk);
 
             delete newEvent;
@@ -80,54 +77,52 @@ RAIDFork::executeProcess() {
 	  // See how many parity messages needed.
 	  int numParity = 0;
 	  int parityDiskId;
-	  
+
 	  // Kludge
 	  // calculate the number of parity messages needed
 	  int lastParityDiskId  = -1;
 	  int count;
 	  for (count = 0; count < newEvent->getSizeRead(); count++) {
 	    parityDiskId = getParityDiskId(firstStripeUnit + count);
-	    
+
 	    if (parityDiskId != lastParityDiskId) {
 	      numParity++;
 	      lastParityDiskId = parityDiskId;
 	    }
 	  }
-	  
+
 	  lastParityDiskId = -1;
 	  for (count = 0; count < newEvent->getSizeRead(); count++) {
-		  ldelayBkp = ldelay + 15;
-		  ldelay=ldelay+30;
 	    newEvent->setStartStripe(firstStripeUnit + count);
 	    calculateStripeInfo(newEvent, parityDiskId, receiveDisk);
 
             delete newEvent;
             newEvent = new RAIDRequest( sendTime, ldelay, this, outputHandles[receiveDisk] );
-            
+
             *newEvent = *recvEvent;
             newEvent->setStartStripe(firstStripeUnit + count );
 
 	    newEvent->setParityMsg(false);
 	    newEvent->setSizeParity(numParity);
-	    
+
 	    // Do we need different parity block yet.
 	    if (parityDiskId != lastParityDiskId) {
-	    	//ldelay=ldelay+30;
+
 	      lastParityDiskId = parityDiskId;
-	      RAIDRequest *parityMsg = new RAIDRequest(sendTime, 
-	    		  	  	  	  	  	  	  	  	  ldelayBkp,
+	      RAIDRequest *parityMsg = new RAIDRequest(sendTime,
+                                                       ldelay,
                                                        this,
                                                        outputHandles[parityDiskId%numberOfOutputs]);
-	      
+
               // send a request for the new information.
 	      *parityMsg = *newEvent;
 	      parityMsg->setParityMsg(true);
-	      //cout << "Parity Write Request" << endl;
+
 	      (outputHandles[parityDiskId%numberOfOutputs])->receiveEvent(parityMsg);
 	    }
-	    //cout << "Write Request" << endl;
+
 	    (outputHandles[receiveDisk])->receiveEvent(newEvent);
-	    
+
 	    newEvent = new RAIDRequest(sendTime,
                                        ldelay,
                                        this,
@@ -138,7 +133,7 @@ RAIDFork::executeProcess() {
 	  }// for (count = 0; count < newEvent->sizeRead; count++)
 	  delete newEvent; // Get rid of last unsent message
 	} // if (read)
-      } // if (sender == source) 
+      } // if (sender == source)
     } // End of if (event != null)
   } // End of while "have more events" loop
 } // End of executePRocess()

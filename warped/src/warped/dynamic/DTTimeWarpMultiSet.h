@@ -152,9 +152,6 @@ public:
 			const VTime &minimumTime, int threadId);
 	const VTime* getMinEventTime(unsigned int threadId, unsigned int objId);
 
-	// Release all the object locks during a catastrophic rollback.
-	void releaseObjectLocksRecovery();
-
 private:
 	AtomicState** unprocessedQueueAtomicState;
 	AtomicState** processedQueueAtomicState;

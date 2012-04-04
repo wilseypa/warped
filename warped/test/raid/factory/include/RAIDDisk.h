@@ -4,7 +4,7 @@
 
 #include "RAIDRequest.h"
 #include "SimulationObject.h"
-
+class IntVTime;
 /** The class RAIDDisk.
 
     Objects of this class will receive disk requests from RAIDFork
@@ -96,6 +96,8 @@ private:
   /// Number of cylinders on this disk.
   int    numCylinders;
   //@} // End of Private Class Members of RAIDDisk.
+
+  warped64_t *lastEventTime;
 };
 
 #endif

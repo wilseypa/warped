@@ -4,6 +4,7 @@
 #include "SimulationObject.h"
 #include "State.h"
 #include "OptFossilCollManager.h"
+#include "SetObject.h"
 
 using std::cerr;
 using std::endl;
@@ -15,6 +16,12 @@ DTStateManagerImplementationBase::DTStateManagerImplementationBase(
 			myStateQueue(
 					new multiset<SetObject<State> > [simMgr->getNumberOfSimulationObjects()]),
 			objectStatePeriod(simMgr->getNumberOfSimulationObjects(), period),
+			rollbackEventNumber(simMgr->getNumberOfSimulationObjects(), 0),
+			lastRollbackSenderObjectId(simMgr->getNumberOfSimulationObjects(),
+					0),
+			lastRollbackSenderObjectSimId(
+					simMgr->getNumberOfSimulationObjects(), 0),
+			lastRollbackTime(simMgr->getNumberOfSimulationObjects(), NULL),
 			periodCounter(simMgr->getNumberOfSimulationObjects(), -1),
 			stateQueueLock(
 					new AtomicState*[simMgr->getNumberOfSimulationObjects()]) {
@@ -30,6 +37,20 @@ DTStateManagerImplementationBase::~DTStateManagerImplementationBase() {
 	delete stateQueueLock;
 }
 
+void DTStateManagerImplementationBase::saveState(const VTime &currentTime,
+		unsigned int eventNumber, SimulationObject *object,
+		const ObjectID senderId, int threadID) {
+	cerr << "DTStateManagerImplementationBase::saveState called" << endl;
+	cerr << "Exiting simulation ..." << endl;
+	exit(-1);
+}
+void DTStateManagerImplementationBase::updateStateWhileCoastForward(
+		const VTime &currentTime, unsigned int eventNumber,
+		SimulationObject *object, const ObjectID senderId, int threadID) {
+	cerr << "DTStateManagerImplementationBase::saveState called" << endl;
+	cerr << "Exiting simulation ..." << endl;
+	exit(-1);
+}
 void DTStateManagerImplementationBase::saveState(const VTime &currentTime,
 		SimulationObject *object, int threadID) {
 	cerr << "DTStateManagerImplementationBase::saveState called" << endl;
@@ -49,7 +70,7 @@ vector<unsigned int> DTStateManagerImplementationBase::getObjectStatePeriod(
 const VTime&
 DTStateManagerImplementationBase::restoreState(const VTime &rollbackTime,
 		SimulationObject *object, int threadID) {
-	// store this object's id temporarily
+	// store this object's id temporarilyAa
 	OBJECT_ID *currentObjectID = object->getObjectID();
 	unsigned int objId = currentObjectID->getSimulationObjectID();
 
@@ -77,17 +98,43 @@ DTStateManagerImplementationBase::restoreState(const VTime &rollbackTime,
 			object->deallocateState((*iter_end).getElement());
 			myStateQueue[objId].erase(iter_end--);
 		}
-
+		(lastRollbackTime[objId]) = (*iter_end).getMainTime().clone();
+		lastRollbackSenderObjectId[objId] = (*iter_end).getsenderObjectId();
+/*		cout << "--------------------+++++++++++-------- "
+				<< (*iter_end).getMainTime()
+				<< "--------------------++++++++++++"
+				<< (*iter_end).getsenderObjectId()
+				<< "--------------------++++++++++++" << endl;*/
+		//	iter_end--;
+		//	int tempCount = 0;
+		//	while (iter_end != iter_begin && (*iter_end).getMainTime() == *tempTime) {
+		//		tempCount++;
+		//		iter_end--;
+		//	}
+		/*	//	cout << "-------------------->>>>>>>>-------- " << tempCount
+		 //			<< "--------------------<<<<<<<<<<<<<<<<<<<<<<<<<<<" << endl;*/
+		//	if (tempCount > 0) {
+		//		std::advance(iter_end, tempCount + 1);
+		//		while (tempCount > 0) {
+		//			object->deallocateState((*iter_end).getElement());
+		//			myStateQueue[objId].erase(iter_end--);
+		//			tempCount--;
+		//		}
+		//	} else
+		//		iter_end++;
 		// at this point, the iterator points to the state we want to restore
 		object->getState()->copyState((*iter_end).getElement());
+		rollbackEventNumber[objId] = (*iter_end).getEventNumber();
+		//	cout << "EventId Value While retiving ::::::::::::::::: "
+		//			<< rollbackEventNumber[objId] << endl;
 		this->releaseStateQueueLock(threadID, objId);
-		return (*iter_end).getMainTime();
+		//	return (*iter_end).getMainTime();
+		return *(lastRollbackTime[objId]);
 
 	} else {
 		// There are no states to be restored. If using optimistic fossil collection, rollback to a saved
 		// checkpoint. This should never happen when not using optimistic fossil collection, so it will
 		// result in a fatal error.
-		this->releaseStateQueueLock(threadID, objId);
 		if (mySimulationManager->getOptFossilColl()) {
 			if (!mySimulationManager->getRecoveringFromCheckpoint()) {
 				utils::debug << mySimulationManager->getSimulationManagerID()
@@ -97,7 +144,7 @@ DTStateManagerImplementationBase::restoreState(const VTime &rollbackTime,
 						<< ": Current Simulation Time is "
 						<< object->getSimulationTime() << endl;
 
-				mySimulationManager->getOptFossilCollManagerNew()->setRecovery(
+				mySimulationManager->getOptFossilCollManagerNew()->startRecovery(
 						objId, rollbackTime.getApproximateIntTime());
 			}
 		} else {
@@ -298,4 +345,21 @@ void DTStateManagerImplementationBase::initStateQueueLocks(
 	for (int i = 0; i < simMgr->getNumberOfSimulationObjects(); i++) {
 		stateQueueLock[i] = new AtomicState();
 	}
+}
+const unsigned int DTStateManagerImplementationBase::getEventIdForRollback(
+		int threadId, int objId) {
+	//    cout <<"Retrived EventId is;;;;;;;;;; " << *ret <<endl;
+	unsigned int ret = rollbackEventNumber[objId];
+	//	rollbackEventNumber[objId] = 0;
+	return ret;
+}
+
+const unsigned int DTStateManagerImplementationBase::getSenderObjectIdForRollback(
+		int threadId, int objId) {
+	return lastRollbackSenderObjectId[objId];
+}
+
+const unsigned int DTStateManagerImplementationBase::getSenderObjectSimIdForRollback(
+		int threadId, int objId) {
+	return lastRollbackSenderObjectSimId[objId];
 }

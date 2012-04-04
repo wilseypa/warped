@@ -4,7 +4,6 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include "DTStateManagerImplementationBase.h"
-
 class DTPeriodicStateManager: public DTStateManagerImplementationBase {
 public:
 	/**@name Public Class Methods of PeriodicStateManager. */
@@ -35,11 +34,19 @@ public:
 	 @param currentTime Current time of state saving.
 	 @param object Simulation object for which to save the state.
 	 */
-	void saveState(const VTime &currentTime, SimulationObject* object,
+	void saveState(const VTime &currentTime,unsigned int eventNumber, SimulationObject* object,const ObjectID senderId,
 			int threadID);
+
+    void saveState(const VTime &currentTime, SimulationObject* object,
+			int threadID);
+
 
 	void configure(SimulationConfiguration &) {
 	}
+
+    const unsigned int getEventIdForRollback(int threadId, int objId);
+
+    void updateStateWhileCoastForward(const VTime &currentTime, unsigned int eventNumber,SimulationObject* object,const ObjectID senderId, int threadID);
 
 	//@} // End of Public Class Methods of PeriodicStateManager.
 
