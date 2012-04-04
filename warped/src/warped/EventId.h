@@ -49,6 +49,11 @@ public:
     return val >= compareTo.val;
   }
 
+  unsigned int getEventNum()
+  { 
+      return val;
+  }
+
 private:
   EventId( const unsigned int initVal ) : val( initVal ){}
   
