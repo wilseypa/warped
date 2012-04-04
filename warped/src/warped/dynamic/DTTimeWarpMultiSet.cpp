@@ -29,7 +29,7 @@ DTTimeWarpMultiSet::DTTimeWarpMultiSet(
 	//	unProcessedQueueArray = new MS[NUMBER_OF_OBJECTS];
 	int threadCount = initSimulationManager->getNumberofThreads();
 	//Iterators for each threads
-	vectorIterator = new vIterate[initSimulationManager->getNumberofThreads()];
+	vectorIterator = new vIterate[threadCount];
 	multisetIterator = new mIterate[threadCount];
 	//Initializing Unprocessed Event Queue
 	for (int i = 0; i < objectCount; i++) {
@@ -242,7 +242,7 @@ const VTime* DTTimeWarpMultiSet::nextEventToBeScheduledTime(int threadID) {
 	const VTime* ret = NULL;
 	this->getScheduleQueueLock(threadID);
 	if (scheduleQueue->size() > 0)
-		ret = (*scheduleQueue->begin())->getReceiveTime().clone();
+		ret = &((*scheduleQueue->begin())->getReceiveTime());
 	this->releaseScheduleQueueLock(threadID);
 	return (ret);
 }
@@ -331,18 +331,18 @@ bool DTTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) {
 	unsigned int objId = receivedEvent->getReceiver().getSimulationObjectID();
 	this->getunProcessedLock(threadId, objId);
 	unProcessedQueue[objId]->insert(receivedEvent);
-	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
-			<< " ) " << mySimulationManager->getObjectHandle(
-			receivedEvent->getReceiver())->getName()
-			<< " has received an Event ::: " << receivedEvent->getReceiveTime()
-			<< " - " << threadId << "\n";
+//	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
+//			<< " ) " << mySimulationManager->getObjectHandle(
+//			receivedEvent->getReceiver())->getName()
+//			<< " has received an Event ::: " << receivedEvent->getReceiveTime()
+//			<< " - " << threadId << "\n";
 	multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator itee;
-	multisetIterator[threadId] = unProcessedQueue[objId]->begin();
+	itee= unProcessedQueue[objId]->begin();
 	this->releaseunProcessedLock(threadId, objId);
 	// The event was just inserted at the beginning, so update the Schedule Queue
 	this->getScheduleQueueLock(threadId);
 	if (!this->isObjectScheduled(objId)) {
-		if (receivedEvent == *(multisetIterator[threadId])) {
+		if (receivedEvent == *(itee)) {
 			// Do not erase the first time.
 			if (lowestObjectPosition[objId] != scheduleQueue->end()) {
 				scheduleQueue->erase(lowestObjectPosition[objId]);
@@ -364,7 +364,7 @@ bool DTTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) {
 					<= mySimulationManager->getNumberOfSimulationObjects());
 	return false;//Old Code Always Returns False-- Check why?
 }
-// Heavily Lock based Counting -- Don't Use it
+// Lock based Counting -- Don't Use it a loop
 int DTTimeWarpMultiSet::getMessageCount(int threadId) {
 	int count = 0;
 	/*for (int i = 0; i < objectCount; i++) {
@@ -377,6 +377,13 @@ int DTTimeWarpMultiSet::getMessageCount(int threadId) {
 	releaseScheduleQueueLock(threadId);
 	//utils::debug << "Unprocessed Event Count :: " << count << "\n";
 	return count;
+}
+bool DTTimeWarpMultiSet::isScheduleQueueEmpty(int threadId){
+    bool ret=false;
+    getScheduleQueueLock(threadId);
+    ret = scheduleQueue->empty();
+    releaseScheduleQueueLock(threadId);
+    return ret;
 }
 //This Function will be called by the worker when the object has been scheduled, so no need to update schedule queue(need to verify this)
 bool DTTimeWarpMultiSet::handleAntiMessage(SimulationObject *simObj,
@@ -456,8 +463,8 @@ void DTTimeWarpMultiSet::fossilCollect(SimulationObject *simObj,
 	while (vectorIterator[threadId] != processedQueue[objId]->end()
 			&& (*(vectorIterator[threadId]))->getReceiveTime()
 					< fossilCollectTime) {
-		//object->reclaimEvent(*(vectorIterator[threadId]));
-		delete *(vectorIterator[threadId]);//Replace this by a reclaim function from object
+		simObj->reclaimEvent(*(vectorIterator[threadId]));
+		//delete *(vectorIterator[threadId]);//Replace this by a reclaim function from object
 		vectorIterator[threadId]++;
 	}
 	processedQueue[objId]->erase(processedQueue[objId]->begin(),
@@ -472,8 +479,8 @@ void DTTimeWarpMultiSet::fossilCollect(SimulationObject *simObj,
 			const Event *eventToReclaim = *(vectorIterator[threadId]);
 			vectorIterator[threadId] = removedEventQueue[objId]->erase(
 					vectorIterator[threadId]);
-			//object->reclaimEvent(eventToReclaim);
-			delete eventToReclaim;//Replace this by a reclaim function from object
+			simObj->reclaimEvent(eventToReclaim);
+		//	delete eventToReclaim;//Replace this by a reclaim function from object
 		} else {
 			vectorIterator[threadId]++;
 		}
@@ -487,9 +494,9 @@ void DTTimeWarpMultiSet::fossilCollect(SimulationObject *object,
 
 	// Removed the processed events with time less than the collect time.
 	this->getProcessedLock(threadId, objId);
-	vector<const Event*>::iterator it = processedQueue[objId]->begin();
+	vectorIterator[threadId] = processedQueue[objId]->begin();
 	while (vectorIterator[threadId] != processedQueue[objId]->end()
-			&& (*(vectorIterator[threadId]))->getReceiveTime().getApproximateIntTime()
+			&& ((*(vectorIterator[threadId]))->getReceiveTime()).getApproximateIntTime()
 					< fossilCollectTime) {
 		object->reclaimEvent(*(vectorIterator[threadId]));
 		vectorIterator[threadId]++;
@@ -672,7 +679,7 @@ void DTTimeWarpMultiSet::ofcPurge(int threadId) {
 		}
 		this->releaseunProcessedLock(threadId, i);
 		this->getScheduleQueueLock(threadId);
-		cout << " ofCPurge is called" << endl;
+		// cout << " ofCPurge is called" << endl;
 		lowestObjectPosition[i] = scheduleQueue->end();
 		this->releaseScheduleQueueLock(threadId);
 		//	insertObjPos[i] = unprocessedObjEvents[i]->end();
@@ -741,4 +748,16 @@ const VTime* DTTimeWarpMultiSet::getMinEventTime(unsigned int threadId,
 	}
 	releaseunProcessedLock(threadId, objId);
 	return ret;
+}
+
+void DTTimeWarpMultiSet::releaseObjectLocksRecovery() {
+	for (int objNum = 0; objNum
+			< mySimulationManager->getNumberOfSimulationObjects(); objNum++) {
+		if (objectStatusLock[objNum]->isLocked()) {
+			objectStatusLock[objNum]->releaseLock(
+					objectStatusLock[objNum]->whoHasLock());
+			utils::debug << "Releasing Object " << objNum
+					<< " during recovery." << endl;
+		}
+	}
 }

@@ -78,7 +78,7 @@ const string MatternGVTManager::getGVTInfo(unsigned int srcSimMgr, unsigned int 
   else{
     //If the first round of GVT Control messages has passed our
     //color is red so we should be monitoring the LTSE
-    const VTime *minimumTime = getEarliestEventTime(&sendTime);
+    const VTime *minimumTime = (&sendTime);
     objectRecord->setMinTimeStamp(*minimumTime);
   }
   return retval;
@@ -111,7 +111,7 @@ void MatternGVTManager::calculateGVT() {
     if (gVTTokenPending == false) {
       zeroWhiteMessagesAtStart=false;
       // Make sure there isn't a token already out there.
-      const VTime *minimumTime =  getEarliestEventTime(&myScheduler->getLastEventScheduledTime());
+      const VTime *minimumTime = (&myScheduler->getLastEventScheduledTime());
       sendGVTToken(*minimumTime, mySimulationManager->getPositiveInfinity());
 
       objectRecord->setColor(RED);
@@ -123,7 +123,7 @@ void MatternGVTManager::calculateGVT() {
   else { // numberOfSimulationManagers == 1
     // okay, we dont need to launch a distributed gvt estimation step
     // gVT is simply the last scheduled event's timestamp
-    const VTime *minimumTime =  getEarliestEventTime(&myScheduler->getLastEventScheduledTime());
+    const VTime *minimumTime = (&myScheduler->getLastEventScheduledTime());
     setGVT(*minimumTime);
     cout << "GVT = " << getGVT() << endl;
     mySimulationManager->fossilCollect(getGVT());
@@ -223,7 +223,7 @@ void MatternGVTManager::receiveKernelMessage(KernelMessage *msg) {
       else {
         // Not yet ready to calculate gvt, send the token around again.
         objectRecord->setNumberOfWhiteMessages(objectRecord->getNumberOfWhiteMessages() + count);
-        const VTime *lowEventTime =  getEarliestEventTime(&myScheduler->getLastEventScheduledTime());
+        const VTime *lowEventTime = (&myScheduler->getLastEventScheduledTime());
         sendGVTToken(MIN_FUNC(gVTMessage->getLastScheduledEventTime(), *lowEventTime),
                MIN_FUNC(gVTMessage->getMinimumTimeStamp(), *objectRecord->getMinTimeStamp()));
 
@@ -243,7 +243,7 @@ void MatternGVTManager::receiveKernelMessage(KernelMessage *msg) {
       // Add the the local white message count to the simulation's white message total.
       objectRecord->setNumberOfWhiteMessages(objectRecord->getNumberOfWhiteMessages() + count);
 
-      const VTime *lowEventTime =  getEarliestEventTime(&myScheduler->getLastEventScheduledTime());
+      const VTime *lowEventTime = (&myScheduler->getLastEventScheduledTime());
       sendGVTToken(MIN_FUNC(gVTMessage->getLastScheduledEventTime(),*lowEventTime),
                    MIN_FUNC(gVTMessage->getMinimumTimeStamp(),*objectRecord->getMinTimeStamp()));
 

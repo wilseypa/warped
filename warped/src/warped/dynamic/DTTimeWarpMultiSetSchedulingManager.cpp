@@ -8,8 +8,8 @@ class DTTimeWarpEventSet;
 
 DTTimeWarpMultiSetSchedulingManager::DTTimeWarpMultiSetSchedulingManager(
 		DTTimeWarpSimulationManager *initSimulationManager) :
-	mySimulationManager(initSimulationManager),
-			lastScheduledTime(initSimulationManager->getZero().clone()) {
+	mySimulationManager(initSimulationManager), lastScheduledTime(
+			initSimulationManager->getZero().clone()) {
 	int num_threads = mySimulationManager->getNumberofThreads();
 	executeQueue.resize(num_threads); // Allocate the no. of threads initialized
 	executeQueueLock = new AtomicState();

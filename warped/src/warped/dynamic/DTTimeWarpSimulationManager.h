@@ -9,6 +9,7 @@
 #include "DTOutputManager.h"
 #include "DTStateManager.h"
 #include "DTTimeWarpEventSet.h"
+#include "DTOptFossilCollManager.h"
 
 class Application;
 //class ThreadedSchedulingManager;
@@ -17,6 +18,7 @@ class LocalKernelMessage;
 class VTime;
 class WorkerInformation;
 class AtomicState;
+class DTOptFossilCollManager;
 
 template<class element> class LockedQueue;
 class DTTimeWarpSimulationManager: public TimeWarpSimulationManager {
@@ -30,6 +32,14 @@ public:
 	 */
 	DTStateManager *getStateManagerNew() {
 		return myStateManager;
+	}
+
+	/* Return a handle to the Fossil Collection manager.
+
+	 @return A handle to the Fossil Collection manager.
+	 */
+	DTOptFossilCollManager *getOptFossilCollManagerNew() {
+		return myrealFossilCollManager;
 	}
 
 	/* Return a handle to the event set factory.
@@ -99,14 +109,39 @@ public:
 
 	void resetComputeLVTStatus();
 
-	void updateLVTfromArray();
+	void setComputeLVTStatus();
+
+	bool updateLVTfromArray();
 
 	const VTime* getLVT();
+
+	void updateCurrentExec(unsigned int threadId, unsigned int objId);
+
+	void updateCurrentExecFromArray();
+
+	void resetCurrentExecArray();
+
+	const VTime* getMinCurrentExecTime();
+
+	// Checks if this is the simulation manager that initiated the recovery process
+	bool getInitiatedRecovery() {
+		return initiatedRecovery;
+	}
+
+	// Sets the flag to indicate that this is the manager that started recovery
+	void setInitiatedRecovery(bool initRec) {
+		initiatedRecovery = initRec;
+	}
+
+	// Releases all the locks that the workers have on the objects  (Called during a catastrophic rollback)
+	void releaseObjectLocksRecovery();
+
+	// Empty the message buffer
+	void clearMessageBuffer();
 
 protected:
 	/**@name Protected Class Methods of DTTimeWarpSimulationManager. */
 	//@{
-
 	//Main simulation function
 	void simulate(const VTime& simulateUntil);
 
@@ -137,12 +172,53 @@ protected:
 
 	 @param event A pointer to the received event.
 	 */
+public:
 	void handleEvent(const Event *event);
+
+	/** call fossil collect on the file queues. This one passes in an integer
+	 and should only be used with the optimistic fossil collection manager.
+
+	 @param fossilCollectTime time upto which fossil collect is performed.
+	 */
+	virtual void fossilCollectFileQueues(SimulationObject *object,
+			int fossilCollectTime);
+
+	/// Used in optimistic fossil collection to checkpoint the file queues.
+	void saveFileQueuesCheckpoint(std::ofstream* outFile, const ObjectID &objId,
+			unsigned int saveTime);
+
+	void restoreFileQueues(ifstream* inFile, const ObjectID &objId,
+			unsigned int restoreTime);
+
 	void handleEventReceiver(SimulationObject *currObject, const Event *event,
 			int threadID);
 
-	void cancelEventsReceiver(SimulationObject *curObject,
-			vector<const NegativeEvent *> &cancelObjectIt, int threadID);
+	/// Return true when recovering from a catastrophic rollback during
+	/// optimimistic fossil collection.
+	bool getRecoveringFromCheckpoint() {
+		return inRecovery;
+	}
+
+	/// Set true when recovering from a catastrophic rollback during
+	/// optimimistic fossil collection.
+	void setRecoveringFromCheckpoint(bool inRec) {
+		inRecovery = inRec;
+	}
+
+	bool initiateLocalGVT();
+
+	bool setGVTTokenPending();
+	bool resetGVTTokenPending();
+
+	/** call fossil collect on the state, output, input queue, and file queues.
+
+	 @param fossilCollectTime time upto which fossil collect is performed.
+	 */
+	virtual void fossilCollect(const VTime &fossilCollectTime);
+protected:
+
+	void cancelEventsReceiver(SimulationObject *curObject, vector<
+			const NegativeEvent *> &cancelObjectIt, int threadID);
 	/**
 	 Used to route local events.
 	 */
@@ -183,18 +259,12 @@ protected:
 
 	/// call coastforward if an infrequent state saving strategy is used
 	void
-			coastForward(const VTime &coastForwardFromTime,
-					const VTime &rollbackToTime, SimulationObject *object,
-					int threadID);
+	coastForward(const VTime &coastForwardFromTime, const VTime &rollbackToTime,
+			SimulationObject *object, int threadID);
 
 	/*@param msg The message to receive.
 	 */
 	virtual void receiveKernelMessage(KernelMessage *msg);
-	/** call fossil collect on the state, output, input queue, and file queues.
-
-	 @param fossilCollectTime time upto which fossil collect is performed.
-	 */
-	virtual void fossilCollect(const VTime &fossilCollectTime);
 
 	/// initialize the simulation objects before starting the simulation.
 	void initialize();
@@ -223,6 +293,10 @@ protected:
 	}
 
 private:
+	//Handle to the new OptFossilCollManager
+	DTOptFossilCollManager *myrealFossilCollManager;
+	OptFossilCollManager *myFossilCollManager;
+
 	///This is the handle to the set of events
 	DTTimeWarpEventSet *myEventSet;
 
@@ -239,18 +313,22 @@ private:
 
 	///Specified in the ThreadControl scope of the configuration file
 	unsigned int numberOfWorkerThreads;
-
+public:
 	///Holds information each thread needs to operate
 	WorkerInformation **workerStatus;
-
+private:
 	/// Time up to which coast forwarding should be done.
 	vector<const VTime *> coastForwardTime;
+
+	/// Used to determine when the optimistic fossil collection manager is
+	/// recovery from a catastrophic rollback.
+	bool inRecovery;
 
 	/// Put all arguments in one object to be passed to StartThread as void*
 	class thread_args {
 	public:
 		thread_args(DTTimeWarpSimulationManager *simManager, int threadIndex) :
-			simManager(simManager), threadIndex(threadIndex) {
+				simManager(simManager), threadIndex(threadIndex) {
 		}
 		DTTimeWarpSimulationManager *simManager;
 		unsigned int threadIndex;
@@ -279,6 +357,14 @@ private:
 	bool** computeLVTStatus;
 
 	const VTime* LVT;
+
+	bool GVTTokenPending;
+public:
+	// Checks if this simulation manager initiated the recovery process
+	bool initiatedRecovery;
+	int numCatastrophicRollbacks;
+	bool checkpointing;
+	int pausedThreads;
 };
 
 #endif /* DTTIMEWARPSIMULATIONMANAGER_H_ */

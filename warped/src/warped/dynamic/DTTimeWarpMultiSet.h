@@ -37,6 +37,7 @@ public:
 	 * @return Pending EventCount
 	 */
 	int getMessageCount(int threadId);
+    bool isScheduleQueueEmpty(int threadId);
 
 	/** Remove and return the next event in the event set.
 	 *  @return The removed event.
@@ -150,6 +151,9 @@ public:
 	const Event* peekEventLockUnprocessed(SimulationObject *simObj,
 			const VTime &minimumTime, int threadId);
 	const VTime* getMinEventTime(unsigned int threadId, unsigned int objId);
+
+	// Release all the object locks during a catastrophic rollback.
+	void releaseObjectLocksRecovery();
 
 private:
 	AtomicState** unprocessedQueueAtomicState;

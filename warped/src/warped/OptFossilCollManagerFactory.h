@@ -7,6 +7,7 @@
 #include "OptFossilCollManager.h"
 #include "SimulationManager.h"
 #include "Configurer.h"
+#include "dynamic/DTOptFossilCollManager.h"
 
 /** The GVTManagerFactory class.
 

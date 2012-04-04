@@ -8,6 +8,7 @@
 #include "SimulationObject.h"
 #include "TimeWarpSimulationManager.h"
 #include "dynamic/DTPeriodicStateManager.h"
+#include "dynamic/DTCostAdaptiveStateManager.h"
 #include "dynamic/DTTimeWarpSimulationManager.h"
 #include <utils/Debug.h>
 
@@ -53,6 +54,16 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 			utils::debug << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a DT Periodic State Manager with period = "
+					<< statePeriod << endl;
+			return retvalue;
+		} else if (configuration.stateManagerTypeIs("ADAPTIVE")) {
+			configuration.getStatePeriod(statePeriod);
+			retvalue = new DTCostAdaptiveStateManager(
+					dynamic_cast<DTTimeWarpSimulationManager *> (parent));
+			mySimulationManager->setStateMgrType(ADAPTIVESTATE);
+			utils::debug << "("
+					<< mySimulationManager->getSimulationManagerID()
+					<< ") configured an Adaptive State Manager with period = "
 					<< statePeriod << endl;
 			return retvalue;
 		} else {

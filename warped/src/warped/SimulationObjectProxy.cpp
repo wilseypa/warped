@@ -32,9 +32,11 @@ SimulationObjectProxy::SimulationObjectProxy( const string &initObjectName,
 }
 
 SimulationObjectProxy::~SimulationObjectProxy(){
+/*
   utils::debug << "processed (+)(" << numberOfPositiveNetworkEvents 
 	<< ")(-)(" << numberOfNegativeNetworkEvents
 	<< ") MPI messages" << endl;
+*/
 }
 
 void
