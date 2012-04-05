@@ -11,7 +11,7 @@ MODEL=pholdSim
 MODEL_CONFIGURATION=phold/LargePHOLD
 SIMULATION_CONFIGURATION=parallel.config
 # comment out to omit this argument
-SIMULATE_UNTIL=50000
+SIMULATE_UNTIL=100
 
 # get batch arguments
 TEMP=`getopt -o d:n:p: -l help -n "$0" -- "$@"`
@@ -62,7 +62,7 @@ do
 
   # do simulation run
   echo "running simulation #$RUN"
-  $CMD &>/dev/null
+  $CMD
 
   # extract runtime and rollback info from the CSVs
   RUNTIME=0
