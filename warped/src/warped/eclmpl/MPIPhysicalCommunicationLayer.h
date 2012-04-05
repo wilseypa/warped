@@ -95,11 +95,6 @@ private:
 			   const vector<string> &arguments );
 
   /**
-     Writes out a procgroup file based on our Warped configuration.
-  */
-  void writeProcGroupFile( SimulationConfiguration &configuration );
-
-  /**
      Does the dirty work of actually starting MPI.
   */
   void startMPI( const vector<string> &arguments );

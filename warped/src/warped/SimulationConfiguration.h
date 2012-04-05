@@ -139,12 +139,6 @@ public:
   bool getClockFreqManagerDummy() const;
 
   /**
-     Returns the list of nodes that it has been requested that this
-     simulation execute on.
-  */
-  vector<string> getNodes() const;
-
-  /**
      Returns the binary name which started this execution.  Presumably we
      will use this binary on every node.
   */

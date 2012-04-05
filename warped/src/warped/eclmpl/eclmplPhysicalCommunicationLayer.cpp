@@ -14,35 +14,7 @@ eclmplPhysicalCommunicationLayer::~eclmplPhysicalCommunicationLayer(){
 } // End of desctructor.
 
 void
-eclmplPhysicalCommunicationLayer::writeProcGroupFile( SimulationConfiguration &configuration ){
-  std::ofstream procGroupFile( "procgroup" );
-  if( !procGroupFile ){
-    perror("Error writing procgroup file:");
-    abort();
-  }
-
-  //This line states that the first process is started locally
-  char masterHostName[128];
-  ASSERT( gethostname(masterHostName, 128) == 0);
-
-  procGroupFile << masterHostName << " 0 " << std::endl;
-
-  //A list of all of the nodes
-  const vector<string> nodeList = configuration.getNodes();
-  for( vector<string>::const_iterator i = nodeList.begin();
-        i < nodeList.end();
-        i++ ){
-      ///The comma separated nodes in the procgroup file at listed here in
-      //the standard format:  nodeName #Processes ProgramLocation
-	  //<< configuration.getBinaryName()
-      procGroupFile << (*i) << " 1 " << " " << std::endl;
-  }
-  procGroupFile.close();
-}
-
-void
 eclmplPhysicalCommunicationLayer::physicalInit( SimulationConfiguration &configuration ) {
-	writeProcGroupFile( configuration );
 	int argc = configuration.getArguments().size();
 	char **argv = new char*[argc];
 	int i;

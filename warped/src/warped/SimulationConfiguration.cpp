@@ -68,7 +68,6 @@ public:
   bool getClockFreqManagerFIRSize(int& size) const;
   bool getClockFreqManagerDummy() const;
 
-  vector<string> getNodes() const;
   const string getBinaryName() const;
 
   bool getWorkerThreadCount(unsigned int &workerThreadCount) const;
@@ -178,8 +177,6 @@ private:
      Returns ConfigurationScope for TimeWarp::OptFossilCollectionManager
   */
   const ConfigurationScope *getClockFrequencyManagerScope() const;
-
-  const ConfigurationValue *getNodesValue() const;
 
   static const string &getCommManagerScopeName();
   static const string &getEventListScopeName();
@@ -408,11 +405,6 @@ SimulationConfiguration::getClockFreqManagerFIRSize(int& size) const {
 bool
 SimulationConfiguration::getClockFreqManagerDummy() const {
   return _impl->getClockFreqManagerDummy();
-}
-
-vector<string>
-SimulationConfiguration::getNodes() const {
-  return _impl->getNodes();
 }
 
 const string
@@ -1015,45 +1007,6 @@ SimulationConfiguration::Implementation::getClockFreqManagerDummy() const {
   if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) 
     return stringToUpper(cfmScope->getStringValue("Dummy")) == "TRUE";
   return false;
-}
-
-const ConfigurationValue *
-SimulationConfiguration::Implementation::getNodesValue() const {
-  const ConfigurationValue *retval = 0;
-
- const ConfigurationScope *scope = getCommunicationManagerScope();
-  if( scope != 0 ){
-    const ConfigurationChoice *nodesList = scope->findChoice( "Nodes" );
-    if( nodesList != 0 ){
-      retval = nodesList->getConfigurationValue();
-    }
-  }
-
-  return retval;
-}
-
-vector<string>
-SimulationConfiguration::Implementation::getNodes( ) const {
-  vector<string> retval;
-
-  const ConfigurationValue *nodesValue = getNodesValue();
-  if( nodesValue &&
-      dynamic_cast<const VectorConfigurationValue *>(nodesValue) ){
-    const vector<const ConfigurationValue *> *configVector = nodesValue->getVectorValue();
-    if( configVector != 0 ){
-      for( vector<const ConfigurationValue *>::const_iterator i = configVector->begin();
-	   i < configVector->end();
-	   i++ ){
-	if( dynamic_cast<const StringConfigurationValue *>( *i )){
-	  retval.push_back( (*i)->getStringValue() );
-	}
-      }
-    }
-  }
-  else if( dynamic_cast<const StringConfigurationValue *>(nodesValue) ){
-    retval.push_back( nodesValue->getStringValue() );
-  }
-  return retval;
 }
 
 const string
