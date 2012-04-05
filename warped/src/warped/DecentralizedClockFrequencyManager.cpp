@@ -26,7 +26,7 @@ DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(
   ,myFrequencyIdxs(myNumSimulationManagers, numSimulatedFrequencies / 2)
 {
   ostringstream path;
-  path << "cfmoutput_lp" << mySimulationManagerID << ".csv";
+  path << "lp" << mySimulationManagerID << ".csv";
 
   myFile.open(path.str().c_str(), ios_base::app);
 }
