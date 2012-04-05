@@ -6,7 +6,7 @@ RUNS=1
 PAUSE=200
 
 # default simulation arguments
-NODES=`cat /proc/cpuinfo | grep processor | wc -l`
+HOSTS=hosts
 MODEL=pholdSim
 MODEL_CONFIGURATION=phold/LargePHOLD
 SIMULATION_CONFIGURATION=parallel.config
@@ -42,7 +42,7 @@ then
 fi
 
 # build simulation command
-CMD="mpiexec.hydra -n "$NODES" -binding cpu:cores ./"$MODEL" \
+CMD="mpiexec.hydra -f $HOSTS ./"$MODEL" \
   -simulate $MODEL_CONFIGURATION -configuration $SIMULATION_CONFIGURATION"
 if [ -n "$SIMULATE_UNTIL" ]
 then
@@ -61,8 +61,8 @@ do
   fi
 
   # do simulation run
-  echo "beginning simulation run \#$RUN"
-  $CMD
+  echo "running simulation #$RUN"
+  $CMD &>/dev/null
 
   # extract runtime and rollback info from the CSVs
   RUNTIME=0
