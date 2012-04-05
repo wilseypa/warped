@@ -451,7 +451,7 @@ void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
     stopwatch.start();
 
     ostringstream oss;
-    oss << "cfmoutput_lp" << mySimulationManagerID << ".csv";
+    oss << "lp" << mySimulationManagerID << ".csv";
     cout << "trying to open " << oss.str() << endl;
     ofstream file(oss.str().c_str(), ios_base::app);
     if(file) {
@@ -1335,7 +1335,7 @@ void TimeWarpSimulationManager::configure(
 	}
 
     ostringstream oss;
-    oss << "cfmoutput_lp" << mySimulationManagerID << ".csv";
+    oss << "lp" << mySimulationManagerID << ".csv";
     ofstream file(oss.str().c_str(), ios_base::app);
 
     if(file) {
