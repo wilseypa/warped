@@ -180,12 +180,21 @@ ostream &operator<<( ostream &os, SEVERITY severity ){
 extern "C" {
   __inline__ warped64_t rdtsc(void) {
     warped32_t lo, hi;
-    __asm__ __volatile__ (      // serialize
-    "xorl %%eax,%%eax \n        cpuid"
-    ::: "%rax", "%rbx", "%rcx", "%rdx");
-    /* We cannot use "=A", since this would use %rax on x86_64 and return only the lower 32bits of the TSC */
-    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
-    return (warped64_t)hi << 32 | lo;
+    __asm__ __volatile__ (
+      #ifdef i386
+          "pushl %%ebx;"
+      #endif
+      "xorl %%eax,%%eax; cpuid; rdtsc;"
+      #ifdef i386
+          "popl %%ebx;"
+      #endif
+      :"=a" (lo), "=d" (hi)
+          ::"%rcx"
+      #ifndef i386
+          ,"%rbx"
+      #endif
+      );
+      return (warped64_t)hi << 32 | lo;
   }
 }
 
