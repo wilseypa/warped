@@ -121,6 +121,8 @@ public:
 
 	const unsigned int  getSenderObjectSimIdForRollback(int threadId, int objId);
 
+	// Called to release locks on all the State Queues
+	void releaseObjectLocksRecovery();
 
 protected:
 

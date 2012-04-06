@@ -341,10 +341,12 @@ void DTOptFossilCollManager::purgeQueuesAndRecover() {
 	// Purge all the Queues
 	threadID = *((unsigned int*) pthread_getspecific(threadKey));
 	mySimManager->getOutputManagerNew()->ofcPurge(threadID);
+	utils::debug << "Purged all output queues." << endl;
 	mySimManager->getEventSetManagerNew()->ofcPurge(threadID);
+	utils::debug << "Purged all multiset queues." << endl;
 	mySimManager->getStateManagerNew()->ofcPurge(threadID);
-	mySimManager->getGVTManager()->setGVT(mySimManager->getZero());
-	utils::debug << "Purged all the queues." << endl;
+	//mySimManager->getGVTManager()->setGVT(mySimManager->getZero());
+	utils::debug << "Purged all state queues." << endl;
 
 	// Reset the last collect times.
 	for (int i = 0; i < mySimManager->getNumberOfSimulationObjects(); i++) {
@@ -437,6 +439,7 @@ void DTOptFossilCollManager::startRecovery() {
 				<< " - Sent the FIRST_CYCLE message " << endl;
 	}
 	myCommManager->sendMessage(restoreMsg, dest);
+	sleep(1);
 }
 
 void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
@@ -477,6 +480,7 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					myCommManager->sendMessage(sendMsg, myPeer);
 					utils::debug << mySimManager->getSimulationManagerID()
 							<< " - Sent the FIRST_CYCLE message " << endl;
+					sleep(1);
 				}
 				break;
 			case RestoreCkptMessage::FIRST_CYCLE:
@@ -530,6 +534,7 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							<< " - Sent the SECOND_CYCLE message " << endl;
 
 					myCommManager->sendMessage(sendMsg, myPeer);
+					sleep(1);
 				}
 				break;
 			case RestoreCkptMessage::SECOND_CYCLE:
@@ -560,6 +565,7 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					recovering = false;
 
 					restoreCheckpoint(restoreMsg->getCheckpointTime());
+					sleep(1);
 				}
 				break;
 			default:
@@ -628,6 +634,7 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					myCommManager->sendMessage(sendMsg, myPeer);
 					utils::debug << mySimManager->getSimulationManagerID()
 							<< " - Sent the FIRST_CYCLE" << endl;
+					sleep(1);
 				}
 				break;
 			case RestoreCkptMessage::SECOND_CYCLE:
@@ -661,6 +668,7 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							<< " - Sent the SECOND_CYCLE message " << endl;
 
 					myCommManager->sendMessage(sendMsg, myPeer);
+					sleep(1);
 				}
 				break;
 			case RestoreCkptMessage::THIRD_CYCLE:
@@ -678,6 +686,7 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					recovering = false;
 
 					restoreCheckpoint(restoreMsg->getCheckpointTime());
+					sleep(1);
 				}
 				break;
 			default:
@@ -705,7 +714,7 @@ void DTOptFossilCollManager::fossilCollect(SimulationObject *object,
 			int collectTime = intCurTime - activeHistoryLength[objId];
 			if (collectTime > lastCollectTimes[objId]) {
 				lastCollectTimes[objId] = collectTime;
-				utils::debug << "Fossil Collecting " << collectTime << endl;
+				cout << "Fossil Collecting " << collectTime << endl;
 				mySimManager->getStateManagerNew()->fossilCollect(object,
 						collectTime, threadId);
 				mySimManager->getOutputManagerNew()->fossilCollect(object,

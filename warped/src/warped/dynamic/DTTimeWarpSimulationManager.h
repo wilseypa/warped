@@ -123,6 +123,25 @@ public:
 
 	const VTime* getMinCurrentExecTime();
 
+	// Checks if this is the simulation manager that initiated the recovery process
+	bool getInitiatedRecovery() {
+		return initiatedRecovery;
+	}
+
+	// Sets the flag to indicate that this is the manager that started recovery
+	void setInitiatedRecovery(bool initRec) {
+		initiatedRecovery = initRec;
+	}
+
+	// Releases all the locks that the workers have on the objects  (Called during a catastrophic rollback)
+	void releaseObjectLocksRecovery();
+
+	// Empty the message buffer
+	void clearMessageBuffer();
+
+
+
+
 protected:
 	/**@name Protected Class Methods of DTTimeWarpSimulationManager. */
 	//@{
@@ -193,6 +212,7 @@ public:
 
 	bool setGVTTokenPending();
 	bool resetGVTTokenPending();
+
 	/** call fossil collect on the state, output, input queue, and file queues.
 
 	 @param fossilCollectTime time upto which fossil collect is performed.
@@ -301,10 +321,10 @@ private:
 
 	///Specified in the ThreadControl scope of the configuration file
 	unsigned int numberOfWorkerThreads;
-
+public:
 	///Holds information each thread needs to operate
 	WorkerInformation **workerStatus;
-
+private:
 	/// Time up to which coast forwarding should be done.
 	vector<const VTime *> coastForwardTime;
 
@@ -349,6 +369,12 @@ private:
 	bool GVTTokenPending;
 
 	bool* rollbackCompleted;
+public:
+	// Checks if this simulation manager initiated the recovery process
+	bool initiatedRecovery;
+	int numCatastrophicRollbacks;
+	bool checkpointing;
+	int pausedThreads;
 };
 
 #endif /* DTTIMEWARPSIMULATIONMANAGER_H_ */

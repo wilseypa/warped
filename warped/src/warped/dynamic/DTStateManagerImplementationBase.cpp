@@ -100,11 +100,11 @@ DTStateManagerImplementationBase::restoreState(const VTime &rollbackTime,
 		}
 		(lastRollbackTime[objId]) = (*iter_end).getMainTime().clone();
 		lastRollbackSenderObjectId[objId] = (*iter_end).getsenderObjectId();
-/*		cout << "--------------------+++++++++++-------- "
-				<< (*iter_end).getMainTime()
-				<< "--------------------++++++++++++"
-				<< (*iter_end).getsenderObjectId()
-				<< "--------------------++++++++++++" << endl;*/
+		/*		cout << "--------------------+++++++++++-------- "
+		 << (*iter_end).getMainTime()
+		 << "--------------------++++++++++++"
+		 << (*iter_end).getsenderObjectId()
+		 << "--------------------++++++++++++" << endl;*/
 		//	iter_end--;
 		//	int tempCount = 0;
 		//	while (iter_end != iter_begin && (*iter_end).getMainTime() == *tempTime) {
@@ -144,7 +144,7 @@ DTStateManagerImplementationBase::restoreState(const VTime &rollbackTime,
 						<< ": Current Simulation Time is "
 						<< object->getSimulationTime() << endl;
 
-				mySimulationManager->getOptFossilCollManagerNew()->startRecovery(
+				mySimulationManager->getOptFossilCollManagerNew()->setRecovery(
 						objId, rollbackTime.getApproximateIntTime());
 			}
 		} else {
@@ -312,6 +312,7 @@ void DTStateManagerImplementationBase::ofcPurge(int threadID) {
 		}
 		this->releaseStateQueueLock(threadID, i);
 		periodCounter[i] = -1;
+		utils::debug << "Cleared Object " << i << endl;
 	}
 }
 
@@ -325,8 +326,8 @@ void DTStateManagerImplementationBase::ofcPurge(unsigned int objId,
 		delete (*it).getElement();
 		myStateQueue[objId].erase(it++);
 	}
-	this->releaseStateQueueLock(threadID, objId);
 	periodCounter[objId] = -1;
+	this->releaseStateQueueLock(threadID, objId);
 }
 
 bool DTStateManagerImplementationBase::getStateQueueLock(int threadId,
@@ -362,4 +363,16 @@ const unsigned int DTStateManagerImplementationBase::getSenderObjectIdForRollbac
 const unsigned int DTStateManagerImplementationBase::getSenderObjectSimIdForRollback(
 		int threadId, int objId) {
 	return lastRollbackSenderObjectSimId[objId];
+}
+
+void DTStateManagerImplementationBase::releaseObjectLocksRecovery() {
+	for (int objNum = 0; objNum
+			< mySimulationManager->getNumberOfSimulationObjects(); objNum++) {
+		if (stateQueueLock[objNum]->isLocked()) {
+			stateQueueLock[objNum]->releaseLock(
+					stateQueueLock[objNum]->whoHasLock());
+			utils::debug << "Releasing State Queue Object " << objNum
+					<< " during recovery." << endl;
+		}
+	}
 }
