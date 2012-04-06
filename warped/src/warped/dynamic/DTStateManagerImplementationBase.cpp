@@ -365,7 +365,7 @@ const unsigned int DTStateManagerImplementationBase::getSenderObjectSimIdForRoll
 	return lastRollbackSenderObjectSimId[objId];
 }
 
-void DTStateManagerImplementationBase::releaseObjectLocksRecovery() {
+void DTStateManagerImplementationBase::releaseStateLocksRecovery() {
 	for (int objNum = 0; objNum
 			< mySimulationManager->getNumberOfSimulationObjects(); objNum++) {
 		if (stateQueueLock[objNum]->isLocked()) {

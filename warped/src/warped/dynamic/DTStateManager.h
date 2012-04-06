@@ -38,13 +38,13 @@ public:
 	 @param VTime Time at which the state is saved.
 	 @param SimulationObject The object whose state is saved.
 	 */
-	virtual void saveState(const VTime &,unsigned int, SimulationObject*, const ObjectID senderId,int threadID) = 0;
+	virtual void saveState(const VTime &, unsigned int, SimulationObject*,
+			const ObjectID senderId, int threadID) = 0;
 
-    virtual void updateStateWhileCoastForward(const VTime &,unsigned int, SimulationObject*, const ObjectID senderId,int threadID) = 0;
+	virtual void updateStateWhileCoastForward(const VTime &, unsigned int,
+			SimulationObject*, const ObjectID senderId, int threadID) = 0;
 
-
-    virtual void saveState(const VTime &, SimulationObject*, int threadID) = 0;
-
+	virtual void saveState(const VTime &, SimulationObject*, int threadID) = 0;
 
 	/** Restore the state of the object at the specified time.
 
@@ -100,11 +100,13 @@ public:
 	 */
 	virtual void ofcPurge(unsigned int, int threadID) = 0;
 
-    virtual const unsigned int getEventIdForRollback(int , int ) = 0;
+	virtual const unsigned int getEventIdForRollback(int, int) = 0;
 
-    virtual const unsigned int getSenderObjectIdForRollback(int, int) = 0;
+	virtual const unsigned int getSenderObjectIdForRollback(int, int) = 0;
 
-    virtual const unsigned int getSenderObjectSimIdForRollback(int, int) = 0;
+	virtual const unsigned int getSenderObjectSimIdForRollback(int, int) = 0;
+
+	virtual void releaseStateLocksRecovery() = 0;
 
 	//@} // End of Public Class Methods of DTStateManager.
 

@@ -144,6 +144,8 @@ public:
 	 */
 	virtual bool checkFault(SimulationObject *obj);
 
+	virtual int getLeastCollectTime();
+
 	/*// These are not currently used anywhere. It was a potential solution
 	 // that did not work out as well as was hoped.
 	 void *newEvent(size_t size);

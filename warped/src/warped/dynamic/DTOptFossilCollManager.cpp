@@ -313,8 +313,9 @@ void DTOptFossilCollManager::purgeQueuesAndRecover() {
 				<< endl;
 	utils::debug << "Stopped all the threads." << endl;
 
-	// Release all the Object locks
+	// Release all the Object and State Queue locks
 	mySimManager->releaseObjectLocksRecovery();
+	mySimManager->getStateManagerNew()->releaseStateLocksRecovery();
 
 	// Find the checkpoint to restore from.
 	int checkpt = lastCheckpointTime[0];
@@ -334,19 +335,12 @@ void DTOptFossilCollManager::purgeQueuesAndRecover() {
 	utils::debug << "The check point to be restored is " << checkpt << "."
 			<< endl;
 
-	// Clean any received messages -- Not needed
-	//while (myCommManager->checkPhysicalLayerForMessages(1000) == 1000)
-	//	;
-
 	// Purge all the Queues
 	threadID = *((unsigned int*) pthread_getspecific(threadKey));
 	mySimManager->getOutputManagerNew()->ofcPurge(threadID);
-	utils::debug << "Purged all output queues." << endl;
 	mySimManager->getEventSetManagerNew()->ofcPurge(threadID);
-	utils::debug << "Purged all multiset queues." << endl;
 	mySimManager->getStateManagerNew()->ofcPurge(threadID);
-	//mySimManager->getGVTManager()->setGVT(mySimManager->getZero());
-	utils::debug << "Purged all state queues." << endl;
+	utils::debug << "Purged all queues." << endl;
 
 	// Reset the last collect times.
 	for (int i = 0; i < mySimManager->getNumberOfSimulationObjects(); i++) {
@@ -439,7 +433,6 @@ void DTOptFossilCollManager::startRecovery() {
 				<< " - Sent the FIRST_CYCLE message " << endl;
 	}
 	myCommManager->sendMessage(restoreMsg, dest);
-	sleep(1);
 }
 
 void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
@@ -480,7 +473,6 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					myCommManager->sendMessage(sendMsg, myPeer);
 					utils::debug << mySimManager->getSimulationManagerID()
 							<< " - Sent the FIRST_CYCLE message " << endl;
-					sleep(1);
 				}
 				break;
 			case RestoreCkptMessage::FIRST_CYCLE:
@@ -488,8 +480,9 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					utils::debug << mySimManager->getSimulationManagerID()
 							<< " - FIRST_CYCLE received." << endl;
 
-					// Release all the Object locks
+					// Release all the Object and State Queue locks
 					mySimManager->releaseObjectLocksRecovery();
+					mySimManager->getStateManagerNew()->releaseStateLocksRecovery();
 
 					// Clear the message buffer
 					mySimManager->clearMessageBuffer();
@@ -534,7 +527,6 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							<< " - Sent the SECOND_CYCLE message " << endl;
 
 					myCommManager->sendMessage(sendMsg, myPeer);
-					sleep(1);
 				}
 				break;
 			case RestoreCkptMessage::SECOND_CYCLE:
@@ -565,7 +557,6 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					recovering = false;
 
 					restoreCheckpoint(restoreMsg->getCheckpointTime());
-					sleep(1);
 				}
 				break;
 			default:
@@ -598,8 +589,9 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 								<< mySimManager->workerStatus[0]->getStillBusyCount()
 								<< endl;
 
-					// Release all the Object locks
+					// Release all the Object and State Queue locks
 					mySimManager->releaseObjectLocksRecovery();
+					mySimManager->getStateManagerNew()->releaseStateLocksRecovery();
 
 					// Clear the message buffer
 					mySimManager->clearMessageBuffer();
@@ -634,7 +626,6 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					myCommManager->sendMessage(sendMsg, myPeer);
 					utils::debug << mySimManager->getSimulationManagerID()
 							<< " - Sent the FIRST_CYCLE" << endl;
-					sleep(1);
 				}
 				break;
 			case RestoreCkptMessage::SECOND_CYCLE:
@@ -668,7 +659,6 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							<< " - Sent the SECOND_CYCLE message " << endl;
 
 					myCommManager->sendMessage(sendMsg, myPeer);
-					sleep(1);
 				}
 				break;
 			case RestoreCkptMessage::THIRD_CYCLE:
@@ -686,7 +676,6 @@ void DTOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					recovering = false;
 
 					restoreCheckpoint(restoreMsg->getCheckpointTime());
-					sleep(1);
 				}
 				break;
 			default:
@@ -761,4 +750,13 @@ void DTOptFossilCollManager::registerWithCommunicationManager() {
 }
 void DTOptFossilCollManager::configure(SimulationConfiguration &configuration) {
 	registerWithCommunicationManager();
+}
+
+int DTOptFossilCollManager::getLeastCollectTime() {
+	int leastCollectTime = lastCollectTimes[0];
+	for (int i = 0; i < mySimManager->getNumberOfSimulationObjects(); i++) {
+		if (lastCollectTimes[i] < leastCollectTime)
+			leastCollectTime = lastCollectTimes[i];
+	}
+	return leastCollectTime;
 }

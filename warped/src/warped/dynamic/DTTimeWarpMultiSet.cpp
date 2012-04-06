@@ -808,5 +808,28 @@ void DTTimeWarpMultiSet::releaseObjectLocksRecovery() {
 			utils::debug << "Releasing Object " << objNum
 					<< " during recovery." << endl;
 		}
+		if (unprocessedQueueAtomicState[objNum]->isLocked()) {
+			unprocessedQueueAtomicState[objNum]->releaseLock(
+					unprocessedQueueAtomicState[objNum]->whoHasLock());
+			utils::debug << "Releasing Unprocessed Queue " << objNum
+					<< " during recovery." << endl;
+		}
+		if (processedQueueAtomicState[objNum]->isLocked()) {
+			processedQueueAtomicState[objNum]->releaseLock(
+					processedQueueAtomicState[objNum]->whoHasLock());
+			utils::debug << "Releasing Processed Queue " << objNum
+					<< " during recovery." << endl;
+		}
+		if (removedQueueAtomicState[objNum]->isLocked()) {
+			removedQueueAtomicState[objNum]->releaseLock(
+					removedQueueAtomicState[objNum]->whoHasLock());
+			utils::debug << "Releasing Removed Queue " << objNum
+					<< " during recovery." << endl;
+		}
 	}
+	if (scheduleQueueLock->isLocked()) {
+		scheduleQueueLock->releaseLock(scheduleQueueLock->whoHasLock());
+		utils::debug << "Releasing Schedule Queue during recovery." << endl;
+	}
+
 }

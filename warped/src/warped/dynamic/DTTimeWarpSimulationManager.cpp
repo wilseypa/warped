@@ -1190,6 +1190,13 @@ bool DTTimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil)
 				<< " ) Termination manager says we're complete." << endl;
 		simulationCompleteFlag = true;
 		retval = true;
+	} else if (myrealFossilCollManager->getLeastCollectTime()
+			> simulateUntil.getApproximateIntTime()) {
+		utils::debug << "(" << mySimulationManagerID
+				<< " ) Minimum Fossil Collected Time = "
+				<< myrealFossilCollManager->getLeastCollectTime() << ", >= "
+				<< simulateUntil << endl;
+		retval = true;
 	}
 	return retval;
 }
