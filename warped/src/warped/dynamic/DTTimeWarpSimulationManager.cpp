@@ -1181,25 +1181,32 @@ void DTTimeWarpSimulationManager::registerWithCommunicationManager() {
 
 bool DTTimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
 	bool retval = false;
-	if (myGVTManager->getGVT() >= simulateUntil) {
-		utils::debug << "(" << mySimulationManagerID << " ) GVT = "
+	if(!usingOptFossilCollection) {
+		if (myGVTManager->getGVT() >= simulateUntil) {
+			utils::debug << "(" << mySimulationManagerID << " ) GVT = "
 				<< myGVTManager->getGVT() << ", >= " << simulateUntil << endl;
-		retval = true;
-	} else if (myTerminationManager->terminateSimulation()) {
-		utils::debug << "(" << mySimulationManagerID
+			retval = true;
+		} else if (myTerminationManager->terminateSimulation()) {
+			utils::debug << "(" << mySimulationManagerID
 				<< " ) Termination manager says we're complete." << endl;
-		simulationCompleteFlag = true;
-		retval = true;
-	} else if (myrealFossilCollManager->getLeastCollectTime()
-			> simulateUntil.getApproximateIntTime()) {
-		utils::debug << "(" << mySimulationManagerID
+			simulationCompleteFlag = true;
+			retval = true;
+		}
+	} else {
+		if (myTerminationManager->terminateSimulation()){
+			utils::debug << "(" << mySimulationManagerID << " ) Termination Manager says we're complete." << endl;
+			retval = true;
+		} else if (myrealFossilCollManager->getLeastCollectTime() > simulateUntil.getApproximateIntTime()) {
+			utils::debug << "(" << mySimulationManagerID
 				<< " ) Minimum Fossil Collected Time = "
 				<< myrealFossilCollManager->getLeastCollectTime() << ", >= "
 				<< simulateUntil << endl;
-		retval = true;
+			retval = true;
+		}
 	}
 	return retval;
 }
+
 const VTime *
 DTTimeWarpSimulationManager::getCoastForwardTime(const unsigned int &objectID) const {
 	return coastForwardTime[objectID];
