@@ -35,7 +35,8 @@ if [ -n "$ERROR" ]; then exit; fi
 # make sure we have the model executable and configuration files
 if [ ! -x "$MODEL" ] || 
    [ ! -e "$MODEL_CONFIGURATION" ] || 
-   [ ! -e "$SIMULATION_CONFIGURATION" ]
+   [ ! -e "$SIMULATION_CONFIGURATION" ] ||
+   [ ! -e "$HOSTS" ]
 then
   echo "$0 must be run from the warped test (model) directory"
   exit
