@@ -65,7 +65,7 @@ public:
 
       @return The number of processes involved in the communicator.
   */
-  int physicalGetSize() const;
+  virtual int physicalGetSize() const;
   
   //@} // End of Public Class Methods of MPIPhysicalCommunicationLayer.
 
@@ -93,11 +93,6 @@ private:
   void getCStyleArguments( int &argc, 
 			   char ** &argv,
 			   const vector<string> &arguments );
-
-  /**
-     Writes out a procgroup file based on our Warped configuration.
-  */
-  void writeProcGroupFile( SimulationConfiguration &configuration );
 
   /**
      Does the dirty work of actually starting MPI.

@@ -25,22 +25,22 @@
 #include "EventFunctors.h"
 #include "OptFossilCollManager.h"
 #include "OptFossilCollManagerFactory.h"
+#include "SimulationConfiguration.h"
 #include <utils/Debug.h>
 #include <algorithm>
 #include <sstream>
 using std::istringstream;
 
-TimeWarpSimulationManager::TimeWarpSimulationManager(
-		unsigned int numProcessors, Application *initApplication) :
-	SimulationManagerImplementationBase(numProcessors),
+TimeWarpSimulationManager::TimeWarpSimulationManager(Application *initApplication) :
+    SimulationManagerImplementationBase(),
 			mySimulationManagerID(0), simulationCompleteFlag(false),
 			coastForwardTime(0), messageAggregation(false), myStateManager(0),
 			myGVTManager(0), myCommunicationManager(0), mySchedulingManager(0),
-			myOutputManager(0), myEventSet(0), mySchedulingData(
-					new SchedulingData()), myTerminationManager(0),
+			myOutputManager(0), myEventSet(0),
+			mySchedulingData(new SchedulingData()), myTerminationManager(0),
 			myApplication(initApplication), myFossilCollManager(0),
 			usingOneAntiMsg(false), usingOptFossilCollection(false),
-			inRecovery(false), numberOfRollbacks(0) {
+            inRecovery(false), numberOfRollbacks(0) {
 }
 
 TimeWarpSimulationManager::~TimeWarpSimulationManager() {
@@ -234,8 +234,9 @@ TimeWarpSimulationManager::getSimulationObjectNames() {
 // of which is passed in as a parameter for a specific simulation
 // manager)
 
-void TimeWarpSimulationManager::registerSimulationObjectProxies(const vector<
-		string> *arrayOfObjectProxies, unsigned int sourceSimulationManagerID,
+void TimeWarpSimulationManager::registerSimulationObjectProxies(
+		const vector<string> *arrayOfObjectProxies,
+		unsigned int sourceSimulationManagerID,
 		unsigned int destSimulationManagerID) {
 	// allocate space of the second dimension of this 2-D array.
 	globalArrayOfSimObjIDs[destSimulationManagerID].resize(
@@ -277,14 +278,13 @@ void TimeWarpSimulationManager::registerSimulationObjectProxies(const vector<
 // InitializationMessage, StartMessage, EventMessage, NegativeEventMessage,
 // CheckIdleMessage, AbortSimulationMessage
 void TimeWarpSimulationManager::registerWithCommunicationManager() {
-
-	const int numberOfMessageTypes = 6;
-	string messageType[numberOfMessageTypes] = { "InitializationMessage",
+	const char* messageTypes[] = { "InitializationMessage",
 			"StartMessage", "EventMessage", "NegativeEventMessage",
 			"CheckIdleMessage", "AbortSimulationMessage" };
 	ASSERT(myCommunicationManager != NULL);
+	int numberOfMessageTypes = sizeof(messageTypes) / sizeof(const char*);
 	for (int count = 0; count < numberOfMessageTypes; count++) {
-		myCommunicationManager->registerMessageType(messageType[count], this);
+		myCommunicationManager->registerMessageType(messageTypes[count], this);
 	}
 }
 
@@ -432,29 +432,44 @@ void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 	StopWatch stopwatch;
 	stopwatch.start();
 
-	cout << "SimulationManager(" << mySimulationManagerID
-			<< "): Starting simulation - End time: " << simulateUntil << ")"
-			<< endl;
+    ostringstream oss;
+    oss << "lp" << mySimulationManagerID << ".csv";
+    ofstream file(oss.str().c_str(), ios_base::app);
+    if(file) {
+        file << " -simulateUntil " << simulateUntil << endl;
+        file.close();
+    }
 
-	while (!simulationComplete(simulateUntil)) {
-		getMessages();
-		while (inRecovery) {
-			getMessages();
-		}
-		ASSERT(mySchedulingManager != NULL);
-		if (executeObjects(simulateUntil)) {
-			myTerminationManager->setStatusActive();
-		} else if (getNumberOfSimulationManagers() == 1) {
-			dynamic_cast<SingleTerminationManager*> (myTerminationManager)->simulationComplete();
-		} else {
-			myTerminationManager->setStatusPassive();
-		}
-	}
-	stopwatch.stop();
 
-	cout << "(" << getSimulationManagerID() << ") Simulation complete ("
-			<< stopwatch.elapsed() << " secs), Number of Rollbacks: ("
-			<< numberOfRollbacks << ")" << endl;
+    cout << "SimulationManager(" << mySimulationManagerID
+                    << "): Starting simulation - End time: " << simulateUntil << ")"
+                    << endl;
+
+    while (!simulationComplete(simulateUntil)) {
+            getMessages();
+            while (inRecovery) {
+                    getMessages();
+            }
+
+            ASSERT(mySchedulingManager != NULL);
+            if (executeObjects(simulateUntil)) {
+                    myTerminationManager->setStatusActive();
+            } else if (getNumberOfSimulationManagers() == 1) {
+                    dynamic_cast<SingleTerminationManager*> (myTerminationManager)->simulationComplete();
+            } else {
+                    myTerminationManager->setStatusPassive();
+            }
+    }
+    stopwatch.stop();
+
+    cout << "(" << getSimulationManagerID() << ") Simulation complete ("
+                    << stopwatch.elapsed() << " secs), Number of Rollbacks: ("
+                    << numberOfRollbacks << ")" << endl;
+
+    file.open(oss.str().c_str(), ios_base::app);
+    if(file)
+        file << stopwatch.elapsed() << ',' << numberOfRollbacks << endl;
+
 
 	// This is commented out by default. It is used along with the testParallelWarped script
 	// to provide a quick and easy way to do large amounts of tests. Make sure to change the
@@ -1176,6 +1191,9 @@ void TimeWarpSimulationManager::configure(
 			= dynamic_cast<CommunicationManager *> (myCommFactory->allocate(
 					configuration, this));
 	ASSERT( myCommunicationManager != 0 );
+    // update the number of the simulation managers with the number
+    // provided by the physical communication layer
+    numberOfSimulationManagers = myCommunicationManager->getSize();
 
 	myCommunicationManager->configure(configuration);
 	mySimulationManagerID = myCommunicationManager->getId();
@@ -1281,8 +1299,21 @@ void TimeWarpSimulationManager::configure(
 	// messages and wait for all initialization messages to arrive
 	// note: we dont need an initialization message from ourself; and
 	// hence the n - 1.
-	myCommunicationManager->waitForInitialization(numberOfSimulationManagers
-			- 1);
+	if (numberOfSimulationManagers > 1) {
+    myCommunicationManager->waitForInitialization(
+        numberOfSimulationManagers - 1);
+	}
+
+    ostringstream oss;
+    oss << "lp" << mySimulationManagerID << ".csv";
+    ofstream file(oss.str().c_str(), ios_base::app);
+
+    if(file) {
+        const vector<string>& args = configuration.getArguments();
+        vector<string>::const_iterator it(args.begin());
+        for(; it != args.end(); ++it)
+          file << " " << *it;
+    }
 
 }
 

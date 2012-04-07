@@ -47,8 +47,7 @@ int WorkerInformation::globalStillBusyCount = 0;
 bool WorkerInformation::workRemaining = true;
 static const unsigned int SIMULATION_MANAGER_THREADID = 0;
 
-ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager( unsigned int numProcessors,
-																	  unsigned int numberOfWorkerThreads,
+ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager( unsigned int numberOfWorkerThreads,
 																	  Application *initApplication )
 	: myThreadedEventSet(NULL),
 	  workerStatus(new WorkerInformation*[numberOfWorkerThreads+1]),
@@ -58,7 +57,7 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager( unsigned i
 	  checkGVT(false),
 	  emptyAllQueues(true),
 	  outgoingMessages(new LockedQueue<KernelMessage*>),
-	  TimeWarpSimulationManager(numProcessors, initApplication)
+      TimeWarpSimulationManager(initApplication)
 {
 	pthread_spin_init(&jobLock, NULL);
 }

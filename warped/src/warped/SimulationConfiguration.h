@@ -113,8 +113,6 @@ public:
   bool schedulerTypeIs( const string &testValue ) const;
   const string getSchedulerType() const;
 
-  bool getNumberOfSimulationManagers( unsigned int &number );
-
   bool stateManagerTypeIs( const string &testValue ) const;
   const string getStateManagerType() const;
 
@@ -131,12 +129,6 @@ public:
   bool getOptFossilCollDefaultLength( unsigned int &defaultLength );
 
   bool getOptFossilCollRiskFactor( double &riskFactor );
-
-  /**
-     Returns the list of nodes that it has been requested that this
-     simulation execute on.
-  */
-  vector<string> getNodes() const;
 
   /**
      Returns the binary name which started this execution.  Presumably we

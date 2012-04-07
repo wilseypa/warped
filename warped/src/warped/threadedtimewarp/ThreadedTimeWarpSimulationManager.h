@@ -27,8 +27,7 @@ public:
 	@param initApplication The application that we're going to start up.
 
 	*/
-	ThreadedTimeWarpSimulationManager( unsigned int numProcessors,
-									   unsigned int numberOfWorkerThreads,
+    ThreadedTimeWarpSimulationManager( unsigned int numberOfWorkerThreads,
 									   Application *initApplication );
 	/// Destructor.
 	~ThreadedTimeWarpSimulationManager();

@@ -157,7 +157,7 @@ CommunicationManagerImplementationBase::waitForInitialization(unsigned int numEx
 	new InitializationMessage( mySimulationManagerID, 
 				   count,
 				   *objectNames,
-				   numberOfSimulationManagers );
+				   numberOfSimulationManagers);
       sendMessage(messageToSend, count);
     }
   }
@@ -195,11 +195,11 @@ CommunicationManagerImplementationBase::waitForInitialization(unsigned int numEx
   // Now we need to circulate a message to synchronize all communication managers and
   // make sure they are in the same "phase". When comm mgr 0 sends this, all other
   // comm mgrs are still stuck in the while loop above.
-  KernelMessage *messageToSend =
-    new CirculateInitializationMessage( mySimulationManagerID, 
-					(mySimulationManagerID+1) % numberOfSimulationManagers );
-		       
+
+  KernelMessage *messageToSend = new CirculateInitializationMessage( mySimulationManagerID,
+        (mySimulationManagerID+1) % numberOfSimulationManagers );
   sendMessage(messageToSend, (mySimulationManagerID+1) % numberOfSimulationManagers);
+
   
   // If we are simulation manager 0 we have to catch the CirculateInitializationMessage.
   while (circulate == false) {

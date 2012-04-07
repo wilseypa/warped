@@ -59,3 +59,9 @@ DefaultPhysicalCommunicationLayer::physicalFinalize(){
    // done for finalize.
 }
 
+int
+DefaultPhysicalCommunicationLayer::physicalGetSize() const {
+   // for a DefaultPhysicalCommunicationLayer, the size is always 1
+   // since we are running a uniprocessor simulation.
+   return 1;
+}

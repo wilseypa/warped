@@ -14,7 +14,7 @@ using std::cout;
 using std::endl;
 
 SequentialSimulationManager::SequentialSimulationManager( Application *initApplication ):
-  SimulationManagerImplementationBase(1), 
+  SimulationManagerImplementationBase(),
   simulationTime( initApplication->getZero().clone() ), 
   sequentialWout( cerr.rdbuf(), ios::out), 
   sequentialWerr( cerr.rdbuf(), ios::out ),

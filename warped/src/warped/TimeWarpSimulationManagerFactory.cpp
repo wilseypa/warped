@@ -19,11 +19,6 @@ TimeWarpSimulationManagerFactory::allocate(
 		SimulationConfiguration &configuration, Configurable *parent) const {
 	TimeWarpSimulationManager *retval = 0;
 
-	unsigned int numberOfSimulationManagers = 0;
-	if (!configuration.getNumberOfSimulationManagers(numberOfSimulationManagers)) {
-		cerr << "Could not find number of simulation managers!" << endl;
-		abort();
-	}
 	if (configuration.simulationTypeIs("DTTimeWarp")) {
 		//Count the number of threads, if none specified try reading the proc file
 		unsigned int numberOfWorkerThreads = 0;
@@ -32,12 +27,10 @@ TimeWarpSimulationManagerFactory::allocate(
 			cerr << "Number of Threads has not been mentioned in the file!" << endl;
 		}
 		DTTimeWarpSimulationManager *retvalue = 0;
-		retvalue = new DTTimeWarpSimulationManager(numberOfSimulationManagers,
-				numberOfWorkerThreads, (Application *) parent);
+        retvalue = new DTTimeWarpSimulationManager(numberOfWorkerThreads, (Application *) parent);
 		return retvalue;
 	} else {
-		retval = new TimeWarpSimulationManager(numberOfSimulationManagers,
-				(Application *) parent);
+        retval = new TimeWarpSimulationManager((Application *) parent);
 	}
 
 	return retval;

@@ -160,6 +160,8 @@ public:
 
 	virtual void finalize();
 
+    virtual int getSize();
+
 	void configure(SimulationConfiguration &configuration);
 
 	//@} // End of Public Class Methods of CommunicationManager

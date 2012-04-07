@@ -35,7 +35,7 @@
 static pthread_key_t threadKey;
 
 DTTimeWarpSimulationManager::DTTimeWarpSimulationManager(
-		unsigned int numProcessors, unsigned int numberOfWorkerThreads,
+        unsigned int numberOfWorkerThreads,
 		Application *initApplication) :
 	numberOfWorkerThreads(numberOfWorkerThreads), masterID(0),
 			coastForwardTime(0), myrealFossilCollManager(0), myStateManager(0),
@@ -47,7 +47,7 @@ DTTimeWarpSimulationManager::DTTimeWarpSimulationManager(
 			computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
 			rollbackCompleted(new bool[numberOfObjects]), inRecovery(false),
 			GVTTokenPending(false),
-			TimeWarpSimulationManager(numProcessors, initApplication) {
+			TimeWarpSimulationManager(initApplication) {
 	LVT = &getZero();
 	LVTArray = new const VTime *[numberOfWorkerThreads + 1];
 	sendMinTimeArray = new const VTime *[numberOfWorkerThreads + 1];

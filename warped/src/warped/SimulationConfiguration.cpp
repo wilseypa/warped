@@ -50,8 +50,6 @@ public:
   bool schedulerTypeIs( const string &testValue ) const;
   const string getSchedulerType() const;
 
-  bool getNumberOfSimulationManagers( unsigned int &number ) const;
-
   bool stateManagerTypeIs( const string &testValue ) const;
   const string getStateManagerType() const;
 
@@ -65,7 +63,6 @@ public:
   bool getOptFossilCollDefaultLength( unsigned int &defaultLength );
   bool getOptFossilCollRiskFactor( double &riskFactor );
 
-  vector<string> getNodes() const;
   const string getBinaryName() const;
 
   bool getWorkerThreadCount(unsigned int &workerThreadCount) const;
@@ -170,8 +167,6 @@ private:
      Returns ConfigurationScope for TimeWarp::OptFossilCollectionManager
   */
   const ConfigurationScope *getOptFossilCollManagerScope() const;
-
-  const ConfigurationValue *getNodesValue() const;
 
   static const string &getCommManagerScopeName();
   static const string &getEventListScopeName();
@@ -343,11 +338,6 @@ SimulationConfiguration::getSchedulerType() const {
 }
 
 bool
-SimulationConfiguration::getNumberOfSimulationManagers( unsigned int &number ){
-  return _impl->getNumberOfSimulationManagers( number );
-}
-
-bool
 SimulationConfiguration::stateManagerTypeIs( const string &testValue ) const {
   return _impl->stateManagerTypeIs( testValue );
 }
@@ -385,11 +375,6 @@ SimulationConfiguration::getOptFossilCollDefaultLength( unsigned int &defaultLen
 bool
 SimulationConfiguration::getOptFossilCollRiskFactor( double &riskFactor ){
   return _impl->getOptFossilCollRiskFactor( riskFactor );
-}
-
-vector<string>
-SimulationConfiguration::getNodes() const {
-  return _impl->getNodes();
 }
 
 const string
@@ -947,77 +932,11 @@ SimulationConfiguration::Implementation::getOptFossilCollRiskFactor( double &ris
   return retval;
 }
 
-const ConfigurationValue *
-SimulationConfiguration::Implementation::getNodesValue() const {
-  const ConfigurationValue *retval = 0;
-
- const ConfigurationScope *scope = getCommunicationManagerScope();
-  if( scope != 0 ){
-    const ConfigurationChoice *nodesList = scope->findChoice( "Nodes" );
-    if( nodesList != 0 ){
-      retval = nodesList->getConfigurationValue();
-    }
-  }
-
-  return retval;
-}
-
-vector<string>
-SimulationConfiguration::Implementation::getNodes( ) const {
-  vector<string> retval;
-
-  const ConfigurationValue *nodesValue = getNodesValue();
-  if( nodesValue &&
-      dynamic_cast<const VectorConfigurationValue *>(nodesValue) ){
-    const vector<const ConfigurationValue *> *configVector = nodesValue->getVectorValue();
-    if( configVector != 0 ){
-      for( vector<const ConfigurationValue *>::const_iterator i = configVector->begin();
-	   i < configVector->end();
-	   i++ ){
-	if( dynamic_cast<const StringConfigurationValue *>( *i )){
-	  retval.push_back( (*i)->getStringValue() );
-	}
-      }
-    }
-  }
-  else if( dynamic_cast<const StringConfigurationValue *>(nodesValue) ){
-    retval.push_back( nodesValue->getStringValue() );
-  }
-  return retval;
-}
-
 const string
 SimulationConfiguration::Implementation::getBinaryName() const {
   string retval = "";
   if( !myArguments.empty() ){
     retval = myArguments[0];
-  }
-  return retval;
-}
-
-bool
-SimulationConfiguration::Implementation::getNumberOfSimulationManagers( unsigned int &numManagers ) const {
-  bool retval = false;
-  const ConfigurationScope *scope = getCommunicationManagerScope();
-  if( scope != 0 ){
-    const ConfigurationChoice *nodesList = scope->findChoice( "Nodes" );
-    if( nodesList != 0 ){
-      if( dynamic_cast<const VectorConfigurationValue *>(nodesList->getConfigurationValue()) ){
-        // Have to add ourself in...
-        numManagers =
-          dynamic_cast<const VectorConfigurationValue *>(nodesList->getConfigurationValue())->getVectorValue()->size() + 1;
-        retval = true;
-      }
-      else if( dynamic_cast<const StringConfigurationValue *>(nodesList->getConfigurationValue()) ){
-        numManagers = 1 + 1; // Have to add yourself in...
-        retval = true;
-      }
-    }
-    else{
-      //We are all alone here
-      numManagers=1;
-      retval = true;
-    }
   }
   return retval;
 }

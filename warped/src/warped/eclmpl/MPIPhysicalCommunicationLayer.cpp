@@ -29,28 +29,6 @@ MPIPhysicalCommunicationLayer::getCStyleArguments( int &argc,
 }
 
 void
-MPIPhysicalCommunicationLayer::writeProcGroupFile( SimulationConfiguration &configuration ){
-  ofstream procGroupFile( "procgroup" );
-  if( !procGroupFile ){
-    perror("Error writing procgroup file:");
-    abort();
-  }
-  
-  //This line states that the first process is started locally
-  procGroupFile << "local 0 " << endl;
-  //A list of all of the nodes
-  const vector<string> nodeList = configuration.getNodes();
-  for( vector<string>::const_iterator i = nodeList.begin();
-        i < nodeList.end();
-        i++ ){
-      ///The comma separated nodes in the procgroup file at listed here in
-      //the standard format:  nodeName #Processes ProgramLocation
-      procGroupFile << (*i) << " 1 " << " " << configuration.getBinaryName() << endl;
-  }  
-  procGroupFile.close();
-}
-
-void
 MPIPhysicalCommunicationLayer::startMPI( const vector<string> &arguments ){
   int argc = 0;
   char **argv = 0;
@@ -67,7 +45,6 @@ MPIPhysicalCommunicationLayer::startMPI( const vector<string> &arguments ){
 
 void
 MPIPhysicalCommunicationLayer::physicalInit( SimulationConfiguration &configuration ){
-  writeProcGroupFile( configuration );
   startMPI( configuration.getArguments() );
   mySimulationManagerID = physicalGetId();
 }

@@ -59,7 +59,7 @@ public:
      This does everything up until the moment that the simulation is about
      to start.  The SimulationManager that is returned can be used
   */
-  void initializeSimulation( const vector<string> &args );
+  void initializeSimulation( vector<string> &args );
 
   /**
      Tells the simulation to run until the absolute time passed in.
@@ -88,30 +88,6 @@ public:
 
 private:
   /**
-     This function decides if we're master or slave and does the right
-     thing depending on which we are.  Returns the argument list that we
-     should use to finish initializing.
-  */
-  vector< vector<string> > initMasterOrSlave( const vector<string> &argumentVector );
-
-  /**
-     Initializes us if we're a slave process.
-  */
-  vector< vector<string> > doSlaveInit( const vector<string> &argumentVector );
-  /**
-     Initializes us if we're a master process.
-  */
-  vector<string> doMasterInit( const vector<string> &argumentVector );
-
-  /**
-     The way MPICH works, we have to communicate slave arguments via a
-     file.  This is because when we called MPI_Init, it starts the remote
-     process without the arguments we passed.
-  */
-  void writeSlaveArguments( const vector<string> &masterArgs );
-
-
-  /**
      Builds a vector of strings from a standard "C"-style argument list.
   */
   vector<string> buildArgumentVector( int, char ** );
@@ -119,11 +95,6 @@ private:
   static ArgumentParser::ArgRecord *getArgumentList( WarpedMain &setMyVariables );
 
   void displayParameters( string executableName );
-  /**
-     This method returns the slave arguments that the master wrote out for
-     us if we're a slave.
-  */
-  vector< vector<string> > readSlaveArguments( const vector<string> &commandLineArguments );
   bool checkConfigFile( string configFileName );
 
   // variables used to catching warnings or errors
@@ -132,18 +103,9 @@ private:
   string configurationFileName;
   bool debugFlag;
   string simulateUntil;
-  
-  /** this is the file that will be read by "slave" processes */
-  const string slaveArgumentFile;
 
   Application *myApplication;
   Simulation *mySimulation;
-
-  /** This method checks to see if we're a slave based on the command line
-      arguments.  (A hack to support MPICH.)  If we find the magic argument
-      we erase it. */
-  bool amSlave( const vector<string> &args ) const;
-
 };
 
 #endif

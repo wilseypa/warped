@@ -67,7 +67,7 @@ public:
 
       @return The number of processes involved in the communicator.
   */
-  int physicalGetSize() const;
+  virtual int physicalGetSize() const;
 
   //@} // End of Public Class Methods of eclmplReliablePhysicalCommunicationLayer.
 

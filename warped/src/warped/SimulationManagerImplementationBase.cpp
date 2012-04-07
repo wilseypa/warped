@@ -13,8 +13,8 @@ using std::endl;
 ostream *wout;
 ostream *werr;
 
-SimulationManagerImplementationBase::SimulationManagerImplementationBase(unsigned int numProcessors)
-  : numberOfSimulationManagers(numProcessors),
+SimulationManagerImplementationBase::SimulationManagerImplementationBase()
+  : numberOfSimulationManagers(0),
     localArrayOfSimObjPtrs(0),
     localArrayOfSimObjIDs(0){}
 

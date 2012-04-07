@@ -1,6 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT([warped],[3.0])
-AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_HEADERS([src/warped/WarpedConfig.h])
 
 AC_CONFIG_MACRO_DIR([m4])
@@ -13,7 +12,6 @@ AC_SUBST(WARPED_VERSION, [2.0-pre031216])
 AC_CANONICAL_HOST
 AC_LANG(C++)
 
-dnl AC_CONFIG_MACRO_DIR([m4])
 dnl Checks for programs.
 AC_PROG_LIBTOOL
 AC_PROG_CXX
@@ -46,7 +44,7 @@ AC_CHECK_HEADER( mpi.h,,
 	AC_MSG_ERROR(Couldn't find mpi.h and you asked to enable mpi.  You probably need to define an include path.) )
 AC_CHECK_LIB( mpi, MPI_Init, havempi=yes,
 	AC_CHECK_LIB( mpich, MPI_Init, havempich=yes,
-	  AC_MSG_ERROR([Could neither find libmpi.a nor libmpich.a and you asked to enable mpi.  You probably need to define a lib path via LDFLAGS and -L]) ))
+	  AC_MSG_ERROR([Could neither find libmpi.a nor libmpich.a and you asked to enable mpi.  You probably need to define a lib path via LDFLAGS and -L]), -lmpl  -lpthread))
 fi
 AM_CONDITIONAL(HAVE_MPICH, test $havempich = yes)
 AM_CONDITIONAL(HAVE_MPI, test $havempi = yes)

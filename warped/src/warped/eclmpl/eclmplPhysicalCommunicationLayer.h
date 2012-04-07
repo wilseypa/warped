@@ -56,7 +56,7 @@ public:
 
       @return The number of processes involved in the communicator.
   */
-  int physicalGetSize() const;
+  virtual int physicalGetSize() const;
 
   //@} // End of Public Class Methods of eclmplPhysicalCommunicationLayer.
 
@@ -67,10 +67,6 @@ protected:
   virtual SerializedInstance *getNextInSequence();
   virtual int peekNextInSequenceSize();
   virtual void initializeCommunicationLayerAttributes() = 0;
-  /**
-     Writes out a procgroup file based on our Warped configuration.
-  */
-  void writeProcGroupFile( SimulationConfiguration &configuration );
   //@} // End of Protected Class Attributes of eclmplPhysicalCommunicationLayer.
 
   /**@name Protected Class Attributes of eclmplPhysicalCommunicationLayer. */

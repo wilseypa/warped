@@ -90,6 +90,12 @@ public:
   /// Clean up.
   virtual void physicalFinalize() = 0;
 
+  /** Return how many processes are involved in the communicator.
+
+      @return The number of processes involved in the communicator.
+  */
+  virtual int physicalGetSize() const = 0;
+
   //@} // End of Public Class Methods of PhysicalCommunicationLayer.
 
 protected:
