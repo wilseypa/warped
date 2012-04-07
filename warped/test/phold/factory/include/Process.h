@@ -24,7 +24,8 @@ class Process : public SimulationObject {
 
 public:
    Process(unsigned int, string &, unsigned int, vector<string>,
-           unsigned int, unsigned int, distribution_t, double, double);
+           unsigned int, unsigned int, distribution_t, double, double,
+           bool useHotspot=false, int hotspot=0);
    ~Process();
 
    void initialize();
@@ -83,6 +84,9 @@ private:
 
    // Contains a loop of double divisions to act as the computational grain.
    void computationGrain();
+
+   bool myUseHotspot;
+   int myHotspot;
 };
 
 #endif

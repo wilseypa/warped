@@ -61,8 +61,17 @@ PHOLDApplication::getSimulationObjects(){
     abort();
   }
   
-  configFile >> numObjects >> msgDen >> distributionString >> seed >> genType;
+  int hotspot;
+  configFile >> hotspot >> numObjects >> msgDen >> distributionString >> seed
+             >> genType;
   
+  // configure object 0 to be a hotspot? (see ronngren paper 1994)
+  if(hotspot != 1 && hotspot != 0) {
+    cerr << "ERROR: First phold parameter must be 1 for hotspot node or 0 "
+         << "for no hotspot node.\nAborting simulation." << endl;
+    abort();
+  }
+
   vector<SimulationObject *> *retval = new vector<SimulationObject *>;
 
   // Convert the distributionString to the proper distribution.
@@ -129,16 +138,24 @@ PHOLDApplication::getSimulationObjects(){
 
       // The outputs will be the next 'numOutputs' names that follow the current
       // object name. This ensures that all objects have the same number of outputs.
+      int hotspotnum = 0;
       vector<string> outputNames;
       for( int j = 0; j < numOutputs; j++){
+        int objnum = (j + i + 1) % numObjects;
+        if(objnum == 0)
+          hotspotnum = j;
          outputNames.push_back(objNames[(j+i+1)%numObjects]);
       }
 
       retval->push_back( new Process( i, objNames[i], numOutputs, outputNames,
-                                      stateSize, msgDen, dist, grain, seed ) );
+                                      stateSize, msgDen, dist, grain, seed, hotspot, hotspotnum ) );
     }
   }
   else{
+    if(hotspot)
+      cout << "Warning; to use hotspot node you must use generated objects."
+           << endl << "Ignoring hotspot." << endl;
+
     for( int i = 0; i < numObjects; i++){
      
        configFile >> name >> procNum >> stateSize >> grain >> numOutputs;

@@ -13,11 +13,12 @@ using namespace std;
 
 Process::Process(unsigned int procNr, string &name, unsigned int nrOfOutputs, 
                  vector<string> outputs, unsigned int stateSize, unsigned int numBalls,
-                 distribution_t dist, double initCompGrain, double seed): 
+                 distribution_t dist, double initCompGrain, double seed,
+                 bool useHotspot/*=false*/, int hotspot/*=0*/):
   processNumber(procNr), myObjectName(name),  numberOfOutputs(nrOfOutputs), 
   outputNames(outputs), sizeOfState(stateSize), numberOfTokens(numBalls), 
-  compGrain(initCompGrain), sourceDistribution(dist), first(seed), second(0.0) { 
-}
+  compGrain(initCompGrain), sourceDistribution(dist), first(seed), second(0.0),
+  myUseHotspot(useHotspot), myHotspot(hotspot) {}
 
 Process::~Process() { 
   deallocateState(getState());
@@ -86,8 +87,11 @@ Process::executeProcess(){
          myState->eventReceived();
 
          // Generate the destination for the event.
-         DiscreteUniform Dest(0, numberOfOutputs-1, myState->gen);
+         int maxOutput = numberOfOutputs + myUseHotspot ? 8 : -1;
+         DiscreteUniform Dest(0, maxOutput, myState->gen);
          int myDestination = (int) Dest();
+         if(myDestination > numberOfOutputs - 1)
+           myDestination = myHotspot;
 
          ASSERT (myDestination < numberOfOutputs);
          SimulationObject *receiver = outputHandles[myDestination];
