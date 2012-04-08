@@ -60,7 +60,7 @@ ClockFrequencyManagerImplementationBase::writeCSVRow(int node,
                                                      double util,
                                                      int freq) {
   ostringstream path;
-  path << "cfmoutput_lp" << node << ".csv";
+  path << "lp" << node << ".csv";
 
   ofstream fp(path.str().c_str(), ios_base::app);
   if(fp)

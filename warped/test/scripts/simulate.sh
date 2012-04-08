@@ -11,7 +11,7 @@ MODEL=pholdSim
 MODEL_CONFIGURATION=phold/LargePHOLD
 SIMULATION_CONFIGURATION=parallel.config
 # comment out to omit this argument
-SIMULATE_UNTIL=100
+SIMULATE_UNTIL=50000
 
 # get batch arguments
 TEMP=`getopt -o d:n:p: -l help -n "$0" -- "$@"`
