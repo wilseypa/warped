@@ -61,16 +61,17 @@ PHOLDApplication::getSimulationObjects(){
     abort();
   }
   
-  int hotspot;
-  configFile >> hotspot >> numObjects >> msgDen >> distributionString >> seed
-             >> genType;
-  
+  int hotspotProb;
   // configure object 0 to be a hotspot? (see ronngren paper 1994)
-  if(hotspot != 1 && hotspot != 0) {
-    cerr << "ERROR: First phold parameter must be 1 for hotspot node or 0 "
-         << "for no hotspot node.\nAborting simulation." << endl;
+  if(!(configFile >> hotspotProb)) {
+    cerr << "ERROR: First phold parameter must be an integer representing"
+         << " the relative probability to send a message to the hotspot."
+         << endl << "Aborting simulation." << endl;
     abort();
   }
+
+  configFile >> numObjects >> msgDen >> distributionString >> seed
+             >> genType;
 
   vector<SimulationObject *> *retval = new vector<SimulationObject *>;
 
@@ -118,8 +119,8 @@ PHOLDApplication::getSimulationObjects(){
   if(generateObjs){
     configFile >> stateSize >> grain >> numOutputs;
     
-    if(numOutputs >= numObjects){
-      cerr << "ERROR: The number of outputs per object must be less than the "
+    if(numOutputs > numObjects){
+      cerr << "ERROR: The number of outputs per object must be less than or equal to the "
            << "total number of objects.\nAborting Simulation.\n";
       abort();
     }
@@ -138,23 +139,24 @@ PHOLDApplication::getSimulationObjects(){
 
       // The outputs will be the next 'numOutputs' names that follow the current
       // object name. This ensures that all objects have the same number of outputs.
-      int hotspotnum = 0;
+      int hotspotNum = 0;
       vector<string> outputNames;
       for( int j = 0; j < numOutputs; j++){
         int objnum = (j + i + 1) % numObjects;
         if(objnum == 0)
-          hotspotnum = j;
+          hotspotNum = j;
          outputNames.push_back(objNames[(j+i+1)%numObjects]);
       }
 
       retval->push_back( new Process( i, objNames[i], numOutputs, outputNames,
-                                      stateSize, msgDen, dist, grain, seed, hotspot, hotspotnum ) );
+                                      stateSize, msgDen, dist, grain, seed,
+                                      hotspotProb, hotspotNum ) );
     }
   }
   else{
-    if(hotspot)
+    if(hotspotProb > 1)
       cout << "Warning; to use hotspot node you must use generated objects."
-           << endl << "Ignoring hotspot." << endl;
+           << endl << "Using hotspot probability multiplier of 1." << endl;
 
     for( int i = 0; i < numObjects; i++){
      

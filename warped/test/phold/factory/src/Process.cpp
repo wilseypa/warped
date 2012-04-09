@@ -8,17 +8,19 @@
 #include "IntVTime.h"
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <time.h>
 using namespace std;
 
 Process::Process(unsigned int procNr, string &name, unsigned int nrOfOutputs, 
                  vector<string> outputs, unsigned int stateSize, unsigned int numBalls,
                  distribution_t dist, double initCompGrain, double seed,
-                 bool useHotspot/*=false*/, int hotspot/*=0*/):
+                 int hotspotProb/*=1*/, int hotspotNum/*=0*/):
   processNumber(procNr), myObjectName(name),  numberOfOutputs(nrOfOutputs), 
   outputNames(outputs), sizeOfState(stateSize), numberOfTokens(numBalls), 
   compGrain(initCompGrain), sourceDistribution(dist), first(seed), second(0.0),
-  myUseHotspot(useHotspot), myHotspot(hotspot) {}
+  myHotspotProb(hotspotProb), myHotspot(hotspotNum) {
+}
 
 Process::~Process() { 
   deallocateState(getState());
@@ -73,6 +75,10 @@ void
 Process::executeProcess(){  
    IntVTime sendTime = dynamic_cast<const IntVTime&>(getSimulationTime());
    
+/*   stringstream ss;
+   ss << "process" << processNumber << ".csv";
+   ofstream f(ss.str().c_str(), ios_base::app);
+*/
    do { 
       PHOLDEvent* recvEvent = (PHOLDEvent*) getEvent();
     
@@ -87,7 +93,10 @@ Process::executeProcess(){
          myState->eventReceived();
 
          // Generate the destination for the event.
-         int maxOutput = numberOfOutputs + myUseHotspot ? 8 : -1;
+         // probability distribution for the destination is uniform except for
+         // the hotspot, which has myHotspotProb times the probability of all
+         // other destinations
+         int maxOutput = numberOfOutputs + myHotspotProb - 2;
          DiscreteUniform Dest(0, maxOutput, myState->gen);
          int myDestination = (int) Dest();
          if(myDestination > numberOfOutputs - 1)
@@ -95,6 +104,8 @@ Process::executeProcess(){
 
          ASSERT (myDestination < numberOfOutputs);
          SimulationObject *receiver = outputHandles[myDestination];
+
+         //f << outputNames[myDestination] << endl;
 
          // Generate the delay between the send and receive times.
          int ldelay = msgDelay();

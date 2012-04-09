@@ -23,13 +23,7 @@ DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(
                                            firsize,
                                            dummy)
   ,mySimulatedFrequencyIdx(numSimulatedFrequencies / 2)
-  ,myFrequencyIdxs(myNumSimulationManagers, numSimulatedFrequencies / 2)
-{
-  ostringstream path;
-  path << "lp" << mySimulationManagerID << ".csv";
-
-  myFile.open(path.str().c_str(), ios_base::app);
-}
+{}
 
 void
 DecentralizedClockFrequencyManager::poll() {
@@ -51,13 +45,26 @@ DecentralizedClockFrequencyManager::registerWithCommunicationManager() {
 }
 
 void
+DecentralizedClockFrequencyManager::configure(SimulationConfiguration &config) {
+  ClockFrequencyManagerImplementationBase::configure(config);
+  
+  // set to highest frequency
+  int freq = myAvailableFreqs[0];
+  cout << "(" << mySimulationManagerID << "): bound to PE " << myCPU
+       << "; initializing freq to " << freq << endl;
+  setCPUFrequency(myCPU, freq);
+
+  myMaxFreqIdx = numSimulatedFrequencies - 1;
+}
+
+void
 DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   UtilizationMessage* msg = dynamic_cast<UtilizationMessage*>(kMsg);
   ASSERT(msg);
 
   std::vector<double> dat;
   UtilizationMessage::MessageRound round = msg->getRound();
-  bool adjust = false;
+  bool idxsChanged = false;
   msg->getData(dat);
   if(round == UtilizationMessage::COLLECT) {
     dat[mySimulationManagerID] = mySimulationManager->effectiveUtilization();
@@ -66,34 +73,33 @@ DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
         myUtilFilters[i].update(dat[i]);
 
       if(!myIsDummy)
-        adjust = adjustFrequency(dat);
+        idxsChanged = updateFrequencyIdxs();
 
       for(int i = 0; i < dat.size(); i++)
         writeCSVRow(i,
                     myUtilFilters[i].getData(),
                     simulatedFrequencies[myIsDummy ? 
-                      numSimulatedFrequencies / 2 : static_cast<int>(dat[i])]);
+                      numSimulatedFrequencies / 2 : myFrequencyIdxs[i]]);
     }
   }
   else if(round == UtilizationMessage::SETFREQ && !myIsDummy)
-  {
     mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
-    //cout << "simulated frequency idx: " << mySimulatedFrequencyIdx << endl;
-  }
 
   // forward message to next node unless we're the master and either
   // we just received a set frequency message or we're not adjusting frequencies
-  if(!(isMaster() && (round == UtilizationMessage::SETFREQ || !adjust))) {
+  if(!(isMaster() && (round == UtilizationMessage::SETFREQ || !idxsChanged))) {
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
     UtilizationMessage::MessageRound newRound =
         isMaster() ? UtilizationMessage::SETFREQ : round;
-    //cout << "sending " << (newRound == UtilizationMessage::SETFREQ ? "set freq" : "collect")
-    //     << " message from " << mySimulationManagerID << " to " << dest << endl;
 
     UtilizationMessage* newMsg = new UtilizationMessage(mySimulationManagerID,
                                                         dest,
                                                         myNumSimulationManagers,
                                                         newRound);
+
+    if(isMaster())
+      for(int i=0; i < myFrequencyIdxs.size(); i++)
+        dat[i] = static_cast<double>(myFrequencyIdxs[i]);
 
     newMsg->setData(dat);
     myCommunicationManager->sendMessage(newMsg, dest);
@@ -102,74 +108,6 @@ DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   //  cout << "ending measurement" << endl;
 
   delete kMsg;
-}
-
-struct Utilization {
-  int node;
-  double util;
-  bool operator()(const Utilization& a, const Utilization& b) const {
-      return a.util < b.util;
-  }
-};
-
-
-bool
-DecentralizedClockFrequencyManager::adjustFrequency(vector<double>& d) {
-  const float dist = 0.01;
-
-  vector<Utilization> utils(0);
-  double avg = 0.;
-  int i = 0;
-  int n = myUtilFilters.size();
-  for(; i < n; i++) {
-    Utilization u;
-    u.node = i;
-    u.util = myUtilFilters[i].getData();
-    avg += u.util;
-    utils.push_back(u);
-  }
-  avg /= n;
-
-  sort(utils.begin(), utils.end(), Utilization());
-
-  /*
-  for(int j=0; j < n; j++)
-    cout << j << " (" << utils[j].node << ") " << utils[j].util << "freqidx: " << myFrequencyIdxs[utils[j].node] << endl;
-  cout << "average: " << avg << endl;
-  */
-
-  i = 0;
-  int high = n;
-  int low = -1;
-  for(; i < n; i++) {
-    if(utils[i].util < avg - dist)
-      low = i;
-    else if(utils[i].util > avg + dist)
-      break;
-  }
-  high = i;
-
-  //cout << "low: " << low << "; high: " << high << endl;
-
-  bool adjust = false;
-  int l = 0;
-  int h = n - 1;
-  while(l <= low && h >= high) {
-    // skip over any nodes that are already at the extremes
-    while(l <= low && myFrequencyIdxs[utils[l].node] == numSimulatedFrequencies - 1)
-      l++;
-    while(h >= high && myFrequencyIdxs[utils[h].node] == 0)
-      h--;
-    if(l <= low && h >= high) {
-      //cout << "(" << utils[l].node << ") freqidx up, (" << utils[h].node << ") freqidx down" << endl ;
-      myFrequencyIdxs[utils[l++].node]++;
-      myFrequencyIdxs[utils[h--].node]--;
-      adjust = true;
-    }
-  }
-
-  d = myFrequencyIdxs;
-  return adjust;
 }
 
 string

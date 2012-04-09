@@ -29,6 +29,7 @@ public:
   virtual void poll();
 
   virtual void registerWithCommunicationManager();
+  virtual void configure(SimulationConfiguration &);
 
   /// from CommunicatingEntity
   virtual void receiveKernelMessage(KernelMessage* msg);
@@ -39,14 +40,10 @@ public:
 
   //@} // End of Public Class Methods of ClockFrequencyManager.
 
-  static const int simulatedFrequencies[];
-  static const int numSimulatedFrequencies;
-
 private:
   int mySimulatedFrequencyIdx;
-  vector<double> myFrequencyIdxs;
-  ofstream myFile;
-  bool adjustFrequency(vector<double>& d);
+  static const int simulatedFrequencies[];
+  static const int numSimulatedFrequencies;
 };
 
 #endif //DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

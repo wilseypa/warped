@@ -48,8 +48,7 @@ protected:
   /// Determines whether a measurement cycle has lapsed
   virtual bool checkMeasurementPeriod();
 
-  virtual bool isMaster() { return myAmMaster; }
-  void setMaster(bool m) { myAmMaster = m; }
+  virtual bool isMaster() { return mySimulationManagerID == 0; }
 
   virtual void writeCSVRow(int, double, int);
 
@@ -58,6 +57,8 @@ protected:
   void populateAvailableFrequencies();
 
   void setCPUFrequency(int cpu_idx, int freq);
+
+  bool updateFrequencyIdxs();
 
   //@} // End of Protected Class Methods of GVTManager.
 
@@ -72,12 +73,14 @@ protected:
 
   // begin() == fastest, end() == slowest
   std::vector<int> myAvailableFreqs;
+  vector<int> myFrequencyIdxs;
+  int myMaxFreqIdx;
 
 private:
   int myMeasurementPeriod;
   StopWatch myStopwatch;
   int myMeasurementCounter;
-  bool myAmMaster;
+  bool myPowerSave;
 
   void setGovernorMode(const char* governor);
 

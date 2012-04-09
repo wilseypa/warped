@@ -29,26 +29,14 @@ public:
 
   virtual void registerWithCommunicationManager();
 
+  virtual void configure(SimulationConfiguration &);
+
   /// from CommunicatingEntity
   virtual void receiveKernelMessage(KernelMessage* msg);
 
   virtual string toString();
 
-  // from ClockFrequencyManagerImplementationBase
-  //virtual bool checkMeasurementPeriod();
-
   //@} // End of Public Class Methods of ClockFrequencyManager.
-
-private:
-
-  std::vector<int> myLastFreqs;
-  bool myStartedRound;
-  bool myFirstTime;
-
-  void adjustFrequencies(std::vector<double>&);
-
 };
-
-
 
 #endif //CENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

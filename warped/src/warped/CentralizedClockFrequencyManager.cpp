@@ -8,17 +8,8 @@
 
 using namespace std;
 
-struct compfir {
-    int operator()(FIRFilter<double>& a, FIRFilter<double>& b) const {
-		return a.getData() < b.getData();
-	}
-};
-
 CentralizedClockFrequencyManager::CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int firsize, bool dummy)
   :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, firsize, dummy)
-  ,myLastFreqs(myNumSimulationManagers, 1)
-  ,myStartedRound(false)
-  ,myFirstTime(true)
    {}
 
 void
@@ -26,7 +17,6 @@ CentralizedClockFrequencyManager::poll() {
   if(checkMeasurementPeriod()) {
     // initiate the measurement cycle
     if(isMaster()) {
-      myStartedRound = true;
       int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
       UtilizationMessage* msg = new UtilizationMessage(mySimulationManagerID,
                                                        dest,
@@ -42,9 +32,26 @@ CentralizedClockFrequencyManager::registerWithCommunicationManager() {
   myCommunicationManager->registerMessageType(UtilizationMessage::dataType(), this);
 }
 
-// 2 experimental ways to set frequencies...
-// first sends one round, LP0 always sets the frequencies
-// second sends two rounds, slowest LP always sets the freqs
+void
+CentralizedClockFrequencyManager::configure(SimulationConfiguration &config) {
+  // populate available frequencies and our CPU id, set userspace governor
+  ClockFrequencyManagerImplementationBase::configure(config);
+
+  // initialize the frequency index array now that we know how many
+  // frequencies are available
+  int n = myAvailableFreqs.size();
+  vector<int>::iterator it(myFrequencyIdxs.begin());
+  for(int i=0; i < myNumSimulationManagers; i++)
+    myFrequencyIdxs.push_back(n / 2);
+  myMaxFreqIdx = n - 1;
+
+  // initialize my frequency to the median frequency
+  int freq = myAvailableFreqs[n / 2];
+  cout << "(" << mySimulationManagerID << "): bound to PE " << myCPU
+       << "; initializing freq to " << freq << endl;
+  setCPUFrequency(myCPU, freq);
+}
+
 void
 CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   resetMeasurementCounter();
@@ -57,9 +64,24 @@ CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 
   dat[mySimulationManagerID] = mySimulationManager->effectiveUtilization();
   if(isMaster()) {
+
     for(int i = 0; i < dat.size(); ++i)
       myUtilFilters[i].update(dat[i]);
-    adjustFrequencies(dat);
+
+    bool changed = false;
+    if(!myIsDummy)
+      changed = updateFrequencyIdxs();
+
+    if(changed && !myIsDummy) {
+      cout << "setting freqs..." << endl;
+      for(int i=0; i < myFrequencyIdxs.size(); i++)
+        setCPUFrequency(i, myAvailableFreqs[myFrequencyIdxs[i]]);
+    }
+
+    for(int i=0; i < myFrequencyIdxs.size(); i++)
+      writeCSVRow(i, myUtilFilters[i].getData(), myAvailableFreqs[myIsDummy ?
+        myAvailableFreqs.size() / 2 : myFrequencyIdxs[i]]);
+
   }
   else {
 
@@ -73,11 +95,6 @@ CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   }
 
   delete kMsg;
-}
-
-void
-CentralizedClockFrequencyManager::adjustFrequencies(vector<double>& d) {
-
 }
 
 string
