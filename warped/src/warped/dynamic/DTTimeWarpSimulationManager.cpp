@@ -995,6 +995,9 @@ void DTTimeWarpSimulationManager::configure(
 			= dynamic_cast<CommunicationManager *> (myCommFactory->allocate(
 					configuration, this));
 	ASSERT( myCommunicationManager != 0);
+    // update the number of the simulation managers with the number
+    // provided by the physical communication layer
+    numberOfSimulationManagers = myCommunicationManager->getSize();
 
 	myCommunicationManager->configure(configuration);
 	mySimulationManagerID = myCommunicationManager->getId();
