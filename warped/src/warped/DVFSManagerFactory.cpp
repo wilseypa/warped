@@ -24,7 +24,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
     dynamic_cast<TimeWarpSimulationManager *>( parent );
   ASSERT(mySimulationManager);
 
-  string type;
+  string type = "NONE";
   configuration.getDVFSStringOption("TYPE", type);
   if(type == "NONE") {
     return NULL;
