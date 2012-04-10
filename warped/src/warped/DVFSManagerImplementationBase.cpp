@@ -1,6 +1,6 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
-#include "ClockFrequencyManagerImplementationBase.h"
+#include "DVFSManagerImplementationBase.h"
 #include "TimeWarpSimulationManager.h"
 #include <set>
 #include <sched.h>
@@ -9,7 +9,13 @@
 
 using namespace std;
 
-ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr, int measurementPeriod, int firsize, bool dummy)
+DVFSManagerImplementationBase::DVFSManagerImplementationBase(
+    TimeWarpSimulationManager* simMgr,
+    int measurementPeriod,
+    int firsize,
+    bool dummy,
+    bool powersave,
+    UsefulWorkMetric uwm)
   :mySimulationManager(simMgr)
   ,myCommunicationManager(simMgr->getCommunicationManager())
   ,mySimulationManagerID(simMgr->getSimulationManagerID())
@@ -23,25 +29,26 @@ ClockFrequencyManagerImplementationBase::ClockFrequencyManagerImplementationBase
   ,myMaxFreqIdx(0)
   ,myMeasurementPeriod(measurementPeriod)
   ,myMeasurementCounter(0)
-  ,myPowerSave(false)
+  ,myPowerSave(powersave)
+  ,myUWM(uwm)
 {
   if(isMaster())
     myStopwatch.start();
 }
 
-ClockFrequencyManagerImplementationBase::~ClockFrequencyManagerImplementationBase() {
+DVFSManagerImplementationBase::~DVFSManagerImplementationBase() {
   setGovernorMode("ondemand");
 }
 
 void
-ClockFrequencyManagerImplementationBase::poll() {
-  cerr << "ClockFrequencyManagerImplementationBase::poll() called !!"
+DVFSManagerImplementationBase::poll() {
+  cerr << "DVFSManagerImplementationBase::poll() called !!"
        << endl;
   abort();
 }
 
 bool
-ClockFrequencyManagerImplementationBase::checkMeasurementPeriod() {
+DVFSManagerImplementationBase::checkMeasurementPeriod() {
 /*  if (isMaster() && ++myMeasurementCounter == myMeasurementPeriod) {
     myMeasurementCounter = 0;
     return true;
@@ -58,7 +65,7 @@ ClockFrequencyManagerImplementationBase::checkMeasurementPeriod() {
 }
 
 void
-ClockFrequencyManagerImplementationBase::writeCSVRow(int node,
+DVFSManagerImplementationBase::writeCSVRow(int node,
                                                      double util,
                                                      int freq) {
   ostringstream path;
@@ -70,7 +77,7 @@ ClockFrequencyManagerImplementationBase::writeCSVRow(int node,
 } 
 
 void
-ClockFrequencyManagerImplementationBase::configure(
+DVFSManagerImplementationBase::configure(
         SimulationConfiguration &configuration) {
   registerWithCommunicationManager();
   myCPU = sched_getcpu();
@@ -79,7 +86,7 @@ ClockFrequencyManagerImplementationBase::configure(
 }
 
 void
-ClockFrequencyManagerImplementationBase::setGovernorMode(const char* governor) {
+DVFSManagerImplementationBase::setGovernorMode(const char* governor) {
   ostringstream path;
   path << "/sys/devices/system/cpu/cpu" << myCPU
        << "/cpufreq/scaling_governor";
@@ -97,9 +104,10 @@ ClockFrequencyManagerImplementationBase::setGovernorMode(const char* governor) {
 }
 
 void
-ClockFrequencyManagerImplementationBase::setCPUFrequency(int cpu_idx, int freq) {
+DVFSManagerImplementationBase::setCPUFrequency(int cpu_idx, int freq) {
   ostringstream path;
-  path << "/sys/devices/system/cpu/cpu" << cpu_idx << "/cpufreq/scaling_setspeed";
+  path << "/sys/devices/system/cpu/cpu" << cpu_idx
+       << "/cpufreq/scaling_setspeed";
 
   ofstream fp(path.str().c_str());
   if(fp.is_open()) {
@@ -107,7 +115,8 @@ ClockFrequencyManagerImplementationBase::setCPUFrequency(int cpu_idx, int freq) 
     fp.close();
   }
   else {
-    cerr << "Unable to set frequency: " << path.str() << " does not exist" << endl;
+    cerr << "Unable to set frequency: " << path.str()
+         << " does not exist" << endl;
     abort();
   }
 }
@@ -121,7 +130,7 @@ struct Utilization {
 };
 
 bool
-ClockFrequencyManagerImplementationBase::updateFrequencyIdxs() {
+DVFSManagerImplementationBase::updateFrequencyIdxs() {
   const float dist = 0.01;
 
   vector<Utilization> utils(0);
@@ -171,7 +180,17 @@ ClockFrequencyManagerImplementationBase::updateFrequencyIdxs() {
 }
 
 void
-ClockFrequencyManagerImplementationBase::populateAvailableFrequencies() {
+DVFSManagerImplementationBase::fillUsefulWork(vector<double>& v) {
+  v[mySimulationManagerID] =
+      myUWM == UWM_ROLLBACKS ? 0. : // TODO
+      myUWM == UWM_EFFICIENCY ? 0. : // TODO
+      myUWM == UWM_EFFECTIVE_UTILIZATION ?
+                                  mySimulationManager->effectiveUtilization() :
+      0;
+}
+
+void
+DVFSManagerImplementationBase::populateAvailableFrequencies() {
   ostringstream path;
   path << "/sys/devices/system/cpu/cpu" << myCPU
        << "/cpufreq/scaling_available_frequencies";
@@ -183,7 +202,8 @@ ClockFrequencyManagerImplementationBase::populateAvailableFrequencies() {
       myAvailableFreqs.push_back(freq);
     fp.close();
   } else {
-    cerr << "Unable to get available frequencies: " << path.str() << " does not exist" << endl;
+    cerr << "Unable to get available frequencies: "
+         << path.str() << " does not exist" << endl;
     abort();
   }
 
@@ -196,7 +216,7 @@ ClockFrequencyManagerImplementationBase::populateAvailableFrequencies() {
   }
 }
 
-ostream& operator<<(ostream& out, ClockFrequencyManager& cfm) {
+ostream& operator<<(ostream& out, DVFSManager& cfm) {
   out << cfm.toString();
   return out;
 }

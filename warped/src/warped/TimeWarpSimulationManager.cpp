@@ -25,8 +25,8 @@
 #include "EventFunctors.h"
 #include "OptFossilCollManager.h"
 #include "OptFossilCollManagerFactory.h"
-#include "ClockFrequencyManager.h"
-#include "ClockFrequencyManagerFactory.h"
+#include "DVFSManager.h"
+#include "DVFSManagerFactory.h"
 #include "SimulationConfiguration.h"
 #include <utils/Debug.h>
 #include <algorithm>
@@ -97,8 +97,8 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
 	delete myStateManager;
 	delete localArrayOfSimObjPtrs;
 	delete mySimulationObjectQueue;
-  if (myClockFrequencyManager)
-    delete myClockFrequencyManager;
+  if (myDVFSManager)
+    delete myDVFSManager;
 }
 
 const VTime &
@@ -334,8 +334,8 @@ double TimeWarpSimulationManager::effectiveUtilization() {
 }
 
 void TimeWarpSimulationManager::doDelay(int util) {
-    if(myClockFrequencyManager)
-        myClockFrequencyManager->delay(util);
+    if(myDVFSManager)
+        myDVFSManager->delay(util);
 }
 
 bool TimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
@@ -372,8 +372,8 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 	while (nextEvent != 0 && !pastSimulationCompleteTime && !inRecovery) {
 		hadAtLeastOne = true;
 
-		if (myClockFrequencyManager) {
-		  myClockFrequencyManager->poll();
+		if (myDVFSManager) {
+		  myDVFSManager->poll();
 		}
 
 		SimulationObject *nextObject =
@@ -1314,12 +1314,12 @@ void TimeWarpSimulationManager::configure(
 	}
 
 	// setup and configure clock frequency manager
-	const ClockFrequencyManagerFactory* myClockFreqMgrFactory =
-	    ClockFrequencyManagerFactory::instance();
-	myClockFrequencyManager = dynamic_cast<ClockFrequencyManager*>(
+	const DVFSManagerFactory* myClockFreqMgrFactory =
+	    DVFSManagerFactory::instance();
+	myDVFSManager = dynamic_cast<DVFSManager*>(
 	    myClockFreqMgrFactory->allocate(configuration, this));
-	if(myClockFrequencyManager)
-      myClockFrequencyManager->configure(configuration);
+	if(myDVFSManager)
+      myDVFSManager->configure(configuration);
 
 	registerSimulationObjects();
 
@@ -1338,8 +1338,8 @@ void TimeWarpSimulationManager::configure(
     ofstream file(oss.str().c_str(), ios_base::app);
 
     if(file) {
-        if(myClockFrequencyManager)
-            file << *myClockFrequencyManager;
+        if(myDVFSManager)
+            file << *myDVFSManager;
         const vector<string>& args = configuration.getArguments();
         vector<string>::const_iterator it(args.begin());
         for(; it != args.end(); ++it)

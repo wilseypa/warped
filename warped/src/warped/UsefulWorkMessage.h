@@ -8,14 +8,14 @@
    Allows a vector of integers to be passed among nodes
 */
 
-class UtilizationMessage : public KernelMessage {
+class UsefulWorkMessage : public KernelMessage {
 public:
   enum MessageRound {
     COLLECT,
     SETFREQ
   };
 
-  UtilizationMessage(unsigned int source,
+  UsefulWorkMessage(unsigned int source,
                 unsigned int dest, int nSimMgrs, MessageRound r) :
     KernelMessage(source, dest),
     numSimulationManagers(nSimMgrs),
@@ -40,7 +40,7 @@ private:
   /**
      Default constructor - to be used only by the deserializer.
   */
-  UtilizationMessage() :
+  UsefulWorkMessage() :
     numSimulationManagers(0),
     myData(0),
     myRound(COLLECT)

@@ -3,27 +3,28 @@
 
 // See copyright notice in file Copyright in the root directory of this archive.
 
-#include "ClockFrequencyManagerImplementationBase.h"
+#include "DVFSManagerImplementationBase.h"
 #include <deque>
 #include <fstream>
 
 class TimeWarpSimulationManager;
 
-/** The CentralizedClockFrequencyManager base class.
+/** The RealDVFSManager base class.
 
-    Controls the frequencies of each process from a single simulation manager
+    Uses delay loops to simulate a system with finer DVFS frequency steps
 */
-class DecentralizedClockFrequencyManager : public ClockFrequencyManagerImplementationBase {
+class SimulatedDVFSManager : public DVFSManagerImplementationBase {
 public:
    
-  /**@name Public Class Methods of CentralizedClockFrequencyManager. */
+  /**@name Public Class Methods of SimulatedDVFSManager. */
   //@{
 
   /// Constructor
-  DecentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int firsize, bool dummy);
+  SimulatedDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
+                       UsefulWorkMetric);
 
   /// Destructor
-  virtual ~DecentralizedClockFrequencyManager() {}
+  virtual ~SimulatedDVFSManager() {}
 
   /// to be called from the simulation manager's simulation loop
   virtual void poll();
@@ -38,7 +39,7 @@ public:
 
   virtual void delay(int);
 
-  //@} // End of Public Class Methods of ClockFrequencyManager.
+  //@} // End of Public Class Methods of SimulatedDVFSManager.
 
 private:
   int mySimulatedFrequencyIdx;

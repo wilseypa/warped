@@ -63,10 +63,8 @@ public:
   bool getOptFossilCollDefaultLength( unsigned int &defaultLength );
   bool getOptFossilCollRiskFactor( double &riskFactor );
 
-  bool getClockFreqManagerType(string& type) const;
-  bool getClockFreqManagerPeriod(int& period) const;
-  bool getClockFreqManagerFIRSize(int& size) const;
-  bool getClockFreqManagerDummy() const;
+  bool getDVFSStringOption(string&, string&) const;
+  bool getDVFSIntOption(string&, int&) const;
 
   const string getBinaryName() const;
 
@@ -176,7 +174,7 @@ private:
   /**
      Returns ConfigurationScope for TimeWarp::OptFossilCollectionManager
   */
-  const ConfigurationScope *getClockFrequencyManagerScope() const;
+  const ConfigurationScope *getDVFSManagerScope() const;
 
   static const string &getCommManagerScopeName();
   static const string &getEventListScopeName();
@@ -388,23 +386,13 @@ SimulationConfiguration::getOptFossilCollRiskFactor( double &riskFactor ){
 }
 
 bool
-SimulationConfiguration::getClockFreqManagerType(string& type) const {
-  return _impl->getClockFreqManagerType(type);
+SimulationConfiguration::getDVFSStringOption(string opt, string& val) const {
+  return _impl->getDVFSStringOption(opt, val);
 }
 
 bool
-SimulationConfiguration::getClockFreqManagerPeriod(int& period) const {
-  return _impl->getClockFreqManagerPeriod(period);
-}
-
-bool
-SimulationConfiguration::getClockFreqManagerFIRSize(int& size) const {
-  return _impl->getClockFreqManagerFIRSize(size);
-}
-   
-bool
-SimulationConfiguration::getClockFreqManagerDummy() const {
-  return _impl->getClockFreqManagerDummy();
+SimulationConfiguration::getDVFSIntOption(string opt, int& val) const {
+  return _impl->getDVFSIntOption(opt, val);
 }
 
 const string
@@ -562,9 +550,9 @@ SimulationConfiguration::Implementation::getOptFossilCollManagerScope() const {
 }
 
 const ConfigurationScope*
-SimulationConfiguration::Implementation::getClockFrequencyManagerScope() const {
+SimulationConfiguration::Implementation::getDVFSManagerScope() const {
   if(const ConfigurationScope* twScope = getTimeWarpScope())
-    return twScope->findScope("ClockFrequencyManager");
+    return twScope->findScope("DVFSManager");
   return NULL;
 }
 
@@ -970,10 +958,10 @@ SimulationConfiguration::Implementation::getOptFossilCollRiskFactor( double &ris
 }
 
 bool
-SimulationConfiguration::Implementation::getClockFreqManagerType(string& type) const {
-  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) {
-    if(cfmScope->findChoice("Type")) {
-      type = stringToUpper(cfmScope->getStringValue("Type"));
+SimulationConfiguration::Implementation::getDVFSStringOption(string& opt, string& val) const {
+  if(const ConfigurationScope* cfmScope = getDVFSManagerScope()) {
+    if(cfmScope->findChoice(opt)) {
+      val = stringToUpper(cfmScope->getStringValue(opt));
       return true;
     }
   }
@@ -981,31 +969,13 @@ SimulationConfiguration::Implementation::getClockFreqManagerType(string& type) c
 }
 
 bool
-SimulationConfiguration::Implementation::getClockFreqManagerPeriod(int& period) const {
-  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) {
-    if(cfmScope->findChoice("Period")) {
-      period = cfmScope->getIntValue("Period");
+SimulationConfiguration::Implementation::getDVFSIntOption(string& opt, int& val) const {
+  if(const ConfigurationScope* cfmScope = getDVFSManagerScope()) {
+    if(cfmScope->findChoice(opt)) {
+      val = cfmScope->getIntValue(opt);
       return true;
     }
   }
-  return false;
-}
-
-bool
-SimulationConfiguration::Implementation::getClockFreqManagerFIRSize(int& size) const {
-  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) {
-    if(cfmScope->findChoice("FIRSize")) {
-      size = cfmScope->getIntValue("FIRSize");
-      return true;
-    }
-  }
-  return false;
-}
-
-bool
-SimulationConfiguration::Implementation::getClockFreqManagerDummy() const {
-  if(const ConfigurationScope* cfmScope = getClockFrequencyManagerScope()) 
-    return stringToUpper(cfmScope->getStringValue("Dummy")) == "TRUE";
   return false;
 }
 

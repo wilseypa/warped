@@ -20,8 +20,7 @@
 #include "EventMessage.h"
 #include "GVTUpdateMessage.h"
 #include "InitializationMessage.h"
-#include "UtilizationMessage.h"
-#include "CFRollbackAverageMessage.h"
+#include "UsefulWorkMessage.h"
 #include "IntVTime.h"
 #include "MatternGVTMessage.h"
 #include "NegativeEventMessage.h"
@@ -107,8 +106,7 @@ WarpedMain::registerKernelDeserializers(){
   EventMessage::registerDeserializer();
   GVTUpdateMessage::registerDeserializer();
   InitializationMessage::registerDeserializer();
-  UtilizationMessage::registerDeserializer();
-  CFRollbackAverageMessage::registerDeserializer();
+  UsefulWorkMessage::registerDeserializer();
   IntVTime::registerDeserializer();
   MatternGVTMessage::registerDeserializer();
   NegativeEvent::registerDeserializer();

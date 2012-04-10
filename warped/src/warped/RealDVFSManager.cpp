@@ -1,41 +1,51 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
-#include "CentralizedClockFrequencyManager.h"
+#include "RealDVFSManager.h"
 #include "TimeWarpSimulationManager.h"
-#include "UtilizationMessage.h"
+#include "UsefulWorkMessage.h"
 #include "CommunicationManager.h"
 #include <utils/Debug.h>
 
 using namespace std;
 
-CentralizedClockFrequencyManager::CentralizedClockFrequencyManager(TimeWarpSimulationManager* simMgr, int measurementPeriod, int firsize, bool dummy)
-  :ClockFrequencyManagerImplementationBase(simMgr, measurementPeriod, firsize, dummy)
-   {}
+RealDVFSManager::RealDVFSManager(TimeWarpSimulationManager* simMgr,
+                                 int measurementPeriod,
+                                 int firsize,
+                                 bool dummy,
+                                 bool powersave,
+                                 UsefulWorkMetric uwm)
+  :DVFSManagerImplementationBase(simMgr,
+                                 measurementPeriod,
+                                 firsize,
+                                 dummy,
+                                 powersave,
+                                 uwm)
+{}
 
 void
-CentralizedClockFrequencyManager::poll() {
+RealDVFSManager::poll() {
   if(checkMeasurementPeriod()) {
     // initiate the measurement cycle
     if(isMaster()) {
       int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-      UtilizationMessage* msg = new UtilizationMessage(mySimulationManagerID,
+      UsefulWorkMessage* msg = new UsefulWorkMessage(mySimulationManagerID,
                                                        dest,
                                                        myNumSimulationManagers,
-                                                       UtilizationMessage::COLLECT);
+                                                       UsefulWorkMessage::COLLECT);
       myCommunicationManager->sendMessage(msg, dest);
     }
   }
 }
 
 void
-CentralizedClockFrequencyManager::registerWithCommunicationManager() {
-  myCommunicationManager->registerMessageType(UtilizationMessage::dataType(), this);
+RealDVFSManager::registerWithCommunicationManager() {
+  myCommunicationManager->registerMessageType(UsefulWorkMessage::dataType(), this);
 }
 
 void
-CentralizedClockFrequencyManager::configure(SimulationConfiguration &config) {
+RealDVFSManager::configure(SimulationConfiguration &config) {
   // populate available frequencies and our CPU id, set userspace governor
-  ClockFrequencyManagerImplementationBase::configure(config);
+  DVFSManagerImplementationBase::configure(config);
 
   // initialize the frequency index array now that we know how many
   // frequencies are available
@@ -53,16 +63,16 @@ CentralizedClockFrequencyManager::configure(SimulationConfiguration &config) {
 }
 
 void
-CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
+RealDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
   resetMeasurementCounter();
 
-  UtilizationMessage* msg = dynamic_cast<UtilizationMessage*>(kMsg);
+  UsefulWorkMessage* msg = dynamic_cast<UsefulWorkMessage*>(kMsg);
   ASSERT(msg);
 
   std::vector<double> dat;
   msg->getData(dat);
 
-  dat[mySimulationManagerID] = mySimulationManager->effectiveUtilization();
+  fillUsefulWork(dat);
   if(isMaster()) {
 
     for(int i = 0; i < dat.size(); ++i)
@@ -86,10 +96,10 @@ CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
   else {
 
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-    UtilizationMessage* newMsg = new UtilizationMessage(mySimulationManagerID,
+    UsefulWorkMessage* newMsg = new UsefulWorkMessage(mySimulationManagerID,
                                                         dest,
                                                         myNumSimulationManagers,
-                                                        UtilizationMessage::COLLECT);
+                                                        UsefulWorkMessage::COLLECT);
     newMsg->setData(dat);
     myCommunicationManager->sendMessage(newMsg, dest);
   }
@@ -98,7 +108,7 @@ CentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 }
 
 string
-CentralizedClockFrequencyManager::toString() {
+RealDVFSManager::toString() {
   ostringstream out;
   if(myIsDummy)
     out << "Dummy ";

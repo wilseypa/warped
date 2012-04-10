@@ -2,9 +2,9 @@
 
 #include <utils/Debug.h>
 #include "warped.h"
-#include "DecentralizedClockFrequencyManager.h"
+#include "SimulatedDVFSManager.h"
 #include "TimeWarpSimulationManager.h"
-#include "UtilizationMessage.h"
+#include "UsefulWorkMessage.h"
 #include "CommunicationManager.h"
 #include <cmath>
 #include <ctime>
@@ -15,38 +15,43 @@ struct compfir {
 	}
 };
 
-DecentralizedClockFrequencyManager::DecentralizedClockFrequencyManager(
-    TimeWarpSimulationManager* simMgr,
-    int measurementPeriod, int firsize, bool dummy)
-  :ClockFrequencyManagerImplementationBase(simMgr,
-                                           measurementPeriod,
-                                           firsize,
-                                           dummy)
+SimulatedDVFSManager::SimulatedDVFSManager(TimeWarpSimulationManager* simMgr,
+                                           int measurementPeriod,
+                                           int firsize,
+                                           bool dummy,
+                                           bool powersave,
+                                           UsefulWorkMetric uwm)
+  :DVFSManagerImplementationBase(simMgr,
+                                 measurementPeriod,
+                                 firsize,
+                                 dummy,
+                                 powersave,
+                                 uwm)
   ,mySimulatedFrequencyIdx(numSimulatedFrequencies / 2)
 {}
 
 void
-DecentralizedClockFrequencyManager::poll() {
+SimulatedDVFSManager::poll() {
   if(checkMeasurementPeriod()) {
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-    UtilizationMessage* msg = new UtilizationMessage(mySimulationManagerID,
+    UsefulWorkMessage* msg = new UsefulWorkMessage(mySimulationManagerID,
                                                      dest,
                                                      myNumSimulationManagers,
-                                                     UtilizationMessage::COLLECT);
+                                                     UsefulWorkMessage::COLLECT);
     //cout << "beginning measurement" << endl;
     myCommunicationManager->sendMessage(msg, dest);
   }
 }
 
 void
-DecentralizedClockFrequencyManager::registerWithCommunicationManager() {
-  myCommunicationManager->registerMessageType(UtilizationMessage::dataType(),
+SimulatedDVFSManager::registerWithCommunicationManager() {
+  myCommunicationManager->registerMessageType(UsefulWorkMessage::dataType(),
                                               this);
 }
 
 void
-DecentralizedClockFrequencyManager::configure(SimulationConfiguration &config) {
-  ClockFrequencyManagerImplementationBase::configure(config);
+SimulatedDVFSManager::configure(SimulationConfiguration &config) {
+  DVFSManagerImplementationBase::configure(config);
   
   // set to highest frequency
   int freq = myAvailableFreqs[0];
@@ -58,16 +63,16 @@ DecentralizedClockFrequencyManager::configure(SimulationConfiguration &config) {
 }
 
 void
-DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
-  UtilizationMessage* msg = dynamic_cast<UtilizationMessage*>(kMsg);
+SimulatedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
+  UsefulWorkMessage* msg = dynamic_cast<UsefulWorkMessage*>(kMsg);
   ASSERT(msg);
 
   std::vector<double> dat;
-  UtilizationMessage::MessageRound round = msg->getRound();
+  UsefulWorkMessage::MessageRound round = msg->getRound();
   bool idxsChanged = false;
   msg->getData(dat);
-  if(round == UtilizationMessage::COLLECT) {
-    dat[mySimulationManagerID] = mySimulationManager->effectiveUtilization();
+  if(round == UsefulWorkMessage::COLLECT) {
+    fillUsefulWork(dat);
     if(isMaster()) {
       for(int i = 0; i < dat.size(); i++)
         myUtilFilters[i].update(dat[i]);
@@ -82,17 +87,17 @@ DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
                       numSimulatedFrequencies / 2 : myFrequencyIdxs[i]]);
     }
   }
-  else if(round == UtilizationMessage::SETFREQ && !myIsDummy)
+  else if(round == UsefulWorkMessage::SETFREQ && !myIsDummy)
     mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
 
   // forward message to next node unless we're the master and either
   // we just received a set frequency message or we're not adjusting frequencies
-  if(!(isMaster() && (round == UtilizationMessage::SETFREQ || !idxsChanged))) {
+  if(!(isMaster() && (round == UsefulWorkMessage::SETFREQ || !idxsChanged))) {
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
-    UtilizationMessage::MessageRound newRound =
-        isMaster() ? UtilizationMessage::SETFREQ : round;
+    UsefulWorkMessage::MessageRound newRound =
+        isMaster() ? UsefulWorkMessage::SETFREQ : round;
 
-    UtilizationMessage* newMsg = new UtilizationMessage(mySimulationManagerID,
+    UsefulWorkMessage* newMsg = new UsefulWorkMessage(mySimulationManagerID,
                                                         dest,
                                                         myNumSimulationManagers,
                                                         newRound);
@@ -111,7 +116,7 @@ DecentralizedClockFrequencyManager::receiveKernelMessage(KernelMessage* kMsg) {
 }
 
 string
-DecentralizedClockFrequencyManager::toString() {
+SimulatedDVFSManager::toString() {
   ostringstream out;
   if(myIsDummy)
     out << "Dummy ";
@@ -121,7 +126,7 @@ DecentralizedClockFrequencyManager::toString() {
 }
 
 void
-DecentralizedClockFrequencyManager::delay(int cycles) {
+SimulatedDVFSManager::delay(int cycles) {
   warped64_t extracycles = cycles * (static_cast<double>(myAvailableFreqs[0]) /
                             simulatedFrequencies[mySimulatedFrequencyIdx] - 1);
 
@@ -131,7 +136,7 @@ DecentralizedClockFrequencyManager::delay(int cycles) {
     stop = rdtsc();
 }
 
-const int DecentralizedClockFrequencyManager::simulatedFrequencies[] =
+const int SimulatedDVFSManager::simulatedFrequencies[] =
   {2.8e6,
    2.7e6,
    2.6e6,
@@ -154,5 +159,5 @@ const int DecentralizedClockFrequencyManager::simulatedFrequencies[] =
    0.9e6,
    0.8e6
 };
-const int DecentralizedClockFrequencyManager::numSimulatedFrequencies = 
+const int SimulatedDVFSManager::numSimulatedFrequencies = 
   sizeof(simulatedFrequencies) / sizeof(int);

@@ -34,14 +34,13 @@ WARPED_H_FILES = \
 	warped/AdaptiveStateManagerBase.h \
 	warped/AggressiveOutputManager.h \
 	warped/Application.h \
-	warped/CentralizedClockFrequencyManager.h \
+	warped/RealDVFSManager.h \
 	warped/CentralizedEventSetSchedulingManager.h \
-	warped/CFRollbackAverageMessage.h \
 	warped/ChebyFossilCollManager.h \
 	warped/CirculateInitializationMessage.h \
-	warped/ClockFrequencyManager.h \
-	warped/ClockFrequencyManagerFactory.h \
-	warped/ClockFrequencyManagerImplementationBase.h \
+	warped/DVFSManager.h \
+	warped/DVFSManagerFactory.h \
+	warped/DVFSManagerImplementationBase.h \
 	warped/CommunicatingEntity.h \
 	warped/CommunicationManager.h \
 	warped/CommunicationManagerFactory.h \
@@ -64,7 +63,7 @@ WARPED_H_FILES = \
 	warped/DefaultTimeWarpEventContOneAntiMsg.h \
 	warped/IntVTime.h \
 	warped/DeserializerManager.h \
-	warped/DecentralizedClockFrequencyManager.h \
+	warped/SimulatedDVFSManager.h \
 	warped/Event.h \
 	warped/EventFunctors.h \
 	warped/EventId.h \
@@ -163,7 +162,7 @@ WARPED_H_FILES = \
 	warped/TimeWarpSimulationStream.h \
 	warped/Transceiver.h \
 	warped/TreeElement.h \
-	warped/UtilizationMessage.h \
+	warped/UsefulWorkMessage.h \
 	warped/VTime.h \
 	warped/version.h \
 	warped/warped.h \
@@ -211,13 +210,12 @@ libwarped_la_SOURCES = \
 	warped/AdaptiveOutputManager.cpp \
 	warped/AdaptiveStateManagerBase.cpp \
 	warped/AggressiveOutputManager.cpp \
-	warped/CentralizedClockFrequencyManager.cpp \
+	warped/RealDVFSManager.cpp \
 	warped/CentralizedEventSetSchedulingManager.cpp \
-	warped/CFRollbackAverageMessage.cpp \
 	warped/ChebyFossilCollManager.cpp \
 	warped/CirculateInitializationMessage.cpp \
-	warped/ClockFrequencyManagerFactory.cpp \
-	warped/ClockFrequencyManagerImplementationBase.cpp \
+	warped/DVFSManagerFactory.cpp \
+	warped/DVFSManagerImplementationBase.cpp \
 	warped/CommunicationManager.cpp \
 	warped/CommunicationManagerImplementationBase.cpp \
 	warped/CommunicationManagerFactory.cpp \
@@ -236,7 +234,7 @@ libwarped_la_SOURCES = \
 	warped/DefaultTimeWarpEventContainer.cpp \
 	warped/DefaultTimeWarpEventContOneAntiMsg.cpp \
 	warped/DeserializerManager.cpp \
-	warped/DecentralizedClockFrequencyManager.cpp \
+	warped/SimulatedDVFSManager.cpp \
 	warped/Event.cpp \
 	warped/EventMessage.cpp \
 	warped/EventMessageBase.cpp \
@@ -307,7 +305,7 @@ libwarped_la_SOURCES = \
 	warped/TimeWarpSimulationStream.cpp \
 	warped/TokenPassingTerminationManager.cpp \
 	warped/Transceiver.cpp \
-	warped/UtilizationMessage.cpp \
+	warped/UsefulWorkMessage.cpp \
 	warped/VTime.cpp \
 	warped/WarpedMain.cpp \
 	warped/warped.cpp

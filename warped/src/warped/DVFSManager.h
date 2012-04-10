@@ -7,20 +7,20 @@
 #include "CommunicatingEntity.h"
 #include "Configurable.h"
 
-/** The ClockFrequencyManager abstract base class.
+/** The DVFSManager abstract base class.
 
     This is the abstract base class for the various Frequency control implementations
     in the simulation kernel.
 */
-class ClockFrequencyManager : public CommunicatingEntity,
+class DVFSManager : public CommunicatingEntity,
 		   public Configurable {
 public:
    
-  /**@name Public Class Methods of ClockFrequencyManager. */
+  /**@name Public Class Methods of DVFSManager. */
   //@{
 
   /// Destructor
-  virtual ~ClockFrequencyManager(){}
+  virtual ~DVFSManager(){}
 
   /// to be called from the simulation manager's simulation loop
   virtual void poll() = 0;
@@ -34,15 +34,15 @@ public:
   // using clock cycles
   virtual void delay(int) = 0;
 
-  //@} // End of Public Class Methods of ClockFrequencyManager.
+  //@} // End of Public Class Methods of DVFSManager.
 
 protected:
    
-  /**@name Protected Class Methods of ClockFrequencyManager. */
+  /**@name Protected Class Methods of DVFSManager. */
   //@{
    
   /// Constructor
-  ClockFrequencyManager(){}
+  DVFSManager(){}
 
   /// Determines whether a measurement cycle has lapsed
   virtual bool checkMeasurementPeriod() = 0;
@@ -56,7 +56,7 @@ protected:
   //@} // End of Protected Class Methods of GVTManager.
 };
 
-ostream& operator<<(ostream& out, ClockFrequencyManager& cfm);
+ostream& operator<<(ostream& out, DVFSManager& cfm);
 
 #endif //CLOCK_FREQUENCY_MANAGER_H
 

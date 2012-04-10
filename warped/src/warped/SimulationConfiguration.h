@@ -130,13 +130,9 @@ public:
 
   bool getOptFossilCollRiskFactor( double &riskFactor );
 
-  bool getClockFreqManagerType(string& type) const;
+  bool getDVFSStringOption(string, string&) const;
 
-  bool getClockFreqManagerPeriod(int& period) const;
-
-  bool getClockFreqManagerFIRSize(int& size) const;
-
-  bool getClockFreqManagerDummy() const;
+  bool getDVFSIntOption(string, int&) const;
 
   /**
      Returns the binary name which started this execution.  Presumably we

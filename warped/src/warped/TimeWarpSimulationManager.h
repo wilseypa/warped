@@ -19,7 +19,7 @@ class Application;
 class CommunicationManager;
 class GVTManager;
 class OptFossilCollManager;
-class ClockFrequencyManager;
+class DVFSManager;
 class OutputManager;
 class SchedulingData;
 class SchedulingManager;
@@ -505,7 +505,7 @@ protected:
 	TerminationManager *myTerminationManager;
 
 	/// handle to the clock frequency manager
-	ClockFrequencyManager *myClockFrequencyManager;
+	DVFSManager *myDVFSManager;
 
 	/// map of objects where each object can have several output file queues
 	vector<vector<TimeWarpSimulationStream*> > outFileQueues;

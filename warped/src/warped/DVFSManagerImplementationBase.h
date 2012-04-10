@@ -4,29 +4,36 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
-#include "ClockFrequencyManager.h"
+#include "DVFSManager.h"
 #include "controlkit/FIRFilter.h"
 #include "StopWatch.h"
 
 class TimeWarpSimulationManager;
 class CommunicationManager;
 
-/** The ClockFrequencyManager abstract base class.
+enum UsefulWorkMetric {
+  UWM_ROLLBACKS,
+  UWM_EFFICIENCY,
+  UWM_EFFECTIVE_UTILIZATION,
+  UWM_NONE
+};
 
-    This is the abstract base class for the various Frequency control implementations
-    in the simulation kernel.
+/** The DVFSManagerImplementationBase implementation base class.
+
+    This contains the default implementations of DVFS functions
 */
-class ClockFrequencyManagerImplementationBase : public ClockFrequencyManager {
+class DVFSManagerImplementationBase : public DVFSManager {
 public:
    
-  /**@name Public Class Methods of ClockFrequencyManager. */
+  /**@name Public Class Methods of DVFSManagerImplementationBase. */
   //@{
 
   /// Constructor
-  ClockFrequencyManagerImplementationBase(TimeWarpSimulationManager* simMgr, int measurementPeriod, int firsize, bool dummy);
+  DVFSManagerImplementationBase(TimeWarpSimulationManager*,
+                                int, int, bool, bool, UsefulWorkMetric);
 
   /// Destructor
-  virtual ~ClockFrequencyManagerImplementationBase();
+  virtual ~DVFSManagerImplementationBase();
 
   /// to be called from the simulation manager's simulation loop
   virtual void poll();
@@ -38,11 +45,11 @@ public:
 
   virtual void delay(int) {}
 
-  //@} // End of Public Class Methods of ClockFrequencyManager.
+  //@} // End of Public Class Methods of DVFSManagerImplementationBase.
 
 protected:
    
-  /**@name Protected Class Methods of ClockFrequencyManager. */
+  /**@name Protected Class Methods of DVFSManagerImplementationBase. */
   //@{
 
   /// Determines whether a measurement cycle has lapsed
@@ -60,7 +67,9 @@ protected:
 
   bool updateFrequencyIdxs();
 
-  //@} // End of Protected Class Methods of GVTManager.
+  void fillUsefulWork(vector<double>&);
+
+  //@} // End of Protected Class Methods of DVFSManagerImplementationBase.
 
   TimeWarpSimulationManager* mySimulationManager;
   CommunicationManager* myCommunicationManager;
@@ -81,6 +90,7 @@ private:
   StopWatch myStopwatch;
   int myMeasurementCounter;
   bool myPowerSave;
+  UsefulWorkMetric myUWM;
 
   void setGovernorMode(const char* governor);
 
