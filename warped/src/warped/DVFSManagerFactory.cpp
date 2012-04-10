@@ -25,7 +25,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   ASSERT(mySimulationManager);
 
   string type = "NONE";
-  configuration.getDVFSStringOption("TYPE", type);
+  configuration.getDVFSStringOption("Type", type);
   if(type == "NONE") {
     return NULL;
   }
@@ -33,13 +33,13 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   string metric = "ROLLBACKS";
   int p = 0;
   int firsize = 16;
-  configuration.getDVFSIntOption("PERIOD", p);
-  configuration.getDVFSIntOption("FIRSIZE", firsize);
-  configuration.getDVFSStringOption("USEFULWORKMETRIC", metric);
+  configuration.getDVFSIntOption("Period", p);
+  configuration.getDVFSIntOption("FIRSize", firsize);
+  configuration.getDVFSStringOption("UsefulWorkMetric", metric);
 
   UsefulWorkMetric uwm;
   uwm = metric == "ROLLBACKS" ?             UWM_ROLLBACKS :
-        metric == "EFFECTIVE_UTILIZATION" ? UWM_EFFECTIVE_UTILIZATION :
+        metric == "EFFECTIVEUTILIZATION" ? UWM_EFFECTIVE_UTILIZATION :
         metric == "EFFICIENCY" ?            UWM_EFFICIENCY :
                                             UWM_NONE;
   if(uwm == UWM_NONE) {
@@ -50,7 +50,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
     mySimulationManager->shutdown(err.str());
   }
 
-  const char* trueFalseOptions[] = {"DUMMY", "POWERSAVE"};
+  const char* trueFalseOptions[] = {"Dummy", "PowerSave"};
   int numTrueFalse = sizeof(trueFalseOptions) / sizeof(const char*);
   bool trueFalseValues[numTrueFalse];
   for(int i=0; i < numTrueFalse; i++) {
@@ -76,12 +76,11 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   if(type == "REAL" || type == "SIMULATED") {
     cout << "("
          << mySimulationManager->getSimulationManagerID()
-         << ") configured a " << type << " DVFS Manager, "
-         << "Dummy: " << (trueFalseValues[0] ? "True" : "False") << "; "
-         << "Period: " << p << "; "
-         << "FIR Size: " << firsize << "; "
-         << "Power Save: " << (trueFalseValues[1] ? "True" : "False")
-         << endl;
+         << ") configured a " << type << " DVFS Manager" << endl
+         << "Dummy: " << (trueFalseValues[0] ? "True" : "False") << endl
+         << "Period: " << p << endl
+         << "FIR Size: " << firsize << endl
+         << "Power Save: " << (trueFalseValues[1] ? "True" : "False") << endl;
 
     if(type == "REAL")
       return new RealDVFSManager(mySimulationManager,
