@@ -110,8 +110,6 @@ public:
 			int threadId);
 	void fossilCollect(const Event *, int threadId);
 
-	void fillProcessed(SimulationObject *simObj);
-
 	void getScheduleQueueLock(int threadId);
 
 	void releaseScheduleQueueLock(int threadId);

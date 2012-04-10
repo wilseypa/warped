@@ -1,7 +1,6 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include "DTTimeWarpMultiSet.h"
-#include <assert.h>
 #include "SimulationObject.h"
 #include "DTTimeWarpSimulationManager.h"
 #include "DTTimeWarpMultiSetSchedulingManager.h"
@@ -26,7 +25,6 @@ DTTimeWarpMultiSet::DTTimeWarpMultiSet(
 			receiveTimeLessThanEventIdLessThan> ;
 	objectStatusLock = new AtomicState *[objectCount];
 	scheduleQueueLock = new AtomicState();
-	//	unProcessedQueueArray = new MS[NUMBER_OF_OBJECTS];
 	int threadCount = initSimulationManager->getNumberofThreads();
 	//Iterators for each threads
 	vectorIterator = new vIterate[threadCount];
@@ -126,7 +124,6 @@ void DTTimeWarpMultiSet::getObjectLock(int threadId, int objId) {
 	assert(objectStatusLock[objId]->hasLock(threadId));
 }
 void DTTimeWarpMultiSet::releaseObjectLock(int threadId, int objId) {
-	//cout << objId << " is released" << endl;
 	assert(objectStatusLock[objId]->hasLock(threadId));
 	objectStatusLock[objId]->releaseLock(threadId);
 	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
@@ -145,7 +142,6 @@ bool DTTimeWarpMultiSet::isObjectScheduledBy(int threadId, int objId) {
 int DTTimeWarpMultiSet::getQueueEventCount(int objId) {
 	int size;
 	size = unProcessedQueue[objId]->size();
-	//size = unProcessedQueueArray[objId]->size();
 	return size;
 }
 //This Function will be called by the worker when the object has been scheduled, so no need to update schedule queue(need to verify this)
@@ -168,12 +164,10 @@ const Event* DTTimeWarpMultiSet::getEvent(SimulationObject *simObj,
 		this->releaseunProcessedLock(threadId, objId);
 		//Insert into Processed Queue
 		if (dynamic_cast<const StragglerEvent*> (ret))
-			//ret = dynamic_cast<const StragglerEvent*> (ret)->getPositiveEvent();
 			assert(false);
 		this->getProcessedLock(threadId, objId);
 		processedQueue[objId]->push_back(ret);
 		this->releaseProcessedLock(threadId, objId);
-		//	cout << "Event Inserted to PQ :::::::::::::" << *ret << endl;
 	} else {
 		this->releaseunProcessedLock(threadId, objId);
 	}
@@ -196,7 +190,6 @@ const Event* DTTimeWarpMultiSet::getEventWhileRollback(
 		unProcessedQueue[objId]->erase(unProcessedQueue[objId]->begin());
 		//Insert into Processed Queue
 		if (dynamic_cast<const StragglerEvent*> (ret))
-			//ret = dynamic_cast<const StragglerEvent*> (ret)->getPositiveEvent();
 			assert(false);
 		this->getProcessedLock(threadId, objId);
 		processedQueue[objId]->push_back(ret);
@@ -224,9 +217,6 @@ const Event* DTTimeWarpMultiSet::getEventIfStraggler(SimulationObject *simObj,
 
 	assert(this->isObjectScheduledBy(threadId, objId));
 
-	/*if (ret != NULL && !(objectStatusLock[objId]->hasLock(threadId))) {
-	 this->getObjectLock(threadId, objId);
-	 }*/
 	return ret;
 }
 const Event *DTTimeWarpMultiSet::getEvent(SimulationObject *simObj,
@@ -253,7 +243,7 @@ const Event* DTTimeWarpMultiSet::peekEvent(SimulationObject *simObj,
 	const Event* ret = NULL;
 	bool releaseWhileReturn = true;
 	SimulationObject *simObject = NULL;
-	if (simObj == NULL /*&& scheduleQueue->begin() != scheduleQueue->end()*/) {
+	if (simObj == NULL) {
 		this->getScheduleQueueLock(threadId);
 		if (scheduleQueue->size() > 0) {
 			ret = *(scheduleQueue->begin());
@@ -363,20 +353,14 @@ bool DTTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) {
 	assert(
 			scheduleQueue->size()
 					<= mySimulationManager->getNumberOfSimulationObjects());
-	return false;//Old Code Always Returns False-- Check why?
+	return false;
 }
-// Lock based Counting -- Don't Use it a loop
+// Lock based Counting -- Don't call this function in a loop
 int DTTimeWarpMultiSet::getMessageCount(int threadId) {
 	int count = 0;
-	/*for (int i = 0; i < objectCount; i++) {
-	 this->getunProcessedLock(threadId, i);
-	 count = count + unProcessedQueue[i]->size();
-	 this->releaseunProcessedLock(threadId, i);
-	 }*/
 	getScheduleQueueLock(threadId);
 	count = scheduleQueue->size();
 	releaseScheduleQueueLock(threadId);
-	//utils::debug << "Unprocessed Event Count :: " << count << "\n";
 	return count;
 }
 bool DTTimeWarpMultiSet::isScheduleQueueEmpty(int threadId) {
@@ -386,7 +370,6 @@ bool DTTimeWarpMultiSet::isScheduleQueueEmpty(int threadId) {
 	releaseScheduleQueueLock(threadId);
 	return ret;
 }
-//This Function will be called by the worker when the object has been scheduled, so no need to update schedule queue(need to verify this)
 bool DTTimeWarpMultiSet::handleAntiMessage(SimulationObject *simObj,
 		const NegativeEvent* negativeEvent, int threadId) {
 	bool eventWasRemoved = false;
@@ -416,7 +399,6 @@ bool DTTimeWarpMultiSet::handleAntiMessage(SimulationObject *simObj,
 			removedEventQueue[objId]->push_back(eventToRemove);
 			this->releaseremovedLock(threadId, objId);
 			eventWasRemoved = true;
-			//utils::debug << "Removed .." << endl;
 		} else {
 			multisetIterator[threadId]++;
 		}
@@ -433,13 +415,7 @@ void DTTimeWarpMultiSet::rollback(SimulationObject *simObj,
 	// unprocessed queue.
 	unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
 	this->getProcessedLock(threadId, objId);
-	//	std::sort(processedQueue[objId]->begin(), processedQueue[objId]->end(),
-	//			receiveTimeLessThan());
 	vectorIterator[threadId] = processedQueue[objId]->begin();
-	//	while (vectorIterator[threadId] != processedQueue[objId]->end()) {
-	//		cout << "Printing Event.............::::::::::::: " << **(vectorIterator[threadId]) << endl;
-	//		(vectorIterator[threadId])++;
-	//	}
 	int tempCount = 0;
 	if (rollbackTime.getApproximateIntTime() == 0) {
 		tempCount = processedQueue[objId]->size();
@@ -448,7 +424,6 @@ void DTTimeWarpMultiSet::rollback(SimulationObject *simObj,
 		while (vectorIterator[threadId] != processedQueue[objId]->end()
 				&& (*(vectorIterator[threadId]))->getReceiveTime()
 						< rollbackTime) {
-			//cout << "Skipping Event.............::::::::::::: " << **(vectorIterator[threadId]) << endl;
 			(vectorIterator[threadId])++;
 			tempCount++;
 		}
@@ -492,10 +467,8 @@ void DTTimeWarpMultiSet::rollback(SimulationObject *simObj,
 	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 			<< " ) Object - " << objId << " Rollback returns : " << tempCount
 			<< " events back to Unprocessed Queue - " << threadId << endl;
-	//this->getunProcessedLock(threadId, objId);
 	unProcessedQueue[objId]->insert(vectorIterator[threadId],
 			processedQueue[objId]->end());
-	//this->releaseunProcessedLock(threadId, objId);
 	processedQueue[objId]->erase(vectorIterator[threadId],
 			processedQueue[objId]->end());
 	this->releaseProcessedLock(threadId, objId);
@@ -608,41 +581,6 @@ void DTTimeWarpMultiSet::fossilCollect(const Event *toRemove, int threadId) {
 		this->releaseremovedLock(threadId, objId);
 	}
 }
-void DTTimeWarpMultiSet::printAll() {
-
-	//Re-implement Print All
-	/*	cout << "UnProcessed Queue" << endl;
-	 multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator it;
-	 for (int i = 0; i < NUMBER_OF_OBJECTS; i++) {
-	 cout << "Queue " << i << " ::: ";
-	 for (it = unProcessedQueue[i]->begin(); it
-	 != unProcessedQueue[i]->end(); it++) {
-	 cout << "-" << (*it)->getReceiveTime();
-	 }
-	 cout << " " << endl;
-	 }
-	 cout << "Processed Queue" << endl;
-	 vector<event*>::iterator iv;
-	 for (int i = 0; i < NUMBER_OF_OBJECTS; i++) {
-	 cout << "Queue " << i << " ::: ";
-	 for (iv = processedQueue[i]->begin(); iv != processedQueue[i]->end(); iv++) {
-	 cout << "-" << (*iv)->receiveTime;
-	 }
-	 cout << " " << endl;
-	 }
-	 cout << "Schedule Queue" << endl;
-	 multiset<event*, compareTime>::iterator iv1;
-	 for (iv1 = scheduleQueue->begin(); iv1 != scheduleQueue->end(); iv1++) {
-	 cout << "-" << (*iv1)->receiveTime;
-	 }
-	 cout << " " << endl;
-	 cout << "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: "
-	 << endl;*/
-}
-//Stub function to insert into processed queue
-void DTTimeWarpMultiSet::fillProcessed(SimulationObject *simObj) {
-	this->getEvent(simObj, 1);
-}
 
 void DTTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId,
 		int threadId) {
@@ -652,7 +590,6 @@ void DTTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId,
 	this->getScheduleQueueLock(threadId);
 	if (!this->unprocessedQueueAtomicState[objId]->hasLock(threadId))
 		this->getunProcessedLock(threadId, objId);
-	//this->getunProcessedLock(threadId, objId);
 	if (unProcessedQueue[objId]->size() > 0) {
 		firstEvent = *(unProcessedQueue[objId]->begin());
 		/*utils::debug << "( " << mySimulationManager->getSimulationManagerID()
@@ -661,15 +598,12 @@ void DTTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId,
 		 << threadId << "\n";*/
 	}
 	this->releaseunProcessedLock(threadId, objId);
-	//	this->getScheduleQueueLock(threadId);
 
 	if (lowestObjectPosition[objId] != scheduleQueue->end()) {
-		//scheduleQueue->erase(lowestObjectPosition[objId]);
 		ASSERT(false);
 	}
 
-	if (firstEvent != NULL /*&& lowestObjectPosition[objId]
-	 == scheduleQueue->end()*/) {
+	if (firstEvent != NULL) {
 		lowestObjectPosition[objId] = scheduleQueue->insert(firstEvent);
 		/*utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 		 << " ) Object - " << objId
@@ -679,7 +613,6 @@ void DTTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId,
 		lowestObjectPosition[objId] = scheduleQueue->end();
 	this->releaseObjectLock(threadId, objId);
 	this->releaseScheduleQueueLock(threadId);
-	//if (isObjectScheduledBy(threadId, objId))
 	assert(
 			scheduleQueue->size()
 					<= mySimulationManager->getNumberOfSimulationObjects());
@@ -711,7 +644,6 @@ bool DTTimeWarpMultiSet::inThePast(const Event *toCheck, int threadId) {
 	this->releaseProcessedLock(threadId, objId);
 	return retval;
 }
-//this Fucntion is really screwed-up need to test this
 void DTTimeWarpMultiSet::ofcPurge(int threadId) {
 	multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator msit;
 	this->getScheduleQueueLock(threadId);
@@ -730,7 +662,6 @@ void DTTimeWarpMultiSet::ofcPurge(int threadId) {
 		this->getScheduleQueueLock(threadId);
 		lowestObjectPosition[i] = scheduleQueue->end();
 		this->releaseScheduleQueueLock(threadId);
-		//	insertObjPos[i] = unprocessedObjEvents[i]->end();
 	}
 
 	for (int i = 0; i < mySimulationManager->getNumberOfSimulationObjects(); i++) {
@@ -755,23 +686,6 @@ void DTTimeWarpMultiSet::ofcPurge(int threadId) {
 		removedEventQueue[i]->clear();
 	}
 }
-/*const VTime &DTTimeWarpMultiSet::getMinimumOfAll(int threadId) {
- const VTime* minTime = NULL;
- for (int i = 0; i < mySimulationManager->getNumberOfSimulationObjects(); i++) {
- this->getunProcessedLock(threadId, i);
- }
- minTime = &(mySimulationManager->getPositiveInfinity());
- for (int i = 0; i < mySimulationManager->getNumberOfSimulationObjects(); i++) {
- if (*(unProcessedQueue[i]->begin()) != NULL)
- if (*minTime > (*(unProcessedQueue[i]->begin()))-> getReceiveTime()) {
- minTime = &(*(unProcessedQueue[i]->begin()))-> getReceiveTime();
- }
- }
- for (int i = 0; i < mySimulationManager->getNumberOfSimulationObjects(); i++) {
- this->releaseunProcessedLock(threadId, i);
- }
- return *minTime->clone();
- }*/
 const Event* DTTimeWarpMultiSet::peekEventLockUnprocessed(
 		SimulationObject *simObj, int threadId) {
 	const Event* ret = NULL;
