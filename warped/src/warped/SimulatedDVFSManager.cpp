@@ -77,17 +77,17 @@ SimulatedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
       for(int i = 0; i < dat.size(); i++)
         myUtilFilters[i].update(dat[i]);
 
-      if(!myIsDummy)
+      if(!isDummy())
         idxsChanged = updateFrequencyIdxs();
 
       for(int i = 0; i < dat.size(); i++)
         writeCSVRow(i,
                     myUtilFilters[i].getData(),
-                    simulatedFrequencies[myIsDummy ? 
+                    simulatedFrequencies[isDummy() ? 
                       numSimulatedFrequencies / 2 : myFrequencyIdxs[i]]);
     }
   }
-  else if(round == UsefulWorkMessage::SETFREQ && !myIsDummy)
+  else if(round == UsefulWorkMessage::SETFREQ && !isDummy())
     mySimulatedFrequencyIdx = static_cast<int>(dat[mySimulationManagerID]);
 
   // forward message to next node unless we're the master and either
@@ -117,12 +117,7 @@ SimulatedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
 
 string
 SimulatedDVFSManager::toString() {
-  ostringstream out;
-  if(myIsDummy)
-    out << "Dummy ";
-  out << "Decentralized CFM, Period = " << getPeriod() << ", FIR size = "
-      << myFIRSize;
-  return out.str();
+  return "Simulated DVFS, " + DVFSManagerImplementationBase::toString();
 }
 
 void

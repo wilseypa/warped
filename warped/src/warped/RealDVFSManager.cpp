@@ -79,17 +79,17 @@ RealDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
       myUtilFilters[i].update(dat[i]);
 
     bool changed = false;
-    if(!myIsDummy)
+    if(!isDummy())
       changed = updateFrequencyIdxs();
 
-    if(changed && !myIsDummy) {
+    if(changed && !isDummy()) {
       cout << "setting freqs..." << endl;
       for(int i=0; i < myFrequencyIdxs.size(); i++)
         setCPUFrequency(i, myAvailableFreqs[myFrequencyIdxs[i]]);
     }
 
     for(int i=0; i < myFrequencyIdxs.size(); i++)
-      writeCSVRow(i, myUtilFilters[i].getData(), myAvailableFreqs[myIsDummy ?
+      writeCSVRow(i, myUtilFilters[i].getData(), myAvailableFreqs[isDummy() ?
         myAvailableFreqs.size() / 2 : myFrequencyIdxs[i]]);
 
   }
@@ -109,9 +109,5 @@ RealDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
 
 string
 RealDVFSManager::toString() {
-  ostringstream out;
-  if(myIsDummy)
-    out << "Dummy ";
-   out << "Centralized CFM, Period = " << getPeriod() << ", FIR size = " << myFIRSize;
-  return out.str();
+  return "Real DVFS, " + DVFSManagerImplementationBase::toString();
 }

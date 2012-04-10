@@ -22,13 +22,13 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
   ,myNumSimulationManagers(simMgr->getNumberOfSimulationManagers())
   ,myCPU(0)
   ,myFIRSize(firsize)
-  ,myIsDummy(dummy) 
   ,myUtilFilters(myNumSimulationManagers, myFIRSize)
   ,myAvailableFreqs(0)
   ,myFrequencyIdxs(0)
   ,myMaxFreqIdx(0)
   ,myMeasurementPeriod(measurementPeriod)
   ,myMeasurementCounter(0)
+  ,myIsDummy(dummy) 
   ,myPowerSave(powersave)
   ,myUWM(uwm)
 {
@@ -216,8 +216,23 @@ DVFSManagerImplementationBase::populateAvailableFrequencies() {
   }
 }
 
-ostream& operator<<(ostream& out, DVFSManager& cfm) {
-  out << cfm.toString();
+string
+DVFSManagerImplementationBase::toString() {
+  stringstream ss;
+  ss << "Period: " << myMeasurementPeriod << ", "
+     << "Dummy: " << (myIsDummy ? "True" : "False") << ", "
+     << "FIRSize: " << myFIRSize << ", "
+     << "UsefulWorkMetric: " << (myUWM == UWM_ROLLBACKS ? "Rollbacks" :
+                                 myUWM == UWM_EFFECTIVE_UTILIZATION ? 
+                                   "Effective Utilization" :
+                                 myUWM == UWM_EFFICIENCY ? "Efficiency" : "")
+                             << ", "
+     << "PowerSave: " << (myPowerSave ? "True" : "False") << endl;
+  return ss.str();
+}
+
+ostream& operator<<(ostream& out, DVFSManager& dvfsm) {
+  out << dvfsm.toString();
   return out;
 }
 

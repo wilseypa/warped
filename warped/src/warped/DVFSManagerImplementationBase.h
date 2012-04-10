@@ -45,6 +45,8 @@ public:
 
   virtual void delay(int) {}
 
+  virtual string toString();
+
   //@} // End of Public Class Methods of DVFSManagerImplementationBase.
 
 protected:
@@ -69,6 +71,9 @@ protected:
 
   void fillUsefulWork(vector<double>&);
 
+  bool isDummy() const { return myIsDummy; }
+  bool powerSave() const { return myPowerSave; }
+
   //@} // End of Protected Class Methods of DVFSManagerImplementationBase.
 
   TimeWarpSimulationManager* mySimulationManager;
@@ -77,7 +82,6 @@ protected:
   int myNumSimulationManagers;
   int myCPU;
   int myFIRSize;
-  bool myIsDummy;
   std::vector<FIRFilter<double> > myUtilFilters;
 
   // begin() == fastest, end() == slowest
@@ -89,10 +93,12 @@ private:
   int myMeasurementPeriod;
   StopWatch myStopwatch;
   int myMeasurementCounter;
+  bool myIsDummy;
   bool myPowerSave;
   UsefulWorkMetric myUWM;
 
   void setGovernorMode(const char* governor);
+
 
 };
 
