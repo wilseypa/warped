@@ -54,23 +54,15 @@ protected:
   /**@name Protected Class Methods of DVFSManagerImplementationBase. */
   //@{
 
-  /// Determines whether a measurement cycle has lapsed
   virtual bool checkMeasurementPeriod();
-
   virtual bool isMaster() { return mySimulationManagerID == 0; }
-
   virtual void writeCSVRow(int, double, int);
-
   int getPeriod() { return myMeasurementPeriod; }
-
   void populateAvailableFrequencies();
-
   void setCPUFrequency(int cpu_idx, int freq);
-
   bool updateFrequencyIdxs();
-
   void fillUsefulWork(vector<double>&);
-
+  void initializeFrequencyIdxs(int maxfreq);
   bool isDummy() const { return myIsDummy; }
   bool powerSave() const { return myPowerSave; }
 
@@ -87,19 +79,17 @@ protected:
   // begin() == fastest, end() == slowest
   std::vector<int> myAvailableFreqs;
   vector<int> myFrequencyIdxs;
-  int myMaxFreqIdx;
 
 private:
   int myMeasurementPeriod;
   StopWatch myStopwatch;
   int myMeasurementCounter;
+  int myMaxFreqIdx;
   bool myIsDummy;
   bool myPowerSave;
   UsefulWorkMetric myUWM;
 
   void setGovernorMode(const char* governor);
-
-
 };
 
 

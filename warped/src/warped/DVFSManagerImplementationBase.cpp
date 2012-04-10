@@ -25,9 +25,9 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
   ,myUtilFilters(myNumSimulationManagers, myFIRSize)
   ,myAvailableFreqs(0)
   ,myFrequencyIdxs(0)
-  ,myMaxFreqIdx(0)
   ,myMeasurementPeriod(measurementPeriod)
   ,myMeasurementCounter(0)
+  ,myMaxFreqIdx(0)
   ,myIsDummy(dummy) 
   ,myPowerSave(powersave)
   ,myUWM(uwm)
@@ -187,6 +187,13 @@ DVFSManagerImplementationBase::fillUsefulWork(vector<double>& v) {
       myUWM == UWM_EFFECTIVE_UTILIZATION ?
                                   mySimulationManager->effectiveUtilization() :
       0;
+}
+
+void 
+DVFSManagerImplementationBase::initializeFrequencyIdxs(int maxidx) {
+  myMaxFreqIdx = maxidx;
+  for(int i=0; i < myNumSimulationManagers; i++)
+    myFrequencyIdxs.push_back(maxidx / 2);
 }
 
 void

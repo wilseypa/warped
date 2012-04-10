@@ -49,14 +49,11 @@ RealDVFSManager::configure(SimulationConfiguration &config) {
 
   // initialize the frequency index array now that we know how many
   // frequencies are available
-  int n = myAvailableFreqs.size();
-  vector<int>::iterator it(myFrequencyIdxs.begin());
-  for(int i=0; i < myNumSimulationManagers; i++)
-    myFrequencyIdxs.push_back(n / 2);
-  myMaxFreqIdx = n - 1;
+  int maxidx = myAvailableFreqs.size() - 1;
+  initializeFrequencyIdxs(maxidx);
 
   // initialize my frequency to the median frequency
-  int freq = myAvailableFreqs[n / 2];
+  int freq = myAvailableFreqs[maxidx / 2];
   cout << "(" << mySimulationManagerID << "): bound to PE " << myCPU
        << "; initializing freq to " << freq << endl;
   setCPUFrequency(myCPU, freq);

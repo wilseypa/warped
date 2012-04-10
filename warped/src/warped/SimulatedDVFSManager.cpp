@@ -27,7 +27,7 @@ SimulatedDVFSManager::SimulatedDVFSManager(TimeWarpSimulationManager* simMgr,
                                  dummy,
                                  powersave,
                                  uwm)
-  ,mySimulatedFrequencyIdx(numSimulatedFrequencies / 2)
+  ,mySimulatedFrequencyIdx((numSimulatedFrequencies - 1) / 2)
 {}
 
 void
@@ -59,7 +59,7 @@ SimulatedDVFSManager::configure(SimulationConfiguration &config) {
        << "; initializing freq to " << freq << endl;
   setCPUFrequency(myCPU, freq);
 
-  myMaxFreqIdx = numSimulatedFrequencies - 1;
+  initializeFrequencyIdxs(numSimulatedFrequencies - 1);
 }
 
 void
