@@ -9,12 +9,6 @@
 #include <cmath>
 #include <ctime>
 
-struct compfir {
-	int operator()(FIRFilter<int>& a, FIRFilter<int>& b) const {
-		return a.getData() < b.getData();
-	}
-};
-
 SimulatedDVFSManager::SimulatedDVFSManager(TimeWarpSimulationManager* simMgr,
                                            int measurementPeriod,
                                            int firsize,
@@ -81,10 +75,9 @@ SimulatedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
         idxsChanged = updateFrequencyIdxs();
 
       for(int i = 0; i < dat.size(); i++)
-        writeCSVRow(i,
-                    myUtilFilters[i].getData(),
-                    simulatedFrequencies[isDummy() ? 
-                      numSimulatedFrequencies / 2 : myFrequencyIdxs[i]]);
+        writeCSVRow(i, 
+                    myUtilFilters[i].getData(), 
+                    simulatedFrequencies[myFrequencyIdxs[i]]);
     }
   }
   else if(round == UsefulWorkMessage::SETFREQ && !isDummy())
@@ -109,8 +102,6 @@ SimulatedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
     newMsg->setData(dat);
     myCommunicationManager->sendMessage(newMsg, dest);
   }
-  //else
-  //  cout << "ending measurement" << endl;
 
   delete kMsg;
 }
@@ -122,13 +113,16 @@ SimulatedDVFSManager::toString() {
 
 void
 SimulatedDVFSManager::delay(int cycles) {
-  warped64_t extracycles = cycles * (static_cast<double>(myAvailableFreqs[0]) /
+  warped64_t extracycles = 10 * cycles * (static_cast<double>(myAvailableFreqs[0]) /
                             simulatedFrequencies[mySimulatedFrequencyIdx] - 1);
 
   warped64_t start = rdtsc();
   warped64_t stop = start;
-  while(stop - start < extracycles)
+  int count = 0;
+  while(stop - start < extracycles) {
+    count++;
     stop = rdtsc();
+  }
 }
 
 const int SimulatedDVFSManager::simulatedFrequencies[] =
@@ -152,7 +146,14 @@ const int SimulatedDVFSManager::simulatedFrequencies[] =
    1.1e6,
    1.0e6,
    0.9e6,
-   0.8e6
+   0.8e6,
+   0.7e6,
+   0.6e6,
+   0.5e6,
+   0.4e6,
+   0.3e6,
+   0.2e6,
+   0.1e6
 };
 const int SimulatedDVFSManager::numSimulatedFrequencies = 
   sizeof(simulatedFrequencies) / sizeof(int);

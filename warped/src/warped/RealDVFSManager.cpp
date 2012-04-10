@@ -80,14 +80,14 @@ RealDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
       changed = updateFrequencyIdxs();
 
     if(changed && !isDummy()) {
-      cout << "setting freqs..." << endl;
       for(int i=0; i < myFrequencyIdxs.size(); i++)
         setCPUFrequency(i, myAvailableFreqs[myFrequencyIdxs[i]]);
     }
 
     for(int i=0; i < myFrequencyIdxs.size(); i++)
-      writeCSVRow(i, myUtilFilters[i].getData(), myAvailableFreqs[isDummy() ?
-        myAvailableFreqs.size() / 2 : myFrequencyIdxs[i]]);
+      writeCSVRow(i, 
+                  myUtilFilters[i].getData(), 
+                  myAvailableFreqs[myFrequencyIdxs[i]]);
 
   }
   else {
