@@ -4,8 +4,8 @@
 #include "ChebyFossilCollManager.h"
 #include "SimulationConfiguration.h"
 #include "TimeWarpConfigurationManager.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
-#include "dynamic/DTChebyFossilCollManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "ThreadedChebyFossilCollManager.h"
 #include <utils/ConfigurationScope.h>
 #include <utils/Debug.h>
 
@@ -22,8 +22,8 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 	Configurable *retval = NULL;
 	TimeWarpSimulationManager *mySimulationManager =
 			dynamic_cast<TimeWarpSimulationManager *> (parent);
-	DTTimeWarpSimulationManager *myDTSimulationManager =
-			dynamic_cast<DTTimeWarpSimulationManager *> (parent);
+	ThreadedTimeWarpSimulationManager *myThreadedSimulationManager =
+			dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent);
 
 	ASSERT( mySimulationManager != NULL );
 	// the following cases are possible:
@@ -44,10 +44,10 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 		configuration.getOptFossilCollDefaultLength(defaultLength);
 		configuration.getOptFossilCollRiskFactor(riskFactor);
 		if (configuration.simulationTypeIs("DTTimeWarp")) {
-			retval = new DTChebyFossilCollManager(myDTSimulationManager,
+			retval = new ThreadedChebyFossilCollManager(myThreadedSimulationManager,
 					checkpointPeriod, minSamples, maxSamples, defaultLength,
 					riskFactor);
-			myDTSimulationManager->setOptFossilColl(true);
+			myThreadedSimulationManager->setOptFossilColl(true);
 
 		} else {
 			retval = new ChebyFossilCollManager(mySimulationManager,

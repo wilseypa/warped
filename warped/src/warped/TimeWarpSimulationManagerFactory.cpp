@@ -3,7 +3,7 @@
 #include "TimeWarpSimulationManagerFactory.h"
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 using std::cerr;
 using std::endl;
 
@@ -23,11 +23,11 @@ TimeWarpSimulationManagerFactory::allocate(
 		//Count the number of threads, if none specified try reading the proc file
 		unsigned int numberOfWorkerThreads = 0;
 		if (!configuration.getWorkerThreadCount(numberOfWorkerThreads)) {
-			//numberOfWorkerThreads = GetProcCount(); // need to implement this GetProcCount for DT Simulator
+			//numberOfWorkerThreads = GetProcCount(); // need to implement this GetProcCount for Threaded Simulator
 			cerr << "Number of Threads has not been mentioned in the file!" << endl;
 		}
-		DTTimeWarpSimulationManager *retvalue = 0;
-        retvalue = new DTTimeWarpSimulationManager(numberOfWorkerThreads, (Application *) parent);
+		ThreadedTimeWarpSimulationManager *retvalue = 0;
+        retvalue = new ThreadedTimeWarpSimulationManager(numberOfWorkerThreads, (Application *) parent);
 		return retvalue;
 	} else {
         retval = new TimeWarpSimulationManager((Application *) parent);

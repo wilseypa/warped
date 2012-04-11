@@ -2,16 +2,12 @@
 
 #include "GVTManagerFactory.h"
 #include "MatternGVTManager.h"
-#include "dynamic/DTMatternGVTManager.h"
+#include "ThreadedMatternGVTManager.h"
 #include "SimulationConfiguration.h"
 #include "TimeWarpConfigurationManager.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 #include <utils/ConfigurationScope.h>
 #include <utils/Debug.h>
-
-#ifdef USE_TIMEWARP
-#include "threadedtimewarp/AtomicMatternGVTManager.h"
-#endif
 
 GVTManagerFactory::GVTManagerFactory() {
 }
@@ -40,13 +36,13 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 		if (configuration.gvtManagerTypeIs("MATTERN")) {
 			unsigned int gvtPeriod = 1;
 			configuration.getGVTPeriod(gvtPeriod);
-			retval = new DTMatternGVTManager(
-					dynamic_cast<DTTimeWarpSimulationManager *> (parent),
+			retval = new ThreadedMatternGVTManager(
+					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent),
 					gvtPeriod);
 			utils::debug << "("
-					<< mySimulationManager->getSimulationManagerID()
-					<< ") configured a Mattern GVT Manager with period = "
-					<< gvtPeriod << endl;
+			<< mySimulationManager->getSimulationManagerID()
+			<< ") configured a Mattern GVT Manager with period = "
+			<< gvtPeriod << endl;
 			return retval;
 		} else {
 			mySimulationManager->shutdown("Unknown GVTManager choice \""
@@ -65,22 +61,11 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 					<< ") configured a Mattern GVT Manager with period = "
 					<< gvtPeriod << endl;
 		}
-#ifdef USE_TIMEWARP
-		else if (configuration.gvtManagerTypeIs("ATOMICMATTERN")) {
-			unsigned int gvtPeriod = 1;
-			configuration.getGVTPeriod(gvtPeriod);
-			retval
-					= new AtomicMatternGVTManager(mySimulationManager,
-							gvtPeriod);
-			utils::debug << "("
-					<< mySimulationManager->getSimulationManagerID()
-					<< ") configured a Mattern GVT Manager with period = "
-					<< gvtPeriod << endl;
-		}
-#endif
+
 		else {
-			mySimulationManager->shutdown("Unknown GVTManager choice \""
-					+ configuration.getGVTManagerType() + "\"");
+			mySimulationManager->shutdown(
+					"Unknown GVTManager choice \""
+							+ configuration.getGVTManagerType() + "\"");
 		}
 
 		return retval;

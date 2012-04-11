@@ -7,9 +7,9 @@
 #include "State.h"
 #include "SimulationObject.h"
 #include "TimeWarpSimulationManager.h"
-#include "dynamic/DTPeriodicStateManager.h"
-#include "dynamic/DTCostAdaptiveStateManager.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
+#include "ThreadedPeriodicStateManager.h"
+#include "ThreadedCostAdaptiveStateManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 #include <utils/Debug.h>
 
 StateManagerFactory::StateManagerFactory() {
@@ -25,7 +25,7 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 		Configurable *parent) const {
 	StateManager *retval = 0;
 #ifdef USE_TIMEWARP
-	DTStateManager *retvalue = 0;
+	ThreadedStateManager *retvalue = 0;
 #endif
 
 	TimeWarpSimulationManager *mySimulationManager =
@@ -47,19 +47,19 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 	if (configuration.simulationTypeIs("DTTimeWarp")) {
 		if (configuration.stateManagerTypeIs("PERIODIC")) {
 			configuration.getStatePeriod(statePeriod);
-			retvalue = new DTPeriodicStateManager(
-					dynamic_cast<DTTimeWarpSimulationManager *> (parent),
+			retvalue = new ThreadedPeriodicStateManager(
+					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent),
 					statePeriod);
 			mySimulationManager->setStateMgrType(STATICSTATE);
 			utils::debug << "("
 					<< mySimulationManager->getSimulationManagerID()
-					<< ") configured a DT Periodic State Manager with period = "
+					<< ") configured a Threaded Periodic State Manager with period = "
 					<< statePeriod << endl;
 			return retvalue;
 		} else if (configuration.stateManagerTypeIs("ADAPTIVE")) {
 			configuration.getStatePeriod(statePeriod);
-			retvalue = new DTCostAdaptiveStateManager(
-					dynamic_cast<DTTimeWarpSimulationManager *> (parent));
+			retvalue = new ThreadedCostAdaptiveStateManager(
+					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setStateMgrType(ADAPTIVESTATE);
 			utils::debug << "("
 					<< mySimulationManager->getSimulationManagerID()

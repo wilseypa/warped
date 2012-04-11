@@ -7,7 +7,7 @@
 #include "ConfigurationManager.h"
 
 #include "TimeWarpSimulationManager.h"
-//#include "dynamic/DTTimeWarpSimulationManager.h"
+
 
 // components of a basic TimeWarp system
 #include "TimeWarpEventSetFactory.h"

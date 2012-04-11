@@ -44,7 +44,7 @@ TimeWarpSimulationManager::TimeWarpSimulationManager(Application *initApplicatio
 }
 
 TimeWarpSimulationManager::~TimeWarpSimulationManager() {
-	if (myOutputManager != NULL) {// to skip this part of destructor when using DT Timewarp
+	if (myOutputManager != NULL) {// to skip this part of destructor when using Threaded Timewarp
 		fossilCollect(getPositiveInfinity());
 		if (usingOptFossilCollection) {
 			vector<SimulationObject *> *objects = getElementVector(

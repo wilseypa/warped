@@ -9,10 +9,10 @@
 #include "OutputManagerFactory.h"
 #include "SimulationConfiguration.h"
 #include "TimeWarpSimulationManager.h"
-#include "dynamic/DTOutputManager.h"
-#include "dynamic/DTAggressiveOutputManager.h"
-#include "dynamic/DTLazyOutputManager.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
+#include "ThreadedOutputManager.h"
+#include "ThreadedAggressiveOutputManager.h"
+#include "ThreadedLazyOutputManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 #include <utils/Debug.h>
 
 using std::cerr;
@@ -64,14 +64,14 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 #if USE_TIMEWARP
 	if (configuration.simulationTypeIs("DTTimeWarp")) {
 		if (configuration.outputManagerIs("AGGRESSIVE")) {
-			retval = new DTAggressiveOutputManager(
-					dynamic_cast<DTTimeWarpSimulationManager *> (parent));
+			retval = new ThreadedAggressiveOutputManager(
+					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setOutputMgrType(AGGRMGR);
 			utils::debug << "a Dynamic Threaded Aggressive Output Manager"
 					<< endl;
 		} else if (configuration.outputManagerIs("LAZY")) {
-			retval = new DTLazyOutputManager(
-					dynamic_cast<DTTimeWarpSimulationManager *> (parent));
+			retval = new ThreadedLazyOutputManager(
+					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setOutputMgrType(LAZYMGR);
 			utils::debug << "a Lazy Output Manager" << endl;
 		} else {

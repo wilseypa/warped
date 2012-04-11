@@ -11,7 +11,6 @@ SUBDIRS= src test
 EXTRA_DIST = Makefile.am.common \
 	src/warped/Makefile.am.stub \
 	src/warped/eclmpl/Makefile.am.stub \
-	src/warped/threadedtimewarp/Makefile.am.stub \
 	src/warped/WarpedConfig.h.in \
 	test/pingPong/Makefile.am.stub \
 	test/warped/Makefile.am.stub

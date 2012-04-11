@@ -5,10 +5,6 @@
 #include "TimeWarpSimulationObjectQueue.h"
 #include "SimulationConfiguration.h"
 #include "SchedulingData.h"
-#ifdef USE_TIMEWARP
-#include "threadedtimewarp/TimeWarpSimulationObjectLockedQueue.h"
-#include "threadedtimewarp/TimeWarpSimulationObjectCalendarQueue.h"
-#endif
 using std::cerr;
 using std::endl;
 
@@ -16,6 +12,7 @@ Configurable *
 TimeWarpSimulationObjectQueueFactory::allocate( SimulationConfiguration &configuration,
 				   Configurable *parent ) const {
   TimeWarpSimulationObjectQueue *retval = 0;
+/*
 #ifdef USE_TIMEWARP
   TimeWarpSimulationManager *mySimulationManager =
     dynamic_cast<TimeWarpSimulationManager *>(parent);
@@ -47,6 +44,7 @@ TimeWarpSimulationObjectQueueFactory::allocate( SimulationConfiguration &configu
 	}
 
 #endif
+*/
 
   return retval;
 }

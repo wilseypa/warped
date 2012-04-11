@@ -32,7 +32,7 @@ class SimulationObject {
   friend class SequentialSimulationManager;
   friend class TimeWarpSimulationManager;
   friend class DefaultEvent;
-  friend class DTTimeWarpSimulationManager;
+  friend class ThreadedTimeWarpSimulationManager;
    
 public:
   /**

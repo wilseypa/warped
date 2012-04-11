@@ -5,8 +5,7 @@
 include $(top_srcdir)/Makefile.am.common
 
 include warped/eclmpl/Makefile.am.stub
-include warped/threadedtimewarp/Makefile.am.stub
-include warped/dynamic/Makefile.am.stub
+
 
 lib_LTLIBRARIES = libwarped.la 
 
@@ -28,8 +27,6 @@ endif
 
 WARPED_H_FILES = \
 	$(ECLMPL_H_FILES) \
-	$(THREADED_H_FILES) \
-	$(DYNAMICTHREADED_H_FILES) \
 	warped/AdaptiveOutputManager.h \
 	warped/AdaptiveStateManagerBase.h \
 	warped/AggressiveOutputManager.h \
@@ -190,7 +187,27 @@ WARPED_H_FILES = \
 	warped/controlkit/SensorImplementationBase.h \
 	warped/controlkit/AsyncFilteredSensor.h \
 	warped/controlkit/Filter.h \
-	warped/controlkit/SyncSensor.h
+	warped/controlkit/SyncSensor.h\
+	warped/ThreadedOutputEvents.h \
+	warped/ThreadedOutputManagerImplementationBase.h \
+	warped/ThreadedAggressiveOutputManager.h \
+	warped/ThreadedTimeWarpMultiSet.h \
+	warped/ThreadedStateManagerImplementationBase.h \
+	warped/ThreadedPeriodicStateManager.h \
+	warped/ThreadedOutputManager.h \
+	warped/ThreadedStateManager.h \
+	warped/ThreadedTimeWarpEventSet.h \
+	warped/ThreadedTimeWarpMultiSetSchedulingManager.h \
+	warped/ThreadedTimeWarpSimulationManager.h\
+	warped/StragglerEvent.h\
+	warped/ThreadedOptFossilCollManager.h\
+	warped/ThreadedChebyFossilCollManager.h\
+	warped/ThreadedLazyOutputManager.h\
+	warped/ThreadedMatternGVTManager.h\
+	warped/ThreadedCostAdaptiveStateManager.h\
+	warped/ThreadedAdaptiveStateManagerBase.h\
+	warped/LockedQueue.h\
+	warped/WorkerInformation.h
 
 library_includedir=$(includedir)/warped
 library_include_HEADERS = $(WARPED_H_FILES) \
@@ -199,8 +216,6 @@ library_include_HEADERS = $(WARPED_H_FILES) \
 libwarped_la_SOURCES = \
 	$(WARPED_H_FILES) \
 	$(ECLMPL_SRC) \
-	$(THREADED_SRC) \
-	$(DYNAMICTHREADED_SRC) \
 	warped/AdaptiveOutputManager.cpp \
 	warped/AdaptiveStateManagerBase.cpp \
 	warped/AggressiveOutputManager.cpp \
@@ -297,7 +312,23 @@ libwarped_la_SOURCES = \
 	warped/Transceiver.cpp \
 	warped/VTime.cpp \
 	warped/WarpedMain.cpp \
-	warped/warped.cpp
+	warped/warped.cpp\
+	warped/ThreadedOutputEvents.cpp \
+    warped/ThreadedOutputManagerImplementationBase.cpp \
+    warped/ThreadedAggressiveOutputManager.cpp \
+    warped/ThreadedTimeWarpMultiSet.cpp \
+    warped/ThreadedStateManagerImplementationBase.cpp \
+    warped/ThreadedPeriodicStateManager.cpp \
+    warped/ThreadedTimeWarpEventSet.cpp \
+    warped/ThreadedTimeWarpMultiSetSchedulingManager.cpp \
+    warped/ThreadedTimeWarpSimulationManager.cpp\
+    warped/StragglerEvent.cpp\
+    warped/ThreadedOptFossilCollManager.cpp\
+    warped/ThreadedChebyFossilCollManager.cpp\
+	warped/ThreadedLazyOutputManager.cpp\
+	warped/ThreadedMatternGVTManager.cpp\
+	warped/ThreadedCostAdaptiveStateManager.cpp\
+	warped/ThreadedAdaptiveStateManagerBase.cpp
 
 CLEANFILES=$(BUILT_SOURCES)
 

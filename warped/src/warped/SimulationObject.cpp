@@ -4,7 +4,7 @@
 #include "SimulationManager.h"
 #include "SimulationManagerImplementationBase.h"
 #include "TimeWarpSimulationManager.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 #include "Event.h"
 
 using std::ios;

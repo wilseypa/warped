@@ -12,7 +12,7 @@
 
 #ifdef USE_TIMEWARP
 #include "eclmpl/eclmpl.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 #endif
 
 CommunicationManagerFactory::CommunicationManagerFactory(){}
@@ -30,8 +30,8 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
   ASSERT( parent != 0 );
   TimeWarpSimulationManager *mySimulationManager =
     dynamic_cast<TimeWarpSimulationManager *>( parent );
-  DTTimeWarpSimulationManager *myDTSimulationManager =
-      dynamic_cast<DTTimeWarpSimulationManager *>( parent );
+  ThreadedTimeWarpSimulationManager *myThreadedSimulationManager =
+      dynamic_cast<ThreadedTimeWarpSimulationManager *>( parent );
 
   PhysicalCommunicationLayer *myPhysicalCommunicationLayer = NULL;
   Configurable *retval = 0;
@@ -61,17 +61,17 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
 		myPhysicalCommunicationLayer->physicalInit(configuration);
 		if (configuration.communicationManagerIs("DEFAULT")) {
 			retval = new DefaultCommunicationManager(
-					myPhysicalCommunicationLayer, myDTSimulationManager);
+					myPhysicalCommunicationLayer, myThreadedSimulationManager);
 			utils::debug << "configured the default communication manager"
 					<< endl;
 		} else if (configuration.communicationManagerIs("MessageAggregating")) {
 			retval = new MsgAggregatingCommunicationManager(
-					myPhysicalCommunicationLayer, myDTSimulationManager);
+					myPhysicalCommunicationLayer, myThreadedSimulationManager);
 			utils::debug
 					<< "configured a message aggregating communication manager"
 					<< endl;
 		} else {
-			myDTSimulationManager->shutdown(
+			myThreadedSimulationManager->shutdown(
 					"Unknown CommunicationManager type \""
 							+ configuration.getCommunicationManagerType());
 		}

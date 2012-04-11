@@ -8,12 +8,10 @@
 #include "TimeWarpSenderQueue.h"
 #include "SimulationConfiguration.h"
 #include "SchedulingData.h"
-#if USE_TIMEWARP
-#include "threadedtimewarp/ThreadedTimeWarpEventSet.h"
-#endif
 
-#include "dynamic/DTTimeWarpMultiSet.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
+
+#include "ThreadedTimeWarpMultiSet.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 
 
 using std::cerr;
@@ -35,9 +33,9 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 #if USE_TIMEWARP
 	if (configuration.simulationTypeIs("DTTimeWarp")) {
 		if (configuration.eventListTypeIs("MULTISET")) {
-			DTTimeWarpEventSet *retvalue = 0;
-			retvalue = new DTTimeWarpMultiSet(
-					dynamic_cast<DTTimeWarpSimulationManager *> (parent));
+			ThreadedTimeWarpEventSet *retvalue = 0;
+			retvalue = new ThreadedTimeWarpMultiSet(
+					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			utils::debug << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured an Dynamic Threaded MultiSet as the event set"
@@ -71,14 +69,6 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 					<< endl;
 		}
 	}
-#if USE_TIMEWARP
-	else if (configuration.eventListTypeIs("THREADED")) {
-		retval = new ThreadedTimeWarpEventSet(mySimulationManager);
-		utils::debug << "(" << mySimulationManager->getSimulationManagerID()
-				<< ") configured an ThreadedTimeWarpEventSet as the event set"
-				<< endl;
-	}
-#endif
 	else {
 		mySimulationManager->shutdown(
 				"Event list type \"" + configuration.getEventListType()

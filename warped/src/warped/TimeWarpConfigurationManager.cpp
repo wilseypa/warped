@@ -8,7 +8,7 @@
 #include "Application.h"
 #include "SimulationConfiguration.h"
 #include "Spinner.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 using std::cout;
 using std::endl;
 
@@ -45,7 +45,7 @@ void TimeWarpConfigurationManager::configure(
 						configuration, myApplication));
 	} else if (configuration.simulationTypeIs("DTTimeWarp")) {
 		mySimulationManager
-				= dynamic_cast<DTTimeWarpSimulationManager *> (twSimMgrFactory->allocate(
+				= dynamic_cast<ThreadedTimeWarpSimulationManager *> (twSimMgrFactory->allocate(
 						configuration, myApplication));
 	} else
 		cout << "Should not reach here, check the config file for SimType!!";

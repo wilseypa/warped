@@ -8,12 +8,14 @@
 #include "DefaultSchedulingManager.h"
 #include "TimeWarpMultiSetSchedulingManager.h"
 #include <utils/Debug.h>
+/*
 #if USE_TIMEWARP
 #include "threadedtimewarp/ThreadedTimeWarpSimulationManager.h"
 #include "threadedtimewarp/ThreadedSchedulingManager.h"
 #endif
-#include "dynamic/DTTimeWarpSimulationManager.h"
-#include "dynamic/DTTimeWarpMultiSetSchedulingManager.h"
+*/
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "ThreadedTimeWarpMultiSetSchedulingManager.h"
 using std::cerr;
 using std::endl;
 
@@ -30,7 +32,7 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
 
   SchedulingManager *retval = 0;
 
-  if ( configuration.schedulerTypeIs( "DEFAULT" ) ){
+/*  if ( configuration.schedulerTypeIs( "DEFAULT" ) ){
 	if (configuration.getSimulationType()=="THREADEDWARP")
 	{
 #ifdef USE_TIMEWARP
@@ -52,7 +54,7 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
 		utils::debug << " a DefaultSchedulingManager." << endl;
 	}
   }
-  else if(configuration.schedulerTypeIs( "MULTISET" )){
+  else */if(configuration.schedulerTypeIs( "MULTISET" )){
     TimeWarpSimulationManager *mySimulationManager = dynamic_cast<TimeWarpSimulationManager *>( parent );
     ASSERT(mySimulationManager!=0);
     retval = new TimeWarpMultiSetSchedulingManager( mySimulationManager );
@@ -67,11 +69,11 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
 #if USE_TIMEWARP
 	if (configuration.simulationTypeIs("DTTimeWarp")) {
 		if (configuration.schedulerTypeIs("MULTISET")) {
-			DTTimeWarpSimulationManager *mySimulationManager =
-					dynamic_cast<DTTimeWarpSimulationManager *> (parent);
+			ThreadedTimeWarpSimulationManager *mySimulationManager =
+					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent);
 			ASSERT(mySimulationManager!=0);
-			retval = new DTTimeWarpMultiSetSchedulingManager(mySimulationManager);
-			utils::debug << " a DT TimeWarpMultiSetSchedulingManager." << endl;
+			retval = new ThreadedTimeWarpMultiSetSchedulingManager(mySimulationManager);
+			utils::debug << " a Threaded TimeWarpMultiSetSchedulingManager." << endl;
 		} else {
 			dynamic_cast<TimeWarpSimulationManager *> (parent)->shutdown(
 					"Unknown SCHEDULER choice \""

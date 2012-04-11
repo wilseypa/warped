@@ -2,7 +2,7 @@
 
 #include "SerializedInstance.h"
 #include "TimeWarpSimulationManager.h"
-#include "dynamic/DTTimeWarpSimulationManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 #include "CommunicationManagerImplementationBase.h"
 #include "TerminateToken.h"
 #include "StartMessage.h"
