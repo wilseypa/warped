@@ -1,65 +1,111 @@
 #!/bin/bash
+#
+# Author: Ryan Child
+#
+# Runs batch WARPED simulations, launches simulations according to the 
+# PhysicalLayer option in WARPED configuration.  For example, MPICH2
+# recommends use of a process manager to launch MPI programs.
+#
+# Run with --help to see list of options
 
-# default batch arguments
+# defaults
+MPI_HOSTS=hosts
+MODEL_EXE=./pholdSim
+MODEL_CONFIG=phold/LargePHOLD
+WARPED_CONFIG=parallel.config
 DATADIR=measurements
-RUNS=1
-PAUSE=200
+RUNS=10
+PAUSE=100
 
-# default simulation arguments
-HOSTS=hosts
-MODEL=pholdSim
-MODEL_CONFIGURATION=phold/LargePHOLD
-SIMULATION_CONFIGURATION=parallel.config
-# comment out to omit this argument
-SIMULATE_UNTIL=50000
-
-# get batch arguments
-TEMP=`getopt -o d:n:p: -l help -n "$0" -- "$@"`
+# get user-supplied arguments
+TEMP=`getopt -o d:n:p:e:f:m:w:s: -n "$0" \
+  -l help,model-exe:,hosts-file:model-config:,warped-config:,simulate-until: \
+  -l data-dir:,number-runs:,pause: \
+  -- "$@"`
+  
 eval set -- "$TEMP"
 while true; do
   case "$1" in
-    -d) DATADIR=${2%/}; shift 2;;
-    -n) RUNS=$2; shift 2;;
-    -p) PAUSE=$2; shift 2;;
-    --help) echo "Usage: $0 -n runs -d directory -p pause_interval"; exit;;
+    -d|--data-dir) DATADIR=${2%/}; shift 2;;
+    -n|--number-runs) RUNS=$2; shift 2;;
+    -p|--pause) PAUSE=$2; shift 2;;
+    -e|--model-exe) MODEL_EXE=$2; shift 2;;
+    -f|--hosts-file) MPI_HOSTS=$2; shift 2;;
+    -m|--model-config) MODEL_CONFIG=$2; shift 2;;
+    -w|--warped-config) WARPED_CONFIG=$2; shift 2;;
+    -s|--simulate-until) SIMULATE_UNTIL=$2; shift 2;;
+    --help) cat << EOF
+Usage: $(basename $0) [OPTION]...
+
+Options:
+  -d, --data-dir          path to the directory where simulation output 
+                          will be saved [default=$DATADIR]
+  -n, --number-runs       number of simulations to do [default=$RUNS]
+  -p, --pause             pause interval in seconds between simulation runs
+                          [default=$PAUSE]
+  -e, --model-exe         path to the model executable [defaut=$MODEL_EXE]
+  -f, --hosts-file        path to the MPI hosts file [default=$MPI_HOSTS]
+  -m, --model-config      path to model configuration file
+                          [default=$MODEL_CONFIG]
+  -w, --warped-config     path to the WARPED configuration file
+                          [default=$WARPED_CONFIG]
+  -s, --simulate-until    GVT to simulate until (same as WARPED -simulateUntil)
+EOF
+      exit;;
     --) shift; break;;
   esac
 done
 
-# sanity check on batch arguments
-if [ ! -d "$DATADIR" ]; then echo "error: invalid directory '$DATADIR'"; ERROR=1; fi
-if ! [[ "$RUNS" =~ ^[0-9]+$ ]]; then echo "error: invalid # runs '$RUNS'"; ERROR=1; fi
-if ! [[ "$PAUSE" =~ ^[0-9]+$ ]]; then echo "error: invalid pause interval '$PAUSE'"; ERROR=1; fi
-if [ -n "$ERROR" ]; then exit; fi
+# validate arguments
+if [ ! -d "$DATADIR" ]; then 
+  ERROR="${ERROR}error: invalid directory $DATADIR\n"; fi
+if ! [[ "$RUNS" =~ ^[0-9]+$ ]]; then 
+  ERROR="${ERROR}error: invalid # runs \"$RUNS\"\n"; fi
+if ! [[ "$PAUSE" =~ ^[0-9]+$ ]]; then 
+  ERROR="${ERROR}error: invalid pause interval $PAUSE\n"; fi
+if [ ! -x "$MODEL_EXE" ]; then 
+  ERROR="${ERROR}error: model executable $MODEL_EXE not found\n"; fi
+if [ ! -e "$MODEL_CONFIG" ]; then 
+  ERROR="${ERROR}error: model configuration file $MODEL_CONFIG not found\n"; fi
+if [ ! -e "$WARPED_CONFIG" ]; then
+  ERROR="${ERROR}error: WARPED configuration file $WARPED_CONFIG not found\n"; fi
+if [ ! -e "$MPI_HOSTS" ]; then
+  ERROR="${ERROR}error: hosts file $MPI_HOSTS not found\n"; fi
+if [ -n "$SIMULATE_UNTIL" ] && (! [[ "$SIMULATE_UNTIL" =~ ^[0-9]+$ ]]); then 
+  ERROR="${ERROR}error: invalid simulate-until \"$SIMULATE_UNTIL\"\n"; fi
+  
+if [ -n "$ERROR" ]; then echo -e "${ERROR}exiting."; exit; fi
 
-# make sure we have the model executable and configuration files
-if [ ! -x "$MODEL" ] || 
-   [ ! -e "$MODEL_CONFIGURATION" ] || 
-   [ ! -e "$SIMULATION_CONFIGURATION" ] ||
-   [ ! -e "$HOSTS" ]
+PHYSICAL_LAYER=`grep -e "^\s*PhysicalLayer\s*:\s*" \
+  parallel.config | sed "s/^.*:\s*//g"`
+
+# need full paths if using TCPSelect
+if [ "$PHYSICAL_LAYER" = TCPSelect ]; then
+  MODEL_EXE=`readlink -f "$MODEL_EXE"`
+  MODEL_CONFIG=`readlink -f "$MODEL_CONFIG"`
+  WARPED_CONFIG=`readlink -f "$SIMULATION_CONFIG"`
+fi
+
+CMD_PARAMS="-simulate $MODEL_CONFIG \
+-configuration $WARPED_CONFIG"
+if [ -n "$SIMULATE_UNTIL" ]
 then
-  echo "$0 must be run from the warped test (model) directory"
-  exit
+  CMD_PARAMS="$CMD_PARAMS -simulateUntil $SIMULATE_UNTIL"
 fi
 
 # build simulation command
-CMD="mpiexec.hydra -f $HOSTS ./"$MODEL" \
-  -simulate $MODEL_CONFIGURATION -configuration $SIMULATION_CONFIGURATION"
-if [ -n "$SIMULATE_UNTIL" ]
-then
-  CMD="$CMD -simulateUntil $SIMULATE_UNTIL"
-fi
+case "$PHYSICAL_LAYER" in
+  MPI)
+    CMD="mpiexec.hydra -f $MPI_HOSTS $MODEL_EXE $CMD_PARAMS"
+    ;;
+  TCPSelect)
+    # if using TCPSelect, the simulation must be run from the home directory
+    CMD="cd && $MODEL_EXE $CMD_PARAMS"
+    ;;
+esac
 
-for i in `seq 1 "$RUNS"`
-do
+for i in `seq 1 "$RUNS"`; do
   RUN=`printf "%02d" $i`
-  CSVDIR="$DATADIR/$RUN"
-
-  # build directory structure
-  if [ ! -d "$CSVDIR" ]
-  then
-    mkdir "$CSVDIR"
-  fi
 
   # do simulation run
   echo "running simulation #$RUN"
@@ -75,6 +121,13 @@ do
     let "ROLLBACKS += ${LINE#*\,}"
   done
   echo "$RUNTIME,$ROLLBACKS" >> "$DATADIR/data.csv"
+
+  # build directory structure
+  CSVDIR="$DATADIR/$RUN"
+  if [ ! -d "$CSVDIR" ]
+  then
+    mkdir "$CSVDIR"
+  fi
 
   # copy the CSVs to a dir for their run
   mv *.csv "$CSVDIR"
