@@ -13,7 +13,7 @@ class CommunicationManager;
 
 enum UsefulWorkMetric {
   UWM_ROLLBACKS,
-  UWM_EFFICIENCY,
+  UWM_ROLLBACK_FRACTION,
   UWM_EFFECTIVE_UTILIZATION,
   UWM_NONE
 };
@@ -90,9 +90,12 @@ private:
   bool myPowerSave;
   UsefulWorkMetric myUWM;
   int myLastRollbacks;
+  int myLastEventsRolledBack;
+  int myLastEventsExecuted;
 
   void setGovernorMode(const char* governor);
   double getRollbacksForPeriod();
+  double getRollbackFractionForPeriod();
 };
 
 

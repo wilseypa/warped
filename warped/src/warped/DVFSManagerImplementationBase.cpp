@@ -32,6 +32,8 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
   ,myPowerSave(powersave)
   ,myUWM(uwm)
   ,myLastRollbacks(0)
+  ,myLastEventsRolledBack(0)
+  ,myLastEventsExecuted(0)
 {
   if(isMaster())
     myStopwatch.start();
@@ -198,18 +200,27 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
 void
 DVFSManagerImplementationBase::fillUsefulWork(vector<double>& v) {
   v[mySimulationManagerID] =
-      myUWM == UWM_ROLLBACKS ? getRollbacksForPeriod()
-      myUWM == UWM_EFFICIENCY ? 0. : // TODO
+      myUWM == UWM_ROLLBACKS ? getRollbacksForPeriod() :
+      myUWM == UWM_ROLLBACK_FRACTION ? getRollbackFractionForPeriod() :
       myUWM == UWM_EFFECTIVE_UTILIZATION ?
                                   mySimulationManager->effectiveUtilization() :
       0;
 }
 
-void
+double
 DVFSManagerImplementationBase::getRollbacksForPeriod() {
   int temp = myLastRollbacks;
   myLastRollbacks = mySimulationManager->getRollbacks();
-  return myLastRollbacks - temp;
+  return static_cast<double>(myLastRollbacks - temp);
+}
+
+double
+DVFSManagerImplementationBase::getRollbackFractionForPeriod() {
+  int temp1 = myLastEventsRolledBack;
+  int temp2 = myLastEventsExecuted;
+  myLastEventsRolledBack = mySimulationManager->getNumEventsRolledBack();
+  myLastEventsExecuted = mySimulationManager->getNumEventsExecuted();
+  return 1 - (static_cast<double>(temp1) / temp2);
 }
 
 void 
@@ -255,7 +266,8 @@ DVFSManagerImplementationBase::toString() {
      << "UsefulWorkMetric: " << (myUWM == UWM_ROLLBACKS ? "Rollbacks" :
                                  myUWM == UWM_EFFECTIVE_UTILIZATION ? 
                                    "Effective Utilization" :
-                                 myUWM == UWM_EFFICIENCY ? "Efficiency" : "")
+                                 myUWM == UWM_ROLLBACK_FRACTION ?
+                                                  "Rollback Fraction" : "")
                              << ", "
      << "PowerSave: " << (myPowerSave ? "True" : "False") << endl;
   return ss.str();

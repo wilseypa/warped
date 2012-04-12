@@ -390,9 +390,15 @@ public:
 	/// Returns the number of rollbacks
 	unsigned int getRollbacks() { return numberOfRollbacks; }
 
-    // effective utilizaiton estimator, based on reiher and jefferson (1990)
-    double effectiveUtilization();
-    void doDelay(int);
+        // effective utilizaiton estimator, based on reiher and jefferson (1990)
+        double effectiveUtilization();
+        void doDelay(int);
+
+        double getEfficiency() { return static_cast<double>(myNumCommittedEvents) /
+              myNumExecutedEvents; }
+
+        unsigned int getNumEventsExecuted() { return myNumExecutedEvents; }
+        unsigned int getNumEventsRolledBack() { return myNumRolledBackEvents; }
 
 	//@} // End of Public Class Methods of TimeWarpSimulationManager.
 
@@ -575,8 +581,10 @@ protected:
 	virtual bool executeObjects(const VTime &simulateUntil);
 
 	Application *myApplication;
-  StopWatch stopwatch;
-
+        StopWatch stopwatch;
+        unsigned int myNumCommittedEvents;
+        unsigned int myNumExecutedEvents;
+        unsigned int myNumRolledBackEvents;
 
 	//@} // End of Protected Class Methods of TimeWarpSimulationManager.
 

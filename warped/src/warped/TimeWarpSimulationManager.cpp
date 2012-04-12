@@ -43,7 +43,8 @@ TimeWarpSimulationManager::TimeWarpSimulationManager(Application *initApplicatio
 			mySchedulingData(new SchedulingData()), myTerminationManager(0),
 			myApplication(initApplication), myFossilCollManager(0),
 			usingOneAntiMsg(false), usingOptFossilCollection(false),
-            inRecovery(false), numberOfRollbacks(0) {
+                        inRecovery(false), numberOfRollbacks(0), myNumCommittedEvents(0),
+                        myNumExecutedEvents(0), myNumRolledBackEvents(0) {
 }
 
 TimeWarpSimulationManager::~TimeWarpSimulationManager() {
@@ -486,7 +487,8 @@ void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 
     file.open(oss.str().c_str(), ios_base::app);
     if(file)
-        file << stopwatch.elapsed() << ',' << numberOfRollbacks << endl;
+        file << stopwatch.elapsed() << ',' << numberOfRollbacks
+             << ',' << myNumCommittedEvents << ',' << myNumExecutedEvents << endl;
 
 
 	// This is commented out by default. It is used along with the testParallelWarped script

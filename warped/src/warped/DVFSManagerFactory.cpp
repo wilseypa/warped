@@ -39,14 +39,14 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
 
   UsefulWorkMetric uwm;
   uwm = metric == "ROLLBACKS" ?             UWM_ROLLBACKS :
-        metric == "EFFECTIVEUTILIZATION" ? UWM_EFFECTIVE_UTILIZATION :
-        metric == "EFFICIENCY" ?            UWM_EFFICIENCY :
+        metric == "ROLLBACKFRACTION" ?      UWM_ROLLBACK_FRACTION :
+        metric == "EFFECTIVEUTILIZATION" ?  UWM_EFFECTIVE_UTILIZATION :
                                             UWM_NONE;
   if(uwm == UWM_NONE) {
     stringstream err;
     err << "DVFSManager: UsefulWorkMetric " << metric << " is invalid. "
         << "Valid metrics are Rollbacks | EffectiveUtilization "
-        << "| Efficiency. Aborting simulation." << endl;
+        << "| RollbackFraction. Aborting simulation." << endl;
     mySimulationManager->shutdown(err.str());
   }
 
