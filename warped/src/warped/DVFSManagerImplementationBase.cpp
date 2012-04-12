@@ -31,6 +31,7 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
   ,myIsDummy(dummy) 
   ,myPowerSave(powersave)
   ,myUWM(uwm)
+  ,myLastRollbacks(0)
 {
   if(isMaster())
     myStopwatch.start();
@@ -131,7 +132,7 @@ struct Utilization {
 
 bool
 DVFSManagerImplementationBase::updateFrequencyIdxs() {
-  const float dist = 0.01;
+  float dist;
 
   vector<Utilization> utils(0);
   double avg = 0.;
@@ -146,16 +147,31 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
   }
   avg /= n;
 
-  sort(utils.begin(), utils.end(), Utilization());
+  if(myUWM == UWM_ROLLBACKS) {
+    dist = avg * .1;
+    sort(utils.rbegin(), utils.rend(), Utilization());
+  }
+  else {
+    dist = 0.01;
+    sort(utils.begin(), utils.end(), Utilization());
+  }
 
   i = 0;
   int high = n;
   int low = -1;
   for(; i < n; i++) {
-    if(utils[i].util < avg - dist)
-      low = i;
-    else if(utils[i].util > avg + dist)
-      break;
+    if(myUWM == UWM_ROLLBACKS) {
+      if(utils[i].util > avg + dist)
+        low = i;
+      else if(utils[i].util < avg - dist)
+        break;
+    }
+    else {
+      if(utils[i].util < avg - dist)
+        low = i;
+      else if(utils[i].util > avg + dist)
+        break;
+    }
   }
   high = i;
 
@@ -182,11 +198,18 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
 void
 DVFSManagerImplementationBase::fillUsefulWork(vector<double>& v) {
   v[mySimulationManagerID] =
-      myUWM == UWM_ROLLBACKS ? 0. : // TODO
+      myUWM == UWM_ROLLBACKS ? getRollbacksForPeriod()
       myUWM == UWM_EFFICIENCY ? 0. : // TODO
       myUWM == UWM_EFFECTIVE_UTILIZATION ?
                                   mySimulationManager->effectiveUtilization() :
       0;
+}
+
+void
+DVFSManagerImplementationBase::getRollbacksForPeriod() {
+  int temp = myLastRollbacks;
+  myLastRollbacks = mySimulationManager->getRollbacks();
+  return myLastRollbacks - temp;
 }
 
 void 

@@ -81,6 +81,7 @@ protected:
   vector<int> myFrequencyIdxs;
 
 private:
+
   int myMeasurementPeriod;
   StopWatch myStopwatch;
   int myMeasurementCounter;
@@ -88,8 +89,10 @@ private:
   bool myIsDummy;
   bool myPowerSave;
   UsefulWorkMetric myUWM;
+  int myLastRollbacks;
 
   void setGovernorMode(const char* governor);
+  double getRollbacksForPeriod();
 };
 
 
