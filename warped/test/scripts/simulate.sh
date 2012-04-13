@@ -76,8 +76,7 @@ if [ -n "$SIMULATE_UNTIL" ] && (! [[ "$SIMULATE_UNTIL" =~ ^[0-9]+$ ]]); then
   
 if [ -n "$ERROR" ]; then echo -e "${ERROR}exiting."; exit; fi
 
-PHYSICAL_LAYER=`grep -e "^\s*PhysicalLayer\s*:\s*" \
-  parallel.config | sed "s/^.*:\s*//g"`
+PHYSICAL_LAYER=`grep -P "^\s*PhysicalLayer" "$WARPED_CONFIG" | sed "s/.*:\s*//g" | sed 's/\s*$//'`
 
 # need full paths if using TCPSelect
 if [ "$PHYSICAL_LAYER" = TCPSelect ]; then
@@ -94,7 +93,7 @@ then
 fi
 
 # build simulation command
-case "$PHYSICAL_LAYER" in
+case $PHYSICAL_LAYER in
   MPI)
     CMD="mpiexec.hydra -f $MPI_HOSTS $MODEL_EXE $CMD_PARAMS"
     ;;
