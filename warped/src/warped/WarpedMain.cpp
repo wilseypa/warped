@@ -150,6 +150,11 @@ WarpedMain::initializeSimulation( vector<string> &commandLineArgs ){
   registerKernelDeserializers();
   myApplication->registerDeserializers();
 
+  // need to save this this for TCPSelect before ArgumentParser cannibalizes it.
+  // TCPSelect uses it to build the argument list for ssh when launching 
+  // "slave" simulation managers
+  vector<string> argsCopy(commandLineArgs);
+
   ArgumentParser ap( getArgumentList( *this ));
   ap.checkArgs( commandLineArgs, false );
 
@@ -159,7 +164,7 @@ WarpedMain::initializeSimulation( vector<string> &commandLineArgs ){
   }
 
   SimulationConfiguration *configuration =
-          readConfiguration( configurationFileName, commandLineArgs );
+          readConfiguration( configurationFileName, argsCopy );
 
   if( configuration != 0 ){
     Spinner::spinIfRequested( "SpinBeforeConfiguration", *configuration );
