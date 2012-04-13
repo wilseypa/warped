@@ -82,7 +82,7 @@ PHYSICAL_LAYER=`grep -P "^\s*PhysicalLayer" "$WARPED_CONFIG" | sed "s/.*:\s*//g"
 if [ "$PHYSICAL_LAYER" = TCPSelect ]; then
   MODEL_EXE=`readlink -f "$MODEL_EXE"`
   MODEL_CONFIG=`readlink -f "$MODEL_CONFIG"`
-  WARPED_CONFIG=`readlink -f "$SIMULATION_CONFIG"`
+  WARPED_CONFIG=`readlink -f "$WARPED_CONFIG"`
 fi
 
 CMD_PARAMS="-simulate $MODEL_CONFIG \
@@ -99,7 +99,21 @@ case $PHYSICAL_LAYER in
     ;;
   TCPSelect)
     # if using TCPSelect, the simulation must be run from the home directory
-    CMD="cd && $MODEL_EXE $CMD_PARAMS"
+    # and we have to make sure the SSH_COMMAND environment variable is set
+    cd
+    export SSH_COMMAND=/usr/bin/ssh
+
+    # unfortunately, this file name must be kept in sync with WARPED code
+    # DO NOT CHANGE
+    TCPSELECT_HOSTS="procgroup"
+
+    if ! [ -e "$TCPSELECT_HOSTS" ]; then
+      echo "error: you must have a $TCPSELECT_HOSTS file in your home \
+directory to use TCPSelect"
+      echo "exiting"
+      exit
+    fi
+    CMD="$MODEL_EXE $CMD_PARAMS"
     ;;
 esac
 
