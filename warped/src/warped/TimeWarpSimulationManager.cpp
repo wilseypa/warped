@@ -26,6 +26,7 @@
 #include "OptFossilCollManager.h"
 #include "OptFossilCollManagerFactory.h"
 #include "DVFSManager.h"
+#include "SimulatedDVFSManager.h"
 #include "DVFSManagerFactory.h"
 #include "SimulationConfiguration.h"
 #include <utils/Debug.h>
@@ -346,6 +347,11 @@ unsigned int TimeWarpSimulationManager::getNumEventsRolledBack() {
   return myEventSet->getNumEventsRolledBack();
 }
 
+bool TimeWarpSimulationManager::doEffectiveUtilization() {
+  return dynamic_cast<SimulatedDVFSManager*>(myDVFSManager) ||
+    (myDVFSManager && myDVFSManager->doEffectiveUtilization());
+}
+
 bool TimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
 	bool retval = false;
 	if (myGVTManager->getGVT() >= simulateUntil) {
@@ -492,11 +498,14 @@ void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
                     << stopwatch.elapsed() << " secs), Number of Rollbacks: ("
                     << numberOfRollbacks << ")" << endl;
 
+    int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
+    int numEventsExecuted = myEventSet->getNumEventsExecuted();
+
     file.open(oss.str().c_str(), ios_base::app);
     if(file)
         file << stopwatch.elapsed() << ',' << numberOfRollbacks
-             << ',' << myEventSet->getNumEventsCommitted() 
-             << ',' << myEventSet->getNumEventsExecuted() << endl;
+             << ',' << numEventsExecuted - numEventsRolledBack
+             << ',' << numEventsExecuted << endl;
 
 
 	// This is commented out by default. It is used along with the testParallelWarped script
@@ -1324,10 +1333,10 @@ void TimeWarpSimulationManager::configure(
 	}
 
 	// setup and configure clock frequency manager
-	const DVFSManagerFactory* myClockFreqMgrFactory =
+	const DVFSManagerFactory* dvfsFactory =
 	    DVFSManagerFactory::instance();
 	myDVFSManager = dynamic_cast<DVFSManager*>(
-	    myClockFreqMgrFactory->allocate(configuration, this));
+	    dvfsFactory->allocate(configuration, this));
 	if(myDVFSManager)
       myDVFSManager->configure(configuration);
 

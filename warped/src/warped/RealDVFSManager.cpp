@@ -11,16 +11,16 @@ using namespace std;
 RealDVFSManager::RealDVFSManager(TimeWarpSimulationManager* simMgr,
                                  int measurementPeriod,
                                  int firsize,
-                                 bool dummy,
-                                 bool powersave,
+                                 bool fixed,
                                  bool debug,
+                                 OptimizationGoal og,
                                  UsefulWorkMetric uwm)
   :DVFSManagerImplementationBase(simMgr,
                                  measurementPeriod,
                                  firsize,
-                                 dummy,
-                                 powersave,
+                                 fixed,
                                  debug,
+                                 og,
                                  uwm)
 {}
 
@@ -52,7 +52,9 @@ RealDVFSManager::configure(SimulationConfiguration &config) {
   // initialize the frequency index array now that we know how many
   // frequencies are available
   int maxidx = myAvailableFreqs.size() - 1;
-  initializeFrequencyIdxs(maxidx);
+
+  // maxidx - 1: only go down to 1.5 GHz
+  initializeFrequencyIdxs(maxidx - 1);
 
   // initialize my frequency to the median frequency
   int freq = myAvailableFreqs[maxidx / 2];

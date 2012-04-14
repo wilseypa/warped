@@ -12,16 +12,16 @@
 SimulatedDVFSManager::SimulatedDVFSManager(TimeWarpSimulationManager* simMgr,
                                            int measurementPeriod,
                                            int firsize,
-                                           bool dummy,
-                                           bool powersave,
+                                           bool fixed,
                                            bool debug,
+                                           OptimizationGoal og,
                                            UsefulWorkMetric uwm)
   :DVFSManagerImplementationBase(simMgr,
                                  measurementPeriod,
                                  firsize,
-                                 dummy,
-                                 powersave,
+                                 fixed,
                                  debug,
+                                 og,
                                  uwm)
   ,mySimulatedFrequencyIdx((numSimulatedFrequencies - 1) / 2)
 {}

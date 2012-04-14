@@ -15,7 +15,27 @@
 class DVFSManager : public CommunicatingEntity,
 		   public Configurable {
 public:
-   
+
+  // Rollbacks: simple rollback counter
+  // RollbackFraction: 1 - (events rolled back) / (events executed)
+  // EffectiveUtilization: cpu time not rolled back / total cpu time
+  enum UsefulWorkMetric {
+    ROLLBACKS,
+    ROLLBACK_FRACTION,
+    EFFECTIVE_UTILIZATION,
+  };
+
+  // Performance: scaling freq down on one core always corresponds to 
+  //              scaling up on another core
+  // Power:       only scale down, never scale up
+  // Hybrid:      scale down nodes with below-average useful work, then
+  //              scale up a node with above-average useful work, if one exists
+  enum OptimizationGoal {
+    PERFORMANCE,
+    POWER,
+    HYBRID,
+  };
+ 
   /**@name Public Class Methods of DVFSManager. */
   //@{
 
@@ -33,6 +53,8 @@ public:
   // delay by amount necessary to simulate different clock frequency
   // using clock cycles
   virtual void delay(int) = 0;
+
+  virtual bool doEffectiveUtilization() = 0;
 
   //@} // End of Public Class Methods of DVFSManager.
 

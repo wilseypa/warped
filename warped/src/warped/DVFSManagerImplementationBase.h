@@ -11,16 +11,6 @@
 class TimeWarpSimulationManager;
 class CommunicationManager;
 
-// Rollbacks: simple rollback counter
-// RollbackFraction: 1 - (events rolled back) / (events executed)
-// EffectiveUtilization: cpu time not rolled back / total cpu time
-enum UsefulWorkMetric {
-  UWM_ROLLBACKS,
-  UWM_ROLLBACK_FRACTION,
-  UWM_EFFECTIVE_UTILIZATION,
-  UWM_NONE
-};
-
 /** The DVFSManagerImplementationBase implementation base class.
 
     This contains the default implementations of DVFS functions
@@ -32,8 +22,8 @@ public:
   //@{
 
   /// Constructor
-  DVFSManagerImplementationBase(TimeWarpSimulationManager*,
-                                int, int, bool, bool, bool, UsefulWorkMetric);
+  DVFSManagerImplementationBase(TimeWarpSimulationManager*,int, int, bool, bool, 
+                                OptimizationGoal, UsefulWorkMetric);
 
   /// Destructor
   virtual ~DVFSManagerImplementationBase();
@@ -67,8 +57,11 @@ protected:
   void fillUsefulWork(vector<double>&);
   void initializeFrequencyIdxs(int maxfreq);
   bool isDummy() const { return myIsDummy; }
-  bool powerSave() const { return myPowerSave; }
   bool debugPrint() const { return myDebugPrint; }
+
+  virtual bool doEffectiveUtilization() { 
+    return myUWM == EFFECTIVE_UTILIZATION; 
+  }
 
   //@} // End of Protected Class Methods of DVFSManagerImplementationBase.
 
@@ -91,8 +84,8 @@ private:
   int myMeasurementCounter;
   int myMaxFreqIdx;
   bool myIsDummy;
-  bool myPowerSave;
   bool myDebugPrint;
+  OptimizationGoal myOG;
   UsefulWorkMetric myUWM;
   int myLastRollbacks;
   int myLastEventsRolledBack;
@@ -101,6 +94,9 @@ private:
   void setGovernorMode(const char* governor);
   double getRollbacksForPeriod();
   double getRollbackFractionForPeriod();
+
+  static const char* optimizationStrings[];
+  static const char* uwmStrings[];
 };
 
 

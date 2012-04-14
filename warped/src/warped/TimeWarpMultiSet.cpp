@@ -232,8 +232,9 @@ TimeWarpMultiSet::fossilCollect(SimulationObject *object,
   while(it != processedObjEvents[objId]->end() && (*it)->getReceiveTime() < fossilCollectTime){
     object->reclaimEvent(*it);
     it++;
-    myNumCommittedEvents++;
   }
+
+  myNumCommittedEvents += it - processedObjEvents[objId]->begin();
   processedObjEvents[objId]->erase(processedObjEvents[objId]->begin(), it);
 
   // Also remove the processed events that have been removed.
@@ -326,7 +327,7 @@ TimeWarpMultiSet::rollback( SimulationObject *object,
   for(; it != processedObjEvents[objId]->end(); ++it){
     if((*it)->getReceiveTime() < rollbackTime)
       newEnd++;
-    else if(object)
+    else if(object && mySimulationManager->doEffectiveUtilization())
       (*it)->subtractEffectiveWork(object);
   }
 

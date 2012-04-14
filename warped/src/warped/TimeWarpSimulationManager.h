@@ -396,6 +396,7 @@ public:
 
   unsigned int getNumEventsExecuted();
   unsigned int getNumEventsRolledBack();
+  bool doEffectiveUtilization();
 
 	//@} // End of Public Class Methods of TimeWarpSimulationManager.
 

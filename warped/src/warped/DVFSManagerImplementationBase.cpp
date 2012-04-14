@@ -14,8 +14,8 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
     int measurementPeriod,
     int firsize,
     bool dummy,
-    bool powersave,
     bool debug,
+    OptimizationGoal og,
     UsefulWorkMetric uwm)
   :mySimulationManager(simMgr)
   ,myCommunicationManager(simMgr->getCommunicationManager())
@@ -30,9 +30,9 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
   ,myMeasurementCounter(0)
   ,myMaxFreqIdx(0)
   ,myIsDummy(dummy) 
-  ,myPowerSave(powersave)
   ,myDebugPrint(debug)
   ,myUWM(uwm)
+  ,myOG(og)
   ,myLastRollbacks(0)
   ,myLastEventsRolledBack(0)
   ,myLastEventsExecuted(0)
@@ -151,7 +151,7 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
   }
   avg /= n;
 
-  if(myUWM == UWM_ROLLBACKS) {
+  if(myUWM == ROLLBACKS) {
     dist = avg * .1;
     sort(utils.rbegin(), utils.rend(), Utilization());
   }
@@ -164,7 +164,7 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
   int high = n;
   int low = -1;
   for(; i < n; i++) {
-    if(myUWM == UWM_ROLLBACKS) {
+    if(myUWM == ROLLBACKS) {
       if(utils[i].util > avg + dist)
         low = i;
       else if(utils[i].util < avg - dist)
@@ -182,15 +182,29 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
   bool changed = false;
   int l = 0;
   int h = n - 1;
+  // low is the index of the highest useful work that is BELOW average
+  // high is the index of the lowest useful work that is ABOVE average
+  // starting with the nodes with the absolute lowest and highest useful 
+  // work indexes, move towards the center, matching pairs as we go
   while(l <= low && h >= high) {
-    // skip over any nodes that are already at the extremes
+
+    // skip over any nodes that are already at max/min frequency
     while(l <= low && myFrequencyIdxs[utils[l].node] == myMaxFreqIdx)
       l++;
     while(h >= high && myFrequencyIdxs[utils[h].node] == 0)
       h--;
-    if(l <= low && h >= high) {
+
+    // adjust frequency indexes depending on optimization goal
+    if(myOG == PERFORMANCE) {
+      if(l <= low && h >= high) {
+        myFrequencyIdxs[utils[l++].node]++;
+        myFrequencyIdxs[utils[h--].node]--;
+        changed = true;
+      }
+    }
+    else if(l <= low) {
       myFrequencyIdxs[utils[l++].node]++;
-      if(!myPowerSave)
+      if(h >= high && myOG != POWER)
         myFrequencyIdxs[utils[h--].node]--;
       changed = true;
     }
@@ -202,11 +216,10 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
 void
 DVFSManagerImplementationBase::fillUsefulWork(vector<double>& v) {
   v[mySimulationManagerID] =
-      myUWM == UWM_ROLLBACKS ? getRollbacksForPeriod() :
-      myUWM == UWM_ROLLBACK_FRACTION ? getRollbackFractionForPeriod() :
-      myUWM == UWM_EFFECTIVE_UTILIZATION ?
-                                  mySimulationManager->effectiveUtilization() :
-      0;
+     myUWM == ROLLBACKS ? getRollbacksForPeriod() :
+     myUWM == ROLLBACK_FRACTION ? getRollbackFractionForPeriod() :
+     myUWM == EFFECTIVE_UTILIZATION ? 
+       mySimulationManager->effectiveUtilization() : 0;
 }
 
 double
@@ -264,15 +277,10 @@ string
 DVFSManagerImplementationBase::toString() {
   stringstream ss;
   ss << "Period: " << myMeasurementPeriod << ", "
-     << "Dummy: " << (myIsDummy ? "True" : "False") << ", "
+     << "Fixed: " << (myIsDummy ? "True" : "False") << ", "
      << "FIRSize: " << myFIRSize << ", "
-     << "UsefulWorkMetric: " << (myUWM == UWM_ROLLBACKS ? "Rollbacks" :
-                                 myUWM == UWM_EFFECTIVE_UTILIZATION ? 
-                                   "Effective Utilization" :
-                                 myUWM == UWM_ROLLBACK_FRACTION ?
-                                                  "Rollback Fraction" : "")
-                             << ", "
-     << "PowerSave: " << (myPowerSave ? "True" : "False");
+     << "UsefulWorkMetric: " << uwmStrings[myUWM] << ", "
+     << "Optimize for: " << optimizationStrings[myOG];
   return ss.str();
 }
 
@@ -281,3 +289,8 @@ ostream& operator<<(ostream& out, DVFSManager& dvfsm) {
   return out;
 }
 
+const char* DVFSManagerImplementationBase::optimizationStrings[] = 
+  {"Performance", "Power", "Hybrid"};
+
+const char* DVFSManagerImplementationBase::uwmStrings[] = 
+  {"Rollbacks", "RollbackFraction", "EffectiveUtilization"};

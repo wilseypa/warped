@@ -125,8 +125,9 @@ for i in `seq 1 "$RUNS"`; do
     let "COMMITTED += ${ARR[2]}"
     let "EXECUTED += ${ARR[3]}"
   done
-  EFFICIENCY=`echo – | awk "{ print $COMMITTED / $EXECUTED}"`
-  echo "$RUNTIME,$ROLLBACKS,$EFFICIENCY" >> "$DATADIR/data.csv"
+  EFFICIENCY=`echo – | awk "{print $COMMITTED / $EXECUTED}"`
+  EVENTRATE=`echo - | awk "{print $COMMITTED / $RUNTIME}"`
+  echo "$RUNTIME,$ROLLBACKS,$EFFICIENCY,$EVENTRATE" >> "$DATADIR/data.csv"
 
   # build directory structure
   CSVDIR="$DATADIR/$RUN"

@@ -20,8 +20,8 @@ public:
   //@{
 
   /// Constructor
-  SimulatedDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool, bool,
-                       UsefulWorkMetric);
+  SimulatedDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
+                       OptimizationGoal, UsefulWorkMetric);
 
   /// Destructor
   virtual ~SimulatedDVFSManager() {}
