@@ -11,6 +11,9 @@
 class TimeWarpSimulationManager;
 class CommunicationManager;
 
+// Rollbacks: simple rollback counter
+// RollbackFraction: 1 - (events rolled back) / (events executed)
+// EffectiveUtilization: cpu time not rolled back / total cpu time
 enum UsefulWorkMetric {
   UWM_ROLLBACKS,
   UWM_ROLLBACK_FRACTION,
@@ -30,7 +33,7 @@ public:
 
   /// Constructor
   DVFSManagerImplementationBase(TimeWarpSimulationManager*,
-                                int, int, bool, bool, UsefulWorkMetric);
+                                int, int, bool, bool, bool, UsefulWorkMetric);
 
   /// Destructor
   virtual ~DVFSManagerImplementationBase();
@@ -65,6 +68,7 @@ protected:
   void initializeFrequencyIdxs(int maxfreq);
   bool isDummy() const { return myIsDummy; }
   bool powerSave() const { return myPowerSave; }
+  bool debugPrint() const { return myDebugPrint; }
 
   //@} // End of Protected Class Methods of DVFSManagerImplementationBase.
 
@@ -88,6 +92,7 @@ private:
   int myMaxFreqIdx;
   bool myIsDummy;
   bool myPowerSave;
+  bool myDebugPrint;
   UsefulWorkMetric myUWM;
   int myLastRollbacks;
   int myLastEventsRolledBack;

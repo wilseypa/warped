@@ -50,7 +50,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
     mySimulationManager->shutdown(err.str());
   }
 
-  const char* trueFalseOptions[] = {"Dummy", "PowerSave"};
+  const char* trueFalseOptions[] = {"Fixed", "PowerSave, DebugPrint"};
   int numTrueFalse = sizeof(trueFalseOptions) / sizeof(const char*);
   bool trueFalseValues[numTrueFalse];
   for(int i=0; i < numTrueFalse; i++) {
@@ -88,6 +88,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
                                  firsize,
                                  trueFalseValues[0],
                                  trueFalseValues[1],
+                                 trueFalseValues[2],
                                  uwm);
 
     return new SimulatedDVFSManager(mySimulationManager,
@@ -95,6 +96,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
                                     firsize,
                                     trueFalseValues[0],
                                     trueFalseValues[1],
+                                    trueFalseValues[2],
                                     uwm);
   }
   else {

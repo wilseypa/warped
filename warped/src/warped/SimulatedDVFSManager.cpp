@@ -14,12 +14,14 @@ SimulatedDVFSManager::SimulatedDVFSManager(TimeWarpSimulationManager* simMgr,
                                            int firsize,
                                            bool dummy,
                                            bool powersave,
+                                           bool debug,
                                            UsefulWorkMetric uwm)
   :DVFSManagerImplementationBase(simMgr,
                                  measurementPeriod,
                                  firsize,
                                  dummy,
                                  powersave,
+                                 debug,
                                  uwm)
   ,mySimulatedFrequencyIdx((numSimulatedFrequencies - 1) / 2)
 {}
@@ -74,10 +76,11 @@ SimulatedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
       if(!isDummy())
         idxsChanged = updateFrequencyIdxs();
 
-      for(int i = 0; i < dat.size(); i++)
-        writeCSVRow(i, 
-                    myUtilFilters[i].getData(), 
-                    simulatedFrequencies[myFrequencyIdxs[i]]);
+      if(debugPrint())
+        for(int i = 0; i < dat.size(); i++)
+          writeCSVRow(i, 
+                      myUtilFilters[i].getData(), 
+                      simulatedFrequencies[myFrequencyIdxs[i]]);
     }
   }
   else if(round == UsefulWorkMessage::SETFREQ && !isDummy())

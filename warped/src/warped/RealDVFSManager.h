@@ -19,7 +19,7 @@ public:
   //@{
 
   /// Constructor
-  RealDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
+  RealDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool, bool,
                   UsefulWorkMetric);
 
   /// Destructor

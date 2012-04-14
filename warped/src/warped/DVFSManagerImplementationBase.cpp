@@ -15,6 +15,7 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
     int firsize,
     bool dummy,
     bool powersave,
+    bool debug,
     UsefulWorkMetric uwm)
   :mySimulationManager(simMgr)
   ,myCommunicationManager(simMgr->getCommunicationManager())
@@ -30,6 +31,7 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
   ,myMaxFreqIdx(0)
   ,myIsDummy(dummy) 
   ,myPowerSave(powersave)
+  ,myDebugPrint(debug)
   ,myUWM(uwm)
   ,myLastRollbacks(0)
   ,myLastEventsRolledBack(0)
@@ -270,7 +272,7 @@ DVFSManagerImplementationBase::toString() {
                                  myUWM == UWM_ROLLBACK_FRACTION ?
                                                   "Rollback Fraction" : "")
                              << ", "
-     << "PowerSave: " << (myPowerSave ? "True" : "False") << endl;
+     << "PowerSave: " << (myPowerSave ? "True" : "False");
   return ss.str();
 }
 

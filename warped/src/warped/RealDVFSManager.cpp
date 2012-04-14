@@ -13,12 +13,14 @@ RealDVFSManager::RealDVFSManager(TimeWarpSimulationManager* simMgr,
                                  int firsize,
                                  bool dummy,
                                  bool powersave,
+                                 bool debug,
                                  UsefulWorkMetric uwm)
   :DVFSManagerImplementationBase(simMgr,
                                  measurementPeriod,
                                  firsize,
                                  dummy,
                                  powersave,
+                                 debug,
                                  uwm)
 {}
 
@@ -84,10 +86,11 @@ RealDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
         setCPUFrequency(i, myAvailableFreqs[myFrequencyIdxs[i]]);
     }
 
-    for(int i=0; i < myFrequencyIdxs.size(); i++)
-      writeCSVRow(i, 
-                  myUtilFilters[i].getData(), 
-                  myAvailableFreqs[myFrequencyIdxs[i]]);
+    if(debugPrint())
+      for(int i=0; i < myFrequencyIdxs.size(); i++)
+        writeCSVRow(i, 
+                    myUtilFilters[i].getData(), 
+                    myAvailableFreqs[myFrequencyIdxs[i]]);
 
   }
   else {
