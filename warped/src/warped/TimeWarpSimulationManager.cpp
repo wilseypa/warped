@@ -338,6 +338,14 @@ void TimeWarpSimulationManager::doDelay(int util) {
         myDVFSManager->delay(util);
 }
 
+unsigned int TimeWarpSimulationManager::getNumEventsExecuted() {
+  return myEventSet->getNumEventsExecuted();
+}
+
+unsigned int TimeWarpSimulationManager::getNumEventsRolledBack() {
+  return myEventSet->getNumEventsRolledBack();
+}
+
 bool TimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
 	bool retval = false;
 	if (myGVTManager->getGVT() >= simulateUntil) {
