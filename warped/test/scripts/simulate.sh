@@ -20,7 +20,7 @@ PAUSE=100
 # get user-supplied arguments
 TEMP=`getopt -o d:n:p:e:f:m:w:s: -n "$0" \
   -l help,model-exe:,hosts-file:model-config:,warped-config:,simulate-until: \
-  -l data-dir:,number-runs:,pause: \
+  -l data-dir:,number-runs:,pause:,delete-csvs \
   -- "$@"`
   
 eval set -- "$TEMP"
@@ -34,6 +34,7 @@ while true; do
     -m|--model-config) MODEL_CONFIG=$2; shift 2;;
     -w|--warped-config) WARPED_CONFIG=$2; shift 2;;
     -s|--simulate-until) SIMULATE_UNTIL=$2; shift 2;;
+    --delete-csvs) DELETE_CSVS=1; shift;;
     --help) cat << EOF
 Usage: $(basename $0) [OPTION]...
 
@@ -50,6 +51,8 @@ Options:
   -w, --warped-config     path to the WARPED configuration file
                           [default=$WARPED_CONFIG]
   -s, --simulate-until    GVT to simulate until (same as WARPED -simulateUntil)
+      --delete-csvs       delete intermediate lpX.csv files
+                          (use for large batches)
 EOF
       exit;;
     --) shift; break;;
@@ -104,45 +107,90 @@ case "$PHYSICAL_LAYER" in
     ;;
 esac
 
-for i in `seq 1 "$RUNS"`; do
-  RUN=`printf "%02d" $i`
+# TODO: streamline this
+PARAMS_FILE=simulation_params
+if [ -e "$PARAMS_FILE" ]; then
+  HAVE_PARAMS=1
+  # print header
+  echo -n "number of nodes,type,fixed,optimize for,hotspot" >> "$DATADIR/data.csv"
+  echo ",msgden,simtime,rollbacks,efficiency,eventrate" >> "$DATADIR/data.csv"
+fi
 
-  # do simulation run
-  echo "running simulation #$RUN"
-  $CMD
+IFS=$'\n'
+for p in `cat "$PARAMS_FILE" || echo 0`; do
 
-  # extract runtime and rollback info from the CSVs
-  RUNTIME=0
-  let "ROLLBACKS=0"
-  let "COMMITTED=0"
-  let "EXECUTED=0"
-  for f in *.csv
-  do
-    LINE=`tail -n 1 $f`
-    ARR=(${LINE//,/ })
-    RUNTIME=${ARR[0]}
-    let "ROLLBACKS += ${ARR[1]}"
-    let "COMMITTED += ${ARR[2]}"
-    let "EXECUTED += ${ARR[3]}"
-  done
-  EFFICIENCY=`echo – | awk "{print $COMMITTED / $EXECUTED}"`
-  EVENTRATE=`echo - | awk "{print $COMMITTED / $RUNTIME}"`
-  echo "$RUNTIME,$ROLLBACKS,$EFFICIENCY,$EVENTRATE" >> "$DATADIR/data.csv"
+  INTERMEDIATEDIR="${DATADIR}"
+  if [ -n "$HAVE_PARAMS" ]; then
+    IFS=$' \n'
+    PARAMS=(${p//,/ })
 
-  # build directory structure
-  CSVDIR="$DATADIR/$RUN"
-  if [ ! -d "$CSVDIR" ]
-  then
-    mkdir "$CSVDIR"
+    # TODO: streamline
+    eval "sed -i 's/\(^[a-zA-Z]*:\)[0-9]/\1${PARAMS[0]}/' $MPI_HOSTS"
+    eval "sed -i '144s/\(^.*: *\)[a-zA-Z]*/\1${PARAMS[1]}/' $WARPED_CONFIG"
+    eval "sed -i '145s/\(^.*: *\)[a-zA-Z]*/\1${PARAMS[2]}/' $WARPED_CONFIG"
+    eval "sed -i '150s/\(^.*: *\)[a-zA-Z]*/\1${PARAMS[3]}/' $WARPED_CONFIG"
+    eval "sed -i '1s/.*/${PARAMS[4]}/' $MODEL_CONFIG"
+    eval "sed -i '3s/\(^[0-9]* \)[0-9]*/\1${PARAMS[5]}/' $MODEL_CONFIG"
+
+    # build directory structure
+    if [ -z "$DELETE_CSVS" ]; then
+      INTERMEDIATEDIR="${INTERMEDIATEDIR}/"
+      for param in "${PARAMS[@]}"; do
+        INTERMEDIATEDIR="${INTERMEDIATEDIR}${param}_"
+      done
+      INTERMEDIATEDIR="${INTERMEDIATEDIR%?}"
+      if [ ! -d "$INTERMEDIATEDIR" ]; then
+        mkdir "$INTERMEDIATEDIR"
+      fi
+    fi
   fi
 
-  # copy the CSVs to a dir for their run
-  mv *.csv "$CSVDIR"
+  for i in `seq 1 "$RUNS"`; do
+    RUN=`printf "%02d" $i`
 
-  # let the CPU cool down for $PAUSE seconds
-  if [ "$i" -ne "$RUNS" ]; then
+    # do simulation run
+    echo "running simulation #$RUN"
+    $CMD
+
+    # extract runtime and rollback info from the CSVs
+    let "ROLLBACKS=0"
+    let "COMMITTED=0"
+    let "EXECUTED=0"
+    for f in *.csv
+    do
+      LINE=`tail -n 1 $f`
+      ARR=(${LINE//,/ })
+      RUNTIME=${ARR[0]}
+      let "ROLLBACKS += ${ARR[1]}"
+      let "COMMITTED += ${ARR[2]}"
+      let "EXECUTED += ${ARR[3]}"
+    done
+    EFFICIENCY=`echo – | awk "{print $COMMITTED / $EXECUTED}"`
+    EVENTRATE=`echo - | awk "{print $COMMITTED / $RUNTIME}"`
+
+    if [ -n "$HAVE_PARAMS" ]; then
+      for param in "${PARAMS[@]}"; do
+        echo -n "$param," >> "$DATADIR/data.csv"
+      done
+    fi
+    echo "$RUNTIME,$ROLLBACKS,$EFFICIENCY,$EVENTRATE" >> "$DATADIR/data.csv"
+
+    # build directory structure
+    if [ -z "$DELETE_CSVS" ]; then
+      CSVDIR="$INTERMEDIATEDIR/$RUN"
+      if [ ! -d "$CSVDIR" ]; then
+        mkdir "$CSVDIR"
+      fi
+
+      # copy the CSVs to a dir for their run
+      mv *.csv "$CSVDIR"
+    else
+      rm *.csv
+    fi
+
+    # let the CPU cool down for $PAUSE seconds
     echo "waiting $PAUSE seconds before next simulation run..."
     sleep $PAUSE
-  fi
 
+  done
 done
