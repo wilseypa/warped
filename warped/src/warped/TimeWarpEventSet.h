@@ -156,6 +156,12 @@ public:
 
   virtual void debugDump( const string &, ostream & ){}
 
+  virtual double getEfficiency() { return 0; }
+
+  virtual unsigned int getNumEventsExecuted() { return 0; }
+  virtual unsigned int getNumEventsRolledBack() { return 0; }
+  virtual unsigned int getNumEventsCommitted() { return 0; }
+
   //@} // End of Public Class Methods of TimeWarpEventSet.
 
 protected:

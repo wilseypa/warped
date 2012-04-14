@@ -110,6 +110,13 @@ public:
   /** Overriden from Configurable */
   void configure( SimulationConfiguration &configure ){}
 
+  virtual double getEfficiency() { return static_cast<double>(myNumCommittedEvents) /
+        myNumExecutedEvents; }
+
+  virtual unsigned int getNumEventsExecuted() { return myNumExecutedEvents; }
+  virtual unsigned int getNumEventsRolledBack() { return myNumRolledBackEvents; }
+  virtual unsigned int getNumEventsCommitted() { return myNumCommittedEvents; }
+
   //@} // End of Public Class Methods of TimeWarpMultiSet.
 
 protected:
@@ -138,6 +145,10 @@ protected:
 
   /// The handle to the simulation manager.
   TimeWarpSimulationManager *mySimulationManager;
+
+  unsigned int myNumCommittedEvents;
+  unsigned int myNumRolledBackEvents;
+  unsigned int myNumExecutedEvents;
 
   //@} // End of Protected Class Attributes of TimeWarpMultiSet.
 };
