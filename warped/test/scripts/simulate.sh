@@ -20,7 +20,7 @@ PAUSE=100
 # get user-supplied arguments
 TEMP=`getopt -o d:n:p:e:f:m:w:s: -n "$0" \
   -l help,model-exe:,hosts-file:model-config:,warped-config:,simulate-until: \
-  -l data-dir:,number-runs:,pause:,delete-csvs \
+  -l data-dir:,number-runs:,pause:,delete-csvs,email-addr: \
   -- "$@"`
   
 eval set -- "$TEMP"
@@ -35,6 +35,7 @@ while true; do
     -w|--warped-config) WARPED_CONFIG=$2; shift 2;;
     -s|--simulate-until) SIMULATE_UNTIL=$2; shift 2;;
     --delete-csvs) DELETE_CSVS=1; shift;;
+    --email-addr) EMAIL_ADDR=$2; shift 2;;
     --help) cat << EOF
 Usage: $(basename $0) [OPTION]...
 
@@ -53,6 +54,7 @@ Options:
   -s, --simulate-until    GVT to simulate until (same as WARPED -simulateUntil)
       --delete-csvs       delete intermediate lpX.csv files
                           (use for large batches)
+      --email-addr        email address to send to when batch is complete
 EOF
       exit;;
     --) shift; break;;
@@ -107,6 +109,12 @@ case "$PHYSICAL_LAYER" in
     ;;
 esac
 
+if [ -n "$EMAIL_ADDR" ]; then
+  echo "results are in $DATADIR/data.csv" | mailx -s "simulate.sh complete" -- \
+    "$EMAIL_ADDR"
+fi
+exit
+
 # TODO: streamline this
 PARAMS_FILE=simulation_params
 if [ -e "$PARAMS_FILE" ]; then
@@ -130,7 +138,8 @@ for p in `cat "$PARAMS_FILE" || echo 0`; do
     eval "sed -i '145s/\(^.*: *\)[a-zA-Z]*/\1${PARAMS[2]}/' $WARPED_CONFIG"
     eval "sed -i '150s/\(^.*: *\)[a-zA-Z]*/\1${PARAMS[3]}/' $WARPED_CONFIG"
     eval "sed -i '1s/.*/${PARAMS[4]}/' $MODEL_CONFIG"
-    eval "sed -i '3s/\(^[0-9]* \)[0-9]*/\1${PARAMS[5]}/' $MODEL_CONFIG"
+    eval "sed -i '3s/[0-9]* *[0-9]*/${PARAMS[0]} ${PARAMS[5]}/' $MODEL_CONFIG"
+    eval "sed -i '9s/.*/${PARAMS[0]}/' $MODEL_CONFIG"
 
     # build directory structure
     if [ -z "$DELETE_CSVS" ]; then
@@ -183,9 +192,9 @@ for p in `cat "$PARAMS_FILE" || echo 0`; do
       fi
 
       # copy the CSVs to a dir for their run
-      mv *.csv "$CSVDIR"
+      mv lp*.csv "$CSVDIR"
     else
-      rm *.csv
+      rm -f lp*.csv
     fi
 
     # let the CPU cool down for $PAUSE seconds
@@ -194,3 +203,4 @@ for p in `cat "$PARAMS_FILE" || echo 0`; do
 
   done
 done
+
