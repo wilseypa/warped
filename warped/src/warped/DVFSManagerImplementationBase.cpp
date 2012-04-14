@@ -220,7 +220,8 @@ DVFSManagerImplementationBase::getRollbackFractionForPeriod() {
   int temp2 = myLastEventsExecuted;
   myLastEventsRolledBack = mySimulationManager->getNumEventsRolledBack();
   myLastEventsExecuted = mySimulationManager->getNumEventsExecuted();
-  return 1 - (static_cast<double>(temp1) / temp2);
+  return 1 - (static_cast<double>(myLastEventsRolledBack - temp1) / 
+            (myLastEventsExecuted - temp2));
 }
 
 void 
