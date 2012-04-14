@@ -77,7 +77,7 @@ if [ -n "$SIMULATE_UNTIL" ] && (! [[ "$SIMULATE_UNTIL" =~ ^[0-9]+$ ]]); then
 if [ -n "$ERROR" ]; then echo -e "${ERROR}exiting."; exit; fi
 
 PHYSICAL_LAYER=`grep -e "^\s*PhysicalLayer\s*:\s*" \
-  parallel.config | sed "s/^.*:\s*//g"`
+  "$WARPED_CONFIG" | sed "s/^.*:\s*//g"`
 
 # need full paths if using TCPSelect
 if [ "$PHYSICAL_LAYER" = TCPSelect ]; then
@@ -114,13 +114,19 @@ for i in `seq 1 "$RUNS"`; do
   # extract runtime and rollback info from the CSVs
   RUNTIME=0
   let "ROLLBACKS=0"
+  let "COMMITTED=0"
+  let "EXECUTED=0"
   for f in *.csv
   do
     LINE=`tail -n 1 $f`
-    RUNTIME=${LINE%\,*}
-    let "ROLLBACKS += ${LINE#*\,}"
+    ARR=(${LINE//,/ })
+    RUNTIME=${ARR[0]}
+    let "ROLLBACKS += ${ARR[1]}"
+    let "COMMITTED += ${ARR[2]}"
+    let "EXECUTED += ${ARR[3]}"
   done
-  echo "$RUNTIME,$ROLLBACKS" >> "$DATADIR/data.csv"
+  EFFICIENCY=`echo – | awk "{ print $COMMITTED / $EXECUTED}"`
+  echo "$RUNTIME,$ROLLBACKS,$EFFICIENCY" >> "$DATADIR/data.csv"
 
   # build directory structure
   CSVDIR="$DATADIR/$RUN"
