@@ -109,12 +109,6 @@ case "$PHYSICAL_LAYER" in
     ;;
 esac
 
-if [ -n "$EMAIL_ADDR" ]; then
-  echo "results are in $DATADIR/data.csv" | mailx -s "simulate.sh complete" -- \
-    "$EMAIL_ADDR"
-fi
-exit
-
 # TODO: streamline this
 PARAMS_FILE=simulation_params
 if [ -e "$PARAMS_FILE" ]; then
@@ -204,3 +198,7 @@ for p in `cat "$PARAMS_FILE" || echo 0`; do
   done
 done
 
+if [ -n "$EMAIL_ADDR" ]; then
+  echo "results are in $DATADIR/data.csv" | mailx -s \
+    "simulation batch complete" -- "$EMAIL_ADDR"
+fi
