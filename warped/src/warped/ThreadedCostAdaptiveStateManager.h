@@ -3,7 +3,10 @@
 
 // See copyright notice in file Copyright in the root directory of this archive.
 
-#include "ThreadedAdaptiveStateManagerBase.h"
+#include "ThreadedStateManagerImplementationBase.h"
+#include "StopWatch.h"
+#include "controlkit/FIRFilter.h"
+#include "controlkit/IIRFilter.h"
 
 /** The ThreadedCostAdaptiveStateManager class.
 
@@ -13,7 +16,7 @@
 
  */
 
-class ThreadedCostAdaptiveStateManager: public ThreadedAdaptiveStateManagerBase {
+class ThreadedCostAdaptiveStateManager: public ThreadedStateManagerImplementationBase {
 public:
 
 	/**@name Public Class Methods of ThreadedCostAdaptStateManager. */
@@ -29,6 +32,20 @@ public:
 	~ThreadedCostAdaptiveStateManager() {
 	}
 	;
+
+	void configure(SimulationConfiguration &) {
+	}
+	;
+
+	/** Start StopWatch to time state saving.
+	 @param id The simulation object id of the object.
+	 */
+	void startStateTiming(unsigned int id);
+
+	/** Stop state StopWatch.
+	 @param id The simulation object id of the object.
+	 */
+	void stopStateTiming(unsigned int id);
 
 	/** Calculates the new period for the given object.
 
@@ -54,7 +71,17 @@ public:
 	 */
 	void saveState(const VTime& currentTime, SimulationObject *object,
 			int threadId);
+	void saveState(const VTime& currentTime, unsigned int eventNumber,
+			SimulationObject *object, const ObjectID senderId, int threadId);
 
+	const unsigned int getEventIdForRollback(int threadId, int objId);
+
+	void updateStateWhileCoastForward(const VTime& currentTime,
+			unsigned int eventNumber, SimulationObject *object,
+			const ObjectID senderId, int threadId);
+
+	const VTime& restoreState(const VTime &rollbackTime,
+			SimulationObject *object, int threadID);
 	//@} // end of Public Class Methods
 
 protected:
@@ -76,6 +103,15 @@ protected:
 
 	// Adaption value for period (magnitude of 1 and sign gives direction).
 	vector<int> adaptionValue;
+
+	/// The StopWatch object.
+	vector<StopWatch> stopWatch;
+
+	/// Weighted filtered time to save one state.
+	vector<IIRFilter<double> > StateSaveTimeWeighted;
+
+	/// Weighted filtered time to coast forward.
+	vector<IIRFilter<double> > CoastForwardTimeWeighted;
 
 	//@} // end of Private Class Attributes
 };

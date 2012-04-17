@@ -205,7 +205,6 @@ WARPED_H_FILES = \
 	warped/ThreadedLazyOutputManager.h\
 	warped/ThreadedMatternGVTManager.h\
 	warped/ThreadedCostAdaptiveStateManager.h\
-	warped/ThreadedAdaptiveStateManagerBase.h\
 	warped/LockedQueue.h\
 	warped/WorkerInformation.h
 
@@ -327,8 +326,7 @@ libwarped_la_SOURCES = \
     warped/ThreadedChebyFossilCollManager.cpp\
 	warped/ThreadedLazyOutputManager.cpp\
 	warped/ThreadedMatternGVTManager.cpp\
-	warped/ThreadedCostAdaptiveStateManager.cpp\
-	warped/ThreadedAdaptiveStateManagerBase.cpp
+	warped/ThreadedCostAdaptiveStateManager.cpp
 
 CLEANFILES=$(BUILT_SOURCES)
 
