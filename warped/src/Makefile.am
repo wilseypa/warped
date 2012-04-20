@@ -31,9 +31,13 @@ WARPED_H_FILES = \
 	warped/AdaptiveStateManagerBase.h \
 	warped/AggressiveOutputManager.h \
 	warped/Application.h \
+	warped/RealDVFSManager.h \
 	warped/CentralizedEventSetSchedulingManager.h \
 	warped/ChebyFossilCollManager.h \
 	warped/CirculateInitializationMessage.h \
+	warped/DVFSManager.h \
+	warped/DVFSManagerFactory.h \
+	warped/DVFSManagerImplementationBase.h \
 	warped/CommunicatingEntity.h \
 	warped/CommunicationManager.h \
 	warped/CommunicationManagerFactory.h \
@@ -56,6 +60,7 @@ WARPED_H_FILES = \
 	warped/DefaultTimeWarpEventContOneAntiMsg.h \
 	warped/IntVTime.h \
 	warped/DeserializerManager.h \
+	warped/SimulatedDVFSManager.h \
 	warped/Event.h \
 	warped/EventFunctors.h \
 	warped/EventId.h \
@@ -154,6 +159,7 @@ WARPED_H_FILES = \
 	warped/TimeWarpSimulationStream.h \
 	warped/Transceiver.h \
 	warped/TreeElement.h \
+	warped/UsefulWorkMessage.h \
 	warped/VTime.h \
 	warped/version.h \
 	warped/warped.h \
@@ -218,9 +224,12 @@ libwarped_la_SOURCES = \
 	warped/AdaptiveOutputManager.cpp \
 	warped/AdaptiveStateManagerBase.cpp \
 	warped/AggressiveOutputManager.cpp \
+	warped/RealDVFSManager.cpp \
 	warped/CentralizedEventSetSchedulingManager.cpp \
 	warped/ChebyFossilCollManager.cpp \
 	warped/CirculateInitializationMessage.cpp \
+	warped/DVFSManagerFactory.cpp \
+	warped/DVFSManagerImplementationBase.cpp \
 	warped/CommunicationManager.cpp \
 	warped/CommunicationManagerImplementationBase.cpp \
 	warped/CommunicationManagerFactory.cpp \
@@ -239,6 +248,7 @@ libwarped_la_SOURCES = \
 	warped/DefaultTimeWarpEventContainer.cpp \
 	warped/DefaultTimeWarpEventContOneAntiMsg.cpp \
 	warped/DeserializerManager.cpp \
+	warped/SimulatedDVFSManager.cpp \
 	warped/Event.cpp \
 	warped/EventMessage.cpp \
 	warped/EventMessageBase.cpp \
@@ -250,8 +260,8 @@ libwarped_la_SOURCES = \
 	warped/GVTManagerImplementationBase.cpp \
 	warped/GVTUpdateMessage.cpp \
 	warped/InFileQueue.cpp \
-	warped/IntVTime.cpp \
 	warped/InitializationMessage.cpp \
+	warped/IntVTime.cpp \
 	warped/KernelMessage.cpp \
 	warped/LazyOutputManager.cpp \
 	warped/MatternGVTManager.cpp \
@@ -309,6 +319,7 @@ libwarped_la_SOURCES = \
 	warped/TimeWarpSimulationStream.cpp \
 	warped/TokenPassingTerminationManager.cpp \
 	warped/Transceiver.cpp \
+	warped/UsefulWorkMessage.cpp \
 	warped/VTime.cpp \
 	warped/WarpedMain.cpp \
 	warped/warped.cpp\

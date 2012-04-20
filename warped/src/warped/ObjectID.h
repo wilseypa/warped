@@ -41,7 +41,7 @@
     mapping from object names to their unique object ids is handled by the
     kernel.  In addition, depending upon the type of the Simulation
     Manager that is instantiated at run-time ({\tt i.e.},
-    SequentialSimulationManager, DistributedSimulationManager, or
+    SequentialSimulationManager, DecentralizedSimulationManager, or
     SharedMemorySimulationManager), either unsigned integers will be used
     as simulation object ids or the two tuple version of simulation object
     ids will be used.

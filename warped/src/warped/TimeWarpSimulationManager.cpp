@@ -25,10 +25,14 @@
 #include "EventFunctors.h"
 #include "OptFossilCollManager.h"
 #include "OptFossilCollManagerFactory.h"
+#include "DVFSManager.h"
+#include "SimulatedDVFSManager.h"
+#include "DVFSManagerFactory.h"
 #include "SimulationConfiguration.h"
 #include <utils/Debug.h>
 #include <algorithm>
 #include <sstream>
+#include <time.h>
 using std::istringstream;
 
 TimeWarpSimulationManager::TimeWarpSimulationManager(Application *initApplication) :
@@ -94,6 +98,7 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
 	delete myStateManager;
 	delete localArrayOfSimObjPtrs;
 	delete mySimulationObjectQueue;
+    delete myDVFSManager;
 }
 
 const VTime &
@@ -314,6 +319,14 @@ void TimeWarpSimulationManager::restoreFileQueues(ifstream* inFile,
 	}
 }
 
+unsigned int TimeWarpSimulationManager::getNumEventsExecuted() {
+  return myEventSet->getNumEventsExecuted();
+}
+
+unsigned int TimeWarpSimulationManager::getNumEventsRolledBack() {
+  return myEventSet->getNumEventsRolledBack();
+}
+
 bool TimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
 	bool retval = false;
 	if (myGVTManager->getGVT() >= simulateUntil) {
@@ -347,6 +360,10 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 
 	while (nextEvent != 0 && !pastSimulationCompleteTime && !inRecovery) {
 		hadAtLeastOne = true;
+
+		if (myDVFSManager) {
+		  myDVFSManager->poll();
+		}
 
 		SimulationObject *nextObject =
 				getObjectHandle(nextEvent->getReceiver());
@@ -466,9 +483,14 @@ void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
                     << stopwatch.elapsed() << " secs), Number of Rollbacks: ("
                     << numberOfRollbacks << ")" << endl;
 
+    int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
+    int numEventsExecuted = myEventSet->getNumEventsExecuted();
+
     file.open(oss.str().c_str(), ios_base::app);
     if(file)
-        file << stopwatch.elapsed() << ',' << numberOfRollbacks << endl;
+        file << stopwatch.elapsed() << ',' << numberOfRollbacks
+             << ',' << numEventsExecuted - numEventsRolledBack
+             << ',' << numEventsExecuted << endl;
 
 
 	// This is commented out by default. It is used along with the testParallelWarped script
@@ -1292,6 +1314,14 @@ void TimeWarpSimulationManager::configure(
 		usingOptFossilCollection = false;
 	}
 
+	// setup and configure clock frequency manager
+	const DVFSManagerFactory* dvfsFactory =
+	    DVFSManagerFactory::instance();
+	myDVFSManager = dynamic_cast<DVFSManager*>(
+	    dvfsFactory->allocate(configuration, this));
+	if(myDVFSManager)
+      myDVFSManager->configure(configuration);
+
 	registerSimulationObjects();
 
 	ASSERT(myCommunicationManager != NULL);
@@ -1309,6 +1339,8 @@ void TimeWarpSimulationManager::configure(
     ofstream file(oss.str().c_str(), ios_base::app);
 
     if(file) {
+        if(myDVFSManager)
+            file << *myDVFSManager;
         const vector<string>& args = configuration.getArguments();
         vector<string>::const_iterator it(args.begin());
         for(; it != args.end(); ++it)

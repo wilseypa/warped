@@ -176,4 +176,26 @@ ostream &operator<<( ostream &os, SEVERITY severity ){
   return os;
 }
 
+// from http://en.wikipedia.org/wiki/Time_Stamp_Counter#C.2B.2B
+extern "C" {
+  __inline__ warped64_t rdtsc(void) {
+    warped32_t lo, hi;
+    __asm__ __volatile__ (
+      #ifdef i386
+          "pushl %%ebx;"
+      #endif
+      "xorl %%eax,%%eax; cpuid; rdtsc;"
+      #ifdef i386
+          "popl %%ebx;"
+      #endif
+      :"=a" (lo), "=d" (hi)
+          ::"%rcx"
+      #ifndef i386
+          ,"%rbx"
+      #endif
+      );
+      return (warped64_t)hi << 32 | lo;
+  }
+}
+
 #endif

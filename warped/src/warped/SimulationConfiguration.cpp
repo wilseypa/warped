@@ -63,6 +63,9 @@ public:
   bool getOptFossilCollDefaultLength( unsigned int &defaultLength );
   bool getOptFossilCollRiskFactor( double &riskFactor );
 
+  bool getDVFSStringOption(string&, string&) const;
+  bool getDVFSIntOption(string&, int&) const;
+
   const string getBinaryName() const;
 
   bool getWorkerThreadCount(unsigned int &workerThreadCount) const;
@@ -167,6 +170,11 @@ private:
      Returns ConfigurationScope for TimeWarp::OptFossilCollectionManager
   */
   const ConfigurationScope *getOptFossilCollManagerScope() const;
+
+  /**
+     Returns ConfigurationScope for TimeWarp::OptFossilCollectionManager
+  */
+  const ConfigurationScope *getDVFSManagerScope() const;
 
   static const string &getCommManagerScopeName();
   static const string &getEventListScopeName();
@@ -377,6 +385,16 @@ SimulationConfiguration::getOptFossilCollRiskFactor( double &riskFactor ){
   return _impl->getOptFossilCollRiskFactor( riskFactor );
 }
 
+bool
+SimulationConfiguration::getDVFSStringOption(string opt, string& val) const {
+  return _impl->getDVFSStringOption(opt, val);
+}
+
+bool
+SimulationConfiguration::getDVFSIntOption(string opt, int& val) const {
+  return _impl->getDVFSIntOption(opt, val);
+}
+
 const string
 SimulationConfiguration::getBinaryName() const {
   return _impl->getBinaryName();
@@ -529,6 +547,13 @@ SimulationConfiguration::Implementation::getOptFossilCollManagerScope() const {
     retval = getTimeWarpScope()->findScope( "OptFossilCollManager" );
   }
   return retval;
+}
+
+const ConfigurationScope*
+SimulationConfiguration::Implementation::getDVFSManagerScope() const {
+  if(const ConfigurationScope* twScope = getTimeWarpScope())
+    return twScope->findScope("DVFSManager");
+  return NULL;
 }
 
 const string &
@@ -930,6 +955,28 @@ SimulationConfiguration::Implementation::getOptFossilCollRiskFactor( double &ris
     }
   }
   return retval;
+}
+
+bool
+SimulationConfiguration::Implementation::getDVFSStringOption(string& opt, string& val) const {
+  if(const ConfigurationScope* cfmScope = getDVFSManagerScope()) {
+    if(cfmScope->findChoice(opt)) {
+      val = stringToUpper(cfmScope->getStringValue(opt));
+      return true;
+    }
+  }
+  return false;
+}
+
+bool
+SimulationConfiguration::Implementation::getDVFSIntOption(string& opt, int& val) const {
+  if(const ConfigurationScope* cfmScope = getDVFSManagerScope()) {
+    if(cfmScope->findChoice(opt)) {
+      val = cfmScope->getIntValue(opt);
+      return true;
+    }
+  }
+  return false;
 }
 
 const string

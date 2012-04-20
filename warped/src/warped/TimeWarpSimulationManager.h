@@ -3,6 +3,7 @@
 
 // See copyright notice in file Copyright in the root directory of this archive.
 
+#include "StopWatch.h"
 #include "warped.h"
 #include "SimulationStream.h"
 #include "CommunicatingEntity.h"
@@ -12,11 +13,13 @@
 #include "NegativeEvent.h"
 #include <map>
 #include <fstream>
+#include <time.h>
 
 class Application;
 class CommunicationManager;
 class GVTManager;
 class OptFossilCollManager;
+class DVFSManager;
 class OutputManager;
 class SchedulingData;
 class SchedulingManager;
@@ -384,6 +387,12 @@ public:
 	void restoreFileQueues(std::ifstream* outFile, const ObjectID &objId,
 			unsigned int restoreTime);
 
+	/// Returns the number of rollbacks
+	unsigned int getRollbacks() { return numberOfRollbacks; }
+
+  unsigned int getNumEventsExecuted();
+  unsigned int getNumEventsRolledBack();
+
 	//@} // End of Public Class Methods of TimeWarpSimulationManager.
 
 protected:
@@ -494,6 +503,9 @@ protected:
 	/// This is a handle to a termination manager
 	TerminationManager *myTerminationManager;
 
+	/// handle to the clock frequency manager
+	DVFSManager *myDVFSManager;
+
 	/// map of objects where each object can have several output file queues
 	vector<vector<TimeWarpSimulationStream*> > outFileQueues;
 
@@ -562,8 +574,6 @@ protected:
 	virtual bool executeObjects(const VTime &simulateUntil);
 
 	Application *myApplication;
-
-
 
 	//@} // End of Protected Class Methods of TimeWarpSimulationManager.
 

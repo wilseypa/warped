@@ -11,7 +11,10 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-TimeWarpMultiSet::TimeWarpMultiSet( TimeWarpSimulationManager *initSimulationManager ){
+TimeWarpMultiSet::TimeWarpMultiSet( TimeWarpSimulationManager *initSimulationManager )
+  :myNumCommittedEvents(0)
+  ,myNumRolledBackEvents(0) 
+  ,myNumExecutedEvents(0) {
    for(int i = 0; i < initSimulationManager->getNumberOfSimulationObjects(); i++){
      multiset<const Event*, receiveTimeLessThanEventIdLessThan> *objSet = 
        new multiset<const Event*, receiveTimeLessThanEventIdLessThan>;
@@ -155,6 +158,7 @@ TimeWarpMultiSet::getEvent(SimulationObject *object){
 
     // Remove from unprocessed queue and put in processed queue.
     processedObjEvents[objId]->push_back(retval);
+    myNumExecutedEvents++;
 
     // Update the lowest object set.
     if(lowObjPos[objId] != lowestObjEvents.end()){
@@ -229,6 +233,8 @@ TimeWarpMultiSet::fossilCollect(SimulationObject *object,
     object->reclaimEvent(*it);
     it++;
   }
+
+  myNumCommittedEvents += it - processedObjEvents[objId]->begin();
   processedObjEvents[objId]->erase(processedObjEvents[objId]->begin(), it);
 
   // Also remove the processed events that have been removed.
@@ -316,10 +322,13 @@ TimeWarpMultiSet::rollback( SimulationObject *object,
 
   // Go through the entire processed events queue and put any events with
   // a receive time greater than or equal to the rollback time back in the
-  // unprocessed queue.
+  // unprocessed queue, and subtract their effective work
   while(it != processedObjEvents[objId]->end() && (*it)->getReceiveTime() < rollbackTime){
     it++;
   }
+
+  myNumRolledBackEvents += processedObjEvents[objId]->end() - it;
+
   unprocessedObjEvents[objId]->insert(it, processedObjEvents[objId]->end());
   processedObjEvents[objId]->erase(it, processedObjEvents[objId]->end());
   

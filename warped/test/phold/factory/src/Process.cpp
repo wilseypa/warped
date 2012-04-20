@@ -4,18 +4,22 @@
 #include "../include/Process.h"
 #include "../include/ProcessState.h"
 #include "SimulationManager.h"
+#include "StopWatch.h"
 #include "IntVTime.h"
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <time.h>
 using namespace std;
 
 Process::Process(unsigned int procNr, string &name, unsigned int nrOfOutputs, 
                  vector<string> outputs, unsigned int stateSize, unsigned int numBalls,
-                 distribution_t dist, double initCompGrain, double seed): 
+                 distribution_t dist, double initCompGrain, double seed,
+                 int hotspotProb/*=1*/, int hotspotNum/*=0*/):
   processNumber(procNr), myObjectName(name),  numberOfOutputs(nrOfOutputs), 
   outputNames(outputs), sizeOfState(stateSize), numberOfTokens(numBalls), 
-  compGrain(initCompGrain), sourceDistribution(dist), first(seed), second(0.0) { 
+  compGrain(initCompGrain), sourceDistribution(dist), first(seed), second(0.0),
+  myHotspotProb(hotspotProb), myHotspot(hotspotNum) {
 }
 
 Process::~Process() { 
@@ -43,7 +47,8 @@ Process::initialize() {
    int eventNumberBase = numberOfTokens * processNumber;
    for(int i = 1; i <= numberOfTokens; i++ ) {
       IntVTime sendTime = dynamic_cast<const IntVTime&>(getSimulationTime());
-      PHOLDEvent *event = new PHOLDEvent(sendTime, sendTime + 1, this, this);
+      int ldelay = msgDelay();
+      PHOLDEvent *event = new PHOLDEvent(sendTime, sendTime + 1 + ldelay, this, this);
       event->eventNumber = eventNumberBase + i;
 
       receiveEvent(event);
@@ -78,11 +83,19 @@ Process::executeProcess(){
          myState->eventReceived();
 
          // Generate the destination for the event.
-         DiscreteUniform Dest(0, numberOfOutputs-1, myState->gen);
+         // probability distribution for the destination is uniform except for
+         // the hotspot, which has myHotspotProb times the probability of all
+         // other destinations
+         int maxOutput = numberOfOutputs + myHotspotProb - 2;
+         DiscreteUniform Dest(0, maxOutput, myState->gen);
          int myDestination = (int) Dest();
+         if(myDestination > numberOfOutputs - 1)
+           myDestination = myHotspot;
 
          ASSERT (myDestination < numberOfOutputs);
          SimulationObject *receiver = outputHandles[myDestination];
+
+         //f << outputNames[myDestination] << endl;
 
          // Generate the delay between the send and receive times.
          int ldelay = msgDelay();

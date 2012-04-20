@@ -14,8 +14,8 @@ using std::endl;
 SimulationObject::SimulationObject() : mySimulationManager(),
 				       myObjectID(0),
 				       localVirtualTime(0),
-                                       eventIdVal(0),
-                                       myState(0){}
+                       eventIdVal(0),
+                       myState(0){}
 
 SimulationObject::~SimulationObject(){
    delete myObjectID;

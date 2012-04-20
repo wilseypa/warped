@@ -19,8 +19,12 @@ RoundRobinPartitioner::partition( const vector<SimulationObject *> *objects,
   }
 
   unsigned int n = 0; 
+  unsigned int skew = 0;
   while( n < objects->size() ){
-    partitions[n % numLPs]->push_back( (*objects)[n] );
+//    if((n % numLPs) ==1 && ++skew % 2 == 1)
+//      partitions[0]->push_back( (*objects)[n] );
+//    else
+      partitions[n % numLPs]->push_back( (*objects)[n] );
     n++;
   }
 

@@ -39,7 +39,7 @@ protected:
 						      receiveTime( initRecvTime.clone() ),
 						      sender( new ObjectID(*(initSender->getObjectID())) ), 
 						      receiver( new ObjectID(*(initReceiver->getObjectID())) ),
-						      eventId( initSender->getNextEventId() ){ }
+                              eventId( initSender->getNextEventId() ){ }
   /**
      Constructor to be called by deserializers only.
   */
@@ -51,7 +51,7 @@ protected:
 							 receiveTime( initRecvTime.clone() ),
 							 sender( new ObjectID(initSender) ), 
 							 receiver( new ObjectID(initReceiver) ),
-							 eventId( eventIdVal ){}
+                             eventId( eventIdVal ){}
 
   /**
      Constructor available for copy constructors.

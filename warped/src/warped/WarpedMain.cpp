@@ -20,6 +20,7 @@
 #include "EventMessage.h"
 #include "GVTUpdateMessage.h"
 #include "InitializationMessage.h"
+#include "UsefulWorkMessage.h"
 #include "IntVTime.h"
 #include "MatternGVTMessage.h"
 #include "NegativeEventMessage.h"
@@ -105,6 +106,7 @@ WarpedMain::registerKernelDeserializers(){
   EventMessage::registerDeserializer();
   GVTUpdateMessage::registerDeserializer();
   InitializationMessage::registerDeserializer();
+  UsefulWorkMessage::registerDeserializer();
   IntVTime::registerDeserializer();
   MatternGVTMessage::registerDeserializer();
   NegativeEvent::registerDeserializer();

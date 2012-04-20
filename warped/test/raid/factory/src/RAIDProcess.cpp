@@ -3,6 +3,7 @@
 #include "../include/RAIDProcess.h"
 #include "../include/RAIDProcessState.h"
 #include "IntVTime.h"
+#include "TimeWarpSimulationManager.h"
 
 // maxdisks == # of total disks in the simulation
 RAIDProcess::RAIDProcess(string &myName, string &outName, int maxdisks,

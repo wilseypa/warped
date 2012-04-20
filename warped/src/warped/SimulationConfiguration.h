@@ -130,6 +130,10 @@ public:
 
   bool getOptFossilCollRiskFactor( double &riskFactor );
 
+  bool getDVFSStringOption(string, string&) const;
+
+  bool getDVFSIntOption(string, int&) const;
+
   /**
      Returns the binary name which started this execution.  Presumably we
      will use this binary on every node.
