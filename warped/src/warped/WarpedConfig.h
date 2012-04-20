@@ -66,7 +66,7 @@
 #define PACKAGE_VERSION "3.0"
 
 /* The size of `long ', as computed by sizeof. */
-#define SIZEOF_LONG_ 8
+#define SIZEOF_LONG_ 4
 
 /* The size of `long long ', as computed by sizeof. */
 #define SIZEOF_LONG_LONG_ 8
@@ -95,7 +95,7 @@
 #define USE_SOCKLEN_T 1
 
 /* Compile in TIMEWARP support */
-#define USE_TIMEWARP 1
+/* #undef USE_TIMEWARP */
 
 /* Version number of package */
 #define VERSION "3.0"
