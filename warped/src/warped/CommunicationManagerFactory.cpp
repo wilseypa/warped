@@ -30,8 +30,10 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
   ASSERT( parent != 0 );
   TimeWarpSimulationManager *mySimulationManager =
     dynamic_cast<TimeWarpSimulationManager *>( parent );
+#ifdef USE_TIMEWARP
   ThreadedTimeWarpSimulationManager *myThreadedSimulationManager =
       dynamic_cast<ThreadedTimeWarpSimulationManager *>( parent );
+#endif
 
   PhysicalCommunicationLayer *myPhysicalCommunicationLayer = NULL;
   Configurable *retval = 0;

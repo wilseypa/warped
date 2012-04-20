@@ -22,7 +22,7 @@ endif
 endif
 
 else
-libwarped_la_LIBADD = -lutils 
+libwarped_la_LIBADD = -lutils -lpthread
 endif
 
 WARPED_H_FILES = \
