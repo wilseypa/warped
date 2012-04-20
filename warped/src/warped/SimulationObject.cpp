@@ -15,9 +15,7 @@ SimulationObject::SimulationObject() : mySimulationManager(),
 				       myObjectID(0),
 				       localVirtualTime(0),
                        eventIdVal(0),
-                       myState(0),
-                       myEffectiveWork(0),
-                       myTotalWork(0){}
+                       myState(0){}
 
 SimulationObject::~SimulationObject(){
    delete myObjectID;

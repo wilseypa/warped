@@ -320,36 +320,12 @@ void TimeWarpSimulationManager::restoreFileQueues(ifstream* inFile,
 	}
 }
 
-double TimeWarpSimulationManager::effectiveUtilization() {
-    vector<SimulationObject*> *objs = getElementVector(localArrayOfSimObjPtrs);
-    vector<SimulationObject*>::iterator it = objs->begin();
-    double effectiveWork = 0;
-    double totalWork = 0;
-    for (; it != objs->end(); ++it) {
-        SimulationObject* o = *it;
-        effectiveWork += o->getEffectiveWork();
-        totalWork += o->getTotalWork();
-        o->resetEffectiveWork();
-    }
-    return effectiveWork / totalWork;
-}
-
-void TimeWarpSimulationManager::doDelay(int util) {
-    if(myDVFSManager)
-        myDVFSManager->delay(util);
-}
-
 unsigned int TimeWarpSimulationManager::getNumEventsExecuted() {
   return myEventSet->getNumEventsExecuted();
 }
 
 unsigned int TimeWarpSimulationManager::getNumEventsRolledBack() {
   return myEventSet->getNumEventsRolledBack();
-}
-
-bool TimeWarpSimulationManager::doEffectiveUtilization() {
-  return dynamic_cast<SimulatedDVFSManager*>(myDVFSManager) ||
-    (myDVFSManager && myDVFSManager->doEffectiveUtilization());
 }
 
 bool TimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {

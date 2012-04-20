@@ -218,8 +218,7 @@ DVFSManagerImplementationBase::fillUsefulWork(vector<double>& v) {
   v[mySimulationManagerID] =
      myUWM == ROLLBACKS ? getRollbacksForPeriod() :
      myUWM == ROLLBACK_FRACTION ? getRollbackFractionForPeriod() :
-     myUWM == EFFECTIVE_UTILIZATION ? 
-       mySimulationManager->effectiveUtilization() : 0;
+     myUWM == EFFECTIVE_UTILIZATION ? 0 : 0;
 }
 
 double

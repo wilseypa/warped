@@ -317,20 +317,6 @@ public:
    
   /// get a handle to a simulation input-output stream
   SimulationStream *getIOFStream(const string &filename);
-
-  // functions for effective work estimation
-  // based on reiher and jefferson (1990)
-  void addEffectiveWork(double work) {
-      myEffectiveWork += work;
-      myTotalWork += work;
-  }
-  void undoEffectiveWork(double work) { myEffectiveWork -= work; }
-  double getEffectiveWork() { return myEffectiveWork; }
-  double getTotalWork() { return myTotalWork; }
-  void resetEffectiveWork() {
-      myEffectiveWork = 0;
-      myTotalWork = 0;
-  }
    
   //@} // End of Public Class Methods of SimulationObject.
   void setSimulationTime( const VTime &newSimulationTime );
@@ -371,11 +357,6 @@ private:
 
   /// The eventId sequence numbers.
   unsigned int eventIdVal;
-
-  // functions for effective work estimation
-  // based on reiher and jefferson (1990)
-  double myEffectiveWork;
-  double myTotalWork;
    
    //@} // End of Private Class Attributes of SimulationObject.
 };

@@ -26,9 +26,6 @@ public:
     return eventId;
   }
 
-  void subtractEffectiveWork(SimulationObject* o) const { o->undoEffectiveWork(work); }
-  void setWork(double w) { work = w; }
-
   //@} // End of Event Public Class Methods.
 
 protected:
@@ -42,8 +39,7 @@ protected:
 						      receiveTime( initRecvTime.clone() ),
 						      sender( new ObjectID(*(initSender->getObjectID())) ), 
 						      receiver( new ObjectID(*(initReceiver->getObjectID())) ),
-                              eventId( initSender->getNextEventId() ),
-                              work(0){ }
+                              eventId( initSender->getNextEventId() ){ }
   /**
      Constructor to be called by deserializers only.
   */
@@ -55,8 +51,7 @@ protected:
 							 receiveTime( initRecvTime.clone() ),
 							 sender( new ObjectID(initSender) ), 
 							 receiver( new ObjectID(initReceiver) ),
-                             eventId( eventIdVal ),
-                             work(0){}
+                             eventId( eventIdVal ){}
 
   /**
      Constructor available for copy constructors.
@@ -69,8 +64,7 @@ protected:
                                                      receiveTime( initRecvTime.clone() ),
                                                      sender( new ObjectID(initSender) ),
                                                      receiver( new ObjectID(initReceiver) ),
-                                                     eventId( eventIdVal ),
-                                                     work(0){}
+                                                     eventId( eventIdVal ){}
   
 private:
   /**@name Private Class Attributes of Event */
@@ -89,10 +83,6 @@ private:
   const ObjectID *receiver;
   
   const EventId eventId;
-
-  // for effective work estimator
-  // reiher and jefferson (1990)
-  double work;
 
   //@} // End of Event Private Class Methods.
 };

@@ -8,7 +8,6 @@
 
 class VTime;
 class EventId;
-class SimulationObject;
 //class OptFossilCollManager;
 
 /** The abstract base class Event.  
@@ -121,12 +120,6 @@ public:
      work.
   */
   static bool compareEvents( const Event *, const Event * );
-
-  // for effective work estimator
-  // based on reiher and jefferson (1990)
-  // called when event is undone
-  virtual void subtractEffectiveWork(SimulationObject* o) const {}
-  virtual void setWork(double) {}
 
 private:
   // No longer using these for optimistic fossil collection.

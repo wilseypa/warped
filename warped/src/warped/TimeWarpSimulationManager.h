@@ -390,13 +390,8 @@ public:
 	/// Returns the number of rollbacks
 	unsigned int getRollbacks() { return numberOfRollbacks; }
 
-  // effective utilizaiton estimator, based on reiher and jefferson (1990)
-  double effectiveUtilization();
-  void doDelay(int);
-
   unsigned int getNumEventsExecuted();
   unsigned int getNumEventsRolledBack();
-  bool doEffectiveUtilization();
 
 	//@} // End of Public Class Methods of TimeWarpSimulationManager.
 

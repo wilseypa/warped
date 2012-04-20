@@ -319,22 +319,18 @@ TimeWarpMultiSet::rollback( SimulationObject *object,
 
   unsigned int objId = object->getObjectID()->getSimulationObjectID();
   vector<const Event*>::iterator it = processedObjEvents[objId]->begin();
-  vector<const Event *>::iterator newEnd = it;
 
   // Go through the entire processed events queue and put any events with
   // a receive time greater than or equal to the rollback time back in the
   // unprocessed queue, and subtract their effective work
-  for(; it != processedObjEvents[objId]->end(); ++it){
-    if((*it)->getReceiveTime() < rollbackTime)
-      newEnd++;
-    else if(object && mySimulationManager->doEffectiveUtilization())
-      (*it)->subtractEffectiveWork(object);
+  while(it != processedObjEvents[objId]->end() && (*it)->getReceiveTime() < rollbackTime){
+    it++;
   }
 
-  myNumRolledBackEvents += processedObjEvents[objId]->end() - newEnd;
+  myNumRolledBackEvents += processedObjEvents[objId]->end() - it;
 
-  unprocessedObjEvents[objId]->insert(newEnd, processedObjEvents[objId]->end());
-  processedObjEvents[objId]->erase(newEnd, processedObjEvents[objId]->end());
+  unprocessedObjEvents[objId]->insert(it, processedObjEvents[objId]->end());
+  processedObjEvents[objId]->erase(it, processedObjEvents[objId]->end());
   
   // Update the low object event.
   if(lowObjPos[objId] != lowestObjEvents.end()){

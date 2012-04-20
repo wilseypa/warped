@@ -2,7 +2,6 @@
 #include "../include/RAIDFork.h"
 #include "../include/RAIDForkState.h"
 #include "IntVTime.h"
-#include "TimeWarpSimulationManager.h"
 
 RAIDFork::RAIDFork(string &myName, int numOutputs, vector<string> outNames,
 		   int disks, int startDisk)  : 
@@ -44,12 +43,6 @@ RAIDFork::executeProcess() {
     recvEvent = (RAIDRequest *) getEvent();
     
     if ( recvEvent != NULL ) {
-      warped64_t util_start;
-      TimeWarpSimulationManager* twsm =
-              dynamic_cast<TimeWarpSimulationManager*>(mySimulationManager);
-      if(twsm)
-        util_start = rdtsc();
-
       myState = (RAIDForkState*) getState();
       newEvent = new RAIDRequest(sendTime, ldelay, this, this);
       *newEvent = *recvEvent; 
@@ -146,15 +139,6 @@ RAIDFork::executeProcess() {
 	  delete newEvent; // Get rid of last unsent message
 	} // if (read)
       } // if (sender == source)
-
-      if(twsm) {
-        int util = rdtsc() - util_start;
-        //cout << "fork: util = " << util << endl;
-        twsm->doDelay(util);
-        recvEvent->setWork(util);
-        addEffectiveWork(util);
-      }
-
     } // End of if (event != null)
   } // End of while "have more events" loop
 } // End of executePRocess()

@@ -4,7 +4,7 @@
 #include "../include/Process.h"
 #include "../include/ProcessState.h"
 #include "SimulationManager.h"
-#include "TimeWarpSimulationManager.h"
+#include "StopWatch.h"
 #include "IntVTime.h"
 #include <iostream>
 #include <sstream>
@@ -75,22 +75,10 @@ void
 Process::executeProcess(){  
    IntVTime sendTime = dynamic_cast<const IntVTime&>(getSimulationTime());
    
-/*   stringstream ss;
-   ss << "process" << processNumber << ".csv";
-   ofstream f(ss.str().c_str(), ios_base::app);
-*/
    do { 
       PHOLDEvent* recvEvent = (PHOLDEvent*) getEvent();
     
       if( recvEvent != NULL ){
-
-         // for calculating effective utilization, if we're using that
-         warped64_t util_start;
-         TimeWarpSimulationManager* twsm =
-                 dynamic_cast<TimeWarpSimulationManager*>(mySimulationManager);
-         if(twsm && twsm->doEffectiveUtilization())
-           util_start = rdtsc();
-
          ProcessState* myState = (ProcessState *) getState();
          myState->eventReceived();
 
@@ -119,14 +107,6 @@ Process::executeProcess(){
          newRequest->eventNumber = recvEvent->eventNumber;
 
          computationGrain();
-
-         // update our effective work and do delay if we're simulating freqs
-         if(twsm && twsm->doEffectiveUtilization()) {
-           int util = rdtsc() - util_start;
-           twsm->doDelay(util);
-           recvEvent->setWork(util);
-           addEffectiveWork(util);
-         }
 
          receiver->receiveEvent(newRequest);
          myState->eventSent();
