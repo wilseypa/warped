@@ -69,6 +69,7 @@ while true; do
     --simulateUntil) SIMULATE_UNTIL=$2; shift 2;;
     --simulate) MODEL_CONFIG=$2; shift 2;;
     --configuration) WARPED_CONFIG=$2; shift 2;;
+    --debug) WARPED_DEBUG=$2; shift;;
     --) shift; break;;
   *) echo "$1";;
   esac
@@ -108,9 +109,11 @@ fi
 
 CMD_PARAMS="-simulate $MODEL_CONFIG \
 -configuration $WARPED_CONFIG"
-if [ -n "$SIMULATE_UNTIL" ]
-then
+if [ -n "$SIMULATE_UNTIL" ]; then
   CMD_PARAMS="$CMD_PARAMS -simulateUntil $SIMULATE_UNTIL"
+fi
+if [ -n "$WARPED_DEBUG" ]; then
+  CMD_PARAMS="$CMD_PARAMS -debug"
 fi
 
 # build simulation command
