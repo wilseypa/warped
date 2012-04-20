@@ -35,7 +35,7 @@ while true; do
     --delete-csvs) DELETE_CSVS=1; shift;;
     --email-addr) EMAIL_ADDR=$2; shift 2;;
     --help) cat << EOF
-Usage: $(basename $0) [OPTION]...
+Usage: $(basename $0) [OPTION]... [--] WARPED executable and options
 
 Options:
   -d, --data-dir          path to the directory where simulation output 
