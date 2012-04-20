@@ -9,19 +9,19 @@
 # Run with --help to see list of options
 
 # defaults
-MPI_HOSTS=hosts
-MODEL_EXE=./pholdSim
-MODEL_CONFIG=phold/LargePHOLD
-WARPED_CONFIG=parallel.config
-DATADIR=measurements
+SCRIPT_DIR=`dirname $0`
+MPI_HOSTS="hosts"
+DATADIR="measurements"
+SETUP_SCRIPT="$SCRIPT_DIR/setup.sh"
 RUNS=10
 PAUSE=100
+CSVFILE=data.csv
 
-# get user-supplied arguments
-TEMP=`getopt -o d:n:p:e:f:m:w:s: -n "$0" \
-  -l help,model-exe:,hosts-file:model-config:,warped-config:,simulate-until: \
-  -l data-dir:,number-runs:,pause: \
-  -- "$@"`
+# get batch script arguments
+export POSIXLY_CORRECT=1
+TEMP=`getopt -o d:n:p:f:s: -n "$0" \
+  -l help,model-exe:,hosts-file:,data-dir:,number-runs:,pause:, \
+  -l parameters-file:,delete-csvs,email-addr:,setup-script: -- "$@"`
   
 eval set -- "$TEMP"
 while true; do
@@ -29,11 +29,11 @@ while true; do
     -d|--data-dir) DATADIR=${2%/}; shift 2;;
     -n|--number-runs) RUNS=$2; shift 2;;
     -p|--pause) PAUSE=$2; shift 2;;
-    -e|--model-exe) MODEL_EXE=$2; shift 2;;
     -f|--hosts-file) MPI_HOSTS=$2; shift 2;;
-    -m|--model-config) MODEL_CONFIG=$2; shift 2;;
-    -w|--warped-config) WARPED_CONFIG=$2; shift 2;;
-    -s|--simulate-until) SIMULATE_UNTIL=$2; shift 2;;
+    --parameters-file) PARAMS_FILE=$2; shift 2;;
+    --setup-script) SETUP_SCRIPT=$2; shift 2;;
+    --delete-csvs) DELETE_CSVS=1; shift;;
+    --email-addr) EMAIL_ADDR=$2; shift 2;;
     --help) cat << EOF
 Usage: $(basename $0) [OPTION]...
 
@@ -43,16 +43,34 @@ Options:
   -n, --number-runs       number of simulations to do [default=$RUNS]
   -p, --pause             pause interval in seconds between simulation runs
                           [default=$PAUSE]
-  -e, --model-exe         path to the model executable [defaut=$MODEL_EXE]
   -f, --hosts-file        path to the MPI hosts file [default=$MPI_HOSTS]
-  -m, --model-config      path to model configuration file
-                          [default=$MODEL_CONFIG]
-  -w, --warped-config     path to the WARPED configuration file
-                          [default=$WARPED_CONFIG]
-  -s, --simulate-until    GVT to simulate until (same as WARPED -simulateUntil)
+      --parameters-file   path to file containing comma-delimited set of 
+                          parameters
+      --setup-script      user-supplied script to set parameters.  for each line
+                          in parameters-file, this script will be called with 
+                          the parameter line on STDIN [default=$SETUP_SCRIPT]
+      --delete-csvs       delete intermediate lpX.csv files
+                          (use for large batches)
+      --email-addr        email address to send to when batch is complete
 EOF
       exit;;
     --) shift; break;;
+  esac
+done
+
+# get WARPED options
+# unfortunately these options must be kept in sync with WARPED code!
+MODEL_EXE="$1"
+TEMP=`getopt -a -l simulate:,configuration:,simulateUntil: -n "$0" -- "$@"`
+
+eval set -- "$TEMP"
+while true; do
+  case "$1" in
+    --simulateUntil) SIMULATE_UNTIL=$2; shift 2;;
+    --simulate) MODEL_CONFIG=$2; shift 2;;
+    --configuration) WARPED_CONFIG=$2; shift 2;;
+    --) shift; break;;
+  *) echo "$1";;
   esac
 done
 
@@ -63,18 +81,21 @@ if ! [[ "$RUNS" =~ ^[0-9]+$ ]]; then
   ERROR="${ERROR}error: invalid # runs \"$RUNS\"\n"; fi
 if ! [[ "$PAUSE" =~ ^[0-9]+$ ]]; then 
   ERROR="${ERROR}error: invalid pause interval $PAUSE\n"; fi
-if [ ! -x "$MODEL_EXE" ]; then 
-  ERROR="${ERROR}error: model executable $MODEL_EXE not found\n"; fi
-if [ ! -e "$MODEL_CONFIG" ]; then 
-  ERROR="${ERROR}error: model configuration file $MODEL_CONFIG not found\n"; fi
-if [ ! -e "$WARPED_CONFIG" ]; then
-  ERROR="${ERROR}error: WARPED configuration file $WARPED_CONFIG not found\n"; fi
 if [ ! -e "$MPI_HOSTS" ]; then
   ERROR="${ERROR}error: hosts file $MPI_HOSTS not found\n"; fi
-if [ -n "$SIMULATE_UNTIL" ] && (! [[ "$SIMULATE_UNTIL" =~ ^[0-9]+$ ]]); then 
-  ERROR="${ERROR}error: invalid simulate-until \"$SIMULATE_UNTIL\"\n"; fi
+if [ ! -e "$PARAMS_FILE" ] || [ ! -e "$SETUP_SCRIPT" ]; then
+  if [ -n "$PARAMS_FILE" ]; then
+    ERROR="${ERROR}error: parameters file given but $PARAMS_FILE and/or " \
+      "$SETUP_SCRIPT do not exist"
+  fi
+else
+  HAVE_PARAMS=1
+fi
   
 if [ -n "$ERROR" ]; then echo -e "${ERROR}exiting."; exit; fi
+
+EMAIL_SUBJECT="batch simulation complete"
+EMAIL_BODY="results are in $DATADIR/$CSVFILE"
 
 PHYSICAL_LAYER=`grep -P "^\s*PhysicalLayer" "$WARPED_CONFIG" | sed "s/.*:\s*//g" | sed 's/\s*$//'`
 
@@ -117,38 +138,88 @@ directory to use TCPSelect"
     ;;
 esac
 
-for i in `seq 1 "$RUNS"`; do
-  RUN=`printf "%02d" $i`
+# print header
+if [ -n "$HAVE_PARAMS" ]; then
+  head -n 1 "$PARAMS_FILE" | tr -d "\n" >> "$DATADIR/$CSVFILE"
+  echo "runtime,rollbacks,efficiency,eventrate" >> "$DATADIR/$CSVFILE"
+fi
 
-  # do simulation run
-  echo "running simulation #$RUN"
-  $CMD
+for p in `tail -n+2 "$PARAMS_FILE" 2>/dev/null || echo 0`; do
+  INTERMEDIATEDIR="${DATADIR}"
+  if [ -n "$HAVE_PARAMS" ]; then
+    PARAMS=(${p//,/ })
 
-  # extract runtime and rollback info from the CSVs
-  RUNTIME=0
-  let "ROLLBACKS=0"
-  for f in *.csv
-  do
-    LINE=`tail -n 1 $f`
-    RUNTIME=${LINE%\,*}
-    let "ROLLBACKS += ${LINE#*\,}"
-  done
-  echo "$RUNTIME,$ROLLBACKS" >> "$DATADIR/data.csv"
+    # make changes to input files
+    echo "$p" | "$SETUP_SCRIPT"
 
-  # build directory structure
-  CSVDIR="$DATADIR/$RUN"
-  if [ ! -d "$CSVDIR" ]
-  then
-    mkdir "$CSVDIR"
+    # build directory structure
+    if [ -z "$DELETE_CSVS" ]; then
+      INTERMEDIATEDIR="${INTERMEDIATEDIR}/"
+      for param in "${PARAMS[@]}"; do
+        INTERMEDIATEDIR="${INTERMEDIATEDIR}${param}_"
+      done
+      INTERMEDIATEDIR="${INTERMEDIATEDIR%?}"
+      if [ ! -d "$INTERMEDIATEDIR" ]; then
+        mkdir "$INTERMEDIATEDIR"
+      fi
+    fi
   fi
 
-  # copy the CSVs to a dir for their run
-  mv *.csv "$CSVDIR"
+  for i in `seq 1 "$RUNS"`; do
+    RUN=`printf "%02d" $i`
 
-  # let the CPU cool down for $PAUSE seconds
-  if [ "$i" -ne "$RUNS" ]; then
+    # do simulation run
+    echo "running simulation #$RUN"
+    $CMD
+
+    # extract runtime and rollback info from the CSVs
+    let "ROLLBACKS=0"
+    let "COMMITTED=0"
+    let "EXECUTED=0"
+    for f in lp*.csv; do
+      LINE=`tail -n 1 $f`
+      ARR=(${LINE//,/ })
+      RUNTIME="${ARR[0]}"
+      let "ROLLBACKS += ${ARR[1]}"
+      let "COMMITTED += ${ARR[2]}"
+      let "EXECUTED += ${ARR[3]}"
+    done
+    EFFICIENCY=`echo – | awk "{print $COMMITTED / $EXECUTED}"`
+    EVENTRATE=`echo - | awk "{print $COMMITTED / $RUNTIME}"`
+
+    if [ -n "$HAVE_PARAMS" ]; then
+      for param in "${PARAMS[@]}"; do
+        echo -n "$param," >> "$DATADIR/$CSVFILE"
+      done
+    fi
+    echo "$RUNTIME,$ROLLBACKS,$EFFICIENCY,$EVENTRATE" >> "$DATADIR/$CSVFILE"
+
+    # build directory structure
+    if [ -z "$DELETE_CSVS" ]; then
+      CSVDIR="$INTERMEDIATEDIR/$RUN"
+      if [ ! -d "$CSVDIR" ]; then
+        mkdir "$CSVDIR"
+      fi
+
+      # copy the CSVs to a dir for their run
+      mv lp*.csv "$CSVDIR"
+    else
+      rm -f lp*.csv
+    fi
+
+    if grep -iq "temperature above threshold" /var/log/kern.log; then
+      EMAIL_SUBJECT="simulation batch terminated"
+      EMAIL_BODY="detected kernel throttling CPU freq due to temperatures above threshold"
+      break 2
+    fi
+
+    # let the CPU cool down for $PAUSE seconds
     echo "waiting $PAUSE seconds before next simulation run..."
     sleep $PAUSE
-  fi
 
+  done
 done
+
+if [ -n "$EMAIL_ADDR" ]; then
+  echo "$EMAIL_BODY" | mailx -s \ "$EMAIL_SUBJECT" -- "$EMAIL_ADDR"
+fi
