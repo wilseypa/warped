@@ -61,7 +61,8 @@ done
 # get WARPED options
 # unfortunately these options must be kept in sync with WARPED code!
 MODEL_EXE="$1"
-TEMP=`getopt -a -l simulate:,configuration:,simulateUntil: -n "$0" -- "$@"`
+TEMP=`getopt -a -l debug,simulate:,configuration:,simulateUntil: \
+  -n "$0" -- "$@"`
 
 eval set -- "$TEMP"
 while true; do
