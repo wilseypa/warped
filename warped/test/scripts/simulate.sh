@@ -145,7 +145,7 @@ esac
 # print header
 if [ -n "$HAVE_PARAMS" ]; then
   head -n 1 "$PARAMS_FILE" | tr -d "\n" >> "$DATADIR/$CSVFILE"
-  echo "runtime,rollbacks,efficiency,eventrate" >> "$DATADIR/$CSVFILE"
+  echo ",runtime,rollbacks,efficiency,eventrate" >> "$DATADIR/$CSVFILE"
 fi
 
 for p in `tail -n+2 "$PARAMS_FILE" 2>/dev/null || echo 0`; do
