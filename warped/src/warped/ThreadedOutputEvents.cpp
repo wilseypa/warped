@@ -128,8 +128,10 @@ ThreadedOutputEvents::getEventsSentAtOrAfterAndRemove(const VTime &searchTime,
 
 		if (out == outputEventsLocal.begin() && (*out)->getMainTime()
 				>= searchTime) {
-			retval->push_back((*out)->getElement());
-			outputEventsLocal.erase(out);
+            if ((*out)->getElement()->getSender()
+                    != (*out)->getElement()->getReceiver())
+                retval->push_back((*out)->getElement());
+            outputEventsLocal.erase(out);
 		}
 	}
 	this->releaseLocalLock(threadID);
