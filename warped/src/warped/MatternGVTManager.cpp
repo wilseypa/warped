@@ -63,13 +63,11 @@ void MatternGVTManager::calculateGVTInfo(const VTime &receiveTime) {
 // This is called before sending an event to a remote simulation manager
 const string MatternGVTManager::getGVTInfo(unsigned int srcSimMgr, unsigned int destSimMgr,
                                            const VTime &sendTime) {
-  string retval;
   //The timestamp information will be sent with the event, the color
   //is the only information stored in GVTInfo
   int tokenColor = objectRecord->getColor();
-  ostringstream stream;
-  stream << tokenColor;
-  retval = stream.str();
+  char c[2];
+  sprintf(c,"%d", tokenColor);
 
   if(tokenColor == WHITE){
     //Keep a count of all messages sent while the GVT Token is white
@@ -81,7 +79,7 @@ const string MatternGVTManager::getGVTInfo(unsigned int srcSimMgr, unsigned int 
     const VTime *minimumTime = (&sendTime);
     objectRecord->setMinTimeStamp(*minimumTime);
   }
-  return retval;
+  return c;
 }
 
 //This is called when receiving a remote event
