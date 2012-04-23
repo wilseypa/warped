@@ -85,13 +85,6 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
     trueFalseValues[i] = val == "TRUE";
   }
 
-  if( geteuid() !=  0 ) {
-    stringstream err;
-    err << "DVFSManager: To use DVFS, WARPED "
-        << " must be run as root. Aborting simulation." << endl;
-    mySimulationManager->shutdown(err.str());
-  }
-
   if(type == "REAL" || type == "SIMULATED") {
     cout << "("
          << mySimulationManager->getSimulationManagerID()
