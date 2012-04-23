@@ -4,6 +4,7 @@
 #include "../include/RAIDRequest.h"
 #include "../include/RAIDDisk.h"
 #include "../include/RAIDDiskState.h"
+#include "SimulationManager.h"
 #include "IntVTime.h"
 
 RAIDDisk::RAIDDisk(string &myName, DISK_TYPE theDisk) :
@@ -37,11 +38,7 @@ RAIDDisk::RAIDDisk(string &myName, DISK_TYPE theDisk) :
 		sectorsPerTrack = 48;
 		break;
 	}
-    lastEventTime = new warped64_t[20];
-    for(int i=0;i<20;i++)
-    {
-        *(lastEventTime+i) = 0;
-    }
+
 	//cout << "Initial LastEvent Time for the Disk = " << lastEventTime;
 } // End of RAIDDisk()
 
@@ -50,9 +47,16 @@ RAIDDisk::~RAIDDisk() {
 }
 
 void RAIDDisk::initialize() {
+    int numObjects = mySimulationManager->getNumberOfSimulationObjects();
+    lastEventTime = new warped64_t[numObjects];
+    for(int i=0;i<numObjects;i++)
+    {
+        *(lastEventTime+i) = 0;
+    }
 }
 
 void RAIDDisk::finalize() {
+    delete[] lastEventTime;
 }
 
 void RAIDDisk::executeProcess() {
