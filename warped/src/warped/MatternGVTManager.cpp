@@ -86,9 +86,7 @@ const string MatternGVTManager::getGVTInfo(unsigned int srcSimMgr, unsigned int 
 void MatternGVTManager::updateEventRecord(const string &infoStream, unsigned int receivingSimMgr){
   // for mattern only color information will be present in the
   // info stream received from the kernel
-  istringstream inputStream(infoStream);
-  int tokenColor;
-  inputStream >> tokenColor;
+  int tokenColor = atoi(infoStream.c_str());
 
   if(tokenColor == WHITE) {
     objectRecord->decrementNumberOfWhiteMessages();
