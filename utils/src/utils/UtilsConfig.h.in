@@ -10,4 +10,7 @@
 /* Define to 1 if you have the <hash_map> header file. */
 #undef HAVE_HASH_MAP
 
+/* Define to 1 if you have the <tr1/unordered_map> header file. */
+#undef HAVE_TR1_UNORDERED_MAP
+
 #endif

@@ -20,11 +20,21 @@ using __gnu_cxx::hash;
 #endif*/
 #include "StringUtilities.h"
 
+#ifdef HAVE_TR1_UNORDERED_MAP
 #include <tr1/unordered_map>
+#else
+#include <unordered_map>
+#endif
+
 #include <string>
 #include <vector>
 
+#ifdef HAVE_TR1_UNORDERED_MAP
 using std::tr1::unordered_map;
+#else
+using std::unordered_map;
+#endif
+
 using std::string;
 using std::vector;
 /*
