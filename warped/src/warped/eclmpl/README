@@ -1,0 +1,4 @@
+The Experimental Computing Laboratory Message Passing Library (ECLMPL)
+
+This directory contains the sources for our own message passing libraries 
+and wrappers for message passing libraries such as MPL.
