@@ -36,6 +36,8 @@ AC_ARG_ENABLE(timewarp,
  esac],[timewarp=false])
  AM_CONDITIONAL(USE_TIMEWARP, test $timewarp = true)
 
+dnl Find the tr1/unordered_map header.
+AC_CHECK_HEADERS([tr1/unordered_map], [break])
 
 havempi=no
 havempich=no

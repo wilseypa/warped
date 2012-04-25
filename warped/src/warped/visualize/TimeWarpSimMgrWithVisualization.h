@@ -5,7 +5,6 @@
 
 #include <warped/TimeWarpSimulationManager.h>
 
-using std::tr1::unordered_map;
 using std::string;
 
 // the new visualization component that sits on top of the

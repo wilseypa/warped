@@ -2,12 +2,17 @@
 #define DESERIALIZER_MANAGER_H
 
 // See copyright notice in file Copyright in the root directory of this archive.
-
+#include "warped.h"
 #include<string>
 using std::string;
 
+#ifdef HAVE_TR1_UNORDERED_MAP
 #include<tr1/unordered_map>
 using std::tr1::unordered_map;
+#else
+#include <unordered_map>
+using std::unordered_map;
+#endif
 
 class Deserializer;
 class Serializable;

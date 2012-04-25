@@ -7,8 +7,14 @@
 #include <fstream>
 #include "SimulationManager.h"
 
+#ifdef HAVE_TR1_UNORDERED_MAP
 #include<tr1/unordered_map>
 using std::tr1::unordered_map;
+#else
+#include <unordered_map>
+using std::unordered_map;
+#endif
+
 /** The base class that implements a SimulationManager.
 
     The SimulationManagerImplementationBase class is the base class

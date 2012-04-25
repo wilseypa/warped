@@ -8,8 +8,13 @@
 #include "eclmpl/PhysicalCommunicationLayer.h"
 #include "Configurable.h"
 
+#ifdef HAVE_TR1_UNORDERED_MAP
 #include<tr1/unordered_map>
 using std::tr1::unordered_map;
+#else
+#include <unordered_map>
+using std::unordered_map;
+#endif
 
 class KernelMessage;
 class SimulationObject;
