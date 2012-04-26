@@ -1,5 +1,6 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
+#include "warped.h"
 #include "DVFSManagerImplementationBase.h"
 #include "TimeWarpSimulationManager.h"
 #include <set>
@@ -85,7 +86,12 @@ void
 DVFSManagerImplementationBase::configure(
         SimulationConfiguration &configuration) {
   registerWithCommunicationManager();
+#ifdef HAVE_SCHED_GETCPU
   myCPU = sched_getcpu();
+#else
+  cerr << "sched_getcpu() required to use DVFS" << endl;
+  abort();
+#endif
   setGovernorMode("userspace");
   populateAvailableFrequencies();
 }

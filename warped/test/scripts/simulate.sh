@@ -124,9 +124,7 @@ case $PHYSICAL_LAYER in
     ;;
   TCPSelect)
     # if using TCPSelect, the simulation must be run from the home directory
-    # and we have to make sure the SSH_COMMAND environment variable is set
     cd
-    export SSH_COMMAND=/usr/bin/ssh
 
     # unfortunately, this file name must be kept in sync with WARPED code
     # DO NOT CHANGE

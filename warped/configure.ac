@@ -58,18 +58,18 @@ dnl Check if we're configuring with --with-ssh, e.g. --with-ssh=/usr/bin/ssh
 AC_ARG_WITH(ssh, AS_HELP_STRING([--with-ssh],[location of ssh]), 
  [AC_MSG_CHECKING(for $withval)
     if test -f $withval; then
-        AC_DEFINE( SSH_COMMAND, $withval )
+        AC_DEFINE_UNQUOTED( SSH_COMMAND, $withval )
         AC_MSG_RESULT(yes)
     else
         AC_MSG_RESULT(no)
         AC_MSG_ERROR(Couldn't find ${withval} and you specified --with-ssh=${withval}. You need to specify a correct path to ssh.)
     fi]
  , 
- [AC_PATH_PROG(SSH_COMMAND, ssh)
-    if test $SSH_PATH = x; then
+ [AC_PATH_PROG(ssh_path, ssh)
+    if test x$ssh_path = x; then
         AC_MSG_ERROR(You need to specify a correct path to ssh with the configure option --with-ssh=.)
     else
-		AC_DEFINE( SSH_COMMAND, $SSH_PATH )
+		AC_DEFINE_UNQUOTED( SSH_COMMAND, $ssh_path )
    fi]
 )
 
@@ -119,6 +119,12 @@ case $found_sockopt_type in
 	AC_DEFINE([USE_SOCKLEN_T], 1)
      ;;
 esac
+
+have_getcpu=false
+AH_TEMPLATE(HAVE_SCHED_GETCPU, [Defines whether sched_getcpu function exists])
+AC_CHECK_FUNC([sched_getcpu], [AC_DEFINE([HAVE_SCHED_GETCPU], [1])]
+  have_getcpu=true)
+AM_CONDITIONAL(USE_DVFS, test x$have_getcpu = xtrue)
 
 AH_TEMPLATE(USE_CHAR_FOR_VOID,
 	[Solaris 7:   int setsockopt(int,int,int,const void *, int );
