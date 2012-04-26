@@ -176,6 +176,8 @@ ostream &operator<<( ostream &os, SEVERITY severity ){
   return os;
 }
 
+#if defined (__i386) || defined (__x86_64)
+
 // from http://en.wikipedia.org/wiki/Time_Stamp_Counter#C.2B.2B
 extern "C" {
   __inline__ warped64_t rdtsc(void) {
@@ -197,5 +199,5 @@ extern "C" {
       return (warped64_t)hi << 32 | lo;
   }
 }
-
+#endif
 #endif
