@@ -463,7 +463,8 @@ TimeWarpMultiSet::eventHasBeenProcessed(SimulationObject* o, const Event* e) {
     vector<const Event*>::reverse_iterator it = processedObjEvents[objId]->rbegin();
 
     for(;it != processedObjEvents[objId]->rend(); ++it) {
-        if((*it)->getEventId() == e->getEventId())
+        if((*it)->getEventId() == e->getEventId() &&
+                (*it)->getSender() == e->getSender())
             return true;
     }
     return false;
