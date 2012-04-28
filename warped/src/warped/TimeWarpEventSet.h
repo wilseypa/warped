@@ -162,6 +162,8 @@ public:
   virtual unsigned int getNumEventsRolledBack() { return 0; }
   virtual unsigned int getNumEventsCommitted() { return 0; }
 
+  virtual bool eventHasBeenProcessed(SimulationObject* o, const Event* e) { return false; }
+
   //@} // End of Public Class Methods of TimeWarpEventSet.
 
 protected:

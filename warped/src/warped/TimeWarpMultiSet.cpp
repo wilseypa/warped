@@ -89,7 +89,8 @@ TimeWarpMultiSet::handleAntiMessage( SimulationObject *object, const NegativeEve
   multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator it;
   it = unprocessedObjEvents[objId]->begin();
 
-  while(it != unprocessedObjEvents[objId]->end() && !eventWasRemoved){
+  while(it != unprocessedObjEvents[objId]->end() &&
+        !eventWasRemoved) {
     if((*it)->getSender() == event->getSender() &&
        (*it)->getEventId() == event->getEventId()){
       
@@ -322,7 +323,7 @@ TimeWarpMultiSet::rollback( SimulationObject *object,
 
   // Go through the entire processed events queue and put any events with
   // a receive time greater than or equal to the rollback time back in the
-  // unprocessed queue, and subtract their effective work
+  // unprocessed queue
   while(it != processedObjEvents[objId]->end() && (*it)->getReceiveTime() < rollbackTime){
     it++;
   }
@@ -454,4 +455,16 @@ TimeWarpMultiSet::print(ostream &out){
       out << "Insert Position: " << **(insertObjPos[i]) << endl;
     }
   }
+}
+
+bool
+TimeWarpMultiSet::eventHasBeenProcessed(SimulationObject* o, const Event* e) {
+    unsigned int objId = o->getObjectID()->getSimulationObjectID();
+    vector<const Event*>::reverse_iterator it = processedObjEvents[objId]->rbegin();
+
+    for(;it != processedObjEvents[objId]->rend(); ++it) {
+        if((*it)->getEventId() == e->getEventId())
+            return true;
+    }
+    return false;
 }
