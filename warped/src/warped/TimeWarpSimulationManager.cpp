@@ -449,50 +449,43 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 
 void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 	StopWatch stopwatch;
+
+  cout << "SimulationManager(" << mySimulationManagerID
+                  << "): Starting simulation - End time: " << simulateUntil << ")"
+                  << endl;
+
 	stopwatch.start();
+  while (!simulationComplete(simulateUntil)) {
+          getMessages();
+          while (inRecovery) {
+                  getMessages();
+          }
 
-    ostringstream oss;
-    oss << "lp" << mySimulationManagerID << ".csv";
-    ofstream file(oss.str().c_str(), ios_base::app);
-    if(file) {
-        file << " -simulateUntil " << simulateUntil << endl;
-        file.close();
-    }
+          ASSERT(mySchedulingManager != NULL);
+          if (executeObjects(simulateUntil)) {
+                  myTerminationManager->setStatusActive();
+          } else if (getNumberOfSimulationManagers() == 1) {
+                  dynamic_cast<SingleTerminationManager*> (myTerminationManager)->simulationComplete();
+          } else {
+                  myTerminationManager->setStatusPassive();
+          }
+  }
+  stopwatch.stop();
 
+  cout << "(" << getSimulationManagerID() << ") Simulation complete ("
+                  << stopwatch.elapsed() << " secs), Number of Rollbacks: ("
+                  << numberOfRollbacks << ")" << endl;
 
-    cout << "SimulationManager(" << mySimulationManagerID
-                    << "): Starting simulation - End time: " << simulateUntil << ")"
-                    << endl;
+  int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
+  int numEventsExecuted = myEventSet->getNumEventsExecuted();
 
-    while (!simulationComplete(simulateUntil)) {
-            getMessages();
-            while (inRecovery) {
-                    getMessages();
-            }
-
-            ASSERT(mySchedulingManager != NULL);
-            if (executeObjects(simulateUntil)) {
-                    myTerminationManager->setStatusActive();
-            } else if (getNumberOfSimulationManagers() == 1) {
-                    dynamic_cast<SingleTerminationManager*> (myTerminationManager)->simulationComplete();
-            } else {
-                    myTerminationManager->setStatusPassive();
-            }
-    }
-    stopwatch.stop();
-
-    cout << "(" << getSimulationManagerID() << ") Simulation complete ("
-                    << stopwatch.elapsed() << " secs), Number of Rollbacks: ("
-                    << numberOfRollbacks << ")" << endl;
-
-    int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
-    int numEventsExecuted = myEventSet->getNumEventsExecuted();
-
-    file.open(oss.str().c_str(), ios_base::app);
-    if(file)
-        file << stopwatch.elapsed() << ',' << numberOfRollbacks
-             << ',' << numEventsExecuted - numEventsRolledBack
-             << ',' << numEventsExecuted << endl;
+  ostringstream oss;
+  oss << "lp" << mySimulationManagerID << ".csv";
+  ofstream file(oss.str().c_str(), ios_base::app);
+  if(file)
+      file << stopwatch.elapsed() << ',' << numberOfRollbacks
+           << ',' << numEventsExecuted - numEventsRolledBack
+           << ',' << numEventsExecuted << endl;
 
 
 	// This is commented out by default. It is used along with the testParallelWarped script
@@ -1342,18 +1335,17 @@ void TimeWarpSimulationManager::configure(
         numberOfSimulationManagers - 1);
 	}
 
-    ostringstream oss;
-    oss << "lp" << mySimulationManagerID << ".csv";
-    ofstream file(oss.str().c_str(), ios_base::app);
-
-    if(file) {
-        if(myDVFSManager)
-            file << *myDVFSManager;
-        const vector<string>& args = configuration.getArguments();
-        vector<string>::const_iterator it(args.begin());
-        for(; it != args.end(); ++it)
-          file << " " << *it;
-    }
+  ostringstream oss;
+  oss << "lp" << mySimulationManagerID << ".csv";
+  ofstream file(oss.str().c_str());
+  if(file) {
+      if(myDVFSManager)
+          file << *myDVFSManager;
+      const vector<string>& args = configuration.getArguments();
+      vector<string>::const_iterator it(args.begin());
+      for(; it != args.end(); ++it)
+        file << " " << *it;
+  }
 
 }
 
