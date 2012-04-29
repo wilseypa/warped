@@ -89,8 +89,7 @@ TimeWarpMultiSet::handleAntiMessage( SimulationObject *object, const NegativeEve
   multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator it;
   it = unprocessedObjEvents[objId]->begin();
 
-  while(it != unprocessedObjEvents[objId]->end() &&
-        !eventWasRemoved) {
+  while(it != unprocessedObjEvents[objId]->end() && !eventWasRemoved){
     if((*it)->getSender() == event->getSender() &&
        (*it)->getEventId() == event->getEventId()){
       
@@ -455,17 +454,4 @@ TimeWarpMultiSet::print(ostream &out){
       out << "Insert Position: " << **(insertObjPos[i]) << endl;
     }
   }
-}
-
-bool
-TimeWarpMultiSet::eventHasBeenProcessed(SimulationObject* o, const Event* e) {
-    unsigned int objId = o->getObjectID()->getSimulationObjectID();
-    vector<const Event*>::reverse_iterator it = processedObjEvents[objId]->rbegin();
-
-    for(;it != processedObjEvents[objId]->rend(); ++it) {
-        if((*it)->getEventId() == e->getEventId() &&
-                (*it)->getSender() == e->getSender())
-            return true;
-    }
-    return false;
 }

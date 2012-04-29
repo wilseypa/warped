@@ -377,10 +377,8 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 					nextEvent->getReceiveTime());
 		}
 
-        if(nextObject->getSimulationTime() != nextEvent->getReceiveTime()) {
-            nextObject->setSimulationTime(nextEvent->getReceiveTime());
-            myStateManager->saveState(nextEvent->getReceiveTime(), nextObject);
-        }
+		nextObject->setSimulationTime(nextEvent->getReceiveTime());
+		myStateManager->saveState(nextEvent->getReceiveTime(), nextObject);
 
 		/* Moving the function nextObject->executeProcess() after the calculateGVT() function
 		 * of the SimulationManager with Id = 0. This is done to make LVT Calculation independent
@@ -579,7 +577,7 @@ void TimeWarpSimulationManager::handleEventReceiver(
 void TimeWarpSimulationManager::handleLocalEvent(const Event *event) {
 	SimulationObject *receiver = getObjectHandle(event->getReceiver());
 	//  if( !myEventSet->inThePast( event ) ){
-    if (event->getReceiveTime() >= receiver->getSimulationTime()) {
+	if (event->getReceiveTime() > receiver->getSimulationTime()) {
 		myEventSet->insert(event);
 	} else {
 		rollback(receiver, event->getReceiveTime());
@@ -613,27 +611,21 @@ void TimeWarpSimulationManager::cancelLocalEvents(const vector<
 		const NegativeEvent *> &eventsToCancel) {
 	const NegativeEvent *curEvent = NULL;
 	const VTime *lowTime = &(eventsToCancel[0]->getReceiveTime());
-    SimulationObject *receiver = getObjectHandle(
-            eventsToCancel[0]->getReceiver());
-    bool doRollback = false;
 
 	//Find the lowest receive time to determine if rollback needs to occur.
 	for (vector<const NegativeEvent*>::const_iterator it =
 			eventsToCancel.begin(); it != eventsToCancel.end(); it++) {
-        curEvent = *it;
-        if(curEvent->getReceiveTime() == receiver->getSimulationTime() &&
-                myEventSet->eventHasBeenProcessed(receiver, curEvent)) {
-            doRollback = true;
-        }
-
+		curEvent = *it;
 		if (*lowTime > curEvent->getReceiveTime()) {
 			//delete lowTime;
 			lowTime = &(curEvent->getReceiveTime());
 		}
 	}
 
+	SimulationObject *receiver = getObjectHandle(
+			eventsToCancel[0]->getReceiver());
 	ASSERT( receiver != 0 );
-    if (doRollback || *lowTime < receiver->getSimulationTime()) {
+	if (*lowTime <= receiver->getSimulationTime()) {
 		rollback(receiver, *lowTime);
 	}
 
@@ -1345,6 +1337,7 @@ void TimeWarpSimulationManager::configure(
       vector<string>::const_iterator it(args.begin());
       for(; it != args.end(); ++it)
         file << " " << *it;
+      file << endl;
   }
 
 }
