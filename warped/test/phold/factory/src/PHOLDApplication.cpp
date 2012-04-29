@@ -119,8 +119,8 @@ PHOLDApplication::getSimulationObjects(){
   if(generateObjs){
     configFile >> stateSize >> grain >> numOutputs;
     
-    if(numOutputs > numObjects){
-      cerr << "ERROR: The number of outputs per object must be less than or equal to the "
+    if(numOutputs >= numObjects){
+      cerr << "ERROR: The number of outputs per object must be less than the "
            << "total number of objects.\nAborting Simulation.\n";
       abort();
     }
@@ -139,18 +139,21 @@ PHOLDApplication::getSimulationObjects(){
 
       // The outputs will be the next 'numOutputs' names that follow the current
       // object name. This ensures that all objects have the same number of outputs.
-      int hotspotNum = 0;
+      int hotspotNum = -1;
       vector<string> outputNames;
       for( int j = 0; j < numOutputs; j++){
         int objnum = (j + i + 1) % numObjects;
-        if(objnum == 0)
-          hotspotNum = j;
-         outputNames.push_back(objNames[(j+i+1)%numObjects]);
-      }
+        if(objnum == 0) {
+          // save this index as a hotspot if i != 0 (not the hotspot)
+          hotspotNum = i != 0 ? j : -1;
+        }
+         outputNames.push_back(objNames[objnum]);
+      } 
 
       retval->push_back( new Process( i, objNames[i], numOutputs, outputNames,
                                       stateSize, msgDen, dist, grain, seed,
-                                      hotspotProb, hotspotNum ) );
+                                      hotspotNum == -1 ? 1 : hotspotProb,
+                                      hotspotNum ) );
     }
   }
   else{
