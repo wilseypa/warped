@@ -55,19 +55,12 @@ DVFSManagerImplementationBase::poll() {
 
 bool
 DVFSManagerImplementationBase::checkMeasurementPeriod() {
-/*  if (isMaster() && ++myMeasurementCounter == myMeasurementPeriod) {
-    myMeasurementCounter = 0;
-    return true;
-  }
-  return false;
-  */
   if(isMaster() && myStopwatch.elapsed() > myMeasurementPeriod) {
     myStopwatch.reset();
     myStopwatch.start();
     return true;
   }
   return false;
-
 }
 
 void

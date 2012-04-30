@@ -15,6 +15,7 @@ RealDVFSManager::RealDVFSManager(TimeWarpSimulationManager* simMgr,
                                  bool debug,
                                  OptimizationGoal og,
                                  UsefulWorkMetric uwm)
+
   :DVFSManagerImplementationBase(simMgr,
                                  measurementPeriod,
                                  firsize,
@@ -31,9 +32,9 @@ RealDVFSManager::poll() {
     if(isMaster()) {
       int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
       UsefulWorkMessage* msg = new UsefulWorkMessage(mySimulationManagerID,
-                                                       dest,
-                                                       myNumSimulationManagers,
-                                                       UsefulWorkMessage::COLLECT);
+                                                     dest,
+                                                     myNumSimulationManagers,
+                                                     UsefulWorkMessage::COLLECT);
       myCommunicationManager->sendMessage(msg, dest);
     }
   }
@@ -53,8 +54,8 @@ RealDVFSManager::configure(SimulationConfiguration &config) {
   // frequencies are available
   int maxidx = myAvailableFreqs.size() - 1;
 
-  // maxidx - 1: only go down to 1.5 GHz
-  initializeFrequencyIdxs(maxidx - 1);
+  // build the frequency index array based on the number of P states available
+  initializeFrequencyIdxs(maxidx);
 
   // initialize my frequency to the median frequency
   int freq = myAvailableFreqs[maxidx / 2];
@@ -65,29 +66,28 @@ RealDVFSManager::configure(SimulationConfiguration &config) {
 
 void
 RealDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
-  resetMeasurementCounter();
-
   UsefulWorkMessage* msg = dynamic_cast<UsefulWorkMessage*>(kMsg);
   ASSERT(msg);
 
   std::vector<double> dat;
   msg->getData(dat);
 
+  // add our useful work index to the array
   fillUsefulWork(dat);
   if(isMaster()) {
 
+    // update FIR filters with data. if we're the master, then we know
+    // dat has all the current useful work indexes of all other LPs
     for(int i = 0; i < dat.size(); ++i)
       myUtilFilters[i].update(dat[i]);
 
-    bool changed = false;
-    if(!isDummy())
-      changed = updateFrequencyIdxs();
-
-    if(changed && !isDummy()) {
+    // if we're not staying at a fixed frequency, and the frequency indexes 
+    // have changed, then set the new cpu frequencies
+    if(!isDummy() && updateFrequencyIdxs())
       for(int i=0; i < myFrequencyIdxs.size(); i++)
         setCPUFrequency(i, myAvailableFreqs[myFrequencyIdxs[i]]);
-    }
 
+    // write trace to csv
     if(debugPrint())
       for(int i=0; i < myFrequencyIdxs.size(); i++)
         writeCSVRow(i, 
@@ -97,6 +97,7 @@ RealDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
   }
   else {
 
+    // send the useful work array on to the next simulation manager
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
     UsefulWorkMessage* newMsg = new UsefulWorkMessage(mySimulationManagerID,
                                                         dest,
