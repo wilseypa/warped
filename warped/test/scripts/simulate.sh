@@ -205,7 +205,11 @@ for p in `tail -n+2 "$PARAMS_FILE" 2>/dev/null || echo 0`; do
 
     # do simulation run
     echo "running simulation #$RUN"
-    $CMD 2>&1 | tee "$TMPFILE"
+    if [ -n "$TMPFILE" ]; then
+      $CMD 2>&1 | tee "$TMPFILE"
+    else
+      $CMD
+    fi
 
     # extract runtime, rollback, efficiency and event rate info from the CSVs
     let "ROLLBACKS=0"
