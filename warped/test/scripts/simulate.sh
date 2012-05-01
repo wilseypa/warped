@@ -17,6 +17,7 @@ PAUSE=0
 CSVFILE=data.csv
 TIME_EXE="/usr/bin/time"
 MPI_EXE="mpiexec.hydra"
+KERN_LOG="/var/log/kern.log"
 
 # get batch script arguments
 export POSIXLY_CORRECT=1
@@ -259,7 +260,8 @@ for p in `tail -n+2 "$PARAMS_FILE" 2>/dev/null || echo 0`; do
       rm -f lp*.csv
     fi
 
-    if grep -iq "temperature above threshold" /var/log/kern.log; then
+    if [ -e "$KERN_LOG" ] && grep -iq "temperature above threshold" "$KERN_LOG"
+    then
       EMAIL_SUBJECT="simulation batch terminated"
       EMAIL_BODY="detected kernel throttling CPU freq due to temperatures above threshold"
       break 2
