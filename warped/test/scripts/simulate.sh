@@ -247,6 +247,9 @@ for p in `tail -n+2 "$PARAMS_FILE" 2>/dev/null || echo 0`; do
     fi
     echo "$RUNTIME,$ROLLBACKS,$EFFICIENCY,$EVENTRATE" >> "$CSVFILE"
 
+    # reset runtime
+    RUNTIME=""
+
     # build directory structure
     if [ -n "$DATADIR" ]; then
       CSVDIR="$INTERMEDIATEDIR/$RUN"
