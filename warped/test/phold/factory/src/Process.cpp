@@ -15,11 +15,11 @@ using namespace std;
 Process::Process(unsigned int procNr, string &name, unsigned int nrOfOutputs, 
                  vector<string> outputs, unsigned int stateSize, unsigned int numBalls,
                  distribution_t dist, double initCompGrain, double seed,
-                 int hotspotProb/*=1*/, int hotspotNum/*=0*/):
+                 int hp/*=1*/, int hotspotNum/*=0*/):
   processNumber(procNr), myObjectName(name),  numberOfOutputs(nrOfOutputs), 
   outputNames(outputs), sizeOfState(stateSize), numberOfTokens(numBalls), 
   compGrain(initCompGrain), sourceDistribution(dist), first(seed), second(0.0),
-  myHotspotProb(hotspotProb), myHotspot(hotspotNum) {
+    hotspotProb(hp), destLPMin(0), destLPMax(0), numLPs(0) {
 }
 
 Process::~Process() { 
@@ -28,10 +28,17 @@ Process::~Process() {
 
 void
 Process::initialize() {
-   outputHandles = vector<SimulationObject *>(outputNames.size(),0);
    for (int i = 0; i < outputNames.size(); i++) {
-      outputHandles[i] = getObjectHandle(outputNames[i]);
+      SimulationObject* o = getObjectHandle(outputNames[i]);
+      int simMgrId = o->getObjectID()->getSimulationManagerID();
+      if(simMgrId >= outputHandles.size())
+          outputHandles.resize(simMgrId + 1);
+      outputHandles[simMgrId].push_back(o);
    }
+   numLPs = outputHandles.size();
+   if(getObjectID()->getSimulationManagerID() == 0)
+       hotspotProb = 1;
+   destLPMax = numLPs + hotspotProb - 2;
 
    ProcessState* myState = dynamic_cast<ProcessState *>( getState() );
    ASSERT(myState != NULL);
@@ -54,6 +61,7 @@ Process::initialize() {
       receiveEvent(event);
       myState->eventSent();
    }
+
 }
 
 void
@@ -75,6 +83,9 @@ void
 Process::executeProcess(){  
    IntVTime sendTime = dynamic_cast<const IntVTime&>(getSimulationTime());
    
+   ostringstream oss;
+   oss << "obj" << processNumber << ".csv";
+   ofstream f(oss.str().c_str(), ios_base::app);
    do { 
       PHOLDEvent* recvEvent = (PHOLDEvent*) getEvent();
     
@@ -84,18 +95,19 @@ Process::executeProcess(){
 
          // Generate the destination for the event.
          // probability distribution for the destination is uniform except for
-         // the hotspot, which has myHotspotProb times the probability of all
+         // the hotspot LP, which has hotspotProb times the probability of all
          // other destinations
-         int maxOutput = numberOfOutputs + myHotspotProb - 2;
-         DiscreteUniform Dest(0, maxOutput, myState->gen);
-         int myDestination = (int) Dest();
-         if(myDestination > numberOfOutputs - 1)
-           myDestination = myHotspot;
+         DiscreteUniform lpd = DiscreteUniform(0, destLPMax, myState->gen);
+         int lp = static_cast<int>(lpd());
+         if(lp > numLPs - 1)
+             lp = 0;
 
-         ASSERT (myDestination < numberOfOutputs);
-         SimulationObject *receiver = outputHandles[myDestination];
+         DiscreteUniform objd = DiscreteUniform(0, outputHandles[lp].size() - 1, myState->gen);
+         int destObj = static_cast<int>(objd());
 
-         //f << outputNames[myDestination] << endl;
+         SimulationObject *receiver = outputHandles[lp][destObj];
+
+         f << receiver->getName() << endl;
 
          // Generate the delay between the send and receive times.
          int ldelay = msgDelay();

@@ -118,6 +118,10 @@ PHOLDApplication::getSimulationObjects(){
   // When generating all the objects, all information about the objects will be the same.
   if(generateObjs){
     configFile >> stateSize >> grain >> numOutputs;
+
+    // if numOutputs isn't given, assume a fully connected network
+    if(!(configFile >> numOutputs))
+        numOutputs = numObjects - 1;
     
     if(numOutputs >= numObjects){
       cerr << "ERROR: The number of outputs per object must be less than the "
@@ -139,21 +143,16 @@ PHOLDApplication::getSimulationObjects(){
 
       // The outputs will be the next 'numOutputs' names that follow the current
       // object name. This ensures that all objects have the same number of outputs.
-      int hotspotNum = -1;
       vector<string> outputNames;
       for( int j = 0; j < numOutputs; j++){
         int objnum = (j + i + 1) % numObjects;
-        if(objnum == 0) {
-          // save this index as a hotspot if i != 0 (not the hotspot)
-          hotspotNum = i != 0 ? j : -1;
-        }
          outputNames.push_back(objNames[objnum]);
       } 
 
+      int hotspotNum = 0;
       retval->push_back( new Process( i, objNames[i], numOutputs, outputNames,
                                       stateSize, msgDen, dist, grain, seed,
-                                      hotspotNum == -1 ? 1 : hotspotProb,
-                                      hotspotNum ) );
+                                      hotspotProb, hotspotNum ) );
     }
   }
   else{

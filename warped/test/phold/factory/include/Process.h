@@ -58,7 +58,7 @@ private:
    vector<string> outputNames;
 
    // The actual output object handles.
-   vector<SimulationObject *> outputHandles;
+   vector<vector<SimulationObject *> >outputHandles;
 
    // The number of bytes for the state size.
    unsigned int sizeOfState;
@@ -85,8 +85,10 @@ private:
    // Contains a loop of double divisions to act as the computational grain.
    void computationGrain();
 
-   int myHotspotProb;
-   int myHotspot;
+   int hotspotProb;
+   int destLPMin;
+   int destLPMax;
+   int numLPs;
 };
 
 #endif
