@@ -26,7 +26,7 @@
 #include "OptFossilCollManager.h"
 #include "OptFossilCollManagerFactory.h"
 #include "DVFSManager.h"
-#include "SimulatedDVFSManager.h"
+#include "DistributedDVFSManager.h"
 #include "DVFSManagerFactory.h"
 #include "SimulationConfiguration.h"
 #include <utils/Debug.h>

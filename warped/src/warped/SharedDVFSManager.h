@@ -8,22 +8,22 @@
 
 class TimeWarpSimulationManager;
 
-/** The RealDVFSManager base class.
+/** The SharedDVFSManager base class.
 
     Uses DVFS to set the frequencies of each core
 */
-class RealDVFSManager : public DVFSManagerImplementationBase {
+class SharedDVFSManager : public DVFSManagerImplementationBase {
 public:
    
-  /**@name Public Class Methods of RealDVFSManager. */
+  /**@name Public Class Methods of SharedDVFSManager. */
   //@{
 
   /// Constructor
-  RealDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
+  SharedDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
                   OptimizationGoal, UsefulWorkMetric);
 
   /// Destructor
-  virtual ~RealDVFSManager() {}
+  virtual ~SharedDVFSManager() {}
 
   /// to be called from the simulation manager's simulation loop
   virtual void poll();

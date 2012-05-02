@@ -1,6 +1,6 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
-#include "RealDVFSManager.h"
+#include "SharedDVFSManager.h"
 #include "TimeWarpSimulationManager.h"
 #include "UsefulWorkMessage.h"
 #include "CommunicationManager.h"
@@ -8,7 +8,7 @@
 
 using namespace std;
 
-RealDVFSManager::RealDVFSManager(TimeWarpSimulationManager* simMgr,
+SharedDVFSManager::SharedDVFSManager(TimeWarpSimulationManager* simMgr,
                                  int measurementPeriod,
                                  int firsize,
                                  bool fixed,
@@ -26,7 +26,7 @@ RealDVFSManager::RealDVFSManager(TimeWarpSimulationManager* simMgr,
 {}
 
 void
-RealDVFSManager::poll() {
+SharedDVFSManager::poll() {
   if(checkMeasurementPeriod()) {
     // initiate the measurement cycle
     if(isMaster()) {
@@ -41,12 +41,12 @@ RealDVFSManager::poll() {
 }
 
 void
-RealDVFSManager::registerWithCommunicationManager() {
+SharedDVFSManager::registerWithCommunicationManager() {
   myCommunicationManager->registerMessageType(UsefulWorkMessage::dataType(), this);
 }
 
 void
-RealDVFSManager::configure(SimulationConfiguration &config) {
+SharedDVFSManager::configure(SimulationConfiguration &config) {
   // populate available frequencies and our CPU id, set userspace governor
   DVFSManagerImplementationBase::configure(config);
 
@@ -65,7 +65,7 @@ RealDVFSManager::configure(SimulationConfiguration &config) {
 }
 
 void
-RealDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
+SharedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
   UsefulWorkMessage* msg = dynamic_cast<UsefulWorkMessage*>(kMsg);
   ASSERT(msg);
 
@@ -111,6 +111,6 @@ RealDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
 }
 
 string
-RealDVFSManager::toString() {
+SharedDVFSManager::toString() {
   return "Real DVFS, " + DVFSManagerImplementationBase::toString();
 }

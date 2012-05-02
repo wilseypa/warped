@@ -9,22 +9,22 @@
 
 class TimeWarpSimulationManager;
 
-/** The RealDVFSManager base class.
+/** The SharedDVFSManager base class.
 
     Uses delay loops to simulate a system with finer DVFS frequency steps
 */
-class SimulatedDVFSManager : public DVFSManagerImplementationBase {
+class DistributedDVFSManager : public DVFSManagerImplementationBase {
 public:
    
-  /**@name Public Class Methods of SimulatedDVFSManager. */
+  /**@name Public Class Methods of DistributedDVFSManager. */
   //@{
 
   /// Constructor
-  SimulatedDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
+  DistributedDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
                        OptimizationGoal, UsefulWorkMetric);
 
   /// Destructor
-  virtual ~SimulatedDVFSManager() {}
+  virtual ~DistributedDVFSManager() {}
 
   /// to be called from the simulation manager's simulation loop
   virtual void poll();
@@ -37,14 +37,10 @@ public:
 
   virtual string toString();
 
-  virtual void delay(int);
-
-  //@} // End of Public Class Methods of SimulatedDVFSManager.
+  //@} // End of Public Class Methods of DistributedDVFSManager.
 
 private:
-  int mySimulatedFrequencyIdx;
-  static const int simulatedFrequencies[];
-  static const int numSimulatedFrequencies;
+  void setFrequencies(int);
 };
 
 #endif //DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

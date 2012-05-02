@@ -31,7 +31,7 @@ WARPED_H_FILES = \
 	warped/AdaptiveStateManagerBase.h \
 	warped/AggressiveOutputManager.h \
 	warped/Application.h \
-	warped/RealDVFSManager.h \
+	warped/SharedDVFSManager.h \
 	warped/CentralizedEventSetSchedulingManager.h \
 	warped/ChebyFossilCollManager.h \
 	warped/CirculateInitializationMessage.h \
@@ -60,7 +60,7 @@ WARPED_H_FILES = \
 	warped/DefaultTimeWarpEventContOneAntiMsg.h \
 	warped/IntVTime.h \
 	warped/DeserializerManager.h \
-	warped/SimulatedDVFSManager.h \
+	warped/DistributedDVFSManager.h \
 	warped/Event.h \
 	warped/EventFunctors.h \
 	warped/EventId.h \
@@ -224,7 +224,7 @@ libwarped_la_SOURCES = \
 	warped/AdaptiveOutputManager.cpp \
 	warped/AdaptiveStateManagerBase.cpp \
 	warped/AggressiveOutputManager.cpp \
-	warped/RealDVFSManager.cpp \
+	warped/SharedDVFSManager.cpp \
 	warped/CentralizedEventSetSchedulingManager.cpp \
 	warped/ChebyFossilCollManager.cpp \
 	warped/CirculateInitializationMessage.cpp \
@@ -248,7 +248,7 @@ libwarped_la_SOURCES = \
 	warped/DefaultTimeWarpEventContainer.cpp \
 	warped/DefaultTimeWarpEventContOneAntiMsg.cpp \
 	warped/DeserializerManager.cpp \
-	warped/SimulatedDVFSManager.cpp \
+	warped/DistributedDVFSManager.cpp \
 	warped/Event.cpp \
 	warped/EventMessage.cpp \
 	warped/EventMessageBase.cpp \

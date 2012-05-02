@@ -2,8 +2,8 @@
 
 #include <utils/Debug.h>
 #include "DVFSManagerFactory.h"
-#include "RealDVFSManager.h"
-#include "SimulatedDVFSManager.h"
+#include "SharedDVFSManager.h"
+#include "DistributedDVFSManager.h"
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
 
@@ -85,7 +85,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
     trueFalseValues[i] = val == "TRUE";
   }
 
-  if(type == "REAL" || type == "SIMULATED") {
+  if(type == "SHARED" || type == "DISTRIBUTED") {
     cout << "("
          << mySimulationManager->getSimulationManagerID()
          << ") configured a " << type << " DVFS Manager" << endl
@@ -97,8 +97,8 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
          if(trueFalseValues[1])
            cout <<  "Writing trace to csv" << endl;
 
-    if(type == "REAL")
-      return new RealDVFSManager(mySimulationManager,
+    if(type == "SHARED")
+      return new SharedDVFSManager(mySimulationManager,
                                  p,
                                  firsize,
                                  trueFalseValues[0],
@@ -106,7 +106,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
                                  og,
                                  uwm);
 
-    return new SimulatedDVFSManager(mySimulationManager,
+    return new DistributedDVFSManager(mySimulationManager,
                                     p,
                                     firsize,
                                     trueFalseValues[0],
@@ -117,7 +117,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   else {
     stringstream err;
     cerr << "DVFSManager: invalid type '" << type << "'." << endl
-         << "Valid types are None | Real | Simulated. Aborting simulation.";
+         << "Valid types are None | Shared | Distributed. Aborting simulation.";
     mySimulationManager->shutdown(err.str());
   }
 }
