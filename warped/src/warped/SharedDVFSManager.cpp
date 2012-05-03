@@ -25,6 +25,10 @@ SharedDVFSManager::SharedDVFSManager(TimeWarpSimulationManager* simMgr,
                                  uwm)
 {}
 
+SharedDVFSManager::~SharedDVFSManager() {
+  setGovernorMode(myCPU, "ondemand");
+}
+
 void
 SharedDVFSManager::poll() {
   if(checkMeasurementPeriod()) {
@@ -61,6 +65,7 @@ SharedDVFSManager::configure(SimulationConfiguration &config) {
   int freq = myAvailableFreqs[maxidx / 2];
   cout << "(" << mySimulationManagerID << "): bound to PE " << myCPU
        << "; initializing freq to " << freq << endl;
+  setGovernorMode(myCPU, "userspace");
   setCPUFrequency(myCPU, freq);
 }
 

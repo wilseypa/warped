@@ -43,7 +43,6 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
 }
 
 DVFSManagerImplementationBase::~DVFSManagerImplementationBase() {
-  setGovernorMode("ondemand");
 }
 
 void
@@ -85,14 +84,13 @@ DVFSManagerImplementationBase::configure(
   cerr << "sched_getcpu() required to use DVFS" << endl;
   abort();
 #endif
-  setGovernorMode("userspace");
   populateAvailableFrequencies();
 }
 
 void
-DVFSManagerImplementationBase::setGovernorMode(const char* governor) {
+DVFSManagerImplementationBase::setGovernorMode(int cpu, const char* governor) {
   ostringstream path;
-  path << "/sys/devices/system/cpu/cpu" << myCPU
+  path << "/sys/devices/system/cpu/cpu" << cpu
        << "/cpufreq/scaling_governor";
 
   ofstream fp(path.str().c_str());
@@ -155,7 +153,7 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
     sort(utils.rbegin(), utils.rend(), Utilization());
   }
   else {
-    dist = 0.01;
+    dist = 0.1;
     sort(utils.begin(), utils.end(), Utilization());
   }
 

@@ -24,7 +24,7 @@ public:
                        OptimizationGoal, UsefulWorkMetric);
 
   /// Destructor
-  virtual ~DistributedDVFSManager() {}
+  virtual ~DistributedDVFSManager();
 
   /// to be called from the simulation manager's simulation loop
   virtual void poll();
@@ -41,6 +41,7 @@ public:
 
 private:
   void setFrequencies(int);
+  void setGovernors(const char*);
 };
 
 #endif //DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

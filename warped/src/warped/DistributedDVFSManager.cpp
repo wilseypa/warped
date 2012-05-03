@@ -25,6 +25,10 @@ DistributedDVFSManager::DistributedDVFSManager(TimeWarpSimulationManager* simMgr
                                  uwm)
 {}
 
+DistributedDVFSManager::~DistributedDVFSManager() {
+  setGovernors("ondemand");
+}
+
 void
 DistributedDVFSManager::poll() {
   if(checkMeasurementPeriod()) {
@@ -56,8 +60,13 @@ DistributedDVFSManager::configure(SimulationConfiguration &config) {
   initializeFrequencyIdxs(maxidx);
 
   // initialize my frequency to the median frequency
+  char hostname[32];
+  gethostname(hostname, 32);
   int freqIdx = maxidx / 2;
-  cout << "initializing frequencies to " << myAvailableFreqs[freqIdx] << endl;
+  cout << "DVFSManager on " << hostname << " here. " 
+       << "initializing all frequencies to " 
+       << myAvailableFreqs[freqIdx] << endl;
+  setGovernors("userspace");
   setFrequencies(freqIdx);
 }
 
@@ -140,6 +149,17 @@ DistributedDVFSManager::setFrequencies(int idx) {
   // package in a node must be coordinated.  i will only be running one LP
   // on each node, so set the frequency of ALL cpus on that node.
   for(int i = 0; i < 8; i++) {
-    setCPUFrequency(i, myFrequencyIdxs[idx]);
+    setCPUFrequency(i, myAvailableFreqs[idx]);
+  }
+}
+
+void
+DistributedDVFSManager::setGovernors(const char* gov) {
+  // for my thesis, i will only be using the distributed DVFS manager with the
+  // school's beowulf cluster, in which the P-states of each core and physical
+  // package in a node must be coordinated.  i will only be running one LP
+  // on each node, so set the frequency of ALL cpus on that node.
+  for(int i = 0; i < 8; i++) {
+    setGovernorMode(i, gov);
   }
 }

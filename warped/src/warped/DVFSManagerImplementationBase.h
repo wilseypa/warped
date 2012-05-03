@@ -58,6 +58,7 @@ protected:
   void initializeFrequencyIdxs(int maxfreq);
   bool isDummy() const { return myIsDummy; }
   bool debugPrint() const { return myDebugPrint; }
+  void setGovernorMode(int i, const char* governor);
 
   virtual bool doEffectiveUtilization() { 
     return myUWM == EFFECTIVE_UTILIZATION; 
@@ -91,7 +92,6 @@ private:
   int myLastEventsRolledBack;
   int myLastEventsExecuted;
 
-  void setGovernorMode(const char* governor);
   double getRollbacksForPeriod();
   double getRollbackFractionForPeriod();
 

@@ -23,7 +23,7 @@ public:
                   OptimizationGoal, UsefulWorkMetric);
 
   /// Destructor
-  virtual ~SharedDVFSManager() {}
+  virtual ~SharedDVFSManager();
 
   /// to be called from the simulation manager's simulation loop
   virtual void poll();
