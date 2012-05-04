@@ -26,7 +26,10 @@ DistributedDVFSManager::DistributedDVFSManager(TimeWarpSimulationManager* simMgr
 {}
 
 DistributedDVFSManager::~DistributedDVFSManager() {
-  setGovernors("ondemand");
+  // if we set the governor back to ondemand, we'll lose our write privileges 
+  // on scaling_setspeed
+  //setGovernors("ondemand");
+  setFrequencies(0);
 }
 
 void
