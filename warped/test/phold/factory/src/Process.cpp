@@ -83,9 +83,6 @@ void
 Process::executeProcess(){  
    IntVTime sendTime = dynamic_cast<const IntVTime&>(getSimulationTime());
    
-   ostringstream oss;
-   oss << "obj" << processNumber << ".csv";
-   ofstream f(oss.str().c_str(), ios_base::app);
    do { 
       PHOLDEvent* recvEvent = (PHOLDEvent*) getEvent();
     
@@ -106,8 +103,6 @@ Process::executeProcess(){
          int destObj = static_cast<int>(objd());
 
          SimulationObject *receiver = outputHandles[lp][destObj];
-
-         f << receiver->getName() << endl;
 
          // Generate the delay between the send and receive times.
          int ldelay = msgDelay();
