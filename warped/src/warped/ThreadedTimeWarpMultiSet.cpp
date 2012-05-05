@@ -697,10 +697,10 @@ const Event* ThreadedTimeWarpMultiSet::peekEventLockUnprocessed(
 		ret = *(unProcessedQueue[objId]->begin());
 		if (dynamic_cast<const StragglerEvent*> (ret) || ret->getReceiveTime()
 				< simObj->getSimulationTime()) {
-			this->releaseunProcessedLock(threadId, objId);
 			return NULL;
 		}
 	}
+	this->releaseunProcessedLock(threadId, objId);
 	return ret;
 }
 const VTime* ThreadedTimeWarpMultiSet::getMinEventTime(unsigned int threadId,

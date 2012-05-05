@@ -23,8 +23,8 @@ class ThreadedOptFossilCollManager;
 template<class element> class LockedQueue;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
-    ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
-                                Application *initApplication);
+	ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
+			Application *initApplication);
 	virtual ~ThreadedTimeWarpSimulationManager();
 	/** Return a handle to the state manager.
 
@@ -94,6 +94,7 @@ public:
 	bool checkTermination();
 
 	void updateLVTArray(unsigned int threadId, unsigned int objId);
+	void updateLVTArray(unsigned int threadId, VTime* timeToUpdate);
 
 	inline void updateSendMinTime(unsigned int threadId, const VTime* sendTime);
 
@@ -138,9 +139,6 @@ public:
 
 	// Empty the message buffer
 	void clearMessageBuffer();
-
-
-
 
 protected:
 	/**@name Protected Class Methods of ThreadedTimeWarpSimulationManager. */
@@ -187,8 +185,8 @@ public:
 			int fossilCollectTime);
 
 	/// Used in optimistic fossil collection to checkpoint the file queues.
-	void saveFileQueuesCheckpoint(std::ofstream* outFile, const ObjectID &objId,
-			unsigned int saveTime);
+	void saveFileQueuesCheckpoint(std::ofstream* outFile,
+			const ObjectID &objId, unsigned int saveTime);
 
 	void restoreFileQueues(ifstream* inFile, const ObjectID &objId,
 			unsigned int restoreTime);
@@ -225,8 +223,8 @@ public:
 
 protected:
 
-	void cancelEventsReceiver(SimulationObject *curObject, vector<
-			const NegativeEvent *> &cancelObjectIt, int threadID);
+	void cancelEventsReceiver(SimulationObject *curObject,
+			vector<const NegativeEvent *> &cancelObjectIt, int threadID);
 	/**
 	 Used to route local events.
 	 */
@@ -267,8 +265,9 @@ protected:
 
 	/// call coastforward if an infrequent state saving strategy is used
 	void
-	coastForward(const VTime &coastForwardFromTime, const VTime &rollbackToTime,
-			SimulationObject *object, int threadID);
+			coastForward(const VTime &coastForwardFromTime,
+					const VTime &rollbackToTime, SimulationObject *object,
+					int threadID);
 
 	/*@param msg The message to receive.
 	 */
@@ -335,8 +334,9 @@ private:
 	/// Put all arguments in one object to be passed to StartThread as void*
 	class thread_args {
 	public:
-		thread_args(ThreadedTimeWarpSimulationManager *simManager, int threadIndex) :
-				simManager(simManager), threadIndex(threadIndex) {
+		thread_args(ThreadedTimeWarpSimulationManager *simManager,
+				int threadIndex) :
+			simManager(simManager), threadIndex(threadIndex) {
 		}
 		ThreadedTimeWarpSimulationManager *simManager;
 		unsigned int threadIndex;
@@ -362,6 +362,8 @@ private:
 
 	const VTime** sendMinTimeArray;
 
+	//unsigned int** logTwice;
+
 	bool** computeLVTStatus;
 
 	const VTime* LVT;
@@ -375,6 +377,7 @@ public:
 	int numCatastrophicRollbacks;
 	bool checkpointing;
 	int pausedThreads;
+	int lvtCount;
 };
 
 #endif /* ThreadedTIMEWARPSIMULATIONMANAGER_H_ */
