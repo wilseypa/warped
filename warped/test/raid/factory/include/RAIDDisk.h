@@ -4,6 +4,8 @@
 
 #include "RAIDRequest.h"
 #include "SimulationObject.h"
+#include<map>
+
 class IntVTime;
 /** The class RAIDDisk.
 
@@ -97,7 +99,7 @@ private:
   int    numCylinders;
   //@} // End of Private Class Members of RAIDDisk.
 
-  warped64_t *lastEventTime;
+  std::map<std::string,warped64_t> lastEventTime;
 };
 
 #endif

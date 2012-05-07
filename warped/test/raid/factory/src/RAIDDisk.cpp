@@ -5,6 +5,7 @@
 #include "../include/RAIDDisk.h"
 #include "../include/RAIDDiskState.h"
 #include "IntVTime.h"
+#include <map>
 
 RAIDDisk::RAIDDisk(string &myName, DISK_TYPE theDisk) :
 	objectName(myName) {
@@ -37,11 +38,7 @@ RAIDDisk::RAIDDisk(string &myName, DISK_TYPE theDisk) :
 		sectorsPerTrack = 48;
 		break;
 	}
-    lastEventTime = new warped64_t[20];
-    for(int i=0;i<20;i++)
-    {
-        *(lastEventTime+i) = 0;
-    }
+    lastEventTime["test"]=120;
 	//cout << "Initial LastEvent Time for the Disk = " << lastEventTime;
 } // End of RAIDDisk()
 
@@ -77,6 +74,7 @@ void RAIDDisk::executeProcess() {
 		if (recvEvent != NULL) {
 			SimulationObject *recvr = getObjectHandle(
 					recvEvent->getSourceObject());
+            string receiverName = recvr->getName();
             objectId=recvr->getObjectID()->getSimulationObjectID();
             tmpEvent = new RAIDRequest(sendTime, sendTime + 1, this, recvr);
             *tmpEvent = *recvEvent;
@@ -111,13 +109,13 @@ void RAIDDisk::executeProcess() {
 				seekTime = 0;
 			}
 
-			recvTime = max(sendTime.getApproximateIntTime(), *(lastEventTime+objectId))
+			recvTime = max(sendTime.getApproximateIntTime(), lastEventTime[receiverName])
 					+ int(seekTime + 0.5 * revolutionTime);
            // recvTime = lastEventTime + int(seekTime + 0.5 * revolutionTime);
 
 			newEvent = new RAIDRequest(sendTime, recvTime, this, recvr);
 			//delete lastEventTime;
-			*(lastEventTime+objectId) = recvTime.getApproximateIntTime();
+			lastEventTime[receiverName] = recvTime.getApproximateIntTime();
 			//cout << "LastEvent Time for the Disk = " << lastEventTime << endl;
 #if 0
 			recvTime = VTime(getSimulationTime() +
