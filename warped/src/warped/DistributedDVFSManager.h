@@ -42,6 +42,8 @@ public:
 private:
   void setFrequencies(int);
   void setGovernors(const char*);
+
+  bool myWaitingForMessage;
 };
 
 #endif //DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

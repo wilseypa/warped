@@ -23,6 +23,7 @@ DistributedDVFSManager::DistributedDVFSManager(TimeWarpSimulationManager* simMgr
                                  debug,
                                  og,
                                  uwm)
+  ,myWaitingForMessage(false)
 {}
 
 DistributedDVFSManager::~DistributedDVFSManager() {
@@ -34,7 +35,7 @@ DistributedDVFSManager::~DistributedDVFSManager() {
 
 void
 DistributedDVFSManager::poll() {
-  if(checkMeasurementPeriod()) {
+  if(checkMeasurementPeriod() && !myWaitingForMessage) {
     int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
     UsefulWorkMessage* msg = new UsefulWorkMessage(mySimulationManagerID,
                                                      dest,
@@ -42,6 +43,7 @@ DistributedDVFSManager::poll() {
                                                      UsefulWorkMessage::COLLECT);
     //cout << "beginning measurement" << endl;
     myCommunicationManager->sendMessage(msg, dest);
+    myWaitingForMessage = true;
   }
 }
 
@@ -120,6 +122,8 @@ DistributedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
     newMsg->setData(dat);
     myCommunicationManager->sendMessage(newMsg, dest);
   }
+  else
+    myWaitingForMessage = false;
 
   delete kMsg;
 }

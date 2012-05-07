@@ -153,7 +153,7 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
     sort(utils.rbegin(), utils.rend(), Utilization());
   }
   else {
-    dist = 0.1;
+    dist = 0.01;
     sort(utils.begin(), utils.end(), Utilization());
   }
 
@@ -231,8 +231,15 @@ DVFSManagerImplementationBase::getRollbackFractionForPeriod() {
   int temp2 = myLastEventsExecuted;
   myLastEventsRolledBack = mySimulationManager->getNumEventsRolledBack();
   myLastEventsExecuted = mySimulationManager->getNumEventsExecuted();
-  return 1 - (static_cast<double>(myLastEventsRolledBack - temp1) / 
-            (myLastEventsExecuted - temp2));
+  int newEventsRolledBack = myLastEventsRolledBack - temp1;
+  int newEventsExecuted = myLastEventsExecuted - temp2;
+
+  if(isMaster()) {
+    cout << (myLastEventsRolledBack - temp1) << " events rolled back, "
+         << (myLastEventsExecuted - temp2) << " events executed" << endl;
+  }
+  return newEventsExecuted == 0 ? 1 :
+           1 - (static_cast<double>(newEventsRolledBack) / (newEventsExecuted));
 }
 
 void 
