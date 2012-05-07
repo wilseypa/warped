@@ -418,7 +418,7 @@ void ThreadedTimeWarpSimulationManager::handleEvent(const Event *event) {
 
 	if (getCoastForwardTime(id) != NULL || (inRecovery && threadID != 0)) {
 		shouldHandleEvent = false;
-		//delete event;
+		delete event;
 		event = NULL;
 	} else {
 		if (contains(event->getSender())) {
@@ -1237,12 +1237,12 @@ void ThreadedTimeWarpSimulationManager::handleAntiMessageFromStraggler(
 		if (myEventSet->handleAntiMessage(receiver, *i, threadId)) {
 			//	delete (*i);
 		}
-		//delete (*i);
+		delete (*i);
 	}
 	utils::debug << "(" << mySimulationManagerID << " T " << threadId
 			<< " ) - Finished Handling Negative Events " << "\n";
-	//delete dynamic_cast<const StragglerEvent*> (stragglerEvent)->getPositiveEvent();
-	//delete stragglerEvent;
+	delete dynamic_cast<const StragglerEvent*> (stragglerEvent)->getPositiveEvent();
+	delete stragglerEvent;
 }
 void ThreadedTimeWarpSimulationManager::printObjectMaaping() {
 	vector<SimulationObject *> *objects = getElementVector(
