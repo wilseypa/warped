@@ -23,7 +23,7 @@ public:
 	/// Destructor
 	~ThreadedMatternGVTManager();
 
-	const VTime *getEarliestEventTime(const VTime *lowEventTime);
+//	const VTime *getEarliestEventTime(const VTime *lowEventTime);
 	void receiveKernelMessage(KernelMessage *msg);
 
 	void sendPendingGVTToken();

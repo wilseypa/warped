@@ -20,7 +20,7 @@ ThreadedMatternGVTManager::ThreadedMatternGVTManager(ThreadedTimeWarpSimulationM
 ThreadedMatternGVTManager::~ThreadedMatternGVTManager() {
 }
 
-const VTime *ThreadedMatternGVTManager::getEarliestEventTime(
+/*const VTime *ThreadedMatternGVTManager::getEarliestEventTime(
 		const VTime *lowEventTime) {
 	if (mySimulationManager->getOutputMgrType() == LAZYMGR
 			|| mySimulationManager->getOutputMgrType() == ADAPTIVEMGR) {
@@ -31,7 +31,7 @@ const VTime *ThreadedMatternGVTManager::getEarliestEventTime(
 		lowEventTime = &MIN_FUNC(*lazyMinTime, *lowEventTime);
 	}
 	return lowEventTime;
-}
+}*/
 
 void ThreadedMatternGVTManager::receiveKernelMessage(KernelMessage *msg) {
 	ASSERT(msg != NULL);
@@ -137,8 +137,7 @@ void ThreadedMatternGVTManager::receiveKernelMessage(KernelMessage *msg) {
 	delete msg;
 }
 void ThreadedMatternGVTManager::sendPendingGVTToken() {
-	const VTime *lowEventTime = getEarliestEventTime(
-			&(myScheduler->getLastEventScheduledTime()));
+	const VTime *lowEventTime =&(myScheduler->getLastEventScheduledTime());
 	//cout << "Sent Pending Token" << endl;
 	sendGVTToken(
 			MIN_FUNC(*GVTMessageLastScheduledEventTime, *lowEventTime),

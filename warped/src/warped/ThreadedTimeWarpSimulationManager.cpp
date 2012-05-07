@@ -27,10 +27,7 @@
 #include "PartitionInfo.h"
 #include "StragglerEvent.h"
 #include "ThreadedMatternGVTManager.h"
-#include <string>
-#include <fstream>
 
-#include <pthread.h>
 
 int WorkerInformation::globalStillBusyCount = 0;
 bool WorkerInformation::workRemaining = true;
@@ -52,15 +49,19 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
 	LVT = &getZero();
 	LVTArray = new const VTime *[numberOfWorkerThreads + 1];
 	sendMinTimeArray = new const VTime *[numberOfWorkerThreads + 1];
+	//	logTwice = new unsigned int *[numberOfWorkerThreads + 1];
 	for (int i = 0; i < numberOfWorkerThreads + 1; i++) {
+		//	logTwice[i] = new unsigned int;
 		computeLVTStatus[i] = new bool(0);
 		*(computeLVTStatus[i]) = 1;
 		sendMinTimeArray[i] = NULL;
+		//	*(logTwice[i]) = 0;
 	}
 	//used 0, since manager object has been constructed using the master
 	pthread_key_create(&threadKey, NULL);
 	pthread_setspecific(threadKey, (void*) &masterID);
 	initiatedRecovery = false;
+	lvtCount = 0;
 	numCatastrophicRollbacks = 0;
 	pausedThreads = 0;
 }
@@ -134,7 +135,8 @@ void *ThreadedTimeWarpSimulationManager::startWorkerThread(void *arguments) {
 	myArgs->simManager->workerThread(myArgs->threadIndex);
 }
 
-bool ThreadedTimeWarpSimulationManager::executeObjects(const unsigned int &threadId) {
+bool ThreadedTimeWarpSimulationManager::executeObjects(
+		const unsigned int &threadId) {
 	bool iDidWork = false;
 	if (!inRecovery) {
 		const Event
@@ -164,11 +166,13 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(const unsigned int &threa
 							nextObject, threadId);
 			//Handle Straggler
 			if (straggler != NULL && !inRecovery) {
+				updateLVTArray(threadId, straggler->getReceiveTime().clone());
 				if (!dynamic_cast<const StragglerEvent*> (straggler)) {
 					utils::debug << "(" << mySimulationManagerID << " T "
 							<< threadId << " )"
 							<< "Processing  StragglerEvent for Object "
 							<< nextObject->getName() << endl;
+
 					rollback(nextObject, straggler->getReceiveTime(), threadId);
 				} else if (dynamic_cast<const StragglerEvent*> (straggler)) {
 					if (straggler->getReceiveTime()
@@ -193,7 +197,7 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(const unsigned int &threa
 				//delete straggler;
 			} else if (!inRecovery) {
 				ASSERT( dynamic_cast<SimulationObjectProxy *>( nextObject ) == 0);
-				updateLVTArray(threadId, objId);
+				//	updateLVTArray(threadId, objId);
 				nextEvent
 						= dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->peekEventLockUnprocessed(
 								nextObject, threadId);
@@ -218,6 +222,7 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(const unsigned int &threa
 					myStateManager->saveState(nextEvent->getReceiveTime(),
 							eventNumber, nextObject, nextEvent->getSender(),
 							threadId);
+					updateLVTArray(threadId, objId);
 					nextObject->executeProcess();
 					// Only the master Simulation manager starts the GVT calculation process.
 					// Fossil collection occurs when a new GVT value is set.
@@ -243,7 +248,8 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(const unsigned int &threa
 	return iDidWork;
 }
 
-void ThreadedTimeWarpSimulationManager::workerThread(const unsigned int &threadId) {
+void ThreadedTimeWarpSimulationManager::workerThread(
+		const unsigned int &threadId) {
 	unsigned int tid = threadId;
 	pthread_setspecific(threadKey, (void*) &tid);
 	while (WorkerInformation::isWorkRemaining()) {
@@ -419,8 +425,9 @@ void ThreadedTimeWarpSimulationManager::handleEvent(const Event *event) {
 			if (outMgrType == AGGRMGR) {
 				myOutputManager->insert(event, threadID);
 			} else if (outMgrType == LAZYMGR) {
-				ThreadedLazyOutputManager *myLazyOutputManager =
-						static_cast<ThreadedLazyOutputManager *> (myOutputManager);
+				ThreadedLazyOutputManager
+						*myLazyOutputManager =
+								static_cast<ThreadedLazyOutputManager *> (myOutputManager);
 				ASSERT(myLazyOutputManager != NULL);
 				shouldHandleEvent = !myLazyOutputManager->lazyCancel(event,
 						threadID);
@@ -731,8 +738,8 @@ void ThreadedTimeWarpSimulationManager::coastForward(
 	// go to the first event to coastforward from and call the object's
 	// execute process until the rollbackToTime is reached.
 	const Event *findEvent =
-			dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->peekEvent(object,
-					moveUpToTime, threadID);
+			dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->peekEvent(
+					object, moveUpToTime, threadID);
 	while (findEvent != 0 && findEvent->getReceiveTime() < moveUpToTime) {
 		utils::debug << "(" << mySimulationManagerID << " T " << threadID
 				<< " ) - coasting forward, skipping " << "event "
@@ -746,15 +753,17 @@ void ThreadedTimeWarpSimulationManager::coastForward(
 				findEvent->getReceiveTime(), eventNumber, object,
 				findEvent->getSender(), threadID);
 		object->executeProcess();
-		findEvent = dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->peekEvent(
-				object, moveUpToTime, threadID);
+		findEvent
+				= dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->peekEvent(
+						object, moveUpToTime, threadID);
 	}
 
 	stopWatch.stop();
 
 	if (stateMgrType == ADAPTIVESTATE) {
-		ThreadedCostAdaptiveStateManager *CAStateManager =
-				static_cast<ThreadedCostAdaptiveStateManager *> (myStateManager);
+		ThreadedCostAdaptiveStateManager
+				*CAStateManager =
+						static_cast<ThreadedCostAdaptiveStateManager *> (myStateManager);
 		CAStateManager->coastForwardTiming(objId, stopWatch.elapsed());
 	}
 
@@ -813,10 +822,12 @@ void ThreadedTimeWarpSimulationManager::receiveKernelMessage(KernelMessage *msg)
 		utils::debug << "(" << mySimulationManagerID << " T " << threadID
 				<< " ): Starting Simulation" << endl;
 	} else if (msg->getDataType() == "AbortSimulationMessage") {
-		cerr << "ThreadedTimeWarpSimulationManager is going to abort simulation"
+		cerr
+				<< "ThreadedTimeWarpSimulationManager is going to abort simulation"
 				<< endl;
 	} else {
-		cerr << "ThreadedTimeWarpSimulationManager::receiveKernelMessage() received"
+		cerr
+				<< "ThreadedTimeWarpSimulationManager::receiveKernelMessage() received"
 				<< " unknown (" << msg->getDataType() << ") message type"
 				<< endl;
 		cerr << "Aborting simulation ..." << endl;
@@ -826,7 +837,8 @@ void ThreadedTimeWarpSimulationManager::receiveKernelMessage(KernelMessage *msg)
 	delete msg;
 }
 
-void ThreadedTimeWarpSimulationManager::fossilCollect(const VTime& fossilCollectTime) {
+void ThreadedTimeWarpSimulationManager::fossilCollect(
+		const VTime& fossilCollectTime) {
 	ASSERT( localArrayOfSimObjPtrs != 0);
 	//Hard Coded ZERO, since this function is always called by the Master
 	int threadID = 0;
@@ -972,8 +984,9 @@ void ThreadedTimeWarpSimulationManager::configure(
 
 	// lets now set up and configure the state manager
 	const StateManagerFactory *myStateFactory = StateManagerFactory::instance();
-	myStateManager = dynamic_cast<ThreadedStateManager *> (myStateFactory->allocate(
-			configuration, this));
+	myStateManager
+			= dynamic_cast<ThreadedStateManager *> (myStateFactory->allocate(
+					configuration, this));
 	ASSERT( myStateManager != 0);
 	myStateManager->configure(configuration);
 
@@ -1087,7 +1100,8 @@ void ThreadedTimeWarpSimulationManager::getLVTFlagLock(unsigned int threadId) {
 		;
 	assert(LVTFlagLock->hasLock(threadId));
 }
-void ThreadedTimeWarpSimulationManager::releaseLVTFlagLock(unsigned int threadId) {
+void ThreadedTimeWarpSimulationManager::releaseLVTFlagLock(
+		unsigned int threadId) {
 	assert(LVTFlagLock->hasLock(threadId));
 	LVTFlagLock->releaseLock(threadId);
 }
@@ -1109,7 +1123,8 @@ void ThreadedTimeWarpSimulationManager::registerWithCommunicationManager() {
 	}
 }
 
-bool ThreadedTimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
+bool ThreadedTimeWarpSimulationManager::simulationComplete(
+		const VTime &simulateUntil) {
 	bool retval = false;
 	if (!usingOptFossilCollection) {
 		if (myGVTManager->getGVT() >= simulateUntil) {
@@ -1141,7 +1156,8 @@ bool ThreadedTimeWarpSimulationManager::simulationComplete(const VTime &simulate
 }
 
 const VTime *
-ThreadedTimeWarpSimulationManager::getCoastForwardTime(const unsigned int &objectID) const {
+ThreadedTimeWarpSimulationManager::getCoastForwardTime(
+		const unsigned int &objectID) const {
 	return coastForwardTime[objectID];
 }
 void ThreadedTimeWarpSimulationManager::registerSimulationObjects() {
@@ -1257,9 +1273,9 @@ void ThreadedTimeWarpSimulationManager::updateLVTArray(unsigned int threadId,
 						dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->getMinEventTime(
 								threadId, objId);
 		if (sendMinTimeArray[threadId] != NULL && nextEventTime != NULL) {
-			utils::debug << "(" << mySimulationManagerID << " ) UP Min Time ::"
-					<< *nextEventTime << endl;
-			utils::debug << "(" << mySimulationManagerID
+			utils::debug << "(" << mySimulationManagerID << "," << threadId
+					<< " ) UP Min Time ::" << *nextEventTime << endl;
+			utils::debug << "(" << mySimulationManagerID << "," << threadId
 					<< " ) send Min Time ::" << *(sendMinTimeArray[threadId])
 					<< endl;
 			LVTArray[threadId]
@@ -1272,6 +1288,26 @@ void ThreadedTimeWarpSimulationManager::updateLVTArray(unsigned int threadId,
 	}
 
 }
+
+void ThreadedTimeWarpSimulationManager::updateLVTArray(unsigned int threadId,
+		VTime* nextEventTime) {
+	if (*(computeLVTStatus[threadId]) == 0) {
+		if (sendMinTimeArray[threadId] != NULL && nextEventTime != NULL) {
+			utils::debug << "(" << mySimulationManagerID << "," << threadId
+					<< " ) UP Min Time ::" << *nextEventTime << endl;
+			utils::debug << "(" << mySimulationManagerID << "," << threadId
+					<< " ) send Min Time ::" << *(sendMinTimeArray[threadId])
+					<< endl;
+			LVTArray[threadId]
+					= *nextEventTime > *(sendMinTimeArray[threadId]) ? sendMinTimeArray[threadId]
+							: nextEventTime;
+			decrementLVTFlag(threadId);
+			sendMinTimeArray[threadId] = NULL;
+			*(computeLVTStatus[threadId]) = 1;
+		}
+	}
+}
+
 inline void ThreadedTimeWarpSimulationManager::updateSendMinTime(
 		unsigned int threadId, const VTime* sendTime) {
 	if (*(computeLVTStatus[threadId]) == 0) {
@@ -1311,6 +1347,7 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
 	bool ret = false;
 	getLVTFlagLock(0);
 	if (LVTFlag == 0) {
+		lvtCount++;
 		const VTime* minimum = &(getPositiveInfinity());
 		for (int i = 1; i < numberOfWorkerThreads; i++) {
 			if (LVTArray[i] != 0 && *LVTArray[i] < *minimum)
@@ -1318,12 +1355,23 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
 		}
 		utils::debug << "(" << mySimulationManagerID << " ) Computed LVT ="
 				<< *minimum << endl;
-		LVT = minimum->clone();
-		ret = true;
-		for (int i = 1; i < numberOfWorkerThreads; i++) {
-			delete (LVTArray[i]);
+		if (lvtCount == 1) {
+			LVT = minimum->clone();
+			LVTFlag = (numberOfWorkerThreads - 1);
+			for (int i = 1; i < numberOfWorkerThreads; i++) {
+				delete (LVTArray[i]);
+			}
+			resetComputeLVTStatus();
+		} else {
+			if (*LVT > *minimum) {
+				LVT = minimum->clone();
+			}
+			ret = true;
+			lvtCount = 0;
+			for (int i = 1; i < numberOfWorkerThreads; i++) {
+				delete (LVTArray[i]);
+			}
 		}
-
 	}
 	releaseLVTFlagLock(0);
 	return ret;
@@ -1332,8 +1380,8 @@ const VTime* ThreadedTimeWarpSimulationManager::getLVT() {
 	return LVT->clone();
 }
 /// Used in optimistic fossil collection to checkpoint the file queues.
-void ThreadedTimeWarpSimulationManager::saveFileQueuesCheckpoint(ofstream* outFile,
-		const ObjectID &objId, unsigned int saveTime) {
+void ThreadedTimeWarpSimulationManager::saveFileQueuesCheckpoint(
+		ofstream* outFile, const ObjectID &objId, unsigned int saveTime) {
 	unsigned int i = objId.getSimulationObjectID();
 	for (int j = 0; j < outFileQueues[i].size(); j++) {
 		(outFileQueues[i][j])->saveCheckpoint(outFile, saveTime);
@@ -1387,7 +1435,7 @@ bool ThreadedTimeWarpSimulationManager::initiateLocalGVT() {
 	getLVTFlagLock(0);
 	if (LVTFlag == 0) {
 		resetComputeLVTStatus();
-		LVTFlag = numberOfWorkerThreads - 1;
+		LVTFlag = (numberOfWorkerThreads - 1);
 		ret = true;
 	}
 	releaseLVTFlagLock(0);
