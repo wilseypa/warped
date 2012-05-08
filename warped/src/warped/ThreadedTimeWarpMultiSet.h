@@ -88,6 +88,8 @@ public:
 	 */
 	void printAll();
 
+	bool threadHasUnprocessedQueueLock(int threadId, int objId);
+
 	void getunProcessedLock(int threadId, int objId);
 
 	void releaseunProcessedLock(int threadId, int objId);

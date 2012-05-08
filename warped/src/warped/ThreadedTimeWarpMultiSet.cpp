@@ -72,6 +72,11 @@ ThreadedTimeWarpMultiSet::~ThreadedTimeWarpMultiSet() {
 	delete multisetIterator;
 }
 
+bool ThreadedTimeWarpMultiSet::threadHasUnprocessedQueueLock(int threadId,
+		int objId) {
+	return (unprocessedQueueAtomicState[objId]->hasLock(threadId));
+}
+
 void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
 	while (!unprocessedQueueAtomicState[objId]->setLock(threadId))
 		;
@@ -198,8 +203,8 @@ const Event* ThreadedTimeWarpMultiSet::getEventWhileRollback(
 	assert(this->isObjectScheduledBy(threadId, objId));
 	return ret;
 }
-const Event* ThreadedTimeWarpMultiSet::getEventIfStraggler(SimulationObject *simObj,
-		int threadId) {
+const Event* ThreadedTimeWarpMultiSet::getEventIfStraggler(
+		SimulationObject *simObj, int threadId) {
 	const Event* ret = NULL;
 	unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
 	this->getunProcessedLock(threadId, objId);
@@ -542,7 +547,8 @@ void ThreadedTimeWarpMultiSet::fossilCollect(SimulationObject *object,
 	this->releaseremovedLock(threadId, objId);
 }
 
-void ThreadedTimeWarpMultiSet::fossilCollect(const Event *toRemove, int threadId) {
+void ThreadedTimeWarpMultiSet::fossilCollect(const Event *toRemove,
+		int threadId) {
 	unsigned int objId = toRemove->getReceiver().getSimulationObjectID();
 	bool foundMatch = false;
 
@@ -697,21 +703,30 @@ const Event* ThreadedTimeWarpMultiSet::peekEventLockUnprocessed(
 		ret = *(unProcessedQueue[objId]->begin());
 		if (dynamic_cast<const StragglerEvent*> (ret) || ret->getReceiveTime()
 				< simObj->getSimulationTime()) {
+			this->releaseunProcessedLock(threadId, objId);
 			return NULL;
 		}
 	}
-	this->releaseunProcessedLock(threadId, objId);
 	return ret;
 }
 const VTime* ThreadedTimeWarpMultiSet::getMinEventTime(unsigned int threadId,
 		unsigned objId) {
 	VTime* ret = NULL;
-	getunProcessedLock(threadId, objId);
-	if (unProcessedQueue[objId]->size() > 0) {
-		ret = (*unProcessedQueue[objId]->begin())->getReceiveTime().clone();
+	bool haslock = (threadHasUnprocessedQueueLock(threadId, objId));
+	if (haslock) {
+		if (unProcessedQueue[objId]->size() > 0) {
+			ret = (*unProcessedQueue[objId]->begin())->getReceiveTime().clone();
+		}
+		return ret;
+	} else {
+		getunProcessedLock(threadId, objId);
+		if (unProcessedQueue[objId]->size() > 0) {
+			ret = (*unProcessedQueue[objId]->begin())->getReceiveTime().clone();
+		}
+
+		releaseunProcessedLock(threadId, objId);
+		return ret;
 	}
-	releaseunProcessedLock(threadId, objId);
-	return ret;
 }
 void ThreadedTimeWarpMultiSet::releaseObjectLocksRecovery() {
 	for (int objNum = 0; objNum
