@@ -220,6 +220,9 @@ public:
 	bool isRollbackJustCompleted(int objId);
 	void setRollbackCompletedStatus(int objId);
 	void resetRollbackCompletedStatus(int objId);
+	void setCheckpointing(bool chkpt) {
+		checkpointing = chkpt;
+	}
 
 protected:
 
@@ -371,12 +374,14 @@ private:
 	bool GVTTokenPending;
 
 	bool* rollbackCompleted;
-public:
+
 	// Checks if this simulation manager initiated the recovery process
 	bool initiatedRecovery;
+
 	int numCatastrophicRollbacks;
+
 	bool checkpointing;
-	int pausedThreads;
+
 	int lvtCount;
 };
 

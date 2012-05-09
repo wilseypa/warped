@@ -718,8 +718,7 @@ void ThreadedOptFossilCollManager::fossilCollect(SimulationObject *object,
 		}
 		fossilPeriod[objId] = 0;
 	}
-	mySimManager->pausedThreads = 0;
-	mySimManager->checkpointing = false;
+	mySimManager->setCheckpointing(false);
 }
 
 bool ThreadedOptFossilCollManager::checkFault(SimulationObject *object) {

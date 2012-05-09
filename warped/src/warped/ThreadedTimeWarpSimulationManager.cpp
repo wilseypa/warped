@@ -63,7 +63,6 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
 	initiatedRecovery = false;
 	lvtCount = 0;
 	numCatastrophicRollbacks = 0;
-	pausedThreads = 0;
 }
 
 ThreadedTimeWarpSimulationManager::~ThreadedTimeWarpSimulationManager() {
