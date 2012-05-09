@@ -202,9 +202,24 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
   }
   if(myOG != PERFORMANCE) {
     while(l <= low) {
-      myFrequencyIdxs[utils[l].node]++;
-      changed = true;
+      if(myFrequencyIdxs[utils[l].node] != myMaxFreqIdx) {
+        myFrequencyIdxs[utils[l].node]++;
+        changed = true;
+      }
+      l++;
     }
+  }
+
+
+  if(changed) {
+    cout << "avg: " << avg << endl << "threshold low: " << avg - threshold << endl << "threshold high: " << avg + threshold << endl;
+    cout << "utils: ";
+    for(int j=0; j<n; j++)
+      cout << myUtilFilters[j].getData() << " ";
+    cout << endl << "freqs: ";
+    for(int j=0; j<n; j++)
+      cout << myAvailableFreqs[myFrequencyIdxs[j]] << " ";
+    cout << endl;
   }
 
   return changed;
