@@ -34,8 +34,10 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   string opt = "PERFORMANCE";
   int p = 0;
   int firsize = 16;
+  double threshold = 0.1;
   configuration.getDVFSIntOption("Period", p);
   configuration.getDVFSIntOption("FIRSize", firsize);
+  configuration.getDVFSDoubleOption("Threshold", threshold);
   configuration.getDVFSStringOption("UsefulWorkMetric", metric);
   configuration.getDVFSStringOption("OptimizeFor", opt);
 
@@ -93,7 +95,8 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
          << "Period: " << p << endl
          << "FIR Size: " << firsize << endl
          << "Optimize for: " << opt << endl
-         << "Useful work metric: " << metric << endl;
+         << "Useful work metric: " << metric << endl
+         << "Threshold: " << threshold << endl;
          if(trueFalseValues[1])
            cout <<  "Writing trace to csv" << endl;
 
@@ -104,7 +107,8 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
                                  trueFalseValues[0],
                                  trueFalseValues[1],
                                  og,
-                                 uwm);
+                                 uwm,
+                                 threshold);
 
     return new DistributedDVFSManager(mySimulationManager,
                                     p,
@@ -112,7 +116,8 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
                                     trueFalseValues[0],
                                     trueFalseValues[1],
                                     og,
-                                    uwm);
+                                    uwm,
+                                    threshold);
   }
   else {
     stringstream err;

@@ -17,7 +17,8 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
     bool dummy,
     bool debug,
     OptimizationGoal og,
-    UsefulWorkMetric uwm)
+    UsefulWorkMetric uwm,
+    double threshold)
   :mySimulationManager(simMgr)
   ,myCommunicationManager(simMgr->getCommunicationManager())
   ,mySimulationManagerID(simMgr->getSimulationManagerID())
@@ -37,6 +38,7 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
   ,myLastRollbacks(0)
   ,myLastEventsRolledBack(0)
   ,myLastEventsExecuted(0)
+  ,myThreshold(threshold)
 {
   if(isMaster())
     myStopwatch.start();
@@ -133,8 +135,6 @@ struct Utilization {
 
 bool
 DVFSManagerImplementationBase::updateFrequencyIdxs() {
-  float dist;
-
   vector<Utilization> utils(0);
   double avg = 0.;
   int i = 0;
@@ -148,12 +148,13 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
   }
   avg /= n;
 
+  double threshold;
   if(myUWM == ROLLBACKS) {
-    dist = avg * .1;
+    threshold = avg * myThreshold;
     sort(utils.rbegin(), utils.rend(), Utilization());
   }
   else {
-    dist = 0.1;
+    threshold = myThreshold;
     sort(utils.begin(), utils.end(), Utilization());
   }
 
@@ -162,15 +163,15 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
   int low = -1;
   for(; i < n; i++) {
     if(myUWM == ROLLBACKS) {
-      if(utils[i].util > avg + dist)
+      if(utils[i].util > avg + threshold)
         low = i;
-      else if(utils[i].util < avg - dist)
+      else if(utils[i].util < avg - threshold)
         break;
     }
     else {
-      if(utils[i].util < avg - dist)
+      if(utils[i].util < avg - threshold)
         low = i;
-      else if(utils[i].util > avg + dist)
+      else if(utils[i].util > avg + threshold)
         break;
     }
   }
@@ -184,25 +185,24 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
   // starting with the nodes with the absolute lowest and highest useful 
   // work indexes, move towards the center, matching pairs as we go
   while(l <= low && h >= high) {
-
     // skip over any nodes that are already at max/min frequency
-    while(l <= low && myFrequencyIdxs[utils[l].node] == myMaxFreqIdx)
+    if(myFrequencyIdxs[utils[l].node] == myMaxFreqIdx)
       l++;
-    while(h >= high && myFrequencyIdxs[utils[h].node] == 0)
+    else if(myFrequencyIdxs[utils[h].node] == 0)
       h--;
-
-    // adjust frequency indexes depending on optimization goal
-    if(myOG == PERFORMANCE) {
-      if(l <= low && h >= high) {
-        myFrequencyIdxs[utils[l++].node]++;
-        myFrequencyIdxs[utils[h--].node]--;
-        changed = true;
-      }
+    else {
+      // adjust frequency indexes depending on optimization goal
+      myFrequencyIdxs[utils[l].node]++;
+      if(myOG != POWER)
+        myFrequencyIdxs[utils[h].node]--;
+      changed = true;
     }
-    else if(l <= low) {
-      myFrequencyIdxs[utils[l++].node]++;
-      if(h >= high && myOG != POWER)
-        myFrequencyIdxs[utils[h--].node]--;
+    l++;
+    h--;
+  }
+  if(myOG != PERFORMANCE) {
+    while(l <= low) {
+      myFrequencyIdxs[utils[l].node]++;
       changed = true;
     }
   }

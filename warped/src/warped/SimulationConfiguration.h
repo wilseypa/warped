@@ -134,6 +134,8 @@ public:
 
   bool getDVFSIntOption(string, int&) const;
 
+  bool getDVFSDoubleOption(string, double&) const;
+
   /**
      Returns the binary name which started this execution.  Presumably we
      will use this binary on every node.

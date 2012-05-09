@@ -23,7 +23,7 @@ public:
 
   /// Constructor
   DVFSManagerImplementationBase(TimeWarpSimulationManager*,int, int, bool, bool, 
-                                OptimizationGoal, UsefulWorkMetric);
+                                OptimizationGoal, UsefulWorkMetric, double);
 
   /// Destructor
   virtual ~DVFSManagerImplementationBase();
@@ -91,6 +91,7 @@ private:
   int myLastRollbacks;
   int myLastEventsRolledBack;
   int myLastEventsExecuted;
+  double myThreshold;
 
   double getRollbacksForPeriod();
   double getRollbackFractionForPeriod();

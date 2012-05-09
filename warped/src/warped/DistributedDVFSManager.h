@@ -21,7 +21,7 @@ public:
 
   /// Constructor
   DistributedDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
-                       OptimizationGoal, UsefulWorkMetric);
+                       OptimizationGoal, UsefulWorkMetric, double);
 
   /// Destructor
   virtual ~DistributedDVFSManager();

@@ -65,6 +65,7 @@ public:
 
   bool getDVFSStringOption(string&, string&) const;
   bool getDVFSIntOption(string&, int&) const;
+  bool getDVFSDoubleOption(string&, double&) const;
 
   const string getBinaryName() const;
 
@@ -393,6 +394,11 @@ SimulationConfiguration::getDVFSStringOption(string opt, string& val) const {
 bool
 SimulationConfiguration::getDVFSIntOption(string opt, int& val) const {
   return _impl->getDVFSIntOption(opt, val);
+}
+
+bool
+SimulationConfiguration::getDVFSDoubleOption(string opt, double& val) const {
+  return _impl->getDVFSDoubleOption(opt, val);
 }
 
 const string
@@ -973,6 +979,18 @@ SimulationConfiguration::Implementation::getDVFSIntOption(string& opt, int& val)
   if(const ConfigurationScope* cfmScope = getDVFSManagerScope()) {
     if(cfmScope->findChoice(opt)) {
       val = cfmScope->getIntValue(opt);
+      return true;
+    }
+  }
+  return false;
+}
+
+
+bool
+SimulationConfiguration::Implementation::getDVFSDoubleOption(string& opt, double& val) const {
+  if(const ConfigurationScope* cfmScope = getDVFSManagerScope()) {
+    if(cfmScope->findChoice(opt)) {
+      val = cfmScope->getDoubleValue(opt);
       return true;
     }
   }

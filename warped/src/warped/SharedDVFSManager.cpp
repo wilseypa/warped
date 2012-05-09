@@ -14,7 +14,8 @@ SharedDVFSManager::SharedDVFSManager(TimeWarpSimulationManager* simMgr,
                                  bool fixed,
                                  bool debug,
                                  OptimizationGoal og,
-                                 UsefulWorkMetric uwm)
+                                 UsefulWorkMetric uwm,
+                                 double threshold)
 
   :DVFSManagerImplementationBase(simMgr,
                                  measurementPeriod,
@@ -22,7 +23,8 @@ SharedDVFSManager::SharedDVFSManager(TimeWarpSimulationManager* simMgr,
                                  fixed,
                                  debug,
                                  og,
-                                 uwm)
+                                 uwm,
+                                 threshold)
 {}
 
 SharedDVFSManager::~SharedDVFSManager() {
