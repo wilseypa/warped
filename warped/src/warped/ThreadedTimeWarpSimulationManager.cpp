@@ -3,6 +3,7 @@
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "DefaultSchedulingManager.h"
 #include "ThreadedLazyOutputManager.h"
+#include "ThreadedDynamicOutputManager.h"
 #include "StopWatch.h"
 #include "ObjectStub.h"
 #include "SimulationObjectProxy.h"
@@ -209,6 +210,13 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(
 						myLazyOutputManager->emptyLazyQueue(nextObject,
 								nextEvent->getReceiveTime(), threadId);
 					}
+				} else if (outMgrType == ADAPTIVEMGR) {
+					ThreadedDynamicOutputManager *myDynamicOutputManager =
+							static_cast<ThreadedDynamicOutputManager *> (myOutputManager);
+					ASSERT(myDynamicOutputManager != NULL);
+					if (nextEvent != NULL)
+						myDynamicOutputManager->emptyLazyQueue(nextObject,
+								nextEvent->getReceiveTime(), threadId);
 				}
 				if (nextEvent != NULL) {
 					nextObject->setSimulationTime(nextEvent->getReceiveTime());
@@ -431,11 +439,11 @@ void ThreadedTimeWarpSimulationManager::handleEvent(const Event *event) {
 				shouldHandleEvent = !myLazyOutputManager->lazyCancel(event,
 						threadID);
 			} else if (outMgrType == ADAPTIVEMGR) {
-				/*				DynamicOutputManager *myDynamicOutputManager =
-				 static_cast<DynamicOutputManager *> (myOutputManager);
+								ThreadedDynamicOutputManager *myDynamicOutputManager =
+				 static_cast<ThreadedDynamicOutputManager *> (myOutputManager);
 				 ASSERT(myDynamicOutputManager != NULL);
 				 shouldHandleEvent
-				 = !myDynamicOutputManager->checkDynamicCancel(event);*/
+				 = !myDynamicOutputManager->checkDynamicCancel(event, threadID);
 			}
 		}
 	}

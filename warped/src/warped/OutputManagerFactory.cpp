@@ -12,6 +12,7 @@
 #include "ThreadedOutputManager.h"
 #include "ThreadedAggressiveOutputManager.h"
 #include "ThreadedLazyOutputManager.h"
+#include "ThreadedDynamicOutputManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 #include <utils/Debug.h>
 
@@ -74,6 +75,11 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setOutputMgrType(LAZYMGR);
 			utils::debug << "a Lazy Output Manager" << endl;
+		} else if (configuration.outputManagerIs("DYNAMIC")) {
+			retval = new ThreadedDynamicOutputManager(
+					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
+			mySimulationManager->setOutputMgrType(ADAPTIVEMGR);
+			utils::debug << "an Dynamic Output Manager" << endl;
 		} else {
 			const string error = "Unknown OutputManager choice \""
 					+ configuration.getOutputManagerType() + "\" encountered.";
