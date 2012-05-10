@@ -12,7 +12,9 @@
 #define LAZY_TO_AGGRESSIVE 0.2
 #define THIRD_THRESHOLD 0.1
 
-enum cancellationModes {Aggressive, Lazy};
+enum cancellationModes {
+	Aggressive, Lazy
+};
 
 class Event;
 class SimulationObject;
@@ -20,122 +22,125 @@ class OutputManager;
 
 /** The Threaded DynamicOutputManager class.
 
-    This class implements an dynamic cancellation scheme as a part of
-    its output manager functionality.
+ This class implements an dynamic cancellation scheme as a part of
+ its output manager functionality.
 
-*/
-class ThreadedDynamicOutputManager : public ThreadedLazyOutputManager {
+ */
+class ThreadedDynamicOutputManager: public ThreadedLazyOutputManager {
 public:
 
-  /**@name Public Class Methods of ThreadedDynamicOutputManager. */
-  //@{
+	/**@name Public Class Methods of ThreadedDynamicOutputManager. */
+	//@{
 
-  /** Constructor.
+	/** Constructor.
 
-      @param simMgr Handle to the simulation manager.
-      @param useThirdThreshold Default is false, not used.
-  */
-  ThreadedDynamicOutputManager( ThreadedTimeWarpSimulationManager *simMgr, bool useThirdThreshold = false );
+	 @param simMgr Handle to the simulation manager.
+	 @param useThirdThreshold Default is false, not used.
+	 */
+	ThreadedDynamicOutputManager(ThreadedTimeWarpSimulationManager *simMgr,
+			bool useThirdThreshold = false);
 
-  // Destructor.
-  ~ThreadedDynamicOutputManager();
+	// Destructor.
+	~ThreadedDynamicOutputManager();
 
-  /** Returns true if the event should be suppressed.
-      Returns false otherwise.
+	/** Returns true if the event should be suppressed.
+	 Returns false otherwise.
 
-      When in aggressive cancellation, lazy checks will be performed but
-      events will not be cancelled (they have already been cancelled through
-      aggressive).
+	 When in aggressive cancellation, lazy checks will be performed but
+	 events will not be cancelled (they have already been cancelled through
+	 aggressive).
 
-      When in lazy cancellation, the method will perform the same as the
-      lazyCancel method.
+	 When in lazy cancellation, the method will perform the same as the
+	 lazyCancel method.
 
-      @param event The event to be checked.
-  */
-  bool checkDynamicCancel( const Event *event, int threadId );
+	 @param event The event to be checked.
+	 */
+	bool checkDynamicCancel(const Event *event, int threadId);
 
-  /** Returns the pointer to the current cancellation mode.
-  */
-  cancellationModes getCancelMode(int objID, int threadId){
-     return *curCancelMode[objID];
-  }
+	/** Returns current cancellation mode.
+	 */
+	cancellationModes getCancelMode(int objID, int threadId) {
+		return *curCancelMode[objID];
+	}
 
-  /** Sets the current cancellation mode.
+	/** Sets the current cancellation mode.
 
-      @param mode The cancellation mode to be set.
-  */
-  void setCancelMode(cancellationModes mode, int objID, int threadId){
-     *curCancelMode[objID] = mode;
-  }
+	 @param mode The cancellation mode to be set.
+	 */
+	void setCancelMode(cancellationModes mode, int objID, int threadId) {
+		*curCancelMode[objID] = mode;
+	}
 
-  /** Rolls back the output queue to rollbackTime.
+	/** Rolls back the output queue to rollbackTime.
 
-      Any events with send time greater than rollbackTime are added to the
-      lazy cancellation queue.
+	 Any events with send time greater than rollbackTime are added to the
+	 lazy cancellation queue.
 
-      When in aggressive mode, anti-messages are also sent for those events.
+	 When in aggressive mode, anti-messages are also sent for those events.
 
-      @param rollbackTime The time to which the object is rolled back.
-      @param object A pointer to the object who experienced rollback.
-  */
-  void rollback( SimulationObject *object,  const VTime &rollbackTime, int threadId );
+	 @param rollbackTime The time to which the object is rolled back.
+	 @param object A pointer to the object who experienced rollback.
+	 */
+	void rollback(SimulationObject *object, const VTime &rollbackTime,
+			int threadId);
 
- // void emptyLazyQueues(const VTime &time, int theadId);
+	// void emptyLazyQueues(const VTime &time, int theadId);
 
-  void emptyLazyQueue(SimulationObject *object, const VTime &time, int threadId);
+	void emptyLazyQueue(SimulationObject *object, const VTime &time,
+			int threadId);
 
-  /**
-     Remove all output events. Used to restore state after
-     a catastrophic rollback while using optimistic fossil collection.
-  */
-  void ofcPurge(int theadId);
+	/**
+	 Remove all output events. Used to restore state after
+	 a catastrophic rollback while using optimistic fossil collection.
+	 */
+	void ofcPurge(int theadId);
 
-  //@} // End of Public Class Methods of ThreadedDynamicOutputManager.
+	//@} // End of Public Class Methods of ThreadedDynamicOutputManager.
 
 protected:
-  /**@name protected Class Methods of ThreadedDynamicOutputManager. */
-  //@{
+	/**@name protected Class Methods of ThreadedDynamicOutputManager. */
+	//@{
 
-  /** Calculates the hit ratio and determines what mode to use.
-      Also returns the cancellation mode that the calculation determined.
+	/** Calculates the hit ratio and determines what mode to use.
+	 Also returns the cancellation mode that the calculation determined.
 
-      @param objID The object ID of the object to set.
-  */
-  cancellationModes determinecancellationModes(int objID, int threadId);
+	 @param objID The object ID of the object to set.
+	 */
+	cancellationModes determinecancellationModes(int objID, int threadId);
 
-  /** The current cancellation mode.
-  */
-  vector<cancellationModes*> curCancelMode;
+	/** The current cancellation mode.
+	 */
+	vector<cancellationModes*> curCancelMode;
 
-  /** The hit count, how many lazy hits have occured.
-  */
-  vector<int*> hitCount;
+	/** The hit count, how many lazy hits have occured.
+	 */
+	vector<int*> hitCount;
 
-  /** The hit ratio is used to determine the cancellation mode.
-  */
-  vector<float*> hitRatio;
+	/** The hit ratio is used to determine the cancellation mode.
+	 */
+	vector<float*> hitRatio;
 
-  /** The filter depth determines how many comparisons are used.
-  */
-  int filterDepth;
+	/** The filter depth determines how many comparisons are used.
+	 */
+	int filterDepth;
 
-  /** Keeps track of the results past comparisons.
-  */
-  vector< vector<int> *> comparisonResults;
+	/** Keeps track of the results past comparisons.
+	 */
+	vector<vector<int> *> comparisonResults;
 
-  /** Keeps track of index for comparisonResults.
-  */
-  vector<int*> curMeasured;
+	/** Keeps track of index for comparisonResults.
+	 */
+	vector<int*> curMeasured;
 
-  /** True if permanently in aggressive mode.
-  */
-  vector<bool*> permanentlyAggressive;
+	/** True if permanently in aggressive mode.
+	 */
+	vector<bool*> permanentlyAggressive;
 
-  /** True if using 3 threshold values instead of 2.
-  */
-  bool thirdThreshold;
+	/** True if using 3 threshold values instead of 2.
+	 */
+	bool thirdThreshold;
 
-  //@} // End of Protected Class Methods of DynamicOutputManager.
+	//@} // End of Protected Class Methods of DynamicOutputManager.
 };
 
 #endif /* THREADEDADAPTIVEOUTPUTMANAGER_H_ */

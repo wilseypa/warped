@@ -4,14 +4,14 @@
 #define ThreadedLazyOutputManager_H_
 
 /*
-#include <set>
-#include <list>
-*/
+ #include <set>
+ #include <list>
+ */
 #include "EventFunctors.h"
 #include "ThreadedOutputManagerImplementationBase.h"
 
 /*using std::multiset;
-using std::list;*/
+ using std::list;*/
 
 class Event;
 class SimulationObject;
@@ -38,7 +38,7 @@ public:
 	/// Destructor.
 	~ThreadedLazyOutputManager();
 
-	void configure(SimulationConfiguration &) {
+	virtual void configure(SimulationConfiguration &) {
 	}
 
 	/** Copies the output events after the rollback time to the lazy
@@ -47,7 +47,7 @@ public:
 	 @param rollbackTime The time to which the output events are rolled back.
 	 @param object A pointer to the object who experienced rollback.
 	 */
-	void rollback(SimulationObject *object, const VTime &rollbackTime,
+	virtual void rollback(SimulationObject *object, const VTime &rollbackTime,
 			int threadId);
 
 	/** Returns true if the event is the same as a previously generated event.
@@ -65,7 +65,7 @@ public:
 	 @param objectID The object for which the lazyQueue is modified
 	 @param threadId The thread working on that object
 	 */
-//	void lazyMinQueueUpdate(unsigned int objectID, int threadId);
+	//	void lazyMinQueueUpdate(unsigned int objectID, int threadId);
 
 	/** This should be called when there are no more events to process in the
 	 event set. At that point there is no way to regenerate events so just
@@ -73,7 +73,7 @@ public:
 
 	 @param time All events before this time will be removed.
 	 */
-//	void emptyLazyQueues(const VTime &time, int threadId);
+	//	void emptyLazyQueues(const VTime &time, int threadId);
 
 	/** This should be called when there are no more events to process for the
 	 simulation object. At that point there is no way to regenerate events so just
@@ -83,7 +83,7 @@ public:
 	 @param object The simulation object for which events will be removed.
 	 @param time All events before this time will be removed.
 	 */
-	void emptyLazyQueue(SimulationObject *object, const VTime &time,
+	virtual void emptyLazyQueue(SimulationObject *object, const VTime &time,
 			int threadId);
 
 	/** Sets the compare mode of the event compare function. This is used
@@ -108,7 +108,7 @@ public:
 
 	 @return VTime The lowest receive time.
 	 */
-//	const VTime &getLazyQMinTime(int threadId);
+	//	const VTime &getLazyQMinTime(int threadId);
 
 	/** Returns the lowest receive time of all events in the lazy queue
 	 of the given object. Used by the GVTManager to calculate GVT.
@@ -116,17 +116,17 @@ public:
 	 @param objectID The id of the simulation object.
 	 @return VTime The lowest receive time.
 	 */
-//	const VTime &getLazyQMinTime(const unsigned int objectID, int threadId);
+	//	const VTime &getLazyQMinTime(const unsigned int objectID, int threadId);
 
 	/**
 	 Remove all output events. Used to restore state after
 	 a catastrophic rollback while using optimistic fossil collection.
 	 */
-	void ofcPurge(int threadId);
+	virtual void ofcPurge(int threadId);
 
-//	void getLazyMinQueueLock(int threadId);
+	//	void getLazyMinQueueLock(int threadId);
 
-//	void releaseLazyMinQueueLock(int threadId);
+	//	void releaseLazyMinQueueLock(int threadId);
 
 	//@} // End of Public Class Methods of ThreadedLazyOutputManager.
 
@@ -192,13 +192,13 @@ protected:
 
 	//Lowest event position pointer to point to position of lowest Time Stamped Event (for each object)
 	// in the Schedule Queue.
-//	vector<multiset<const Event*, sendTimeLessThanEventIdLessThan>::iterator> lowestObjectPosition;
+	//	vector<multiset<const Event*, sendTimeLessThanEventIdLessThan>::iterator> lowestObjectPosition;
 
 	///Schedule Queue: used for GVT calculation
-//	multiset<const Event*, sendTimeLessThanEventIdLessThan> *lazyMinQueue;
+	//	multiset<const Event*, sendTimeLessThanEventIdLessThan> *lazyMinQueue;
 
 	///Schedule Queue Lock
-//	AtomicState* lazyMinQueueLock;
+	//	AtomicState* lazyMinQueueLock;
 
 	//@} // End of Protected Class Methods of ThreadedLazyOutputManager.
 };

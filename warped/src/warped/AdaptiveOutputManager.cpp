@@ -187,7 +187,7 @@ void DynamicOutputManager::emptyLazyQueue(SimulationObject *object, const VTime 
   if( (lazyQueues[id])->size() > 0){
     vector<const Event *>::iterator LCEvent = (lazyQueues[id])->begin();
     while(LCEvent != (lazyQueues[id])->end() && (*LCEvent)->getSendTime() < time){
-      if(curCancelMode[id] = LAZY){
+      if(curCancelMode[id] == LAZY){
         (eventsToCancel[id])->push_back(*LCEvent);
       }
       LCEvent = (lazyQueues[id])->erase(LCEvent);
