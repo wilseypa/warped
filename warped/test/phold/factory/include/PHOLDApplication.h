@@ -36,6 +36,7 @@ private:
 
   string inputFileName;
   int numObjects;
+  int numLPs;
 };
 
 #endif

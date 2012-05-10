@@ -17,6 +17,8 @@
 using std::string;
 using std::vector;
 
+class ProcessState;
+
 enum distribution_t {UNIFORM, POISSON, EXPONENTIAL, NORMAL, BINOMIAL, FIXED,
                      ALTERNATE, ROUNDROBIN, CONDITIONAL, ALL};
 
@@ -25,7 +27,7 @@ class Process : public SimulationObject {
 public:
    Process(unsigned int, string &, unsigned int, vector<string>,
            unsigned int, unsigned int, distribution_t, double, double,
-           int hotspotProb=1, int hotspotNum=0);
+           int hotspotProb=1, vector<int>* hst=NULL);
    ~Process();
 
    void initialize();
@@ -45,6 +47,9 @@ public:
    void reportError(const string&, SEVERITY);
 
 private:
+   int getHotspot();
+   SimulationObject* getDestination(ProcessState*);
+
    // The designated number for this object.
    unsigned int processNumber;
 
@@ -58,7 +63,8 @@ private:
    vector<string> outputNames;
 
    // The actual output object handles.
-   vector<vector<SimulationObject *> >outputHandles;
+   vector<vector<SimulationObject *> >lpOutputHandles;
+   vector<SimulationObject* > outputHandles;
 
    // The number of bytes for the state size.
    unsigned int sizeOfState;
@@ -86,9 +92,9 @@ private:
    void computationGrain();
 
    int hotspotProb;
-   int destLPMin;
-   int destLPMax;
    int numLPs;
+   int lpID;
+   vector<int> hotspotSwitchTimes;
 };
 
 #endif

@@ -61,13 +61,43 @@ PHOLDApplication::getSimulationObjects(){
     abort();
   }
   
+  // hotspots
+  // a hotspot is an LP (TimeWarpSimulationManager) that has a probability
+  // of receiving a message that is N times greater than the other LPs.
+  // it is a way of imposing load imbalance in a way that might occur in a
+  // realistic model such as a digital logic simulator (see ronngren 1994)
+  // the first PHOLD configuration parameter is N.  Set to 1 to not use hotspots
   int hotspotProb;
-  // configure object 0 to be a hotspot? (see ronngren paper 1994)
   if(!(configFile >> hotspotProb)) {
     cerr << "ERROR: First phold parameter must be an integer representing"
          << " the relative probability to send a message to the hotspot."
          << endl << "Aborting simulation." << endl;
     abort();
+  }
+
+  // the hotspot can be setup to switch from LP to LP during the simulation.
+  // hotspot switch times (virtual times) come after the hotspot probability
+  // if the probability is greater than 1 (no hotspot). for example:
+  // 3 0 500 1000
+  // says to switch hotspots at approximately virtual time = 0, 500, and 1000.
+  // the first number indicates the number of switches.
+  // times are slightly adjusted so that the next hotspot can be discerned.
+  // for example, the times in the last example will be
+  // 3 0 501 1002
+  // then the hotspot is LP0 for 0 < t < 501, LP1 for 501 < t < 1002,
+  // and LP2 for 1002 < t
+  int numHotspotSwitches = 0;
+  vector<int> hotspotSwitchTimes(0);
+  if (hotspotProb > 1) {
+    configFile >> numHotspotSwitches;
+    int nextHotspot = 0;
+    for(int i = 0; i < numHotspotSwitches; i++) {
+      int next;
+      configFile >> next;
+      while(next % numLPs != nextHotspot) next++;
+      hotspotSwitchTimes.push_back(next);
+      nextHotspot = (nextHotspot + 1) % numLPs;
+    }
   }
 
   configFile >> numObjects >> msgDen >> distributionString >> seed
@@ -149,10 +179,9 @@ PHOLDApplication::getSimulationObjects(){
          outputNames.push_back(objNames[objnum]);
       } 
 
-      int hotspotNum = 0;
       retval->push_back( new Process( i, objNames[i], numOutputs, outputNames,
                                       stateSize, msgDen, dist, grain, seed,
-                                      hotspotProb, hotspotNum ) );
+                                      hotspotProb, &hotspotSwitchTimes ) );
     }
   }
   else{
@@ -182,6 +211,7 @@ PHOLDApplication::getSimulationObjects(){
 const PartitionInfo *
 PHOLDApplication::getPartitionInfo( unsigned int numberOfProcessorsAvailable ){
   const PartitionInfo *retval = 0;
+  numLPs = numberOfProcessorsAvailable;
 
   Partitioner *myPartitioner = new RoundRobinPartitioner();
   // Now we'll create some simulation objects...

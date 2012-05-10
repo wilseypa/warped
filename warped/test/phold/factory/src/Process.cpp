@@ -15,30 +15,69 @@ using namespace std;
 Process::Process(unsigned int procNr, string &name, unsigned int nrOfOutputs, 
                  vector<string> outputs, unsigned int stateSize, unsigned int numBalls,
                  distribution_t dist, double initCompGrain, double seed,
-                 int hp/*=1*/, int hotspotNum/*=0*/):
+                 int hp/*=1*/, vector<int>* hst/*=NULL*/):
   processNumber(procNr), myObjectName(name),  numberOfOutputs(nrOfOutputs), 
   outputNames(outputs), sizeOfState(stateSize), numberOfTokens(numBalls), 
   compGrain(initCompGrain), sourceDistribution(dist), first(seed), second(0.0),
-    hotspotProb(hp), destLPMin(0), destLPMax(0), numLPs(0) {
+  hotspotProb(hp), numLPs(0), lpID(0) {
+  if(hst)
+    hotspotSwitchTimes = *hst;
 }
 
 Process::~Process() { 
   deallocateState(getState());
 };
 
+int
+Process::getHotspot() {
+  int t = getSimulationTime().getApproximateIntTime();
+  for(int i = hotspotSwitchTimes.size() - 1; i >= 0; i--) {
+    if(hotspotSwitchTimes[i] < t)
+      // hash function gets the next hotspot from the list of switch times
+      // that are identical in each LP.  the hotspot moves from lp 0->1->2->...
+      // hotspot numbers are encoded in the switch times by PHOLDApplication
+      return hotspotSwitchTimes[i] % numLPs;
+  }
+}
+
+SimulationObject*
+Process::getDestination(ProcessState* s) {
+  if(hotspotProb == 1) {
+    // the traditional way
+    DiscreteUniform Dest(0, numberOfOutputs-1, s->gen);
+    int myDestination = (int) Dest();
+
+    ASSERT (myDestination < numberOfOutputs);
+    return outputHandles[myDestination];
+  }
+  else {
+    // the "hotspot" way (see ronngren 1994)
+    int hs = getHotspot();
+    int destLPMax = hs == lpID? numLPs - 1 : numLPs + hotspotProb - 2;
+    DiscreteUniform lpd = DiscreteUniform(0, destLPMax, s->gen);
+    int lp = static_cast<int>(lpd());
+    if(lp > numLPs - 1)
+        lp = hs;
+
+    DiscreteUniform objd = DiscreteUniform(0, lpOutputHandles[lp].size() - 1, s->gen);
+    int destObj = static_cast<int>(objd());
+
+    return lpOutputHandles[lp][destObj];
+  }
+}
+
 void
 Process::initialize() {
    for (int i = 0; i < outputNames.size(); i++) {
       SimulationObject* o = getObjectHandle(outputNames[i]);
+      outputHandles.push_back(o);
       int simMgrId = o->getObjectID()->getSimulationManagerID();
-      if(simMgrId >= outputHandles.size())
-          outputHandles.resize(simMgrId + 1);
-      outputHandles[simMgrId].push_back(o);
+      if(simMgrId >= lpOutputHandles.size())
+          lpOutputHandles.resize(simMgrId + 1);
+      lpOutputHandles[simMgrId].push_back(o);
    }
-   numLPs = outputHandles.size();
-   if(getObjectID()->getSimulationManagerID() == 0)
-       hotspotProb = 1;
-   destLPMax = numLPs + hotspotProb - 2;
+   numLPs = lpOutputHandles.size();
+   lpID = getObjectID()->getSimulationManagerID();
 
    ProcessState* myState = dynamic_cast<ProcessState *>( getState() );
    ASSERT(myState != NULL);
@@ -90,19 +129,7 @@ Process::executeProcess(){
          ProcessState* myState = (ProcessState *) getState();
          myState->eventReceived();
 
-         // Generate the destination for the event.
-         // probability distribution for the destination is uniform except for
-         // the hotspot LP, which has hotspotProb times the probability of all
-         // other destinations
-         DiscreteUniform lpd = DiscreteUniform(0, destLPMax, myState->gen);
-         int lp = static_cast<int>(lpd());
-         if(lp > numLPs - 1)
-             lp = 0;
-
-         DiscreteUniform objd = DiscreteUniform(0, outputHandles[lp].size() - 1, myState->gen);
-         int destObj = static_cast<int>(objd());
-
-         SimulationObject *receiver = outputHandles[lp][destObj];
+         SimulationObject* receiver = getDestination(myState);
 
          // Generate the delay between the send and receive times.
          int ldelay = msgDelay();
