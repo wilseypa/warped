@@ -19,6 +19,7 @@ SimulationObject::SimulationObject() : mySimulationManager(),
 
 SimulationObject::~SimulationObject(){
    delete myObjectID;
+   delete localVirtualTime;
 }
 
 void
