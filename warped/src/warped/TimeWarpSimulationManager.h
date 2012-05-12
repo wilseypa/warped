@@ -534,7 +534,7 @@ protected:
 	/**
 	 Used to cancel local events.
 	 */
-	void cancelLocalEvents(const vector<const NegativeEvent *> &eventsToCancel);
+    void cancelLocalEvents(const vector<const NegativeEvent *> &eventsToCancel);
 	/**
 	 Used to cancel remote events.
 	 */

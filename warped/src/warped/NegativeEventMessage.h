@@ -34,6 +34,8 @@ public:
     myEvents( events ),
     gVTInfo( initGVTInfo ){}
 
+  ~NegativeEventMessage();
+
   static Serializable *deserialize( SerializedInstance *data );
   static const string &getNegativeEventMessageType();
 

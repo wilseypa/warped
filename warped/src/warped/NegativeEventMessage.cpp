@@ -4,6 +4,12 @@
 #include "Event.h"
 #include "DeserializerManager.h"
 
+NegativeEventMessage::~NegativeEventMessage() {
+    vector<const NegativeEvent*>::const_iterator it(myEvents.begin());
+    while (it != myEvents.end())
+        delete (*it++);
+}
+
 void 
 NegativeEventMessage::serialize( SerializedInstance *serializeInto ) const {
   KernelMessage::serialize( serializeInto );
@@ -13,7 +19,6 @@ NegativeEventMessage::serialize( SerializedInstance *serializeInto ) const {
   }
   serializeInto->addString( gVTInfo );
 }
-
 
 Serializable *
 NegativeEventMessage::deserialize( SerializedInstance *data ){

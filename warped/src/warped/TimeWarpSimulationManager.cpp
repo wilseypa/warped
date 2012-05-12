@@ -608,7 +608,7 @@ void TimeWarpSimulationManager::handleRemoteEvent(const Event *event) {
 }
 
 void TimeWarpSimulationManager::cancelLocalEvents(const vector<
-		const NegativeEvent *> &eventsToCancel) {
+			   const NegativeEvent *> &eventsToCancel) {
 	const NegativeEvent *curEvent = NULL;
 	const VTime *lowTime = &(eventsToCancel[0]->getReceiveTime());
 
@@ -635,13 +635,7 @@ void TimeWarpSimulationManager::cancelLocalEvents(const vector<
 			utils::debug << mySimulationManagerID << " - Cancelling: " << *(*i)
 					<< "\n";
 			ASSERT( (*i)->getReceiveTime() >= receiver->getSimulationTime() );
-
-			//If the event was found and the sender is remote, delete the negative event
-			//in the case the event is not found it will be stored in the negativeEventsQueue for this object
-			//until the corresponding positive event arrives
-			if (myEventSet->handleAntiMessage(receiver, *i)) {
-				delete (*i);
-			}
+			myEventSet->handleAntiMessage(receiver, *i);
 		}
 	}
 }
@@ -797,7 +791,13 @@ void TimeWarpSimulationManager::cancelEvents(
 		cancelObjectIt = cancelEventObjects.begin();
 		while (cancelObjectIt != cancelEventObjects.end()) {
 			SimulationObject *curObject = cancelObjectIt->first;
-			cancelEventsReceiver(curObject, cancelObjectIt->second);
+			vector<const NegativeEvent*> &ne = cancelObjectIt->second;
+			cancelEventsReceiver(curObject, ne);
+			if(contains(*(curObject->getObjectID()))) {
+				vector<const NegativeEvent*>::const_iterator it(ne.begin());
+				while (it != ne.end())
+					delete (*it++);
+			}
 			cancelObjectIt++;
 		}
 	}
@@ -1045,6 +1045,7 @@ void TimeWarpSimulationManager::fossilCollect(const VTime& fossilCollectTime) {
 					}
 				}
 			}
+
 
 			const VTime *min = minTimes[0];
 			for (unsigned int t = 1; t < minTimes.size(); t++) {
