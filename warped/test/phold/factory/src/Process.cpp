@@ -15,13 +15,17 @@ using namespace std;
 Process::Process(unsigned int procNr, string &name, unsigned int nrOfOutputs, 
                  vector<string> outputs, unsigned int stateSize, unsigned int numBalls,
                  distribution_t dist, double initCompGrain, double seed,
-                 int hp/*=1*/, vector<int>* hst/*=NULL*/):
+                 int hp/*=1*/, vector<int>* hst/*=NULL*/,
+                 vector<vector<int> >* hs/*=NULL*/):
   processNumber(procNr), myObjectName(name),  numberOfOutputs(nrOfOutputs), 
   outputNames(outputs), sizeOfState(stateSize), numberOfTokens(numBalls), 
   compGrain(initCompGrain), sourceDistribution(dist), first(seed), second(0.0),
-  hotspotProb(hp), numLPs(0), lpID(0) {
-  if(hst)
+  hotspotProb(hp) {
+  if(hst) {
+    ASSERT(hs);
     hotspotSwitchTimes = *hst;
+    hotspots = *hs;
+  }
 }
 
 Process::~Process() { 
@@ -29,15 +33,21 @@ Process::~Process() {
 };
 
 int
-Process::getHotspot() {
+Process::getHotspotGroup() {
   int t = getSimulationTime().getApproximateIntTime();
   for(int i = hotspotSwitchTimes.size() - 1; i >= 0; i--) {
     if(hotspotSwitchTimes[i] < t)
-      // hash function gets the next hotspot from the list of switch times
-      // that are identical in each LP.  the hotspot moves from lp 0->1->2->...
-      // hotspot numbers are encoded in the switch times by PHOLDApplication
-      return hotspotSwitchTimes[i] % numLPs;
+      return i;
   }
+  return 0;
+}
+
+int
+Process::procNumToOutputNum(int n) {
+  if(n > processNumber)
+    return n - processNumber - 1;
+  else
+    return numberOfOutputs - (processNumber - n);
 }
 
 SimulationObject*
@@ -52,32 +62,40 @@ Process::getDestination(ProcessState* s) {
   }
   else {
     // the "hotspot" way (see ronngren 1994)
-    int hs = getHotspot();
-    int destLPMax = hs == lpID? numLPs - 1 : numLPs + hotspotProb - 2;
-    DiscreteUniform lpd = DiscreteUniform(0, destLPMax, s->gen);
-    int lp = static_cast<int>(lpd());
-    if(lp > numLPs - 1)
-        lp = hs;
+    int destMax = numberOfOutputs - 1;
+    int g = getHotspotGroup();
+    int numHotspots = hotspots[g].size();
+    for(int i = 0; i < numHotspots; i++)
+      destMax += hotspotProb - 1;
 
-    DiscreteUniform objd = DiscreteUniform(0, lpOutputHandles[lp].size() - 1, s->gen);
+    DiscreteUniform objd = DiscreteUniform(0, destMax, s->gen);
     int destObj = static_cast<int>(objd());
+    if(destObj > numberOfOutputs - 1)
+      destObj = hotspots[g][(destObj - (numberOfOutputs - 1)) / hotspotProb];
 
-    return lpOutputHandles[lp][destObj];
+    ASSERT(destObj < numberOfOutputs);
+    return outputHandles[destObj];
   }
 }
 
 void
 Process::initialize() {
-   for (int i = 0; i < outputNames.size(); i++) {
-      SimulationObject* o = getObjectHandle(outputNames[i]);
-      outputHandles.push_back(o);
-      int simMgrId = o->getObjectID()->getSimulationManagerID();
-      if(simMgrId >= lpOutputHandles.size())
-          lpOutputHandles.resize(simMgrId + 1);
-      lpOutputHandles[simMgrId].push_back(o);
+   for (int i = 0; i < outputNames.size(); i++)
+      outputHandles.push_back(getObjectHandle(outputNames[i]));
+
+   // replace hotspots with their indexes in our output handles
+   // delete hotspots that are not in our neighborhood
+   vector<vector<int> >::iterator it(hotspots.begin());
+   for(; it != hotspots.end(); ++it) {
+     vector<int>::iterator iit((*it).begin());
+     while(iit != (*it).end()) {
+       int n = procNumToOutputNum(*iit);
+       if(n < 0 || n >= numberOfOutputs)
+         (*it).erase(iit);
+       else
+         *iit++ = n;
+     }
    }
-   numLPs = lpOutputHandles.size();
-   lpID = getObjectID()->getSimulationManagerID();
 
    ProcessState* myState = dynamic_cast<ProcessState *>( getState() );
    ASSERT(myState != NULL);
@@ -100,7 +118,6 @@ Process::initialize() {
       receiveEvent(event);
       myState->eventSent();
    }
-
 }
 
 void

@@ -61,42 +61,51 @@ PHOLDApplication::getSimulationObjects(){
     abort();
   }
   
-  // hotspots
-  // a hotspot is an LP (TimeWarpSimulationManager) that has a probability
-  // of receiving a message that is N times greater than the other LPs.
-  // it is a way of imposing load imbalance in a way that might occur in a
-  // realistic model such as a digital logic simulator (see ronngren 1994)
-  // the first PHOLD configuration parameter is N.  Set to 1 to not use hotspots
-  int hotspotProb;
-  if(!(configFile >> hotspotProb)) {
-    cerr << "ERROR: First phold parameter must be an integer representing"
-         << " the relative probability to send a message to the hotspot."
-         << endl << "Aborting simulation." << endl;
-    abort();
-  }
-
-  // the hotspot can be setup to switch from LP to LP during the simulation.
-  // hotspot switch times (virtual times) come after the hotspot probability
-  // if the probability is greater than 1 (no hotspot). for example:
-  // 3 0 500 1000
-  // says to switch hotspots at approximately virtual time = 0, 500, and 1000.
-  // the first number indicates the number of switches.
-  // times are slightly adjusted so that the next hotspot can be discerned.
-  // for example, the times in the last example will be
-  // 3 0 501 1002
-  // then the hotspot is LP0 for 0 < t < 501, LP1 for 501 < t < 1002,
-  // and LP2 for 1002 < t
-  int numHotspotSwitches = 0;
+ /* ------------------------------- HOT SPOTS ------------------------------- *
+  *                                                                           *
+  * a hotspot is a SimulationObject that has a probability                    *
+  * of receiving a message that is N times greater than the other objects.    *
+  * it is a way of imposing load imbalance in a way that might occur in a     *
+  * realistic model such as a digital logic simulator (see ronngren 1994)     *
+  * the first PHOLD configuration parameter is N.  Set to 1 to not use        *
+  * hotspots                                                                  *
+  *                                                                           *
+  * If N > 1, a set of groups of objects to use as hotspots at various points *
+  * during the simulation is required.  The next parameter is the number of   *
+  * groups M.  After that, the following data points are read in M times,     *
+  * one for each group of objects: virtual time, number of objects in the     *
+  * set, and the list of objects (by process ID)                              *
+  *                                                                           *
+  * Example:                                                                  *
+  *                                                                           *
+  * 5                                                                         *
+  * 2                                                                         *
+  * 0 2 0 1                                                                   *
+  * 500 3 2 3 4                                                               *
+  *                                                                           *
+  * N is 5.  There will be 2 groups of hotspots.  At virtual time 0,          *
+  * processes 0 and 1 will become hotspots.  At virtual time 500, processes   *
+  * 2 and 3 and 4 will become hotspots.                                       *
+  *                                                                           *
+  * ------------------------------------------------------------------------- */
   vector<int> hotspotSwitchTimes(0);
+  vector<vector<int> > hotspots;
+  int hotspotProb;
+  configFile >> hotspotProb;
   if (hotspotProb > 1) {
+    int numHotspotSwitches;
     configFile >> numHotspotSwitches;
-    int nextHotspot = 0;
+    hotspots.resize(numHotspotSwitches);
     for(int i = 0; i < numHotspotSwitches; i++) {
-      int next;
+      int next, n;
       configFile >> next;
-      while(next % numLPs != nextHotspot) next++;
       hotspotSwitchTimes.push_back(next);
-      nextHotspot = (nextHotspot + 1) % numLPs;
+      configFile >> n;
+      for(int j = 0; j < n; j++) {
+        int obj;
+        configFile >> obj;
+        hotspots[i].push_back(obj);
+      }
     }
   }
 
@@ -176,12 +185,12 @@ PHOLDApplication::getSimulationObjects(){
       vector<string> outputNames;
       for( int j = 0; j < numOutputs; j++){
         int objnum = (j + i + 1) % numObjects;
-         outputNames.push_back(objNames[objnum]);
+        outputNames.push_back(objNames[objnum]);
       } 
 
       retval->push_back( new Process( i, objNames[i], numOutputs, outputNames,
                                       stateSize, msgDen, dist, grain, seed,
-                                      hotspotProb, &hotspotSwitchTimes ) );
+                                      hotspotProb, &hotspotSwitchTimes, &hotspots ) );
     }
   }
   else{
