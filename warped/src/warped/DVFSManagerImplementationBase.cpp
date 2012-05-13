@@ -196,9 +196,9 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
       if(myOG != POWER)
         myFrequencyIdxs[utils[h].node]--;
       changed = true;
+      l++;
+      h--;
     }
-    l++;
-    h--;
   }
   if(myOG != PERFORMANCE) {
     while(l <= low) {
@@ -210,17 +210,16 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
     }
   }
 
-
-  if(changed) {
-    cout << "avg: " << avg << endl << "threshold low: " << avg - threshold << endl << "threshold high: " << avg + threshold << endl;
-    cout << "utils: ";
-    for(int j=0; j<n; j++)
-      cout << myUtilFilters[j].getData() << " ";
-    cout << endl << "freqs: ";
-    for(int j=0; j<n; j++)
-      cout << myAvailableFreqs[myFrequencyIdxs[j]] << " ";
-    cout << endl;
-  }
+//  if(changed) {
+//    cout << "avg: " << avg << endl << "threshold low: " << avg - threshold << endl << "threshold high: " << avg + threshold << endl;
+//    cout << "utils: ";
+//    for(int j=0; j<n; j++)
+//      cout << myUtilFilters[j].getData() << " ";
+//    cout << endl << "freqs: ";
+//    for(int j=0; j<n; j++)
+//      cout << myAvailableFreqs[myFrequencyIdxs[j]] << " ";
+//    cout << endl;
+//  }
 
   return changed;
 }
