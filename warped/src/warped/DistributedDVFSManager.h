@@ -20,8 +20,8 @@ public:
   //@{
 
   /// Constructor
-  DistributedDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
-                       OptimizationGoal, UsefulWorkMetric, double);
+  DistributedDVFSManager(TimeWarpSimulationManager*, int, int, Algorithm, bool,
+                         UsefulWorkMetric, double);
 
   /// Destructor
   virtual ~DistributedDVFSManager();

@@ -22,8 +22,8 @@ public:
   //@{
 
   /// Constructor
-  DVFSManagerImplementationBase(TimeWarpSimulationManager*,int, int, bool, bool, 
-                                OptimizationGoal, UsefulWorkMetric, double);
+  DVFSManagerImplementationBase(TimeWarpSimulationManager*,int, int, Algorithm, bool,
+                                UsefulWorkMetric, double);
 
   /// Destructor
   virtual ~DVFSManagerImplementationBase();
@@ -56,7 +56,7 @@ protected:
   bool updateFrequencyIdxs();
   void fillUsefulWork(vector<double>&);
   void initializeFrequencyIdxs(int maxfreq);
-  bool isDummy() const { return myIsDummy; }
+  bool isDummy() const { return myAlg == FIXED; }
   bool debugPrint() const { return myDebugPrint; }
   void setGovernorMode(int i, const char* governor);
 
@@ -84,9 +84,8 @@ private:
   StopWatch myStopwatch;
   int myMeasurementCounter;
   int myMaxFreqIdx;
-  bool myIsDummy;
   bool myDebugPrint;
-  OptimizationGoal myOG;
+  Algorithm myAlg;
   UsefulWorkMetric myUWM;
   int myLastRollbacks;
   int myLastEventsRolledBack;
@@ -96,7 +95,7 @@ private:
   double getRollbacksForPeriod();
   double getRollbackFractionForPeriod();
 
-  static const char* optimizationStrings[];
+  static const char* algorithmStrings[];
   static const char* uwmStrings[];
 };
 

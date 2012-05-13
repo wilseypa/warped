@@ -22,18 +22,20 @@ public:
   enum UsefulWorkMetric {
     ROLLBACKS,
     ROLLBACK_FRACTION,
-    EFFECTIVE_UTILIZATION,
+    EFFECTIVE_UTILIZATION
   };
 
-  // Performance: scaling freq down on one core always corresponds to 
+  // Fixed:       leave cores set at middle frequency
+  // Performance: scaling freq down on one core always corresponds to
   //              scaling up on another core
   // Power:       only scale down, never scale up
   // Hybrid:      scale down nodes with below-average useful work, then
   //              scale up a node with above-average useful work, if one exists
-  enum OptimizationGoal {
+  enum Algorithm {
+    FIXED,
     PERFORMANCE,
     POWER,
-    HYBRID,
+    HYBRID
   };
  
   /**@name Public Class Methods of DVFSManager. */
