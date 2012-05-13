@@ -52,7 +52,7 @@ const VTime & ThreadedTimeWarpMultiSetSchedulingManager::getLastEventScheduledTi
 	 this->releaseExecuteLock(0);
 
 	 if (*minTime == mySimulationManager->getPositiveInfinity()) {
-	 //assert(false);
+	 //ASSERT(false);
 	 minTime = &(mySimulationManager->getGVTManager()->getGVT());
 	 }
 
@@ -86,11 +86,11 @@ ThreadedTimeWarpMultiSetSchedulingManager::peekNextEvent() {
 void ThreadedTimeWarpMultiSetSchedulingManager::getExecuteLock(int threadId) {
 	while (!executeQueueLock->setLock(threadId))
 		;
-	assert(executeQueueLock->hasLock(threadId));
+	ASSERT(executeQueueLock->hasLock(threadId));
 }
 
 void ThreadedTimeWarpMultiSetSchedulingManager::releaseExecuteLock(int threadId) {
-	assert(executeQueueLock->hasLock(threadId));
+	ASSERT(executeQueueLock->hasLock(threadId));
 	executeQueueLock->releaseLock(threadId);
 }
 

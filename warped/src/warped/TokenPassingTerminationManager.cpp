@@ -4,7 +4,6 @@
 #include "TerminateToken.h"
 #include "TimeWarpSimulationManager.h"
 #include "CommunicationManager.h"
-#include <cassert>
 #include <utils/Debug.h>
 using utils::debug;
 
@@ -38,7 +37,7 @@ TokenPassingTerminationManager::figureOutPeer( const TimeWarpSimulationManager *
     myPeer = myId + 1;
   }
 
-  assert( myPeer != myId );
+  ASSERT( myPeer != myId );
 
   return myPeer;
 }

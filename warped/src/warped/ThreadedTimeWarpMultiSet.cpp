@@ -83,10 +83,10 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
 	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 	 << " ) Queue - " << objId << " is Locked by the thread - "
 	 << threadId << "\n";*/
-	assert(unprocessedQueueAtomicState[objId]->hasLock(threadId));
+	ASSERT(unprocessedQueueAtomicState[objId]->hasLock(threadId));
 }
 void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
-	assert(unprocessedQueueAtomicState[objId]->hasLock(threadId));
+	ASSERT(unprocessedQueueAtomicState[objId]->hasLock(threadId));
 	unprocessedQueueAtomicState[objId]->releaseLock(threadId);
 	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 	 << " ) Queue - " << objId << " is Released by the thread - "
@@ -95,29 +95,29 @@ void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
 void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
 	while (!processedQueueAtomicState[objId]->setLock(threadId))
 		;
-	assert(processedQueueAtomicState[objId]->hasLock(threadId));
+	ASSERT(processedQueueAtomicState[objId]->hasLock(threadId));
 }
 void ThreadedTimeWarpMultiSet::releaseProcessedLock(int threadId, int objId) {
-	assert(processedQueueAtomicState[objId]->hasLock(threadId));
+	ASSERT(processedQueueAtomicState[objId]->hasLock(threadId));
 	processedQueueAtomicState[objId]->releaseLock(threadId);
 }
 void ThreadedTimeWarpMultiSet::getremovedLock(int threadId, int objId) {
 	while (!removedQueueAtomicState[objId]->setLock(threadId))
 		;
-	assert(removedQueueAtomicState[objId]->hasLock(threadId));
+	ASSERT(removedQueueAtomicState[objId]->hasLock(threadId));
 }
 void ThreadedTimeWarpMultiSet::releaseremovedLock(int threadId, int objId) {
-	assert(removedQueueAtomicState[objId]->hasLock(threadId));
+	ASSERT(removedQueueAtomicState[objId]->hasLock(threadId));
 	removedQueueAtomicState[objId]->releaseLock(threadId);
 }
 
 void ThreadedTimeWarpMultiSet::getScheduleQueueLock(int threadId) {
 	while (!scheduleQueueLock->setLock(threadId))
 		;
-	assert(scheduleQueueLock->hasLock(threadId));
+	ASSERT(scheduleQueueLock->hasLock(threadId));
 }
 void ThreadedTimeWarpMultiSet::releaseScheduleQueueLock(int threadId) {
-	assert(scheduleQueueLock->hasLock(threadId));
+	ASSERT(scheduleQueueLock->hasLock(threadId));
 	scheduleQueueLock->releaseLock(threadId);
 }
 void ThreadedTimeWarpMultiSet::getObjectLock(int threadId, int objId) {
@@ -126,10 +126,10 @@ void ThreadedTimeWarpMultiSet::getObjectLock(int threadId, int objId) {
 	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 	 << " ) Object - " << objId << " is Locked by the thread - "
 	 << threadId << "\n";*/
-	assert(objectStatusLock[objId]->hasLock(threadId));
+	ASSERT(objectStatusLock[objId]->hasLock(threadId));
 }
 void ThreadedTimeWarpMultiSet::releaseObjectLock(int threadId, int objId) {
-	assert(objectStatusLock[objId]->hasLock(threadId));
+	ASSERT(objectStatusLock[objId]->hasLock(threadId));
 	objectStatusLock[objId]->releaseLock(threadId);
 	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 	 << " ) Object - " << objId << " is Released by the thread - "
@@ -169,14 +169,14 @@ const Event* ThreadedTimeWarpMultiSet::getEvent(SimulationObject *simObj,
 		this->releaseunProcessedLock(threadId, objId);
 		//Insert into Processed Queue
 		if (dynamic_cast<const StragglerEvent*> (ret))
-			assert(false);
+			ASSERT(false);
 		this->getProcessedLock(threadId, objId);
 		processedQueue[objId]->push_back(ret);
 		this->releaseProcessedLock(threadId, objId);
 	} else {
 		this->releaseunProcessedLock(threadId, objId);
 	}
-	assert(this->isObjectScheduledBy(threadId, objId));
+	ASSERT(this->isObjectScheduledBy(threadId, objId));
 	return ret;
 }
 const Event* ThreadedTimeWarpMultiSet::getEventWhileRollback(
@@ -195,12 +195,12 @@ const Event* ThreadedTimeWarpMultiSet::getEventWhileRollback(
 		unProcessedQueue[objId]->erase(unProcessedQueue[objId]->begin());
 		//Insert into Processed Queue
 		if (dynamic_cast<const StragglerEvent*> (ret))
-			assert(false);
+			ASSERT(false);
 		this->getProcessedLock(threadId, objId);
 		processedQueue[objId]->push_back(ret);
 		this->releaseProcessedLock(threadId, objId);
 	}
-	assert(this->isObjectScheduledBy(threadId, objId));
+	ASSERT(this->isObjectScheduledBy(threadId, objId));
 	return ret;
 }
 const Event* ThreadedTimeWarpMultiSet::getEventIfStraggler(
@@ -220,7 +220,7 @@ const Event* ThreadedTimeWarpMultiSet::getEventIfStraggler(
 	} else
 		this->releaseunProcessedLock(threadId, objId);
 
-	assert(this->isObjectScheduledBy(threadId, objId));
+	ASSERT(this->isObjectScheduledBy(threadId, objId));
 
 	return ret;
 }
@@ -355,7 +355,7 @@ bool ThreadedTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) 
 	}
 	this->releaseScheduleQueueLock(threadId);
 
-	assert(
+	ASSERT(
 			scheduleQueue->size()
 					<= mySimulationManager->getNumberOfSimulationObjects());
 	return false;
@@ -592,7 +592,7 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId,
 		int threadId) {
 	const Event* firstEvent = NULL;
 	if (!this->isObjectScheduledBy(threadId, objId))
-		assert(false);
+		ASSERT(false);
 	this->getScheduleQueueLock(threadId);
 	if (!this->unprocessedQueueAtomicState[objId]->hasLock(threadId))
 		this->getunProcessedLock(threadId, objId);
@@ -619,7 +619,7 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId,
 		lowestObjectPosition[objId] = scheduleQueue->end();
 	this->releaseObjectLock(threadId, objId);
 	this->releaseScheduleQueueLock(threadId);
-	assert(
+	ASSERT(
 			scheduleQueue->size()
 					<= mySimulationManager->getNumberOfSimulationObjects());
 
@@ -696,7 +696,7 @@ const Event* ThreadedTimeWarpMultiSet::peekEventLockUnprocessed(
 		SimulationObject *simObj, int threadId) {
 	const Event* ret = NULL;
 	SimulationObject *simObject = NULL;
-	assert(simObj != NULL);
+	ASSERT(simObj != NULL);
 	unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
 	this->getunProcessedLock(threadId, objId);
 	if (getQueueEventCount(objId) > 0) {

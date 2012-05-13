@@ -68,7 +68,7 @@ void
 SerializedInstance::getBytes(  char *buffer, unsigned int numBytes ){
   initExtract();
   checkType( DATA_TYPE(readInt( extractIterator )), CHAR_BLOB );
-  assert( readUnsigned( extractIterator ) == numBytes );
+  ASSERT( readUnsigned( extractIterator ) == numBytes );
   readBytes( buffer, numBytes, extractIterator );
 }
 

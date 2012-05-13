@@ -33,10 +33,10 @@ ThreadedLazyOutputManager::~ThreadedLazyOutputManager() {
 /*void ThreadedLazyOutputManager::getLazyMinQueueLock(int threadId) {
 	while (!lazyMinQueueLock->setLock(threadId))
 		;
-	assert(lazyMinQueueLock->hasLock(threadId));
+	ASSERT(lazyMinQueueLock->hasLock(threadId));
 }
 void ThreadedLazyOutputManager::releaseLazyMinQueueLock(int threadId) {
-	assert(lazyMinQueueLock->hasLock(threadId));
+	ASSERT(lazyMinQueueLock->hasLock(threadId));
 	lazyMinQueueLock->releaseLock(threadId);
 }*/
 

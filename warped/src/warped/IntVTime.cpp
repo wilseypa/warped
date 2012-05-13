@@ -40,7 +40,7 @@ IntVTime::deserialize( SerializedInstance *serialized ){
 // We might be able to move this to VTime
 void 
 IntVTime::registerDeserializer(){
-  assert (DeserializerManager::instance() != 0);
+  ASSERT(DeserializerManager::instance() != 0);
   DeserializerManager::instance()->registerDeserializer( getIntVTimeDataType(),
 							 &deserialize );
 }

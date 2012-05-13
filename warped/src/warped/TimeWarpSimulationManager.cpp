@@ -103,7 +103,7 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
 
 const VTime &
 TimeWarpSimulationManager::getCommittedTime() {
-	assert(myGVTManager != 0);
+	ASSERT(myGVTManager != 0);
 	return myGVTManager->getGVT();
 }
 

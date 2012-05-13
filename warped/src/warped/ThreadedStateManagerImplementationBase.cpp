@@ -334,11 +334,11 @@ bool ThreadedStateManagerImplementationBase::getStateQueueLock(int threadId,
 		int objId) {
 	while (!stateQueueLock[objId]->setLock(threadId))
 		;
-	assert(stateQueueLock[objId]->hasLock(threadId));
+	ASSERT(stateQueueLock[objId]->hasLock(threadId));
 }
 bool ThreadedStateManagerImplementationBase::releaseStateQueueLock(int threadId,
 		int objId) {
-	assert(stateQueueLock[objId]->hasLock(threadId));
+	ASSERT(stateQueueLock[objId]->hasLock(threadId));
 	stateQueueLock[objId]->releaseLock(threadId);
 }
 void ThreadedStateManagerImplementationBase::initStateQueueLocks(

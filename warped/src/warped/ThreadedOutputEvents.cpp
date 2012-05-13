@@ -456,32 +456,32 @@ void ThreadedOutputEvents::ofcPurge(int threadID) {
 bool ThreadedOutputEvents::getLocalLock(int threadId) {
 	while (!localQueueLock->setLock(threadId))
 		;
-	assert(localQueueLock->hasLock(threadId));
+	ASSERT(localQueueLock->hasLock(threadId));
 }
 
 bool ThreadedOutputEvents::releaseLocalLock(int threadId) {
-	assert(localQueueLock->hasLock(threadId));
+	ASSERT(localQueueLock->hasLock(threadId));
 	localQueueLock->releaseLock(threadId);
 }
 
 bool ThreadedOutputEvents::getRemoteLock(int threadId) {
 	while (!remoteQueueLock->setLock(threadId))
 		;
-	assert(remoteQueueLock->hasLock(threadId));
+	ASSERT(remoteQueueLock->hasLock(threadId));
 }
 
 bool ThreadedOutputEvents::releaseRemoteLock(int threadId) {
-	assert(remoteQueueLock->hasLock(threadId));
+	ASSERT(remoteQueueLock->hasLock(threadId));
 	remoteQueueLock->releaseLock(threadId);
 }
 
 bool ThreadedOutputEvents::getRemovedLock(int threadId) {
 	while (!removedListLock->setLock(threadId))
 		;
-	assert(removedListLock->hasLock(threadId));
+	ASSERT(removedListLock->hasLock(threadId));
 }
 
 bool ThreadedOutputEvents::releaseRemovedLock(int threadId) {
-	assert(removedListLock->hasLock(threadId));
+	ASSERT(removedListLock->hasLock(threadId));
 	removedListLock->releaseLock(threadId);
 }

@@ -388,7 +388,7 @@ ThreadedTimeWarpSimulationManager::getEvent(SimulationObject *object) {
 		retval = myEventSet->getEvent(object, threadID);
 	}
 	if (dynamic_cast<const StragglerEvent*> (retval)) {
-		assert(false);
+		ASSERT(false);
 	}
 
 	return retval;
@@ -1095,21 +1095,21 @@ ThreadedTimeWarpSimulationManager::createMapOfObjects() {
 void ThreadedTimeWarpSimulationManager::getGVTTimePeriodLock(int threadId) {
 	while (!GVTTimePeriodLock->setLock(threadId))
 		;
-	assert(GVTTimePeriodLock->hasLock(threadId));
+	ASSERT(GVTTimePeriodLock->hasLock(threadId));
 }
 void ThreadedTimeWarpSimulationManager::releaseGVTTimePeriodLock(int threadId) {
-	assert(GVTTimePeriodLock->hasLock(threadId));
+	ASSERT(GVTTimePeriodLock->hasLock(threadId));
 	GVTTimePeriodLock->releaseLock(threadId);
 }
 
 void ThreadedTimeWarpSimulationManager::getLVTFlagLock(unsigned int threadId) {
 	while (!LVTFlagLock->setLock(threadId))
 		;
-	assert(LVTFlagLock->hasLock(threadId));
+	ASSERT(LVTFlagLock->hasLock(threadId));
 }
 void ThreadedTimeWarpSimulationManager::releaseLVTFlagLock(
 		unsigned int threadId) {
-	assert(LVTFlagLock->hasLock(threadId));
+	ASSERT(LVTFlagLock->hasLock(threadId));
 	LVTFlagLock->releaseLock(threadId);
 }
 
@@ -1334,7 +1334,7 @@ void ThreadedTimeWarpSimulationManager::decrementLVTFlag(unsigned int threadId) 
 	LVTFlag--;
 	utils::debug << "(" << mySimulationManagerID << " T " << threadId << " )"
 			<< "Decrementing LVTFlag .. Current value :: " << LVTFlag << endl;
-	assert(LVTFlag >= 0);
+	ASSERT(LVTFlag >= 0);
 	releaseLVTFlagLock(threadId);
 }
 
