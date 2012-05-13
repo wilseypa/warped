@@ -147,7 +147,7 @@ PHOLDApplication::getSimulationObjects(){
 
   // When generating all the objects, all information about the objects will be the same.
   if(generateObjs){
-    configFile >> stateSize >> grain >> numOutputs;
+    configFile >> stateSize >> grain;
 
     // if numOutputs isn't given, assume a fully connected network
     if(!(configFile >> numOutputs))
