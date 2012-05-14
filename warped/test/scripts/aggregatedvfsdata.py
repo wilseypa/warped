@@ -18,7 +18,7 @@ for x in range(numlines - 2):
   for fnum in range(numfiles):
     (uwi, freq) =  lines[fnum][x + 1].strip().split(',')
     uwiavg = uwiavg + float(uwi)
-    outline = outline + '%s,%s' % (uwi, freq)
+    outline = outline + '%s,%s,' % (uwi, freq)
   uwiavg = uwiavg / numfiles
   outline = '%f: %s' % (uwiavg, outline[0:-1])
   print outline
