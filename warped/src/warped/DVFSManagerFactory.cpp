@@ -57,7 +57,9 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   }
 
   DVFSManager::Algorithm alg;
-  if(al == "PERFORMANCE")
+  if(al == "FIXED")
+    alg = DVFSManager::FIXED;
+  else if(al == "PERFORMANCE")
     alg = DVFSManager::PERFORMANCE;
   else if(al == "POWER")
     alg = DVFSManager::POWER;
@@ -101,20 +103,20 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
 
     if(type == "SHARED")
       return new SharedDVFSManager(mySimulationManager,
-                                 p,
-                                 firsize,
-                                 alg,
-                                 trueFalseValues[0],
-                                 uwm,
-                                 threshold);
+                                   p,
+                                   firsize,
+                                   alg,
+                                   trueFalseValues[0],
+                                   uwm,
+                                   threshold);
 
     return new DistributedDVFSManager(mySimulationManager,
-                                    p,
-                                    firsize,
-                                    alg,
-                                    trueFalseValues[0],
-                                    uwm,
-                                    threshold);
+                                      p,
+                                      firsize,
+                                      alg,
+                                      trueFalseValues[0],
+                                      uwm,
+                                      threshold);
   }
   else {
     stringstream err;
