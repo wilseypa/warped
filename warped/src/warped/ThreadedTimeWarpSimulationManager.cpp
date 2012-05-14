@@ -705,17 +705,6 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject *object,
 
 		ASSERT( *restoredTime <= rollbackTime);
 
-		// now rollback the file queues
-		for (vector<TimeWarpSimulationStream*>::iterator i =
-				inFileQueues[objId].begin(); i != inFileQueues[objId].end(); i++) {
-			(*i)->rollbackTo(*restoredTime);
-		}
-
-		for (vector<TimeWarpSimulationStream*>::iterator i =
-				outFileQueues[objId].begin(); i != outFileQueues[objId].end(); i++) {
-			(*i)->rollbackTo(*restoredTime);
-		}
-
 		// send out the cancel messages
 		myEventSet->rollback(object, *restoredTime, threadID);
 		myOutputManager->rollback(object, rollbackTime, threadID);
@@ -865,28 +854,6 @@ void ThreadedTimeWarpSimulationManager::fossilCollect(
 				// call fossil collect on the file queues
 				unsigned int objID =
 						(*objects)[i]->getObjectID()->getSimulationObjectID();
-
-				if (!inFileQueues[objID].empty()) {
-					vector<TimeWarpSimulationStream*>::iterator iter =
-							inFileQueues[objID].begin();
-					vector<TimeWarpSimulationStream*>::iterator iter_end =
-							inFileQueues[objID].end();
-					while (iter != iter_end) {
-						(*iter)->fossilCollect(*(minTimes[i]));
-						++iter;
-					}
-				}
-
-				if (!outFileQueues[objID].empty()) {
-					vector<TimeWarpSimulationStream*>::iterator iter =
-							outFileQueues[objID].begin();
-					vector<TimeWarpSimulationStream*>::iterator iter_end =
-							outFileQueues[objID].end();
-					while (iter != iter_end) {
-						(*iter)->fossilCollect(*(minTimes[i]));
-						++iter;
-					}
-				}
 			}
 
 			const VTime *min = minTimes[0];
@@ -1214,10 +1181,6 @@ void ThreadedTimeWarpSimulationManager::registerSimulationObjects() {
 
 		// initialize the coast forward vector element for the object
 		coastForwardTime.push_back(0);
-
-		// initialize the input and output file queues.
-		inFileQueues.push_back(vector<TimeWarpSimulationStream*> ());
-		outFileQueues.push_back(vector<TimeWarpSimulationStream*> ());
 	}
 	delete objects;
 	delete keys;
@@ -1385,57 +1348,6 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
 }
 const VTime* ThreadedTimeWarpSimulationManager::getLVT() {
 	return LVT->clone();
-}
-/// Used in optimistic fossil collection to checkpoint the file queues.
-void ThreadedTimeWarpSimulationManager::saveFileQueuesCheckpoint(
-		ofstream* outFile, const ObjectID &objId, unsigned int saveTime) {
-	unsigned int i = objId.getSimulationObjectID();
-	for (int j = 0; j < outFileQueues[i].size(); j++) {
-		(outFileQueues[i][j])->saveCheckpoint(outFile, saveTime);
-	}
-	for (int j = 0; j < inFileQueues[i].size(); j++) {
-		(inFileQueues[i][j])->saveCheckpoint(outFile, saveTime);
-	}
-}
-
-/// Used in optimistic fossil collection to restore the file queues.
-void ThreadedTimeWarpSimulationManager::restoreFileQueues(ifstream* inFile,
-		const ObjectID &objId, unsigned int restoreTime) {
-	unsigned int i = objId.getSimulationObjectID();
-	for (int j = 0; j < outFileQueues[i].size(); j++) {
-		(outFileQueues[i][j])->restoreCheckpoint(inFile, restoreTime);
-	}
-
-	for (int j = 0; j < inFileQueues[i].size(); j++) {
-		(inFileQueues[i][j])->restoreCheckpoint(inFile, restoreTime);
-	}
-}
-
-void ThreadedTimeWarpSimulationManager::fossilCollectFileQueues(
-		SimulationObject *object, int fossilCollectTime) {
-	unsigned int objID = object->getObjectID()->getSimulationObjectID();
-
-	if (!inFileQueues[objID].empty()) {
-		vector<TimeWarpSimulationStream*>::iterator iter =
-				inFileQueues[objID].begin();
-		vector<TimeWarpSimulationStream*>::iterator iter_end =
-				inFileQueues[objID].end();
-		while (iter != iter_end) {
-			(*iter)->fossilCollect(fossilCollectTime);
-			++iter;
-		}
-	}
-
-	if (!outFileQueues[objID].empty()) {
-		vector<TimeWarpSimulationStream*>::iterator iter =
-				outFileQueues[objID].begin();
-		vector<TimeWarpSimulationStream*>::iterator iter_end =
-				outFileQueues[objID].end();
-		while (iter != iter_end) {
-			(*iter)->fossilCollect(fossilCollectTime);
-			++iter;
-		}
-	}
 }
 bool ThreadedTimeWarpSimulationManager::initiateLocalGVT() {
 	bool ret = false;
