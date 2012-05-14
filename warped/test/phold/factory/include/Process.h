@@ -27,7 +27,8 @@ class Process : public SimulationObject {
 public:
    Process(unsigned int, string &, unsigned int, vector<string>,
            unsigned int, unsigned int, distribution_t, double, double,
-           int hotspotProb=1, vector<int>* hst=NULL);
+           int hotspotProb=1, vector<int>* hst=NULL,
+           vector<vector<int> >* hs=NULL);
    ~Process();
 
    void initialize();
@@ -47,7 +48,13 @@ public:
    void reportError(const string&, SEVERITY);
 
 private:
-   int getHotspot();
+   // gets the current hot spot group according to the current virtual time
+   int getHotspotGroup();
+
+   // takes a process number and converts it to an index into our output handles
+   int procNumToOutputNum(int);
+
+   // gets the destination of the generated event
    SimulationObject* getDestination(ProcessState*);
 
    // The designated number for this object.
@@ -92,9 +99,8 @@ private:
    void computationGrain();
 
    int hotspotProb;
-   int numLPs;
-   int lpID;
    vector<int> hotspotSwitchTimes;
+   vector<vector<int> > hotspots;
 };
 
 #endif

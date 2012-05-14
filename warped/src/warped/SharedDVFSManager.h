@@ -19,8 +19,8 @@ public:
   //@{
 
   /// Constructor
-  SharedDVFSManager(TimeWarpSimulationManager*, int, int, bool, bool,
-                  OptimizationGoal, UsefulWorkMetric, double);
+  SharedDVFSManager(TimeWarpSimulationManager*, int, int, Algorithm, bool,
+                    UsefulWorkMetric, double);
 
   /// Destructor
   virtual ~SharedDVFSManager();

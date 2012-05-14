@@ -31,7 +31,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   }
 
   string metric = "ROLLBACKS";
-  string opt = "PERFORMANCE";
+  string al = "FIXED";
   int p = 0;
   int firsize = 16;
   double threshold = 0.1;
@@ -39,39 +39,39 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   configuration.getDVFSIntOption("FIRSize", firsize);
   configuration.getDVFSDoubleOption("Threshold", threshold);
   configuration.getDVFSStringOption("UsefulWorkMetric", metric);
-  configuration.getDVFSStringOption("OptimizeFor", opt);
+  configuration.getDVFSStringOption("Algorithm", al);
 
   DVFSManager::UsefulWorkMetric uwm;
   if(metric == "ROLLBACKS")
     uwm = DVFSManager::ROLLBACKS;
   else if(metric == "ROLLBACKFRACTION")
     uwm = DVFSManager::ROLLBACK_FRACTION;
-  else if(metric == "EFFECTIVEUTILIZATION")
-    uwm = DVFSManager::EFFECTIVE_UTILIZATION;
+  //else if(metric == "EFFECTIVEUTILIZATION")
+  //  uwm = DVFSManager::EFFECTIVE_UTILIZATION;
   else {
     stringstream err;
     err << "DVFSManager: UsefulWorkMetric " << metric << " is invalid. "
-        << "Valid metrics are Rollbacks | EffectiveUtilization "
-        << "| RollbackFraction. Aborting simulation." << endl;
+        << "Valid metrics are Rollbacks | RollbackFraction. Aborting simulation."
+        << endl;
     mySimulationManager->shutdown(err.str());
   }
 
-  DVFSManager::OptimizationGoal og;
-  if(opt == "PERFORMANCE")
-    og = DVFSManager::PERFORMANCE;
-  else if(opt == "POWER")
-    og = DVFSManager::POWER;
-  else if(opt == "HYBRID")
-    og = DVFSManager::HYBRID;
+  DVFSManager::Algorithm alg;
+  if(al == "PERFORMANCE")
+    alg = DVFSManager::PERFORMANCE;
+  else if(al == "POWER")
+    alg = DVFSManager::POWER;
+  else if(al == "HYBRID")
+    alg = DVFSManager::HYBRID;
   else {
     stringstream err;
-    err << "DVFSManager: OptimizeFor " << opt << " is invalid. "
-        << "Valid options are Performance | Power | Hybrid. "
+    err << "DVFSManager: Algorithm " << al << " is invalid. "
+        << "Valid options are Fixed | Performance | Power | Hybrid. "
         << "Aborting simulation." << endl;
     mySimulationManager->shutdown(err.str());
   }
 
-  const char* trueFalseOptions[] = {"Fixed", "DebugPrint"};
+  const char* trueFalseOptions[] = {"DebugPrint"};
   int numTrueFalse = sizeof(trueFalseOptions) / sizeof(const char*);
   bool trueFalseValues[numTrueFalse];
   for(int i=0; i < numTrueFalse; i++) {
@@ -91,31 +91,28 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
     cout << "("
          << mySimulationManager->getSimulationManagerID()
          << ") configured a " << type << " DVFS Manager" << endl
-         << "Fixed: " << (trueFalseValues[0] ? "True" : "False") << endl
+         << "Algorithm: " << al << endl
          << "Period: " << p << endl
          << "FIR Size: " << firsize << endl
-         << "Optimize for: " << opt << endl
          << "Useful work metric: " << metric << endl
          << "Threshold: " << threshold << endl;
-         if(trueFalseValues[1])
+         if(trueFalseValues[0])
            cout <<  "Writing trace to csv" << endl;
 
     if(type == "SHARED")
       return new SharedDVFSManager(mySimulationManager,
                                  p,
                                  firsize,
+                                 alg,
                                  trueFalseValues[0],
-                                 trueFalseValues[1],
-                                 og,
                                  uwm,
                                  threshold);
 
     return new DistributedDVFSManager(mySimulationManager,
                                     p,
                                     firsize,
+                                    alg,
                                     trueFalseValues[0],
-                                    trueFalseValues[1],
-                                    og,
                                     uwm,
                                     threshold);
   }

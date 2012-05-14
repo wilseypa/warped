@@ -11,24 +11,22 @@ using namespace std;
 SharedDVFSManager::SharedDVFSManager(TimeWarpSimulationManager* simMgr,
                                  int measurementPeriod,
                                  int firsize,
-                                 bool fixed,
+                                 Algorithm alg,
                                  bool debug,
-                                 OptimizationGoal og,
                                  UsefulWorkMetric uwm,
                                  double threshold)
 
   :DVFSManagerImplementationBase(simMgr,
                                  measurementPeriod,
                                  firsize,
-                                 fixed,
+                                 alg,
                                  debug,
-                                 og,
                                  uwm,
                                  threshold)
 {}
 
 SharedDVFSManager::~SharedDVFSManager() {
-  setGovernorMode(myCPU, "ondemand");
+  //setGovernorMode(myCPU, "ondemand");
 }
 
 void

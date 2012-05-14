@@ -14,9 +14,8 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
     TimeWarpSimulationManager* simMgr,
     int measurementPeriod,
     int firsize,
-    bool dummy,
+    Algorithm alg,
     bool debug,
-    OptimizationGoal og,
     UsefulWorkMetric uwm,
     double threshold)
   :mySimulationManager(simMgr)
@@ -31,10 +30,9 @@ DVFSManagerImplementationBase::DVFSManagerImplementationBase(
   ,myMeasurementPeriod(measurementPeriod)
   ,myMeasurementCounter(0)
   ,myMaxFreqIdx(0)
-  ,myIsDummy(dummy) 
+  ,myAlg(alg)
   ,myDebugPrint(debug)
   ,myUWM(uwm)
-  ,myOG(og)
   ,myLastRollbacks(0)
   ,myLastEventsRolledBack(0)
   ,myLastEventsExecuted(0)
@@ -191,16 +189,16 @@ DVFSManagerImplementationBase::updateFrequencyIdxs() {
     else if(myFrequencyIdxs[utils[h].node] == 0)
       h--;
     else {
-      // adjust frequency indexes depending on optimization goal
+      // adjust frequency indexes depending on algorithm
       myFrequencyIdxs[utils[l].node]++;
-      if(myOG != POWER)
+      if(myAlg != POWER)
         myFrequencyIdxs[utils[h].node]--;
       changed = true;
       l++;
       h--;
     }
   }
-  if(myOG != PERFORMANCE) {
+  if(myAlg != PERFORMANCE) {
     while(l <= low) {
       if(myFrequencyIdxs[utils[l].node] != myMaxFreqIdx) {
         myFrequencyIdxs[utils[l].node]++;
@@ -290,10 +288,9 @@ string
 DVFSManagerImplementationBase::toString() {
   stringstream ss;
   ss << "Period: " << myMeasurementPeriod << ", "
-     << "Fixed: " << (myIsDummy ? "True" : "False") << ", "
      << "FIRSize: " << myFIRSize << ", "
      << "UsefulWorkMetric: " << uwmStrings[myUWM] << ", "
-     << "Optimize for: " << optimizationStrings[myOG];
+     << "Algorithm: " << algorithmStrings[myAlg];
   return ss.str();
 }
 
@@ -302,8 +299,8 @@ ostream& operator<<(ostream& out, DVFSManager& dvfsm) {
   return out;
 }
 
-const char* DVFSManagerImplementationBase::optimizationStrings[] = 
-  {"Performance", "Power", "Hybrid"};
+const char* DVFSManagerImplementationBase::algorithmStrings[] =
+  {"Fixed", "Performance", "Power", "Hybrid"};
 
 const char* DVFSManagerImplementationBase::uwmStrings[] = 
   {"Rollbacks", "RollbackFraction", "EffectiveUtilization"};

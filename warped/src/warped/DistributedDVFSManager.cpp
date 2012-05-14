@@ -12,17 +12,15 @@
 DistributedDVFSManager::DistributedDVFSManager(TimeWarpSimulationManager* simMgr,
                                            int measurementPeriod,
                                            int firsize,
-                                           bool fixed,
+                                           Algorithm alg,
                                            bool debug,
-                                           OptimizationGoal og,
                                            UsefulWorkMetric uwm,
                                            double threshold)
   :DVFSManagerImplementationBase(simMgr,
                                  measurementPeriod,
                                  firsize,
-                                 fixed,
+                                 alg,
                                  debug,
-                                 og,
                                  uwm,
                                  threshold)
   ,myWaitingForMessage(false)
