@@ -89,7 +89,7 @@ SharedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
 
   if(msg->getRound() == UsefulWorkMessage::CIRCULATECPU) {
     if(isMaster()) {
-      for(int i = 0; i < myCPUs.size() - 1; i++)
+      for(int i = 1; i < myCPUs.size(); i++)
           myCPUs[i] = static_cast<int>(dat[i]);
     }
     else {
