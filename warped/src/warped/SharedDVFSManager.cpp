@@ -23,6 +23,7 @@ SharedDVFSManager::SharedDVFSManager(TimeWarpSimulationManager* simMgr,
                                  debug,
                                  uwm,
                                  threshold)
+  ,myCPUs(myNumSimulationManagers)
 {}
 
 SharedDVFSManager::~SharedDVFSManager() {
@@ -67,6 +68,15 @@ SharedDVFSManager::configure(SimulationConfiguration &config) {
        << "; initializing freq to " << freq << endl;
   setGovernorMode(myCPU, "userspace");
   setCPUFrequency(myCPU, freq);
+
+  if(isMaster()) {
+    myCPUs[0] = myCPU;
+    UsefulWorkMessage* uwm = new UsefulWorkMessage(0,
+                                                   1,
+                                                   myNumSimulationManagers,
+                                                   UsefulWorkMessage::CIRCULATECPU);
+    myCommunicationManager->sendMessage(uwm, 1);
+  }
 }
 
 void
@@ -76,6 +86,25 @@ SharedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
 
   std::vector<double> dat;
   msg->getData(dat);
+
+  if(msg->getRound() == UsefulWorkMessage::CIRCULATECPU) {
+    if(isMaster()) {
+      for(int i = 0; i < myCPUs.size() - 1; i++)
+          myCPUs[i] = static_cast<int>(dat[i]);
+    }
+    else {
+      dat[mySimulationManagerID] = static_cast<double>(myCPU);
+      int dest = (mySimulationManagerID + 1) % myNumSimulationManagers;
+      UsefulWorkMessage* newMsg = new UsefulWorkMessage(mySimulationManagerID,
+                                                        dest,
+                                                        myNumSimulationManagers,
+                                                        UsefulWorkMessage::CIRCULATECPU);
+      newMsg->setData(dat);
+      myCommunicationManager->sendMessage(newMsg, dest);
+    }
+    delete msg;
+    return;
+  }
 
   // add our useful work index to the array
   fillUsefulWork(dat);
@@ -90,7 +119,7 @@ SharedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
     // have changed, then set the new cpu frequencies
     if(!isDummy() && updateFrequencyIdxs())
       for(int i=0; i < myFrequencyIdxs.size(); i++)
-        setCPUFrequency(i, myAvailableFreqs[myFrequencyIdxs[i]]);
+        setCPUFrequency(myCPUs[i], myAvailableFreqs[myFrequencyIdxs[i]]);
 
     // write trace to csv
     if(debugPrint())
@@ -117,5 +146,5 @@ SharedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
 
 string
 SharedDVFSManager::toString() {
-  return "Real DVFS, " + DVFSManagerImplementationBase::toString();
+  return "Shared DVFS, " + DVFSManagerImplementationBase::toString();
 }

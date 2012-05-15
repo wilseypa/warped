@@ -38,6 +38,9 @@ public:
   virtual string toString();
 
   //@} // End of Public Class Methods of DVFSManager.
+
+private:
+  std::vector<int>myCPUs;
 };
 
 #endif //CENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

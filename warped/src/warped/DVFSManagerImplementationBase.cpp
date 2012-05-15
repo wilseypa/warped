@@ -77,13 +77,14 @@ DVFSManagerImplementationBase::writeCSVRow(int node,
 void
 DVFSManagerImplementationBase::configure(
         SimulationConfiguration &configuration) {
-  registerWithCommunicationManager();
 #ifdef HAVE_SCHED_GETCPU
   myCPU = sched_getcpu();
 #else
   cerr << "sched_getcpu() required to use DVFS" << endl;
   abort();
 #endif
+  registerWithCommunicationManager();
+
   populateAvailableFrequencies();
 }
 

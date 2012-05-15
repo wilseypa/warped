@@ -12,7 +12,8 @@ class UsefulWorkMessage : public KernelMessage {
 public:
   enum MessageRound {
     COLLECT,
-    SETFREQ
+    SETFREQ,
+    CIRCULATECPU
   };
 
   UsefulWorkMessage(unsigned int source,

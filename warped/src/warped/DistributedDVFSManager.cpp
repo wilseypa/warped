@@ -130,7 +130,7 @@ DistributedDVFSManager::receiveKernelMessage(KernelMessage* kMsg) {
 
 string
 DistributedDVFSManager::toString() {
-  return "Simulated DVFS, " + DVFSManagerImplementationBase::toString();
+  return "Distributed DVFS, " + DVFSManagerImplementationBase::toString();
 }
 
 /*
