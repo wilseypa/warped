@@ -176,6 +176,21 @@ protected:
 public:
 	void handleEvent(const Event *event);
 
+	/** call fossil collect on the file queues. This one passes in an integer
+	 and should only be used with the optimistic fossil collection manager.
+
+	 @param fossilCollectTime time upto which fossil collect is performed.
+	 */
+	virtual void fossilCollectFileQueues(SimulationObject *object,
+			int fossilCollectTime);
+
+	/// Used in optimistic fossil collection to checkpoint the file queues.
+	void saveFileQueuesCheckpoint(std::ofstream* outFile,
+			const ObjectID &objId, unsigned int saveTime);
+
+	void restoreFileQueues(ifstream* inFile, const ObjectID &objId,
+			unsigned int restoreTime);
+
 	void handleEventReceiver(SimulationObject *currObject, const Event *event,
 			int threadID);
 
