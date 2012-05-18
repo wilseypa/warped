@@ -446,13 +446,11 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
 }
 
 void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
-	StopWatch stopwatch;
-
   cout << "SimulationManager(" << mySimulationManagerID
                   << "): Starting simulation - End time: " << simulateUntil << ")"
                   << endl;
 
-	stopwatch.start();
+	myStopwatch.start();
   while (!simulationComplete(simulateUntil)) {
           getMessages();
           while (inRecovery) {
@@ -468,23 +466,11 @@ void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
                   myTerminationManager->setStatusPassive();
           }
   }
-  stopwatch.stop();
+  myStopwatch.stop();
 
   cout << "(" << getSimulationManagerID() << ") Simulation complete ("
-                  << stopwatch.elapsed() << " secs), Number of Rollbacks: ("
+                  << myStopwatch.elapsed() << " secs), Number of Rollbacks: ("
                   << numberOfRollbacks << ")" << endl;
-
-  int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
-  int numEventsExecuted = myEventSet->getNumEventsExecuted();
-
-  ostringstream oss;
-  oss << "lp" << mySimulationManagerID << ".csv";
-  ofstream file(oss.str().c_str(), ios_base::app);
-  if(file)
-      file << stopwatch.elapsed() << ',' << numberOfRollbacks
-           << ',' << numEventsExecuted - numEventsRolledBack
-           << ',' << numEventsExecuted << endl;
-
 
 	// This is commented out by default. It is used along with the testParallelWarped script
 	// to provide a quick and easy way to do large amounts of tests. Make sure to change the
@@ -1147,6 +1133,19 @@ void TimeWarpSimulationManager::finalize() {
 
 	cout.flush();
 	//  fossilCollect(currentTime);
+
+  int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
+  int numEventsExecuted = myEventSet->getNumEventsExecuted();
+
+  ostringstream oss;
+  oss << "lp" << mySimulationManagerID << ".csv";
+  ofstream file(oss.str().c_str(), ios_base::app);
+  if(file)
+      file << myStopwatch.elapsed() << ',' << numberOfRollbacks
+           << ',' << numEventsExecuted - numEventsRolledBack
+           << ',' << numEventsExecuted << endl;
+
+
 }
 
 SimulationStream*

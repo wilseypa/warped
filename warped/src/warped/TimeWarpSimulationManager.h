@@ -575,6 +575,8 @@ protected:
 
 	Application *myApplication;
 
+  StopWatch myStopwatch;
+
 	//@} // End of Protected Class Methods of TimeWarpSimulationManager.
 
 	//private:
