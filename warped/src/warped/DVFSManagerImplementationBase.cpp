@@ -247,7 +247,7 @@ DVFSManagerImplementationBase::getRollbackFractionForPeriod() {
   int newEventsRolledBack = myLastEventsRolledBack - temp1;
   int newEventsExecuted = myLastEventsExecuted - temp2;
 
-  int efficiency = newEventsExecuted == 0 ? 0 :
+  double efficiency = newEventsExecuted == 0 ? 0 :
            1 - (static_cast<double>(newEventsRolledBack) / (newEventsExecuted));
   return efficiency < 0 ? 0 : efficiency;
 }
