@@ -6,9 +6,14 @@
 #include "Event.h"
 
 ThreadedDynamicOutputManager::ThreadedDynamicOutputManager(
-		ThreadedTimeWarpSimulationManager *simMgr, bool useThirdThreshold) :
+		ThreadedTimeWarpSimulationManager *simMgr, unsigned int filterDepth,
+		double aggr2lazy, double lazy2aggr, double thirdThreshold,
+		bool useThirdThreshold) :
 			ThreadedLazyOutputManager(simMgr),
-			filterDepth(FILTER_DEPTH),
+			filterDepth(filterDepth),
+			aggressive_to_lazy(aggr2lazy),
+			lazy_to_aggressive(lazy2aggr),
+			third_threshold(thirdThreshold),
 			thirdThreshold(useThirdThreshold),
 			comparisonResults(simMgr->getNumberOfSimulationObjects(),
 					new vector<int> (filterDepth, 0)) {
@@ -126,7 +131,7 @@ cancellationModes ThreadedDynamicOutputManager::determinecancellationModes(
 
 	// If the hit ratio is between the AGGRESSIVE_TO_LAZY and LAZY_TO_AGGRESSIVE
 	// values, then do not change the mode.
-	if (thirdThreshold && *hitRatio[objID] < THIRD_THRESHOLD) {
+	if (thirdThreshold && *hitRatio[objID] < third_threshold) {
 		if (*curCancelMode[objID] == Lazy) {
 			utils::debug << "Object " << objID
 					<< " Switching from Lazy to Aggressive Output Manager PERMANENTLY.\n";
@@ -136,14 +141,14 @@ cancellationModes ThreadedDynamicOutputManager::determinecancellationModes(
 		setCompareMode(object, false);
 		*permanentlyAggressive[objID] = true;
 	} else if ((*curCancelMode[objID]) == Lazy && (*hitRatio[objID])
-			< LAZY_TO_AGGRESSIVE) {
+			< lazy_to_aggressive) {
 		utils::debug << "Object " << objID
 				<< " Switching from Lazy to Aggressive Output Manager.\n";
 		*curCancelMode[objID] = Aggressive;
 		setCompareMode(object, false);
 		lazyToAggr = true;
 	} else if ((*curCancelMode[objID]) == Aggressive && (*hitRatio[objID])
-			> AGGRESSIVE_TO_LAZY) {
+			> aggressive_to_lazy) {
 		utils::debug << "Object " << objID
 				<< " Switching from Aggressive to Lazy Output Manager.\n";
 		*curCancelMode[objID] = Lazy;

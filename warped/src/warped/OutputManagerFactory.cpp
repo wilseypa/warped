@@ -76,8 +76,17 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 			mySimulationManager->setOutputMgrType(LAZYMGR);
 			utils::debug << "a Lazy Output Manager" << endl;
 		} else if (configuration.outputManagerIs("DYNAMIC")) {
+			unsigned int filterDepth = 16;
+			double aggr2lazy = 0.5;
+			double lazy2aggr = 0.2;
+			double thirdThreshold = 0.1;
+			configuration.getDynamicFilterDepth(filterDepth);
+			configuration.getAggressive2Lazy(aggr2lazy);
+			configuration.getLazy2Aggressive(lazy2aggr);
+			configuration.getThirdThreshold(thirdThreshold);
 			retval = new ThreadedDynamicOutputManager(
-					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
+					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent),
+					filterDepth, aggr2lazy, lazy2aggr, thirdThreshold);
 			mySimulationManager->setOutputMgrType(ADAPTIVEMGR);
 			utils::debug << "an Dynamic Output Manager" << endl;
 		} else {

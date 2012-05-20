@@ -7,10 +7,10 @@
 #include "ThreadedLazyOutputManager.h"
 #include "EventFunctors.h"
 
-#define FILTER_DEPTH 16
-#define AGGRESSIVE_TO_LAZY 0.5
-#define LAZY_TO_AGGRESSIVE 0.2
-#define THIRD_THRESHOLD 0.1
+//#define FILTER_DEPTH 16
+//#define AGGRESSIVE_TO_LAZY 0.5
+//#define LAZY_TO_AGGRESSIVE 0.2
+//#define THIRD_THRESHOLD 0.1
 
 enum cancellationModes {
 	Aggressive, Lazy
@@ -38,7 +38,8 @@ public:
 	 @param useThirdThreshold Default is false, not used.
 	 */
 	ThreadedDynamicOutputManager(ThreadedTimeWarpSimulationManager *simMgr,
-			bool useThirdThreshold = false);
+			unsigned int filterDepth, double aggr2lazy, double lazy2aggr,
+			double thirdThreshold, bool useThirdThreshold = false);
 
 	// Destructor.
 	~ThreadedDynamicOutputManager();
@@ -123,6 +124,18 @@ protected:
 	/** The filter depth determines how many comparisons are used.
 	 */
 	int filterDepth;
+
+	/** The aggressive to lazy ratio determines when to switch from aggressive cancellation to lazy cancellation.
+	 */
+	double aggressive_to_lazy;
+
+	/** The lazy to aggressive ratio determines when to switch from lazy cancellation to aggressive cancellation.
+	 */
+	double lazy_to_aggressive;
+
+	/** when to permanently swithc to aggressive.
+	 */
+	double third_threshold;
 
 	/** Keeps track of the results past comparisons.
 	 */
