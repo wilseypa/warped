@@ -4,11 +4,12 @@
 #include "ThreadedOutputEvents.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 
-ThreadedLazyOutputManager::ThreadedLazyOutputManager(ThreadedTimeWarpSimulationManager *simMgr) :
+ThreadedLazyOutputManager::ThreadedLazyOutputManager(
+		ThreadedTimeWarpSimulationManager *simMgr) :
 	ThreadedOutputManagerImplementationBase(simMgr) {
-//	lazyMinQueueLock = new AtomicState();
+	//	lazyMinQueueLock = new AtomicState();
 	// lazy Queues min
-//	lazyMinQueue = new multiset<const Event*, sendTimeLessThanEventIdLessThan> ;
+	//	lazyMinQueue = new multiset<const Event*, sendTimeLessThanEventIdLessThan> ;
 	for (int i = 0; i < simMgr->getNumberOfSimulationObjects(); i++) {
 		lazyQueues.push_back(new vector<const Event*> ());
 		eventsToCancel.push_back(new vector<const Event*> ());
@@ -21,46 +22,47 @@ ThreadedLazyOutputManager::ThreadedLazyOutputManager(ThreadedTimeWarpSimulationM
 		compareAndInsertMode.push_back(tempCompare);
 		lazyHitCount.push_back(tempHit);
 		lazyMissCount.push_back(tempMiss);
-//		lowestObjectPosition.push_back(lazyMinQueue->end());
+		//		lowestObjectPosition.push_back(lazyMinQueue->end());
 	}
 }
 
 ThreadedLazyOutputManager::~ThreadedLazyOutputManager() {
-//		delete lazyMinQueueLock;
+	//		delete lazyMinQueueLock;
 
 }
 
 /*void ThreadedLazyOutputManager::getLazyMinQueueLock(int threadId) {
-	while (!lazyMinQueueLock->setLock(threadId))
-		;
-	ASSERT(lazyMinQueueLock->hasLock(threadId));
-}
-void ThreadedLazyOutputManager::releaseLazyMinQueueLock(int threadId) {
-	ASSERT(lazyMinQueueLock->hasLock(threadId));
-	lazyMinQueueLock->releaseLock(threadId);
-}*/
+ while (!lazyMinQueueLock->setLock(threadId))
+ ;
+ ASSERT(lazyMinQueueLock->hasLock(threadId));
+ }
+ void ThreadedLazyOutputManager::releaseLazyMinQueueLock(int threadId) {
+ ASSERT(lazyMinQueueLock->hasLock(threadId));
+ lazyMinQueueLock->releaseLock(threadId);
+ }*/
 
 /*void ThreadedLazyOutputManager::lazyMinQueueUpdate(unsigned int objectID, int threadId) {
-	// Update gvt Queue with the new minimum time stamp of the object
-	this->getLazyMinQueueLock(threadId);
-	// Do not erase the first time.
-	if (lowestObjectPosition[objectID] != lazyMinQueue->end()) {
-		lazyMinQueue->erase(lowestObjectPosition[objectID]);
-	}
-	if (lazyQueues[objectID]->size() > 0)
-		lowestObjectPosition[objectID] = lazyMinQueue->insert(
-				*(lazyQueues[objectID]->begin()));
-	else
-		lowestObjectPosition[objectID] = lazyMinQueue->end();
-	multiset<const Event*, sendTimeLessThanEventIdLessThan>::iterator iv1;
-	utils::debug << "LazyMin Queue";
-	for (iv1 = lazyMinQueue->begin(); iv1 != lazyMinQueue->end(); iv1++) {
-		utils::debug << "-" << (*iv1)->getSendTime();
-	}
-	this->releaseLazyMinQueueLock(threadId);
-}*/
+ // Update gvt Queue with the new minimum time stamp of the object
+ this->getLazyMinQueueLock(threadId);
+ // Do not erase the first time.
+ if (lowestObjectPosition[objectID] != lazyMinQueue->end()) {
+ lazyMinQueue->erase(lowestObjectPosition[objectID]);
+ }
+ if (lazyQueues[objectID]->size() > 0)
+ lowestObjectPosition[objectID] = lazyMinQueue->insert(
+ *(lazyQueues[objectID]->begin()));
+ else
+ lowestObjectPosition[objectID] = lazyMinQueue->end();
+ multiset<const Event*, sendTimeLessThanEventIdLessThan>::iterator iv1;
+ utils::debug << "LazyMin Queue";
+ for (iv1 = lazyMinQueue->begin(); iv1 != lazyMinQueue->end(); iv1++) {
+ utils::debug << "-" << (*iv1)->getSendTime();
+ }
+ this->releaseLazyMinQueueLock(threadId);
+ }*/
 
-bool ThreadedLazyOutputManager::checkLazyCancelEvent(const Event *event, int threadId) {
+bool ThreadedLazyOutputManager::checkLazyCancelEvent(const Event *event,
+		int threadId) {
 
 	bool suppressEvent = false;
 	int
@@ -76,16 +78,16 @@ bool ThreadedLazyOutputManager::checkLazyCancelEvent(const Event *event, int thr
 
 		//Any events with a timestamp less than the current event time
 		//were not regenerated. Add them to the cancel events list.
-	//	bool iDeleteEvent = false;
+		//	bool iDeleteEvent = false;
 		while (LCEvent != lazyCancelEvents->end() && (*LCEvent)->getSendTime()
 				< event->getSendTime()) {
 			eveToCan->push_back(*LCEvent);
 			lazyCancelEvents->erase(LCEvent);
 			(*lazyMissCount[objectID])++;
-		//	iDeleteEvent = true;
+			//	iDeleteEvent = true;
 		}
-	/*	if (iDeleteEvent)
-			lazyMinQueueUpdate(objectID, threadId);*/
+		/*	if (iDeleteEvent)
+		 lazyMinQueueUpdate(objectID, threadId);*/
 
 		//Compare the events in the lazy cancellation queue to this event.
 		//If the queue is empty after checking for past time stamps, end lazy cancellation.
@@ -96,13 +98,13 @@ bool ThreadedLazyOutputManager::checkLazyCancelEvent(const Event *event, int thr
 
 				if (const_cast<Event *> ((*LCEvent))->eventCompare(event)) {
 					if (*compareAndInsertMode[objectID]) {
-						ThreadedOutputManagerImplementationBase::insert(*LCEvent,
-								threadId);
+						ThreadedOutputManagerImplementationBase::insert(
+								*LCEvent, threadId);
 					}
 					suppressEvent = true;
 					(*lazyHitCount[objectID])++;
 					LCEvent = lazyCancelEvents->erase(LCEvent);
-			//		lazyMinQueueUpdate(objectID, threadId);
+					//		lazyMinQueueUpdate(objectID, threadId);
 				} else {
 					LCEvent++;
 				}
@@ -154,19 +156,19 @@ void ThreadedLazyOutputManager::handleCancelEvents(SimulationObject *object,
 }
 
 /*void ThreadedLazyOutputManager::emptyLazyQueues(const VTime &time, int threadId) {
-	for (int t = 0; t < lazyQueues.size(); t++) {
-		if ((lazyQueues[t])->size() > 0) {
-			vector<const Event *>::iterator LCEvent = (lazyQueues[t])->begin();
-			while (LCEvent != (lazyQueues[t])->end()
-					&& (*LCEvent)->getSendTime() < time) {
-				(eventsToCancel[t])->push_back(*LCEvent);
-				LCEvent = (lazyQueues[t])->erase(LCEvent);
-				(*lazyMissCount[t])++;
-			}
-		}
-	}
-	handleCancelEvents(threadId);
-}*/
+ for (int t = 0; t < lazyQueues.size(); t++) {
+ if ((lazyQueues[t])->size() > 0) {
+ vector<const Event *>::iterator LCEvent = (lazyQueues[t])->begin();
+ while (LCEvent != (lazyQueues[t])->end()
+ && (*LCEvent)->getSendTime() < time) {
+ (eventsToCancel[t])->push_back(*LCEvent);
+ LCEvent = (lazyQueues[t])->erase(LCEvent);
+ (*lazyMissCount[t])++;
+ }
+ }
+ }
+ handleCancelEvents(threadId);
+ }*/
 
 void ThreadedLazyOutputManager::emptyLazyQueue(SimulationObject *object,
 		const VTime &time, int threadId) {
@@ -179,35 +181,43 @@ void ThreadedLazyOutputManager::emptyLazyQueue(SimulationObject *object,
 				&& (*LCEvent)->getSendTime() < time) {
 			(eventsToCancel[objectID])->push_back(*LCEvent);
 			LCEvent = (lazyQueues[objectID])->erase(LCEvent);
-		//	iDeleteEvent = true;
+			//	iDeleteEvent = true;
 			(*lazyMissCount[objectID])++;
 		}
-			}
+		if (lazyQueues[objectID]->size() <= 0) {
+			//End lazy cancellation phase.
+			utils::debug << "Lazy Cancellation Phase Complete For Object: "
+					<< objectID << " Lazy Hits: " << *lazyHitCount[objectID]
+					<< " Lazy Misses: " << *lazyMissCount[objectID] << "\n";
+			*lazyHitCount[objectID] = 0;
+			*lazyMissCount[objectID] = 0;
+		}
+	}
 	handleCancelEvents(object, threadId);
 	//if (iDeleteEvent)
 	//lazyMinQueueUpdate(objectID, threadId);
 }
 
 /*const VTime &ThreadedLazyOutputManager::getLazyQMinTime(int threadId) {
-	const VTime *minTime = &getSimulationManager()->getPositiveInfinity();
-	this->getLazyMinQueueLock(threadId);
-	if (lazyMinQueue->size() > 0) {
-		minTime = &(*(lazyMinQueue->begin()))->getSendTime();
-	}
-	this->releaseLazyMinQueueLock(threadId);
-	return (*minTime);
-}*/
+ const VTime *minTime = &getSimulationManager()->getPositiveInfinity();
+ this->getLazyMinQueueLock(threadId);
+ if (lazyMinQueue->size() > 0) {
+ minTime = &(*(lazyMinQueue->begin()))->getSendTime();
+ }
+ this->releaseLazyMinQueueLock(threadId);
+ return (*minTime);
+ }*/
 
 /*const VTime &ThreadedLazyOutputManager::getLazyQMinTime(const unsigned int objectID,
-		int threadId) {
-	const VTime *minTime = &getSimulationManager()->getPositiveInfinity();
-	this->getLazyMinQueueLock(threadId);
-	if (lowestObjectPosition[objectID] != lazyMinQueue->end()) {
-		minTime = &((*(lowestObjectPosition[objectID]))->getReceiveTime());
-	}
-	this->releaseLazyMinQueueLock(threadId);
-	return (*minTime);
-}*/
+ int threadId) {
+ const VTime *minTime = &getSimulationManager()->getPositiveInfinity();
+ this->getLazyMinQueueLock(threadId);
+ if (lowestObjectPosition[objectID] != lazyMinQueue->end()) {
+ minTime = &((*(lowestObjectPosition[objectID]))->getReceiveTime());
+ }
+ this->releaseLazyMinQueueLock(threadId);
+ return (*minTime);
+ }*/
 
 bool ThreadedLazyOutputManager::lazyCancel(const Event *event, int threadId) {
 	SimulationObject *sender = getSimulationManager()->getObjectHandle(
@@ -240,10 +250,13 @@ void ThreadedLazyOutputManager::rollback(SimulationObject *object,
 	unsigned int objectID = object->getObjectID()->getSimulationObjectID();
 	//Put the events that have a timestamp greater than rollback event's
 	//timestamp into the Lazy Cancellation Queue to be compared to regenerated output.
-	ThreadedOutputEvents &outputEvents = getOutputEventsFor(*(object->getObjectID()));
+	ThreadedOutputEvents &outputEvents = getOutputEventsFor(
+			*(object->getObjectID()));
 	vector<const Event*>
 			*tempOutEvents = outputEvents.getEventsSentAtOrAfterAndRemove(
 					rollbackTime, threadId);
+	utils::debug << tempOutEvents->size() << " events added to object "
+			<< objectID << " Lazy Queue" << endl;
 	vector<const Event*> *lazyCancelEvents = lazyQueues[objectID];
 
 	//These output events need to be added to the lazy cancel queue. There may already be
@@ -253,10 +266,10 @@ void ThreadedLazyOutputManager::rollback(SimulationObject *object,
 	std::sort(lazyCancelEvents->begin(), lazyCancelEvents->end(),
 			sendTimeLessThan());
 
-/*	vector<const Event*>::iterator it;
-	for (it = lazyQueues[objectID]->begin(); it != lazyQueues[objectID]->end(); it++) {
-		utils::debug << "-" << (*it)->getSendTime();
-	}*/
+	/*	vector<const Event*>::iterator it;
+	 for (it = lazyQueues[objectID]->begin(); it != lazyQueues[objectID]->end(); it++) {
+	 utils::debug << "-" << (*it)->getSendTime();
+	 }*/
 	// Update gvt Queue with the new minimum time stamp of the object
 	//lazyMinQueueUpdate(objectID, threadId);
 
@@ -288,12 +301,12 @@ void ThreadedLazyOutputManager::printAll() {
 		cout << " " << endl;
 	}
 	/*cout << "GVT Queue" << endl;
-	multiset<const Event*, sendTimeLessThanEventIdLessThan>::iterator iv1;
-	//	if (lazyMinQueue->size() > 0){
-	for (iv1 = lazyMinQueue->begin(); iv1 != lazyMinQueue->end(); iv1++) {
-		cout << "-" << (*iv1)->getSendTime();
-	}
-	cout << " " << endl;*/
+	 multiset<const Event*, sendTimeLessThanEventIdLessThan>::iterator iv1;
+	 //	if (lazyMinQueue->size() > 0){
+	 for (iv1 = lazyMinQueue->begin(); iv1 != lazyMinQueue->end(); iv1++) {
+	 cout << "-" << (*iv1)->getSendTime();
+	 }
+	 cout << " " << endl;*/
 	cout << "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: "
 			<< endl;
 }
