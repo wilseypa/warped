@@ -35,7 +35,7 @@ SMMPServerObject::~SMMPServerObject(){
 void
 SMMPServerObject::initialize() {
    SMMPServerState *myState = dynamic_cast<SMMPServerState*>(getState());
-   int id = getObjectID()->getSimulationObjectID();
+   //int id = getObjectID()->getSimulationObjectID();
    myState->gen = new MLCG(seed, seed + 1);
 }
 

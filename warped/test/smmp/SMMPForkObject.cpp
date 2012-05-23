@@ -55,7 +55,7 @@ SMMPForkObject::executeProcess() {
    MemRequest *recvEvent = NULL;
    string recvName = "";
    SimulationObject *receiver = NULL;
-   int index = 0;
+   //int index = 0;
 
    while(haveMoreEvents() == true){ 
       recvEvent = (MemRequest*) getEvent();

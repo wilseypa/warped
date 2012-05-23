@@ -9,7 +9,7 @@
 using namespace std;
 
 static const int MAX_NUMBER_IDLE_LOOPS = 50;
-static int threadCounter = 0;
+//static int threadCounter = 0;
 ///Each worker thread gets assigned an object of this type to keep track of its status
 class WorkerInformation {
 public:

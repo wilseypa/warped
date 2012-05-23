@@ -270,7 +270,7 @@ const VTime&
 ThreadedCostAdaptiveStateManager::restoreState(const VTime &rollbackTime,
 		SimulationObject *object, int threadID) {
 	OBJECT_ID *currentObjectID = object->getObjectID();
-	unsigned int simObjectID = currentObjectID->getSimulationObjectID();
+	//unsigned int simObjectID = currentObjectID->getSimulationObjectID();
 	//periodCounter[simObjectID] = objectStatePeriod[simObjectID];
 	return ThreadedStateManagerImplementationBase::restoreState(rollbackTime,
 			object, threadID);

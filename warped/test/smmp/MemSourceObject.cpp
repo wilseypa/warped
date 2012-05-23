@@ -27,7 +27,7 @@ MemSourceObject::~MemSourceObject() {
 
 void 
 MemSourceObject::initialize(){
-  MemSourceState *myState = dynamic_cast<MemSourceState *>( getState() );
+  //MemSourceState *myState = dynamic_cast<MemSourceState *>( getState() );
   IntVTime sendTime = dynamic_cast<const IntVTime&>(getSimulationTime());
 
   MemRequest *firstEvent = new MemRequest(sendTime,
@@ -54,7 +54,7 @@ MemSourceObject::executeProcess(){
   MemSourceState *myState = static_cast<MemSourceState *>(getState());
   MemRequest* received = NULL;
   IntVTime sendTime = static_cast<const IntVTime&>(getSimulationTime());
-  int id = getObjectID()->getSimulationObjectID();
+  //int id = getObjectID()->getSimulationObjectID();
 
   while(true == haveMoreEvents()) {
      received = (MemRequest*)getEvent();
