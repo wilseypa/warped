@@ -1134,17 +1134,18 @@ void TimeWarpSimulationManager::finalize() {
 	cout.flush();
 	//  fossilCollect(currentTime);
 
-  int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
-  int numEventsExecuted = myEventSet->getNumEventsExecuted();
+	if (myEventSet!=NULL) {
+		int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
+		int numEventsExecuted = myEventSet->getNumEventsExecuted();
 
-  ostringstream oss;
-  oss << "lp" << mySimulationManagerID << ".csv";
-  ofstream file(oss.str().c_str(), ios_base::app);
-  if(file)
-      file << myStopwatch.elapsed() << ',' << numberOfRollbacks
-           << ',' << numEventsExecuted - numEventsRolledBack
-           << ',' << numEventsExecuted << endl;
-
+		ostringstream oss;
+		oss << "lp" << mySimulationManagerID << ".csv";
+		ofstream file(oss.str().c_str(), ios_base::app);
+		if(file)
+			file << myStopwatch.elapsed() << ',' << numberOfRollbacks
+				<< ',' << numEventsExecuted - numEventsRolledBack
+				<< ',' << numEventsExecuted << endl;
+	}
 
 }
 
