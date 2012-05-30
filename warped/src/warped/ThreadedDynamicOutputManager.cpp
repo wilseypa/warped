@@ -27,12 +27,12 @@ ThreadedDynamicOutputManager::ThreadedDynamicOutputManager(
 		bool* tempPermanentAggr = new bool();
 		*tempPermanentAggr = false;
 		cancellationModes* tempMode = new cancellationModes();
-		*tempMode = Aggressive;
+		*tempMode = Lazy;
 		hitCount.push_back(tempHit);
 		hitRatio.push_back(tempRatio);
 		curMeasured.push_back(tempCurMeasured);
 		permanentlyAggressive.push_back(tempPermanentAggr);
-				*compareAndInsertMode[i] = false;
+		*compareAndInsertMode[i] = true;
 		curCancelMode.push_back(tempMode);
 	}
 }
