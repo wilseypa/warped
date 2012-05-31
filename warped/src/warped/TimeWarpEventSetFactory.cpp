@@ -31,7 +31,7 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 		usingOneAntiMessageOpt = true;
 	}
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("DTTimeWarp")) {
+	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		if (configuration.eventListTypeIs("MULTISET")) {
 			ThreadedTimeWarpEventSet *retvalue = 0;
 			retvalue = new ThreadedTimeWarpMultiSet(

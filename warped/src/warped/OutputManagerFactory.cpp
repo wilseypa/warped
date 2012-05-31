@@ -63,7 +63,7 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 	}
 
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("DTTimeWarp")) {
+	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		if (configuration.outputManagerIs("AGGRESSIVE")) {
 			retval = new ThreadedAggressiveOutputManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));

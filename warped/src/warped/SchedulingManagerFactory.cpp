@@ -67,7 +67,7 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
   
 
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("DTTimeWarp")) {
+	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		if (configuration.schedulerTypeIs("MULTISET")) {
 			ThreadedTimeWarpSimulationManager *mySimulationManager =
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent);

@@ -44,7 +44,7 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 
 	unsigned int statePeriod = 0;
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("DTTimeWarp")) {
+	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		if (configuration.stateManagerTypeIs("PERIODIC")) {
 			configuration.getStatePeriod(statePeriod);
 			retvalue = new ThreadedPeriodicStateManager(

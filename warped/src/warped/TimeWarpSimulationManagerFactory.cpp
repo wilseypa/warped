@@ -19,7 +19,7 @@ TimeWarpSimulationManagerFactory::allocate(
 		SimulationConfiguration &configuration, Configurable *parent) const {
 	TimeWarpSimulationManager *retval = 0;
 
-	if (configuration.simulationTypeIs("DTTimeWarp")) {
+	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		//Count the number of threads, if none specified try reading the proc file
 		unsigned int numberOfWorkerThreads = 0;
 		if (!configuration.getWorkerThreadCount(numberOfWorkerThreads)) {

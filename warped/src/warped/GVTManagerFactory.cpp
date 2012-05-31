@@ -31,7 +31,7 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 	//     instantiate the MatternGVTStateManager with a state period (if
 	//     one is found).
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("DTTimeWarp")) {
+	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 
 		if (configuration.gvtManagerTypeIs("MATTERN")) {
 			unsigned int gvtPeriod = 1;

@@ -441,8 +441,8 @@ SimulationConfiguration::Implementation::getEventListScope() const {
 	string simType = stringToUpper(getSimulationType());
 	if (simType == "SEQUENTIAL") {
 		retval = findScope(getEventListScopeName());
-	} else if (simType == "TIMEWARP" || simType == "THREADEDWARP" || simType
-			== "DTTIMEWARP") {
+	} else if (simType == "TIMEWARP" || simType
+			== "THREADEDTIMEWARP") {
 		const ConfigurationScope *twScope = getTimeWarpScope();
 		if (twScope != 0) {
 			retval = twScope->findScope(getEventListScopeName());

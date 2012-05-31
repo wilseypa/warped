@@ -27,7 +27,7 @@ ConfigurationManagerFactory::allocate(SimulationConfiguration &configuration,
 		retval = new SequentialConfigurationManager((Application *) parent);
 		utils::debug << "Configured a SequentialSimulationManager" << endl;
 	} else if (configuration.simulationTypeIs("TimeWarp")
-			|| configuration.simulationTypeIs("DTTimeWarp")) {
+			|| configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		retval = new TimeWarpConfigurationManager(configuration.getArguments(),
 				(Application *) parent);
 		utils::debug << "Configured a TimeWarpSimulationManager" << endl;

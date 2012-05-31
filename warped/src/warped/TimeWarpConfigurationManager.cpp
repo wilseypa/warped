@@ -43,7 +43,7 @@ void TimeWarpConfigurationManager::configure(
 		mySimulationManager
 				= dynamic_cast<TimeWarpSimulationManager *> (twSimMgrFactory->allocate(
 						configuration, myApplication));
-	} else if (configuration.simulationTypeIs("DTTimeWarp")) {
+	} else if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		mySimulationManager
 				= dynamic_cast<ThreadedTimeWarpSimulationManager *> (twSimMgrFactory->allocate(
 						configuration, myApplication));
