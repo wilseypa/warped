@@ -212,7 +212,7 @@ void MatternGVTManager::receiveKernelMessage(KernelMessage *msg) {
           // Only output the value and fossil collect when it actually changes.
           if(getGVT() > oldGVT){
             // Fossil collect now with the new GVT.
-            //cout << "GVT = " << getGVT() << endl;
+            cout << "GVT = " << getGVT() << endl;
             mySimulationManager->fossilCollect(getGVT());
           }
       } 
