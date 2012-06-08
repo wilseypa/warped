@@ -61,7 +61,7 @@ ThreadedLazyOutputManager::~ThreadedLazyOutputManager() {
  this->releaseLazyMinQueueLock(threadId);
  }*/
 
-int ThreadedLazyOutputManager::getNumberOfAntiMessage(){
+unsigned int ThreadedLazyOutputManager::getNumberOfAntiMessage() {
 	return numberOfAntiMessage;
 }
 
@@ -144,6 +144,8 @@ bool ThreadedLazyOutputManager::checkLazyCancelEvent(const Event *event,
 void ThreadedLazyOutputManager::handleCancelEvents(int threadId) {
 	for (int t = 0; t < eventsToCancel.size(); t++) {
 		if ((eventsToCancel[t])->size() > 0) {
+			__sync_fetch_and_add(&numberOfAntiMessage,
+					(eventsToCancel[t])->size());
 			getSimulationManager()->cancelEvents(*(eventsToCancel[t]));
 			(eventsToCancel[t])->clear();
 		}
@@ -154,7 +156,8 @@ void ThreadedLazyOutputManager::handleCancelEvents(SimulationObject *object,
 		int threadId) {
 	int objectID = object->getObjectID()->getSimulationObjectID();
 	if ((eventsToCancel[objectID])->size() > 0) {
-                __sync_fetch_and_add(&numberOfAntiMessage, (eventsToCancel[objectID])->size());
+		__sync_fetch_and_add(&numberOfAntiMessage,
+				(eventsToCancel[objectID])->size());
 		getSimulationManager()->cancelEvents(*(eventsToCancel[objectID]));
 		(eventsToCancel[objectID])->clear();
 	}

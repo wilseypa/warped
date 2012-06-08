@@ -124,7 +124,7 @@ public:
 	 */
 	virtual void ofcPurge(int threadId);
 
-        int getNumberOfAntiMessage ();
+	unsigned int getNumberOfAntiMessage();
 
 	//	void getLazyMinQueueLock(int threadId);
 
@@ -192,8 +192,8 @@ protected:
 	 */
 	vector<bool*> compareAndInsertMode;
 
-        /// Used to keep track of the number of antimessages sent.
-        unsigned int numberOfAntiMessage;
+	// Used to count number of Anti Messages sent.
+	unsigned int numberOfAntiMessage;
 
 	//Lowest event position pointer to point to position of lowest Time Stamped Event (for each object)
 	// in the Schedule Queue.

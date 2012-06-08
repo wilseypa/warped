@@ -328,10 +328,10 @@ bool ThreadedTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) 
 	unsigned int objId = receivedEvent->getReceiver().getSimulationObjectID();
 	this->getunProcessedLock(threadId, objId);
 	unProcessedQueue[objId]->insert(receivedEvent);
-//	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
-//			<< " ) " << mySimulationManager->getObjectHandle(
-//			receivedEvent->getReceiver())->getName() << " has received ::::"
-//			<< *receivedEvent << " - " << threadId << "\n";
+	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
+			<< " ) " << mySimulationManager->getObjectHandle(
+			receivedEvent->getReceiver())->getName() << " has received ::::"
+			<< *receivedEvent << " - " << threadId << "\n";
 	multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator itee;
 	itee = unProcessedQueue[objId]->begin();
 	this->releaseunProcessedLock(threadId, objId);
@@ -391,9 +391,9 @@ bool ThreadedTimeWarpMultiSet::handleAntiMessage(SimulationObject *simObj,
 						== negativeEvent->getEventId())) {
 			const Event *eventToRemove = *multisetIterator[threadId];
 			if (dynamic_cast<const StragglerEvent*> (*(multisetIterator[threadId]))) {
-//				utils::debug
-//						<< "Negative Message Found in Handling Anti-Message .."
-//						<< endl;
+				utils::debug
+						<< "Negative Message Found in Handling Anti-Message .."
+						<< endl;
 				multisetIterator[threadId]++;
 				continue;
 			}
@@ -734,31 +734,31 @@ void ThreadedTimeWarpMultiSet::releaseObjectLocksRecovery() {
 		if (objectStatusLock[objNum]->isLocked()) {
 			objectStatusLock[objNum]->releaseLock(
 					objectStatusLock[objNum]->whoHasLock());
-//			utils::debug << "Releasing Object " << objNum
-//					<< " during recovery." << endl;
+			utils::debug << "Releasing Object " << objNum
+					<< " during recovery." << endl;
 		}
 		if (unprocessedQueueAtomicState[objNum]->isLocked()) {
 			unprocessedQueueAtomicState[objNum]->releaseLock(
 					unprocessedQueueAtomicState[objNum]->whoHasLock());
-//			utils::debug << "Releasing Unprocessed Queue " << objNum
-//					<< " during recovery." << endl;
+			utils::debug << "Releasing Unprocessed Queue " << objNum
+					<< " during recovery." << endl;
 		}
 		if (processedQueueAtomicState[objNum]->isLocked()) {
 			processedQueueAtomicState[objNum]->releaseLock(
 					processedQueueAtomicState[objNum]->whoHasLock());
-//			utils::debug << "Releasing Processed Queue " << objNum
-//					<< " during recovery." << endl;
+			utils::debug << "Releasing Processed Queue " << objNum
+					<< " during recovery." << endl;
 		}
 		if (removedQueueAtomicState[objNum]->isLocked()) {
 			removedQueueAtomicState[objNum]->releaseLock(
 					removedQueueAtomicState[objNum]->whoHasLock());
-//			utils::debug << "Releasing Removed Queue " << objNum
-//					<< " during recovery." << endl;
+			utils::debug << "Releasing Removed Queue " << objNum
+					<< " during recovery." << endl;
 		}
 	}
 	if (scheduleQueueLock->isLocked()) {
 		scheduleQueueLock->releaseLock(scheduleQueueLock->whoHasLock());
-//		utils::debug << "Releasing Schedule Queue during recovery." << endl;
+		utils::debug << "Releasing Schedule Queue during recovery." << endl;
 	}
 
 }
