@@ -68,6 +68,8 @@ public:
   /// Used for optimistic fossil collection.
   void ofcReset();
 
+  bool getGVTTokenStatus();
+
   //@} // End of Public Class Methods of MatternGVTManager.
    
 protected:

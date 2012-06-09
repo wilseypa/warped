@@ -28,6 +28,7 @@
 #include "PartitionInfo.h"
 #include "StragglerEvent.h"
 #include "ThreadedMatternGVTManager.h"
+#include "SimulationConfiguration.h"
 
 
 int WorkerInformation::globalStillBusyCount = 0;
@@ -301,15 +302,15 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 			}
 		}
 
-		getMessages();
-		//Calculate GVT
-		if (!usingOptFossilCollection) {
-			if (checkGVT && mySimulationManagerID == 0) {
-				if (!GVTTokenPending) {
-					initiateLocalGVT();
-					setGVTTokenPending();
-				}
-				if (GVTTokenPending) {
+        getMessages();
+        //Calculate GVT
+        if (!usingOptFossilCollection) {
+            if (/*!(myGVTManager->getGVTTokenStatus()) &&*/ checkGVT && mySimulationManagerID == 0) {
+                if (!GVTTokenPending) {
+                    initiateLocalGVT();
+                    setGVTTokenPending();
+                }
+                if (GVTTokenPending) {
 					if (updateLVTfromArray()) {
 						myGVTManager->calculateGVT();
 						//Reset the GVT flag so the Worker thread can increase GVT Period
@@ -352,6 +353,13 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 	}
 	sendPendingMessages();
 	stopwatch.stop();
+	ostringstream oss;
+  		oss << "lp" << mySimulationManagerID << ".csv";
+  		ofstream file(oss.str().c_str(), ios_base::app);
+      if(file)
+        file << stopwatch.elapsed() << ',' << numberOfRollbacks <<
+            ',' << 0 << ',' << 1 <<endl;
+
 	cout << "After Simulation :: Event Count in Unprocessed Queue is = "
 			<< dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->getMessageCount(
 					0) << endl;
@@ -1052,6 +1060,16 @@ void ThreadedTimeWarpSimulationManager::configure(
 	// hence the n - 1.
 	myCommunicationManager->waitForInitialization(
 			numberOfSimulationManagers - 1);
+  ostringstream oss;
+  oss << "lp" << mySimulationManagerID << ".csv";
+  ofstream file(oss.str().c_str());
+  if(file) {
+    const vector<string>& args = configuration.getArguments();
+    vector<string>::const_iterator it(args.begin());
+    for(; it != args.end(); ++it)
+      file << " " << *it;
+    file << endl;
+  }
 
 }
 
@@ -1360,8 +1378,8 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
 			if (LVTArray[i] != 0 && *LVTArray[i] < *minimum)
 				minimum = LVTArray[i];
 		}
-		utils::debug << "(" << mySimulationManagerID << " ) Computed LVT ="
-				<< *minimum << endl;
+        utils::debug<< "(" << mySimulationManagerID << " ) Computed LVT ="
+				<< *minimum <<":::::"<<myGVTManager->getGVT()<<"::::::"<<endl;
 		if (lvtCount == 1) {
 			LVT = minimum->clone();
 			LVTFlag = (numberOfWorkerThreads - 1);
@@ -1450,8 +1468,6 @@ bool ThreadedTimeWarpSimulationManager::initiateLocalGVT() {
 }
 
 bool ThreadedTimeWarpSimulationManager::setGVTTokenPending() {
-	utils::debug << "(" << mySimulationManagerID << ")"
-			<< " Received a GVT request" << endl;
 	return __sync_bool_compare_and_swap(&GVTTokenPending, false, true);
 }
 

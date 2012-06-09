@@ -66,6 +66,9 @@ public:
   */
   void setGVT( const VTime &newGVT );
 
+  virtual bool getGVTTokenStatus();
+
+
   //@} // End of Public Class Methods of GVTManager.
    
 protected:
@@ -77,8 +80,8 @@ protected:
 
   /// handle to the simulation manager that owns this gvt manager
   TimeWarpSimulationManager *mySimulationManager;
-
-
+   
+  
 private:
   /**@name Protected Class Attributes of GVTManagerImplementationBase. */
   //@{

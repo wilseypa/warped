@@ -297,3 +297,6 @@ MatternGVTManager::ofcReset(){
   objectRecord->setTokenIterationNumber(0);
   objectRecord->setColor(WHITE);
 }
+bool MatternGVTManager::getGVTTokenStatus(){
+    return gVTTokenPending;
+}

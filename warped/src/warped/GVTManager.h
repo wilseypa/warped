@@ -64,6 +64,8 @@ public:
   */
   virtual void ofcReset() = 0;
 
+  virtual bool getGVTTokenStatus() = 0;
+
   //@} // End of Public Class Methods of GVTManager.
 
 protected:

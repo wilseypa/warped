@@ -76,6 +76,12 @@ GVTManagerImplementationBase::sendGVTUpdate(){
        << endl;
   abort();
 }
+bool
+GVTManagerImplementationBase::getGVTTokenStatus(){
+  cerr << "GVTManagerImplementationBase::getGVTTokenStatus() called !!"
+       << endl;
+  abort();
+}
 
 void
 GVTManagerImplementationBase::configure( SimulationConfiguration &configuration ){
