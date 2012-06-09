@@ -147,8 +147,8 @@ void ThreadedMatternGVTManager::sendPendingGVTToken() {
 			MIN_FUNC(*GVTMessageLastScheduledEventTime, *lowEventTime),
 			MIN_FUNC(*GVTMessageMinimumTimeStamp,
 					*objectRecord->getMinTimeStamp()));
-	/*delete GVTMessageLastScheduledEventTime;
-	delete GVTMessageMinimumTimeStamp;*/
+	delete GVTMessageLastScheduledEventTime;
+	delete GVTMessageMinimumTimeStamp;
 	// This is reset to record the number of messages received since the last round.
 	objectRecord->setNumberOfWhiteMessages(0);
 

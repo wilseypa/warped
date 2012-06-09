@@ -65,7 +65,7 @@ public:
   */
   virtual void setMinTimeStamp(const VTime& newTime){
 	  if (newTime < *tMin) {
-		  delete tMin;
+		 // delete tMin;
 		  tMin = newTime.clone();
 	  }
   }
