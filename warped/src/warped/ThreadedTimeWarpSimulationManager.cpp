@@ -4,6 +4,7 @@
 #include "DefaultSchedulingManager.h"
 #include "ThreadedLazyOutputManager.h"
 #include "ThreadedDynamicOutputManager.h"
+#include "ThreadedAggressiveOutputManager.h"
 #include "StopWatch.h"
 #include "ObjectStub.h"
 #include "SimulationObjectProxy.h"
@@ -212,8 +213,9 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(
 								nextEvent->getReceiveTime(), threadId);
 					}
 				} else if (outMgrType == ADAPTIVEMGR) {
-					ThreadedDynamicOutputManager *myDynamicOutputManager =
-							static_cast<ThreadedDynamicOutputManager *> (myOutputManager);
+					ThreadedDynamicOutputManager
+							*myDynamicOutputManager =
+									static_cast<ThreadedDynamicOutputManager *> (myOutputManager);
 					ASSERT(myDynamicOutputManager != NULL);
 					if (nextEvent != NULL)
 						myDynamicOutputManager->emptyLazyQueue(nextObject,
@@ -360,9 +362,28 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
         file << stopwatch.elapsed() << ',' << numberOfRollbacks <<
             ',' << 0 << ',' << 1 <<endl;
 
-	cout << "After Simulation :: Event Count in Unprocessed Queue is = "
-			<< dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->getMessageCount(
-					0) << endl;
+//	cout << "After Simulation :: Event Count in Unprocessed Queue is = "
+//			<< dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->getMessageCount(
+//					0) << endl;
+
+	if (outMgrType == AGGRMGR) {
+		ThreadedAggressiveOutputManager
+				*myAggressiveOutputManager =
+						static_cast<ThreadedAggressiveOutputManager *> (myOutputManager);
+		cout << "Number of AntiMessage for Aggressive Cancellation is "
+				<< myAggressiveOutputManager->getNumberOfAntiMessage() << endl;
+	} else if (outMgrType == LAZYMGR) {
+		ThreadedLazyOutputManager *myLazyOutputManager =
+				static_cast<ThreadedLazyOutputManager *> (myOutputManager);
+		cout << "Number of AntiMessage for Lazy Cancellation is "
+				<< myLazyOutputManager->getNumberOfAntiMessage() << endl;
+	} else if (outMgrType == ADAPTIVEMGR) {
+		ThreadedDynamicOutputManager *myDynamicOutputManager =
+				static_cast<ThreadedDynamicOutputManager *> (myOutputManager);
+		cout << "Number of AntiMessage for Dynamic Cancellation is "
+				<< myDynamicOutputManager->getNumberOfAntiMessage() << endl;
+	}
+
 	//kill all Workers
 	WorkerInformation::killWorkerThreads();
 	//join Worker threads
@@ -447,11 +468,13 @@ void ThreadedTimeWarpSimulationManager::handleEvent(const Event *event) {
 				shouldHandleEvent = !myLazyOutputManager->lazyCancel(event,
 						threadID);
 			} else if (outMgrType == ADAPTIVEMGR) {
-								ThreadedDynamicOutputManager *myDynamicOutputManager =
-				 static_cast<ThreadedDynamicOutputManager *> (myOutputManager);
-				 ASSERT(myDynamicOutputManager != NULL);
-				 shouldHandleEvent
-				 = !myDynamicOutputManager->checkDynamicCancel(event, threadID);
+				ThreadedDynamicOutputManager
+						*myDynamicOutputManager =
+								static_cast<ThreadedDynamicOutputManager *> (myOutputManager);
+				ASSERT(myDynamicOutputManager != NULL);
+				shouldHandleEvent
+						= !myDynamicOutputManager->checkDynamicCancel(event,
+								threadID);
 			}
 		}
 	}
@@ -1380,14 +1403,36 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
 		}
         utils::debug<< "(" << mySimulationManagerID << " ) Computed LVT ="
 				<< *minimum <<":::::"<<myGVTManager->getGVT()<<"::::::"<<endl;
-		if (lvtCount == 1) {
+		switch(lvtCount) {
+        case 1:
 			LVT = minimum->clone();
 			LVTFlag = (numberOfWorkerThreads - 1);
 			for (int i = 1; i < numberOfWorkerThreads; i++) {
 				delete (LVTArray[i]);
 			}
 			resetComputeLVTStatus();
-		} else {
+			break;
+		case 2:
+			if (*LVT > *minimum) {
+				LVT = minimum->clone();
+			}
+			LVTFlag = (numberOfWorkerThreads - 1);
+			for (int i = 1; i < numberOfWorkerThreads; i++) {
+				delete (LVTArray[i]);
+			}
+			resetComputeLVTStatus();
+			break;
+		case 3:
+			if (*LVT > *minimum) {
+				LVT = minimum->clone();
+			}
+			LVTFlag = (numberOfWorkerThreads - 1);
+			for (int i = 1; i < numberOfWorkerThreads; i++) {
+				delete (LVTArray[i]);
+			}
+			resetComputeLVTStatus();
+			break;
+		case 4:
 			if (*LVT > *minimum) {
 				LVT = minimum->clone();
 			}
@@ -1396,6 +1441,7 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
 			for (int i = 1; i < numberOfWorkerThreads; i++) {
 				delete (LVTArray[i]);
 			}
+
 		}
 	}
 	releaseLVTFlagLock(0);

@@ -265,6 +265,8 @@ void ThreadedDynamicOutputManager::rollback(SimulationObject *object,
 		//Send out the anti-messages if in aggressive mode.
 		if (*curCancelMode[objID] == Aggressive) {
 			if (tempOutEvents->size() > 0) {
+				__sync_fetch_and_add(&numberOfAntiMessage,
+						tempOutEvents->size());
 				getSimulationManager()->cancelEvents(*tempOutEvents);
 			}
 		}

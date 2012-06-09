@@ -13,38 +13,43 @@ class OutputManager;
 
 /** The ThreadedAggressiveOutputManager class.
 
-    This class implements an aggressive cancellation scheme as a part of
-    its output manager functionality.
+ This class implements an aggressive cancellation scheme as a part of
+ its output manager functionality.
 
-*/
-class ThreadedAggressiveOutputManager : public ThreadedOutputManagerImplementationBase {
+ */
+class ThreadedAggressiveOutputManager: public ThreadedOutputManagerImplementationBase {
 public:
 
-  /**@name Public Class Methods of ThreadedAggressiveOutputManager. */
-  //@{
+	/**@name Public Class Methods of ThreadedAggressiveOutputManager. */
+	//@{
 
-  /** Constructor.
+	/** Constructor.
 
-      @param simMgr Handle to the simulation manager.
-  */
-  ThreadedAggressiveOutputManager( ThreadedTimeWarpSimulationManager *simMgr );
+	 @param simMgr Handle to the simulation manager.
+	 */
+	ThreadedAggressiveOutputManager(ThreadedTimeWarpSimulationManager *simMgr);
 
-  /// Destructor.
-  ~ThreadedAggressiveOutputManager();
+	/// Destructor.
+	~ThreadedAggressiveOutputManager();
 
+	/** Send out anti-messages.
 
-  /** Send out anti-messages.
+	 @param rollbackTime Bound for how many antimessages will be sent.
+	 @param object A pointer to the object who experienced rollback.
+	 */
+	void rollback(SimulationObject *object, const VTime &rollbackTime,
+			int threadID);
 
-      @param rollbackTime Bound for how many antimessages will be sent.
-      @param object A pointer to the object who experienced rollback.
-  */
-  void rollback( SimulationObject *object,  const VTime &rollbackTime , int threadID);
+	virtual void configure(SimulationConfiguration &) {
+	}
 
-  virtual void configure( SimulationConfiguration & ){}
+	unsigned int getNumberOfAntiMessage();
 
-  //@} // End of Public Class Methods of ThreadedAggressiveOutputManager.
+	// To keep a record of number of Anti Messages sent
+	unsigned int numberOfAntiMessage;
+
+	//@} // End of Public Class Methods of ThreadedAggressiveOutputManager.
 
 };
-
 
 #endif /* THREADEDAGGRESSIVEOUTPUTMANAGER_H_ */
