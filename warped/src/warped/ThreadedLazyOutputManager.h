@@ -124,8 +124,6 @@ public:
 	 */
 	virtual void ofcPurge(int threadId);
 
-	unsigned int getNumberOfAntiMessage();
-
 	//	void getLazyMinQueueLock(int threadId);
 
 	//	void releaseLazyMinQueueLock(int threadId);
@@ -191,9 +189,6 @@ protected:
 	 False when just using checkLazyCancelEvent for the comparison (no insert).
 	 */
 	vector<bool*> compareAndInsertMode;
-
-	// Used to count number of Anti Messages sent.
-	unsigned int numberOfAntiMessage;
 
 	//Lowest event position pointer to point to position of lowest Time Stamped Event (for each object)
 	// in the Schedule Queue.

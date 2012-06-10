@@ -6,7 +6,7 @@
 
 ThreadedLazyOutputManager::ThreadedLazyOutputManager(
 		ThreadedTimeWarpSimulationManager *simMgr) :
-	ThreadedOutputManagerImplementationBase(simMgr), numberOfAntiMessage(0) {
+	ThreadedOutputManagerImplementationBase(simMgr) {
 	//	lazyMinQueueLock = new AtomicState();
 	// lazy Queues min
 	//	lazyMinQueue = new multiset<const Event*, sendTimeLessThanEventIdLessThan> ;
@@ -60,10 +60,6 @@ ThreadedLazyOutputManager::~ThreadedLazyOutputManager() {
  }
  this->releaseLazyMinQueueLock(threadId);
  }*/
-
-unsigned int ThreadedLazyOutputManager::getNumberOfAntiMessage() {
-	return numberOfAntiMessage;
-}
 
 bool ThreadedLazyOutputManager::checkLazyCancelEvent(const Event *event,
 		int threadId) {
@@ -144,8 +140,6 @@ bool ThreadedLazyOutputManager::checkLazyCancelEvent(const Event *event,
 void ThreadedLazyOutputManager::handleCancelEvents(int threadId) {
 	for (int t = 0; t < eventsToCancel.size(); t++) {
 		if ((eventsToCancel[t])->size() > 0) {
-			__sync_fetch_and_add(&numberOfAntiMessage,
-					(eventsToCancel[t])->size());
 			getSimulationManager()->cancelEvents(*(eventsToCancel[t]));
 			(eventsToCancel[t])->clear();
 		}
@@ -156,8 +150,6 @@ void ThreadedLazyOutputManager::handleCancelEvents(SimulationObject *object,
 		int threadId) {
 	int objectID = object->getObjectID()->getSimulationObjectID();
 	if ((eventsToCancel[objectID])->size() > 0) {
-		__sync_fetch_and_add(&numberOfAntiMessage,
-				(eventsToCancel[objectID])->size());
 		getSimulationManager()->cancelEvents(*(eventsToCancel[objectID]));
 		(eventsToCancel[objectID])->clear();
 	}

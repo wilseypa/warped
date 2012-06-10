@@ -8,7 +8,7 @@
 
 ThreadedAggressiveOutputManager::ThreadedAggressiveOutputManager(
 		ThreadedTimeWarpSimulationManager *simMgr) :
-	ThreadedOutputManagerImplementationBase(simMgr), numberOfAntiMessage(0) {
+	ThreadedOutputManagerImplementationBase(simMgr) {
 }
 
 ThreadedAggressiveOutputManager::~ThreadedAggressiveOutputManager() {
@@ -23,13 +23,8 @@ void ThreadedAggressiveOutputManager::rollback(SimulationObject *object,
 					rollbackTime, threadID);
 
 	if (eventsToCancel->size() > 0) {
-		__sync_fetch_and_add(&numberOfAntiMessage, eventsToCancel->size());
 		getSimulationManager()->cancelEvents(*eventsToCancel);
 	}
 
 	delete eventsToCancel;
-}
-
-unsigned int ThreadedAggressiveOutputManager::getNumberOfAntiMessage() {
-	return numberOfAntiMessage;
 }

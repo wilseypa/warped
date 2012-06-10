@@ -383,6 +383,12 @@ private:
 	bool checkpointing;
 
 	int lvtCount;
+
+	unsigned int numberOfNegativeEventMessage;
+
+	unsigned int numberOfRemoteAntimessages;
+
+	unsigned int numberOfLocalAntimessages;
 };
 
 #endif /* ThreadedTIMEWARPSIMULATIONMANAGER_H_ */

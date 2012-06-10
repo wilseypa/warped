@@ -43,11 +43,6 @@ public:
 	virtual void configure(SimulationConfiguration &) {
 	}
 
-	unsigned int getNumberOfAntiMessage();
-
-	// To keep a record of number of Anti Messages sent
-	unsigned int numberOfAntiMessage;
-
 	//@} // End of Public Class Methods of ThreadedAggressiveOutputManager.
 
 };
