@@ -148,3 +148,4 @@ INFINITY. This is because we need to retain the last executed event
 timestamp to determine if we need to rollback an object or not.
 
 \section
+*/
