@@ -198,6 +198,7 @@ WARPED_H_FILES = \
 	warped/ThreadedOutputManagerImplementationBase.h \
 	warped/ThreadedAggressiveOutputManager.h \
 	warped/ThreadedTimeWarpMultiSet.h \
+	warped/ThreadedTimeWarpMultiSetLTSF.h \
 	warped/ThreadedStateManagerImplementationBase.h \
 	warped/ThreadedPeriodicStateManager.h \
 	warped/ThreadedOutputManager.h \
@@ -328,6 +329,7 @@ libwarped_la_SOURCES = \
     warped/ThreadedOutputManagerImplementationBase.cpp \
     warped/ThreadedAggressiveOutputManager.cpp \
     warped/ThreadedTimeWarpMultiSet.cpp \
+    warped/ThreadedTimeWarpMultiSetLTSF.cpp \
     warped/ThreadedStateManagerImplementationBase.cpp \
     warped/ThreadedPeriodicStateManager.cpp \
     warped/ThreadedTimeWarpEventSet.cpp \
