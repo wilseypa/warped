@@ -17,6 +17,8 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount) {
 
 ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
 	delete objectStatusLock;
+	delete scheduleQueueLock;
+	delete scheduleQueue;
 }
 
 void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
