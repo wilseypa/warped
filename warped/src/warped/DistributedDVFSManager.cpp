@@ -8,6 +8,7 @@
 #include "CommunicationManager.h"
 #include <cmath>
 #include <ctime>
+#include <unistd.h>
 
 DistributedDVFSManager::DistributedDVFSManager(TimeWarpSimulationManager* simMgr,
                                            int measurementPeriod,

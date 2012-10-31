@@ -15,6 +15,7 @@
 #include <pwd.h>
 #include <sstream>
 #include <fstream>
+#include <unistd.h>
 using namespace std;
 
 const char delimiter = '_';
