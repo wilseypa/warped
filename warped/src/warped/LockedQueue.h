@@ -5,7 +5,6 @@
 
 #include<pthread.h>
 #include<deque>
-//#include <iostream>
 
 using std::deque;
 
