@@ -77,6 +77,7 @@ public:
 	const string getBinaryName() const;
 
 	bool getWorkerThreadCount(unsigned int &workerThreadCount) const;
+	const string getSyncMechanism() const;
 
 	Implementation() :
 		myOuterScope(0) {
@@ -407,6 +408,10 @@ const string SimulationConfiguration::getBinaryName() const {
 bool SimulationConfiguration::getWorkerThreadCount(
 		unsigned int &workerThreadCount) const {
 	return _impl->getWorkerThreadCount(workerThreadCount);
+}
+
+const string SimulationConfiguration::getSyncMechanism() const {
+	return _impl->getSyncMechanism();
 }
 
 const ConfigurationChoice *
@@ -950,6 +955,18 @@ bool SimulationConfiguration::Implementation::getWorkerThreadCount(
 		if (scope->getIntValue("WorkerThreadCount") != -1) {
 			workerThreadCount = scope->getIntValue("WorkerThreadCount");
 			retval = true;
+		}
+	}
+	return retval;
+}
+
+const string SimulationConfiguration::Implementation::getSyncMechanism() const {
+	string retval = "(none)";
+	if (getThreadControlScope() != 0) {
+		const ConfigurationChoice *scope = getThreadControlScope()->findChoice(
+				"SyncMechanism");
+		if (scope != 0) {
+			retval = stringToUpper(scope->getStringValue());
 		}
 	}
 	return retval;

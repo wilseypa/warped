@@ -24,7 +24,7 @@ template<class element> class LockedQueue;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
 	ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
-			Application *initApplication);
+			const string syncMechanism, Application *initApplication);
 	virtual ~ThreadedTimeWarpSimulationManager();
 	/** Return a handle to the state manager.
 
@@ -323,6 +323,9 @@ private:
 
 	///Specified in the ThreadControl scope of the configuration file
 	unsigned int numberOfWorkerThreads;
+
+	//Specfiy the synchronization mechanism in the configuraion file
+	const string syncMechanism;
 public:
 	///Holds information each thread needs to operate
 	WorkerInformation **workerStatus;

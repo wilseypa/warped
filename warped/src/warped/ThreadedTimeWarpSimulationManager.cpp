@@ -37,8 +37,8 @@ bool WorkerInformation::workRemaining = true;
 static pthread_key_t threadKey;
 
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
-		unsigned int numberOfWorkerThreads, Application *initApplication) :
-	numberOfWorkerThreads(numberOfWorkerThreads), masterID(0),
+		unsigned int numberOfWorkerThreads, const string syncMechanism, Application *initApplication) :
+			numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism), masterID(0),
 			coastForwardTime(0), myrealFossilCollManager(0), myStateManager(0),
 			messageBuffer(new LockedQueue<KernelMessage*> ),
 			workerStatus(new WorkerInformation*[numberOfWorkerThreads + 1]),
@@ -81,16 +81,16 @@ ThreadedTimeWarpSimulationManager::~ThreadedTimeWarpSimulationManager() {
 
 inline void ThreadedTimeWarpSimulationManager::sendMessage(KernelMessage *msg,
 		unsigned int destSimMgrId) {
-	messageBuffer->enqueue(msg);
+	messageBuffer->enqueue(msg, syncMechanism);
 }
 
 inline void ThreadedTimeWarpSimulationManager::sendPendingMessages() {
 	KernelMessage *messageToBeSent = NULL;
-	if ((messageToBeSent = messageBuffer->peekNext()) != NULL) {
+	if ((messageToBeSent = messageBuffer->peekNext(syncMechanism)) != NULL) {
 		utils::debug << "(" << mySimulationManagerID
 				<< " ) In Sending Module: " << endl;
 	}
-	while ((messageToBeSent = messageBuffer->dequeue()) != NULL) {
+	while ((messageToBeSent = messageBuffer->dequeue(syncMechanism)) != NULL) {
 		utils::debug << "(" << mySimulationManagerID << " ) Sending Message: "
 				<< endl;
 		myCommunicationManager->sendMessage(messageToBeSent,
@@ -1542,7 +1542,7 @@ void ThreadedTimeWarpSimulationManager::releaseObjectLocksRecovery() {
 
 void ThreadedTimeWarpSimulationManager::clearMessageBuffer() {
 	KernelMessage *tobedeleted = NULL;
-	while ((tobedeleted = messageBuffer->dequeue()) != NULL) {
+	while ((tobedeleted = messageBuffer->dequeue(syncMechanism)) != NULL) {
 		utils::debug << "Deleted message from buffer." << endl;
 	}
 }

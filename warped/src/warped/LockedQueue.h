@@ -5,52 +5,91 @@
 
 #include<pthread.h>
 #include<deque>
+//#include <iostream>
+
 using std::deque;
 
 template<class element> class LockedQueue
 {
 private:
 	deque<element> myQueue;
+
 	pthread_spinlock_t spinlock;
+	pthread_mutex_t mutex;
+
 public:
 	LockedQueue()
 	{
 		pthread_spin_init(&spinlock, PTHREAD_PROCESS_PRIVATE );
+		pthread_mutex_init(&mutex, NULL);
 	}
 	~LockedQueue(){};
 
-	void enqueue(element e)
+	void enqueue(element e, const string syncMechanism)
 	{
-		pthread_spin_lock(&spinlock);
+		if(syncMechanism == "SPINLOCK") {
+			pthread_spin_lock(&spinlock);
+		} else {
+			pthread_mutex_lock(&mutex);
+		}
+
 		myQueue.push_back(e);
-		pthread_spin_unlock(&spinlock);
+
+		if(syncMechanism == "SPINLOCK") {
+			pthread_spin_unlock(&spinlock);
+		} else {
+			pthread_mutex_unlock(&mutex);
+		}
 	}
 
-	element dequeue()
+	element dequeue(const string syncMechanism)
 	{
 		element returnVal = 0;
 		if (!myQueue.empty())
 		{
-			pthread_spin_lock(&spinlock);
+			if(syncMechanism == "SPINLOCK") {
+				pthread_spin_lock(&spinlock);
+			} else {
+				pthread_mutex_lock(&mutex);
+			}
+
 			if (!myQueue.empty())
 			{
 				returnVal = myQueue.front();
 				myQueue.pop_front();
 			}
-			pthread_spin_unlock(&spinlock);
+
+			if(syncMechanism == "SPINLOCK") {
+				pthread_spin_unlock(&spinlock);
+			} else {
+				pthread_mutex_unlock(&mutex);
+			}
 		}
 		return returnVal;
 	}
 
-	element peekNext()
+	element peekNext(const string syncMechanism)
 	{
 		element returnVal = 0;
-		pthread_spin_lock(&spinlock);
+
+		if(syncMechanism == "SPINLOCK") {
+			pthread_spin_lock(&spinlock);
+		} else {
+			pthread_mutex_lock(&mutex);
+		}
+
 		if (!myQueue.empty())
 		{
 			returnVal = myQueue.front();
 		}
-		pthread_spin_unlock(&spinlock);
+
+		if(syncMechanism == "SPINLOCK")
+		{
+			pthread_spin_unlock(&spinlock);
+		} else {
+			pthread_mutex_unlock(&mutex);
+		}
+
 		return returnVal;
 	}
 };

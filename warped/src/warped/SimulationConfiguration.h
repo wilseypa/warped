@@ -123,6 +123,8 @@ public:
 
 	bool getWorkerThreadCount(unsigned int &workerThreadCount) const;
 
+	const string getSyncMechanism() const;
+
 	bool getOptFossilCollPeriod(unsigned int &period);
 
 	bool getOptFossilCollMinSamples(unsigned int &minSamples);

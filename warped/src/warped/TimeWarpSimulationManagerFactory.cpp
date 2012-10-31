@@ -22,15 +22,21 @@ TimeWarpSimulationManagerFactory::allocate(
 	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		//Count the number of threads, if none specified try reading the proc file
 		unsigned int numberOfWorkerThreads = 0;
+		//Specify the synchronization mechanism
+		string syncMechanism = "(none)";
+
 		if (!configuration.getWorkerThreadCount(numberOfWorkerThreads)) {
 			//numberOfWorkerThreads = GetProcCount(); // need to implement this GetProcCount for Threaded Simulator
 			cerr << "Number of Threads has not been mentioned in the file!" << endl;
 		}
+		if ( (syncMechanism = configuration.getSyncMechanism()) == "(none)" ) {
+			cerr << "Synchronization mechanism has not been mentioned in the file!" << endl;
+		}
 		ThreadedTimeWarpSimulationManager *retvalue = 0;
-        retvalue = new ThreadedTimeWarpSimulationManager(numberOfWorkerThreads, (Application *) parent);
+        	retvalue = new ThreadedTimeWarpSimulationManager(numberOfWorkerThreads, syncMechanism, (Application *) parent);
 		return retvalue;
 	} else {
-        retval = new TimeWarpSimulationManager((Application *) parent);
+		retval = new TimeWarpSimulationManager((Application *) parent);
 	}
 
 	return retval;
