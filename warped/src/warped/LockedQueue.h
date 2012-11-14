@@ -25,11 +25,11 @@ public:
 	}
 	~LockedQueue(){};
 
-	void enqueue(element e, const string syncMechanism)
+	void enqueue(element e, const string syncMech)
 	{
-		syncMechanism = SPINLOCK; /* MUTEX code section is not needed currently.
-					   * Code section not deleted keeping future use
-					   * in mind */
+		const string syncMechanism = "SPINLOCK"; /* MUTEX code section is not needed currently.
+							  * Code section not deleted keeping future use
+							  * in mind */
 
 		if(syncMechanism == "SPINLOCK") {
 			pthread_spin_lock(&spinlock);
@@ -46,11 +46,11 @@ public:
 		}
 	}
 
-	element dequeue(const string syncMechanism)
+	element dequeue(const string syncMech)
 	{
-		syncMechanism = SPINLOCK; /* MUTEX code section is not needed currently.
-					   * Code section not deleted keeping future use
-					   * in mind */
+		const string syncMechanism = "SPINLOCK"; /* MUTEX code section is not needed currently.
+							  * Code section not deleted keeping future use
+					   		  * in mind */
 
 		element returnVal = 0;
 		if (!myQueue.empty())
@@ -76,11 +76,11 @@ public:
 		return returnVal;
 	}
 
-	element peekNext(const string syncMechanism)
+	element peekNext(const string syncMech)
 	{
-		syncMechanism = SPINLOCK; /* MUTEX code section is not needed currently.
-					   * Code section not deleted keeping future use
-					   * in mind */
+		const string syncMechanism = "SPINLOCK"; /* MUTEX code section is not needed currently.
+							  * Code section not deleted keeping future use
+							  * in mind */
 
 		element returnVal = 0;
 
