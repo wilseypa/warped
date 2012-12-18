@@ -17,9 +17,12 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 	//Input queues
 	objectCount = initSimulationManager->getNumberOfSimulationObjects();
 
-	unprocessedQueueAtomicState = new AtomicState *[objectCount];
-	processedQueueAtomicState = new AtomicState *[objectCount];
-	removedQueueAtomicState = new AtomicState *[objectCount];
+	//synchronization mechanism
+	syncMechanism = initSimulationManager->getSyncMechanism();
+
+	unprocessedQueueLockState = new LockState *[objectCount];
+	processedQueueLockState = new LockState *[objectCount];
+	removedQueueLockState = new LockState *[objectCount];
 
 	//Schedule Queue (LTSF)
 	LTSF1 = new ThreadedTimeWarpMultiSetLTSF(objectCount);
@@ -39,9 +42,9 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 		processedQueue.push_back(new vector<const Event*> );
 		removedEventQueue.push_back(new vector<const Event*> );
 		//Initialzing Atomic Locks for each Object
-		unprocessedQueueAtomicState[i] = new AtomicState();
-		processedQueueAtomicState[i] = new AtomicState();
-		removedQueueAtomicState[i] = new AtomicState();
+		unprocessedQueueLockState[i] = new LockState();
+		processedQueueLockState[i] = new LockState();
+		removedQueueLockState[i] = new LockState();
 		////objectStatusLock[i] = new AtomicState();
 		//Schedule queue
 		////lowestObjectPosition.push_back(scheduleQueue->end());
@@ -65,9 +68,9 @@ ThreadedTimeWarpMultiSet::~ThreadedTimeWarpMultiSet() {
 		processedQueue.pop_back();
 		delete toDeleteVector;
 	}
-	delete unprocessedQueueAtomicState;
-	delete processedQueueAtomicState;
-	delete removedQueueAtomicState;
+	delete unprocessedQueueLockState;
+	delete processedQueueLockState;
+	delete removedQueueLockState;
 	////delete objectStatusLock;
 	//	deleting each Threads Iterator
 	delete vectorIterator;
@@ -76,41 +79,41 @@ ThreadedTimeWarpMultiSet::~ThreadedTimeWarpMultiSet() {
 
 bool ThreadedTimeWarpMultiSet::threadHasUnprocessedQueueLock(int threadId,
 		int objId) {
-	return (unprocessedQueueAtomicState[objId]->hasLock(threadId));
+	return (unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 
 void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
-	while (!unprocessedQueueAtomicState[objId]->setLock(threadId))
+	while (!unprocessedQueueLockState[objId]->setLock(threadId, syncMechanism))
 		;
 	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 	 << " ) Queue - " << objId << " is Locked by the thread - "
 	 << threadId << "\n";*/
-	ASSERT(unprocessedQueueAtomicState[objId]->hasLock(threadId));
+	ASSERT(unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
-	ASSERT(unprocessedQueueAtomicState[objId]->hasLock(threadId));
-	unprocessedQueueAtomicState[objId]->releaseLock(threadId);
+	ASSERT(unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+	unprocessedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 	 << " ) Queue - " << objId << " is Released by the thread - "
 	 << threadId << "\n";*/
 }
 void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
-	while (!processedQueueAtomicState[objId]->setLock(threadId))
+	while (!processedQueueLockState[objId]->setLock(threadId, syncMechanism))
 		;
-	ASSERT(processedQueueAtomicState[objId]->hasLock(threadId));
+	ASSERT(processedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSet::releaseProcessedLock(int threadId, int objId) {
-	ASSERT(processedQueueAtomicState[objId]->hasLock(threadId));
-	processedQueueAtomicState[objId]->releaseLock(threadId);
+	ASSERT(processedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+	processedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 }
 void ThreadedTimeWarpMultiSet::getremovedLock(int threadId, int objId) {
-	while (!removedQueueAtomicState[objId]->setLock(threadId))
+	while (!removedQueueLockState[objId]->setLock(threadId, syncMechanism))
 		;
-	ASSERT(removedQueueAtomicState[objId]->hasLock(threadId));
+	ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSet::releaseremovedLock(int threadId, int objId) {
-	ASSERT(removedQueueAtomicState[objId]->hasLock(threadId));
-	removedQueueAtomicState[objId]->releaseLock(threadId);
+	ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+	removedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 }
 
 ////void ThreadedTimeWarpMultiSet::getScheduleQueueLock(int threadId) {
@@ -156,7 +159,7 @@ const Event* ThreadedTimeWarpMultiSet::getEvent(SimulationObject *simObj,
 		int threadId) {
 	const Event* ret = NULL;
 	unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
-	if (!this->unprocessedQueueAtomicState[objId]->hasLock(threadId))
+	if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism))
 		this->getunProcessedLock(threadId, objId);
 	if (getQueueEventCount(objId) > 0) {
 		//Remove from Unprocessed Queue
@@ -274,7 +277,7 @@ const Event* ThreadedTimeWarpMultiSet::peekEvent(SimulationObject *simObj,
                		ret = LTSF1->peekIt(threadId);
 	} else if (simObj != NULL) {
 		unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
-		if (!this->unprocessedQueueAtomicState[objId]->hasLock(threadId)) {
+		if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) {
 			this->getunProcessedLock(threadId, objId);
 			releaseWhileReturn = false;
 		}
@@ -392,7 +395,7 @@ bool ThreadedTimeWarpMultiSet::handleAntiMessage(SimulationObject *simObj,
 		const NegativeEvent* negativeEvent, int threadId) {
 	bool eventWasRemoved = false;
 	unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
-	if (!this->unprocessedQueueAtomicState[objId]->hasLock(threadId))
+	if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism))
 		this->getunProcessedLock(threadId, objId);
 	multisetIterator[threadId] = unProcessedQueue[objId]->begin();
 
@@ -608,7 +611,7 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId,
 		ASSERT(false);
 	////this->getScheduleQueueLock(threadId);
 	LTSF1->getScheduleQueueLock(threadId);
-	if (!this->unprocessedQueueAtomicState[objId]->hasLock(threadId))
+	if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism))
 		this->getunProcessedLock(threadId, objId);
 	if (unProcessedQueue[objId]->size() > 0) {
 		firstEvent = *(unProcessedQueue[objId]->begin());
@@ -757,21 +760,24 @@ void ThreadedTimeWarpMultiSet::releaseObjectLocksRecovery() {
 		////			<< " during recovery." << endl;
 		////}
 		LTSF1->releaseObjectLocksRecovery(objNum);
-		if (unprocessedQueueAtomicState[objNum]->isLocked()) {
-			unprocessedQueueAtomicState[objNum]->releaseLock(
-					unprocessedQueueAtomicState[objNum]->whoHasLock());
+		if (unprocessedQueueLockState[objNum]->isLocked()) {
+			unprocessedQueueLockState[objNum]->releaseLock(
+									unprocessedQueueLockState[objNum]->whoHasLock(),
+									syncMechanism);
 			utils::debug << "Releasing Unprocessed Queue " << objNum
 					<< " during recovery." << endl;
 		}
-		if (processedQueueAtomicState[objNum]->isLocked()) {
-			processedQueueAtomicState[objNum]->releaseLock(
-					processedQueueAtomicState[objNum]->whoHasLock());
+		if (processedQueueLockState[objNum]->isLocked()) {
+			processedQueueLockState[objNum]->releaseLock(
+									processedQueueLockState[objNum]->whoHasLock(),
+									syncMechanism);
 			utils::debug << "Releasing Processed Queue " << objNum
 					<< " during recovery." << endl;
 		}
-		if (removedQueueAtomicState[objNum]->isLocked()) {
-			removedQueueAtomicState[objNum]->releaseLock(
-					removedQueueAtomicState[objNum]->whoHasLock());
+		if (removedQueueLockState[objNum]->isLocked()) {
+			removedQueueLockState[objNum]->releaseLock(
+									removedQueueLockState[objNum]->whoHasLock(),
+									syncMechanism);
 			utils::debug << "Releasing Removed Queue " << objNum
 					<< " during recovery." << endl;
 		}

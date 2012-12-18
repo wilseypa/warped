@@ -6,7 +6,7 @@
 #include <set>
 #include <list>
 #include "ThreadedTimeWarpEventSet.h"
-#include "AtomicState.h"
+#include "LockState.h"
 #include "NegativeEvent.h"
 #include "EventFunctors.h"
 #include "ThreadedTimeWarpSimulationManager.h"
@@ -157,9 +157,9 @@ public:
 	void releaseObjectLocksRecovery();
 
 private:
-	AtomicState** unprocessedQueueAtomicState;
-	AtomicState** processedQueueAtomicState;
-	AtomicState** removedQueueAtomicState;
+	LockState** unprocessedQueueLockState;
+	LockState** processedQueueLockState;
+	LockState** removedQueueLockState;
 
 	//	typedef std::multiset<const Event*, receiveTimeLessThanEventIdLessThan>* MS;
 	//	MS *unProcessedQueueArray;
@@ -193,6 +193,9 @@ private:
 
 	//number of objects associated with the manager
 	int objectCount;
+
+	//Specfiy the synchronization mechanism in the config
+	string syncMechanism;
 
 	//ScheduleQueue (LTSF) - eventually declare multiple of these 
 	// - not sure if '*' used correctly

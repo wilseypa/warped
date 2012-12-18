@@ -62,6 +62,10 @@ public:
 		return numberOfWorkerThreads;
 	}
 
+	const string getSyncMechanism() {
+		return syncMechanism;
+	}
+
 	/** Create a map of simulation objects.
 
 	 @return An STL hash-map of the simulation objects.

@@ -27,11 +27,11 @@ public:
 
 	void enqueue(element e, const string syncMech)
 	{
-		const string syncMechanism = "SPINLOCK"; /* MUTEX code section is not needed currently.
-							  * Code section not deleted keeping future use
-							  * in mind */
+		const string syncMechanism = "ATOMICLOCK";	/* MUTEX code section is not needed currently.
+								 * Code section not deleted keeping future use
+								 * in mind */
 
-		if(syncMechanism == "SPINLOCK") {
+		if(syncMechanism == "ATOMICLOCK") {
 			pthread_spin_lock(&spinlock);
 		} else {
 			pthread_mutex_lock(&mutex);
@@ -39,7 +39,7 @@ public:
 
 		myQueue.push_back(e);
 
-		if(syncMechanism == "SPINLOCK") {
+		if(syncMechanism == "ATOMICLOCK") {
 			pthread_spin_unlock(&spinlock);
 		} else {
 			pthread_mutex_unlock(&mutex);
@@ -48,14 +48,14 @@ public:
 
 	element dequeue(const string syncMech)
 	{
-		const string syncMechanism = "SPINLOCK"; /* MUTEX code section is not needed currently.
-							  * Code section not deleted keeping future use
-					   		  * in mind */
+		const string syncMechanism = "ATOMICLOCK";	/* MUTEX code section is not needed currently.
+								 * Code section not deleted keeping future use
+					   			 * in mind */
 
 		element returnVal = 0;
 		if (!myQueue.empty())
 		{
-			if(syncMechanism == "SPINLOCK") {
+			if(syncMechanism == "ATOMICLOCK") {
 				pthread_spin_lock(&spinlock);
 			} else {
 				pthread_mutex_lock(&mutex);
@@ -67,7 +67,7 @@ public:
 				myQueue.pop_front();
 			}
 
-			if(syncMechanism == "SPINLOCK") {
+			if(syncMechanism == "ATOMICLOCK") {
 				pthread_spin_unlock(&spinlock);
 			} else {
 				pthread_mutex_unlock(&mutex);
@@ -78,13 +78,13 @@ public:
 
 	element peekNext(const string syncMech)
 	{
-		const string syncMechanism = "SPINLOCK"; /* MUTEX code section is not needed currently.
-							  * Code section not deleted keeping future use
-							  * in mind */
+		const string syncMechanism = "ATOMICLOCK";	/* MUTEX code section is not needed currently.
+								 * Code section not deleted keeping future use
+								 * in mind */
 
 		element returnVal = 0;
 
-		if(syncMechanism == "SPINLOCK") {
+		if(syncMechanism == "ATOMICLOCK") {
 			pthread_spin_lock(&spinlock);
 		} else {
 			pthread_mutex_lock(&mutex);
@@ -95,7 +95,7 @@ public:
 			returnVal = myQueue.front();
 		}
 
-		if(syncMechanism == "SPINLOCK")
+		if(syncMechanism == "ATOMICLOCK")
 		{
 			pthread_spin_unlock(&spinlock);
 		} else {
