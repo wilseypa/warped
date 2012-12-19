@@ -6,6 +6,7 @@
 #include <list>
 #include "ThreadedTimeWarpEventSet.h"
 #include "AtomicState.h"
+#include "LockState.h"
 #include "NegativeEvent.h"
 #include "EventFunctors.h"
 #include "ThreadedTimeWarpSimulationManager.h"
@@ -20,7 +21,7 @@ class ThreadedTimeWarpSimulationManager;
 class ThreadedTimeWarpMultiSetLTSF {
 public:
 	// Creates an LTSF queue with 'objectCount' input queues
-	ThreadedTimeWarpMultiSetLTSF(int objectCount);
+	ThreadedTimeWarpMultiSetLTSF(int objectCount, const string syncMechanism);
 	~ThreadedTimeWarpMultiSetLTSF();
 
 	void getScheduleQueueLock(int threadId);
@@ -78,9 +79,12 @@ private:
 	///Schedule Queue - LTSF
 	multiset<const Event*, receiveTimeLessThanEventIdLessThan> *scheduleQueue;
 	///Schedule Queue Lock
-	AtomicState* scheduleQueueLock;
+	LockState* scheduleQueueLock;
 
 	///Object Status Lock
-	AtomicState** objectStatusLock;
+	LockState** objectStatusLock;
+
+	//Specfiy the synchronization mechanism in the config
+	string syncMechanism;
 };
 #endif /* ThreadedTIMEWARPMULTISETLTSF_H_ */

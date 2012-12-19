@@ -25,7 +25,7 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 	removedQueueLockState = new LockState *[objectCount];
 
 	//Schedule Queue (LTSF)
-	LTSF1 = new ThreadedTimeWarpMultiSetLTSF(objectCount);
+	LTSF1 = new ThreadedTimeWarpMultiSetLTSF(objectCount, syncMechanism);
 	////scheduleQueue = new multiset<const Event*,
 	////		receiveTimeLessThanEventIdLessThan> ;
 	////objectStatusLock = new AtomicState *[objectCount];
