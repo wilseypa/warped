@@ -11,9 +11,9 @@
 ThreadedOutputEvents::ThreadedOutputEvents(ThreadedTimeWarpSimulationManager *simMgr) :
 	mySimulationManager(simMgr) {
 
-	localQueueLock = new AtomicState();
-	remoteQueueLock = new AtomicState();
-	removedListLock = new AtomicState();
+	localQueueLock = new LockState();
+	remoteQueueLock = new LockState();
+	removedListLock = new LockState();
 }
 
 ThreadedOutputEvents::~ThreadedOutputEvents() {
@@ -454,34 +454,34 @@ void ThreadedOutputEvents::ofcPurge(int threadID) {
 }
 
 bool ThreadedOutputEvents::getLocalLock(int threadId) {
-	while (!localQueueLock->setLock(threadId))
+	while (!localQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism()))
 		;
-	ASSERT(localQueueLock->hasLock(threadId));
+	ASSERT(localQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
 bool ThreadedOutputEvents::releaseLocalLock(int threadId) {
-	ASSERT(localQueueLock->hasLock(threadId));
-	localQueueLock->releaseLock(threadId);
+	ASSERT(localQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
+	localQueueLock->releaseLock(threadId, mySimulationManager->getSyncMechanism());
 }
 
 bool ThreadedOutputEvents::getRemoteLock(int threadId) {
-	while (!remoteQueueLock->setLock(threadId))
+	while (!remoteQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism()))
 		;
-	ASSERT(remoteQueueLock->hasLock(threadId));
+	ASSERT(remoteQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
 bool ThreadedOutputEvents::releaseRemoteLock(int threadId) {
-	ASSERT(remoteQueueLock->hasLock(threadId));
-	remoteQueueLock->releaseLock(threadId);
+	ASSERT(remoteQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
+	remoteQueueLock->releaseLock(threadId, mySimulationManager->getSyncMechanism());
 }
 
 bool ThreadedOutputEvents::getRemovedLock(int threadId) {
-	while (!removedListLock->setLock(threadId))
+	while (!removedListLock->setLock(threadId, mySimulationManager->getSyncMechanism()))
 		;
-	ASSERT(removedListLock->hasLock(threadId));
+	ASSERT(removedListLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
 bool ThreadedOutputEvents::releaseRemovedLock(int threadId) {
-	ASSERT(removedListLock->hasLock(threadId));
-	removedListLock->releaseLock(threadId);
+	ASSERT(removedListLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
+	removedListLock->releaseLock(threadId, mySimulationManager->getSyncMechanism());
 }

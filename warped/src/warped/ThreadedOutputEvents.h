@@ -3,7 +3,7 @@
 #ifndef THREADEDOUTPUTEVENTS_H_
 #define THREADEDOUTPUTEVENTS_H_
 
-#include "AtomicState.h"
+#include "LockState.h"
 #include "warped.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 #include <vector>
@@ -152,9 +152,9 @@ private:
 	ThreadedTimeWarpSimulationManager *mySimulationManager;
 
 	///Lock Definitions
-	AtomicState* localQueueLock;
-	AtomicState* remoteQueueLock;
-	AtomicState* removedListLock;
+	LockState* localQueueLock;
+	LockState* remoteQueueLock;
+	LockState* removedListLock;
 
 	//@} // End of Private Class Methods of ThreadedOutputEvents.
 };
