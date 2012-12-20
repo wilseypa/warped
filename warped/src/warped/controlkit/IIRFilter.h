@@ -27,9 +27,9 @@
     
     Y(k) = R * U(k) + (1.0 - R) * Y(k - 1)
          = R * U(k) + Y(k - 1) - R * Y(k - 1)
-         = Y(k - l) + R * (U(k) - Y(k - 1))
+         = Y(k - 1) + R * (U(k) - Y(k - 1))
 
-    Final Form: Y(k) = Y(k - l) + R * (U(k) - Y(k - 1)) ---(2)
+    Final Form: Y(k) = Y(k - 1) + R * (U(k) - Y(k - 1)) ---(2)
 */
 template <class Type>
 class IIRFilter : public Filter<Type> {
