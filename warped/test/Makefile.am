@@ -17,5 +17,7 @@ include raid/Makefile.am.stub
 include rnd/Makefile.am.stub
 # SMMP Stuff
 include smmp/Makefile.am.stub
+# gatesCircuit stuff
+include gatesCircuit/Makefile.am.stub
 
-noinst_PROGRAMS = $(PING_PONG_PROGRAM) $(UNIT_TEST_PROGRAM) $(ADAPT_TEST_PROGRAM) $(PHOLD_PROGRAM) $(RAID_PROGRAM) $(SMMP_PROGRAM)
+noinst_PROGRAMS = $(PING_PONG_PROGRAM) $(UNIT_TEST_PROGRAM) $(ADAPT_TEST_PROGRAM) $(PHOLD_PROGRAM) $(RAID_PROGRAM) $(SMMP_PROGRAM) $(GATESCIRCUIT_PROGRAM)
