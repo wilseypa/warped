@@ -34,7 +34,7 @@ public:
   virtual const string toString() const = 0;
   /**
      Return an integer approximation of the current time
-     This is used whent he kernel needs an actual number for VTime
+     This is used when the kernel needs an actual number for VTime
      such as calculating position in the calendar queue
   */
   virtual const warped64_t getApproximateIntTime() const = 0;
