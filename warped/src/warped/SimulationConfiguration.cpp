@@ -56,6 +56,8 @@ public:
 
 	bool schedulerTypeIs(const string &testValue) const;
 	const string getSchedulerType() const;
+	const string getScheduleQScheme() const;
+	bool getScheduleQCount(unsigned int &scheduleQCount) const;
 
 	bool stateManagerTypeIs(const string &testValue) const;
 	const string getStateManagerType() const;
@@ -336,6 +338,15 @@ bool SimulationConfiguration::schedulerTypeIs(const string &testValue) const {
 
 const string SimulationConfiguration::getSchedulerType() const {
 	return _impl->getSchedulerType();
+}
+
+const string SimulationConfiguration::getScheduleQScheme() const {
+	return _impl->getScheduleQScheme();
+}
+
+bool SimulationConfiguration::getScheduleQCount(
+		unsigned int &scheduleQCount) const {
+	return _impl->getScheduleQCount(scheduleQCount);
 }
 
 bool SimulationConfiguration::stateManagerTypeIs(const string &testValue) const {
@@ -842,6 +853,31 @@ const string SimulationConfiguration::Implementation::getSchedulerType() const {
 				"Type");
 		if (type != 0) {
 			retval = stringToUpper(type->getStringValue());
+		}
+	}
+	return retval;
+}
+
+const string SimulationConfiguration::Implementation::getScheduleQScheme() const {
+	string retval = "(none)";
+	if (getSchedulerScope() != 0) {
+		const ConfigurationChoice *type = getSchedulerScope()->findChoice(
+				"ScheduleQScheme");
+		if (type != 0) {
+			retval = stringToUpper(type->getStringValue());
+		}
+	}
+	return retval;
+}
+
+bool SimulationConfiguration::Implementation::getScheduleQCount(
+		unsigned int &scheduleQCount) const {
+	bool retval = false;
+	const ConfigurationScope *scope = getSchedulerScope();
+	if (scope != 0) {
+		if (scope->getIntValue("ScheduleQCount") != -1) {
+			scheduleQCount = scope->getIntValue("ScheduleQCount");
+			retval = true;
 		}
 	}
 	return retval;

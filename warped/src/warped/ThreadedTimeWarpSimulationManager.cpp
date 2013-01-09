@@ -37,8 +37,11 @@ bool WorkerInformation::workRemaining = true;
 static pthread_key_t threadKey;
 
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
-		unsigned int numberOfWorkerThreads, const string syncMechanism, Application *initApplication) :
-			numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism), masterID(0),
+		unsigned int numberOfWorkerThreads, const string syncMechanism, 
+		const string scheduleQScheme, unsigned int scheduleQCount, 
+		Application *initApplication) :
+			numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism), 
+			scheduleQScheme(scheduleQScheme), scheduleQCount(scheduleQCount), masterID(0),
 			coastForwardTime(0), myrealFossilCollManager(0), myStateManager(0),
 			messageBuffer(new LockedQueue<KernelMessage*> ),
 			workerStatus(new WorkerInformation*[numberOfWorkerThreads + 1]),
