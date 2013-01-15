@@ -377,8 +377,6 @@ private:
 
 	unsigned int masterID;
 
-	unsigned int terminationCheckCount;
-
 	//Flag for initiating the LVT Calculation between threads
 	unsigned int LVTFlag;
 

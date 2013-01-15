@@ -24,16 +24,48 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 	processedQueueLockState = new LockState *[objectCount];
 	removedQueueLockState = new LockState *[objectCount];
 
-	//Schedule Queue (LTSF)
-	LTSF1 = new ThreadedTimeWarpMultiSetLTSF(objectCount, syncMechanism);
-	////scheduleQueue = new multiset<const Event*,
-	////		receiveTimeLessThanEventIdLessThan> ;
-	////objectStatusLock = new AtomicState *[objectCount];
-	////scheduleQueueLock = new AtomicState();
 	int threadCount = initSimulationManager->getNumberofThreads();
+	scheduleQScheme = initSimulationManager->getScheduleQScheme();
+
+	if( scheduleQScheme == "MULTILTSF") {
+		LTSF = new ThreadedTimeWarpMultiSetLTSF *[LTSFCount];
+
+		LTSFCount = initSimulationManager->getScheduleQCount();
+
+		// Assert whether object count greater than or equal to LTSF queue count
+		ASSERT(objectCount >= LTSFCount);
+
+		// Assert whether thread count greater than or equal  to LTSF queue count
+		ASSERT(threadCount >= LTSFCount);
+
+		// Initialize schedule queues / setup lookup table to associate unprocessed
+		// objId with schedule queue 
+		for (int i=0; i < LTSFCount; i++) {
+			if(i < objectCount % LTSFCount) {
+				LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount + 1, LTSFCount, syncMechanism);
+			} else {
+				LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount, LTSFCount, syncMechanism);
+			}
+		}
+
+		LTSFByThread = new ThreadedTimeWarpMultiSetLTSF *[threadCount];
+		LTSFByObj = new ThreadedTimeWarpMultiSetLTSF *[objectCount]; 
+
+		// Assign threads to LTSF queues
+		for (int i=0; i < threadCount; i++) {
+			LTSFByThread[i] = LTSF[ i % LTSFCount ]; 
+		}
+
+		// Warning message if uneven distribution of threads to LTSF queues
+		if ( (threadCount % LTSFCount ) != 0 ) {
+			cout << "Threads unevenly distributed amongst LTSF queues" << endl;
+		}
+	}
+
 	//Iterators for each threads
 	vectorIterator = new vIterate[threadCount];
 	multisetIterator = new mIterate[threadCount];
+
 	//Initializing Unprocessed Event Queue
 	for (int i = 0; i < objectCount; i++) {
 		multiset<const Event*, receiveTimeLessThanEventIdLessThan> *objSet =
@@ -41,13 +73,18 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 		unProcessedQueue.push_back(objSet);
 		processedQueue.push_back(new vector<const Event*> );
 		removedEventQueue.push_back(new vector<const Event*> );
-		//Initialzing Atomic Locks for each Object
+
+		//Initialzing Locks for each Object
 		unprocessedQueueLockState[i] = new LockState();
 		processedQueueLockState[i] = new LockState();
 		removedQueueLockState[i] = new LockState();
-		////objectStatusLock[i] = new AtomicState();
-		//Schedule queue
-		////lowestObjectPosition.push_back(scheduleQueue->end());
+
+		if(scheduleQScheme == "MULTILTSF") {
+
+			// Create lookup table to associate between an unprocessed queue id
+			// and the appropriate LTSF queue 
+			LTSFByObj[i] = LTSF[ i % LTSFCount ];
+		}
 	}
 	mySimulationManager = initSimulationManager;
 
@@ -83,19 +120,12 @@ bool ThreadedTimeWarpMultiSet::threadHasUnprocessedQueueLock(int threadId,
 }
 
 void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
-	while (!unprocessedQueueLockState[objId]->setLock(threadId, syncMechanism))
-		;
-	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
-	 << " ) Queue - " << objId << " is Locked by the thread - "
-	 << threadId << "\n";*/
+	while (!unprocessedQueueLockState[objId]->setLock(threadId, syncMechanism));
 	ASSERT(unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
 	ASSERT(unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 	unprocessedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
-	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
-	 << " ) Queue - " << objId << " is Released by the thread - "
-	 << threadId << "\n";*/
 }
 void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
 	while (!processedQueueLockState[objId]->setLock(threadId, syncMechanism))
@@ -116,36 +146,17 @@ void ThreadedTimeWarpMultiSet::releaseremovedLock(int threadId, int objId) {
 	removedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 }
 
-////void ThreadedTimeWarpMultiSet::getScheduleQueueLock(int threadId) {
-////	while (!scheduleQueueLock->setLock(threadId))
-////		;
-////	ASSERT(scheduleQueueLock->hasLock(threadId));
-////}
-////void ThreadedTimeWarpMultiSet::releaseScheduleQueueLock(int threadId) {
-////	ASSERT(scheduleQueueLock->hasLock(threadId));
-////	scheduleQueueLock->releaseLock(threadId);
-////}
-////void ThreadedTimeWarpMultiSetLTSF::getObjectLock(int threadId, int objId) {
-////	while (!objectStatusLock[objId]->setLock(threadId))
-////		;
-////	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
-////	 << " ) Object - " << objId << " is Locked by the thread - "
-////	 << threadId << "\n";*/
-////	ASSERT(objectStatusLock[objId]->hasLock(threadId));
-////}
-////void ThreadedTimeWarpMultiSetLTSF::releaseObjectLock(int threadId, int objId) {
-////	ASSERT(objectStatusLock[objId]->hasLock(threadId));
-////	objectStatusLock[objId]->releaseLock(threadId);
-////	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
-////	 << " ) Object - " << objId << " is Released by the thread - "
-////	 << threadId << "\n";*/
-////}
 bool ThreadedTimeWarpMultiSet::isObjectScheduled(int objId) {
-	return LTSF1->isObjectScheduled(objId);
+	if(scheduleQScheme == "MULTILTSF") {
+		return LTSFByObj[objId]->isObjectScheduled(objId / LTSFCount);
+	}
 }
 
 bool ThreadedTimeWarpMultiSet::isObjectScheduledBy(int threadId, int objId) {
-	return LTSF1->isObjectScheduledBy(threadId, objId);
+	if(scheduleQScheme == "MULTILTSF") {
+		return LTSFByObj[objId]->isObjectScheduledBy(threadId, objId / LTSFCount);
+
+	}
 }
 
 //not thread Safe
@@ -240,17 +251,21 @@ const Event *ThreadedTimeWarpMultiSet::getEvent(SimulationObject *simObj,
 	}
 	return retval;
 }
-////const VTime* ThreadedTimeWarpMultiSet::nextEventToBeScheduledTime(int threadID) {
-////	const VTime* ret = NULL;
-////	this->getScheduleQueueLock(threadID);
-////	if (scheduleQueue->size() > 0)
-////		ret = &((*scheduleQueue->begin())->getReceiveTime());
-////	this->releaseScheduleQueueLock(threadID);
-////	return (ret);
-////}
+
 const VTime* ThreadedTimeWarpMultiSet::nextEventToBeScheduledTime(int threadId) {
-	return LTSF1->nextEventToBeScheduledTime(threadId);
+	if(scheduleQScheme == "MULTILTSF") {
+		const VTime* minimum = NULL;
+		const VTime* temp;
+		// Iterate through all schedule queues, and find lowest item
+		for (int i=0; i<LTSFCount; i++) {
+			temp = (LTSF[i]->nextEventToBeScheduledTime(threadId));
+			if ( (minimum == NULL) || ( (temp != NULL) && (*temp < *minimum) ) )
+				minimum = temp;
+		}
+		return minimum;
+	}
 }
+
 const Event* ThreadedTimeWarpMultiSet::peekEvent(SimulationObject *simObj,
 		int threadId) {
 	const Event* ret = NULL;
@@ -258,23 +273,9 @@ const Event* ThreadedTimeWarpMultiSet::peekEvent(SimulationObject *simObj,
 	bool releaseWhileReturn = true;
 	SimulationObject *simObject = NULL;
 	if (simObj == NULL) {
-		////this->getScheduleQueueLock(threadId);
-		////if (scheduleQueue->size() > 0) {
-		////	ret = *(scheduleQueue->begin());
-		////	unsigned int objId = ret->getReceiver().getSimulationObjectID();
-		////	this ->getObjectLock(threadId, objId);
-		////	//remove the object out of schedule
-		////	scheduleQueue->erase(scheduleQueue->begin());
-		////	//set the indexer/pointer to NULL
-		////	lowestObjectPosition[objId] = scheduleQueue->end();
-		////	/*		utils::debug << "( "
-		////	 << mySimulationManager->getSimulationManagerID()
-		////	 << " ) Object - " << objId
-		////	 << " is removed out for schedule by the thread - "
-		////	 << threadId << "\n";*/
-		////}
-		////this->releaseScheduleQueueLock(threadId);
-               		ret = LTSF1->peekIt(threadId);
+		if(scheduleQScheme == "MULTILTSF") {
+               		ret = LTSFByThread[threadId-1]->peekIt(threadId);
+		}
 	} else if (simObj != NULL) {
 		unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
 		if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) {
@@ -346,51 +347,38 @@ bool ThreadedTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) 
 	itee = unProcessedQueue[objId]->begin();
 	this->releaseunProcessedLock(threadId, objId);
 	// The event was just inserted at the beginning, so update the Schedule Queue
-	LTSF1->getScheduleQueueLock(threadId);
-	if (!this->isObjectScheduled(objId)) {
-		if (receivedEvent == *(itee)) {
-			////// Do not erase the first time.
-			////if (lowestObjectPosition[objId] != scheduleQueue->end()) {
-			////	scheduleQueue->erase(lowestObjectPosition[objId]);
-			////} else {
-			////	/*utils::debug << "( "
-			////	 << mySimulationManager->getSimulationManagerID()
-			////	 << " ) Object - " << objId
-			////	 << " is returned for schedule thro' insert by the thread - "
-			////	 << threadId << "\n";*/
-			////}
-			////lowestObjectPosition[objId] = scheduleQueue->insert(receivedEvent);
-			LTSF1->eraseSkipFirst(objId);
-			LTSF1->insertEvent(objId, receivedEvent);
-
+	if (receivedEvent == *(itee)) {
+		if(scheduleQScheme == "MULTILTSF") {
+			LTSFByObj[objId]->getScheduleQueueLock(threadId);
+			if (!this->isObjectScheduled(objId)) {
+				LTSFByObj[objId]->eraseSkipFirst(objId / LTSFCount);
+				LTSFByObj[objId]->insertEvent(objId / LTSFCount, receivedEvent);
+			}
+			LTSFByObj[objId]->releaseScheduleQueueLock(threadId);
 		}
 	}
-	LTSF1->releaseScheduleQueueLock(threadId);
 
-	ASSERT(
-			////scheduleQueue->size()
-			LTSF1->getScheduleQueueSize()
-					<= mySimulationManager->getNumberOfSimulationObjects());
-	return false;
+	//ASSERT( LTSFByObj[objId]->getScheduleQueueSize() <= mySimulationManager->getNumberOfSimulationObjects() );
+	//return false;
 }
-////// Lock based Counting -- Don't call this function in a loop
-////int ThreadedTimeWarpMultiSet::getMessageCount(int threadId) {
-////	int count = 0;
-////	getScheduleQueueLock(threadId);
-////	count = scheduleQueue->size();
-////	releaseScheduleQueueLock(threadId);
-////	return count;
-////}
-////bool ThreadedTimeWarpMultiSet::isScheduleQueueEmpty(int threadId) {
-////	bool ret = false;
-////	getScheduleQueueLock(threadId);
-////	ret = scheduleQueue->empty();
-////	releaseScheduleQueueLock(threadId);
-////	return ret;
-////}
-bool ThreadedTimeWarpMultiSet::isScheduleQueueEmpty(int threadId) {
-	return LTSF1->isScheduleQueueEmpty(threadId);
+
+bool ThreadedTimeWarpMultiSet::isScheduleQueueEmpty(int ltsfIndex) {
+	if(scheduleQScheme == "MULTILTSF") {
+		if(ltsfIndex < LTSFCount) {
+			return LTSF[ltsfIndex]->isScheduleQueueEmpty();
+		} else if (ltsfIndex == LTSFCount) { // simulation termination check condition
+			bool isEmpty = true;
+
+			for(unsigned int index = 0; (index < LTSFCount) && (isEmpty); index++) { // check all schedule queues
+				isEmpty &= LTSF[index]->isScheduleQueueEmpty();
+			}
+			return isEmpty;
+		} else {
+			ASSERT(false);
+		}
+	}
 }
+
 bool ThreadedTimeWarpMultiSet::handleAntiMessage(SimulationObject *simObj,
 		const NegativeEvent* negativeEvent, int threadId) {
 	bool eventWasRemoved = false;
@@ -604,46 +592,37 @@ void ThreadedTimeWarpMultiSet::fossilCollect(const Event *toRemove,
 	}
 }
 
-void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId,
-		int threadId) {
+void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int threadId) {
+
 	const Event* firstEvent = NULL;
-	if (!this->isObjectScheduledBy(threadId, objId))
-		ASSERT(false);
-	////this->getScheduleQueueLock(threadId);
-	LTSF1->getScheduleQueueLock(threadId);
+	ASSERT(this->isObjectScheduledBy(threadId, objId));
+
+	if(scheduleQScheme == "MULTILTSF") {
+		LTSFByObj[objId]->getScheduleQueueLock(threadId);
+	}
 	if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism))
 		this->getunProcessedLock(threadId, objId);
 	if (unProcessedQueue[objId]->size() > 0) {
 		firstEvent = *(unProcessedQueue[objId]->begin());
-		/*utils::debug << "( " << mySimulationManager->getSimulationManagerID()
-		 << " ) Object - " << objId << " has still "
-		 << unProcessedQueue[objId]->size() << " events pending - "
-		 << threadId << "\n";*/
 	}
 	this->releaseunProcessedLock(threadId, objId);
 
-	// TODO: ADD THIS BACK IN!!!!
-	////if (lowestObjectPosition[objId] != scheduleQueue->end()) {
-	////	ASSERT(false);
-	////}
+	// Check that lowest object position for this objId is scheduleQueue->end
 	
-	if (firstEvent != NULL) {
-		LTSF1->insertEvent(objId, firstEvent);
-		/*utils::debug << "( " << mySimulationManager->getSimulationManagerID()
-		 << " ) Object - " << objId
-		 << " is returned for schedule by the thread - " << threadId
-		 << "\n";*/
-	} else
-		LTSF1->insertEventEnd(objId);
+	if(scheduleQScheme == "MULTILTSF") {
+		if (firstEvent != NULL) {
+			LTSFByObj[objId]->insertEvent(objId / LTSFCount, firstEvent);
+		} else {
+			LTSFByObj[objId]->insertEventEnd(objId / LTSFCount);
+		}
+	}
 
-	LTSF1->releaseObjectLock(threadId, objId);
-	utils::debug <<" ( "<< threadId << ") Returning the Object " <<objId <<" back to SCheQ"<<endl;
-	LTSF1->releaseScheduleQueueLock(threadId);
-	ASSERT(
-			////scheduleQueue->size()
-			LTSF1->getScheduleQueueSize()
-					<= mySimulationManager->getNumberOfSimulationObjects());
+	utils::debug <<" ( "<< threadId << ") Returning object " <<objId <<" back to SCheQ"<<endl;
 
+	if(scheduleQScheme == "MULTILTSF") {
+		LTSFByObj[objId]->releaseObjectLock(threadId, objId / LTSFCount);
+		LTSFByObj[objId]->releaseScheduleQueueLock(threadId);
+	}
 }
 
 //Dont Know, Who call this function. Its not completely tested
@@ -673,10 +652,12 @@ bool ThreadedTimeWarpMultiSet::inThePast(const Event *toCheck, int threadId) {
 }
 void ThreadedTimeWarpMultiSet::ofcPurge(int threadId) {
 	multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator msit;
-	////this->getScheduleQueueLock(threadId);
-	////scheduleQueue->clear();
-	////this->releaseScheduleQueueLock(threadId);
-	LTSF1->clearScheduleQueue(threadId);
+
+	if(scheduleQScheme == "MULTILTSF") {
+		for(int index = 0; index < LTSFCount; index++) {
+			LTSF[index]->clearScheduleQueue(threadId);
+		}
+	}
 	for (int i = 0; i < mySimulationManager->getNumberOfSimulationObjects(); i++) {
 		this->getunProcessedLock(threadId, i);
 		msit = unProcessedQueue[i]->begin();
@@ -686,12 +667,10 @@ void ThreadedTimeWarpMultiSet::ofcPurge(int threadId) {
 			unProcessedQueue[i]->erase(msit++);
 		}
 		this->releaseunProcessedLock(threadId, i);
-		////this->getScheduleQueueLock(threadId);
-		////lowestObjectPosition[i] = scheduleQueue->end();
-		////this->releaseScheduleQueueLock(threadId);
-		LTSF1->setLowestObjectPosition(threadId, i);
+		if(scheduleQScheme == "MULTILTSF") {
+			LTSFByObj[i]->setLowestObjectPosition(threadId, i / LTSFCount);
+		}
 	}
-
 	for (int i = 0; i < mySimulationManager->getNumberOfSimulationObjects(); i++) {
 		this->getProcessedLock(threadId, i);
 		vector<const Event*>::iterator ip = processedQueue[i]->begin();
@@ -753,13 +732,11 @@ const VTime* ThreadedTimeWarpMultiSet::getMinEventTime(unsigned int threadId,
 void ThreadedTimeWarpMultiSet::releaseObjectLocksRecovery() {
 	for (int objNum = 0; objNum
 			< mySimulationManager->getNumberOfSimulationObjects(); objNum++) {
-		////if (objectStatusLock[objNum]->isLocked()) {
-		////	objectStatusLock[objNum]->releaseLock(
-		////			objectStatusLock[objNum]->whoHasLock());
-		////	utils::debug << "Releasing Object " << objNum
-		////			<< " during recovery." << endl;
-		////}
-		LTSF1->releaseObjectLocksRecovery(objNum);
+		if(scheduleQScheme == "MULTILTSF") {
+			for (int i = 0; i<LTSFCount; i++) {
+				LTSF[i]->releaseObjectLocksRecovery(objNum);
+			}
+		}
 		if (unprocessedQueueLockState[objNum]->isLocked()) {
 			unprocessedQueueLockState[objNum]->releaseLock(
 									unprocessedQueueLockState[objNum]->whoHasLock(),
@@ -782,9 +759,9 @@ void ThreadedTimeWarpMultiSet::releaseObjectLocksRecovery() {
 					<< " during recovery." << endl;
 		}
 	}
-	////if (scheduleQueueLock->isLocked()) {
-	////	scheduleQueueLock->releaseLock(scheduleQueueLock->whoHasLock());
-	////	utils::debug << "Releasing Schedule Queue during recovery." << endl;
-	////}
-	LTSF1->releaseAllScheduleQueueLocks();
+	if(scheduleQScheme == "MULTILTSF") {
+		for (int i = 0; i<LTSFCount; i++) {
+			LTSF[i]->releaseAllScheduleQueueLocks();
+		}
+	}
 }

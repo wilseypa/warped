@@ -21,7 +21,7 @@ class ThreadedTimeWarpSimulationManager;
 class ThreadedTimeWarpMultiSetLTSF {
 public:
 	// Creates an LTSF queue with 'objectCount' input queues
-	ThreadedTimeWarpMultiSetLTSF(int objectCount, const string syncMechanism);
+	ThreadedTimeWarpMultiSetLTSF(int objectCount, int LTSFCountVal, const string syncMechanism);
 	~ThreadedTimeWarpMultiSetLTSF();
 
 	void getScheduleQueueLock(int threadId);
@@ -35,7 +35,7 @@ public:
 	 * @return Pending EventCount
 	 */
 	int getMessageCount(int threadId);
-	bool isScheduleQueueEmpty(int threadId);
+	bool isScheduleQueueEmpty();
 
 	//Release all schedule queue locks for releaseObjectLocksRecovery.
 	// There might be a better way to do this.
@@ -86,5 +86,8 @@ private:
 
 	//Specfiy the synchronization mechanism in the config
 	string syncMechanism;
+
+	// Number of LTSF Queues in use
+	int LTSFCount;
 };
 #endif /* ThreadedTIMEWARPMULTISETLTSF_H_ */

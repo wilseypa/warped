@@ -38,7 +38,7 @@ public:
 	 * @return Pending EventCount
 	 */
 	////int getMessageCount(int threadId);
-	bool isScheduleQueueEmpty(int threadId);
+	bool isScheduleQueueEmpty(int ltsfIndex);
 
 	/** Remove and return the next event in the event set.
 	 *  @return The removed event.
@@ -197,9 +197,14 @@ private:
 	//Specfiy the synchronization mechanism in the config
 	string syncMechanism;
 
-	//ScheduleQueue (LTSF) - eventually declare multiple of these 
-	// - not sure if '*' used correctly
-	ThreadedTimeWarpMultiSetLTSF* LTSF1;
+	//ScheduleQueues (LTSF)
+	ThreadedTimeWarpMultiSetLTSF** LTSF;
+	string scheduleQScheme;
+	int LTSFCount;
+
+	// ScheduleQueue (LTSF) Lookup Tables
+	ThreadedTimeWarpMultiSetLTSF** LTSFByObj;
+	ThreadedTimeWarpMultiSetLTSF** LTSFByThread;
 };
 
 #endif /* ThreadedTIMEWARPMULTISET_H_ */

@@ -1,6 +1,6 @@
 #include "ThreadedTimeWarpMultiSetLTSF.h"
 
-ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, const string syncMech) {
+ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int LTSFCountVal, const string syncMech) {
 	// Set up scheduleQueue (LTSF queue)
 	scheduleQueue = new multiset<const Event*,
 			receiveTimeLessThanEventIdLessThan> ;
@@ -9,6 +9,8 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, cons
 
 	//synchronization mechanism
 	syncMechanism = syncMech;
+
+	LTSFCount = LTSFCountVal;
 
 	//Initialize LTSF Event Queue
 	for (int i = 0; i < objectCount; i++) {
@@ -52,13 +54,10 @@ int ThreadedTimeWarpMultiSetLTSF::getMessageCount(int threadId) {
 	releaseScheduleQueueLock(threadId);
 	return count;
 }
-bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty(int threadId) {
-	bool ret = false;
-	getScheduleQueueLock(threadId);
-	ret = scheduleQueue->empty();
-	releaseScheduleQueueLock(threadId);
-	return ret;
+bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty() {
+	return scheduleQueue->empty();
 }
+
 void ThreadedTimeWarpMultiSetLTSF::releaseAllScheduleQueueLocks()
 {
 	if (scheduleQueueLock->isLocked()) {
@@ -111,7 +110,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId)
 utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 
 		ret = *(scheduleQueue->begin());
-		unsigned int objId = ret->getReceiver().getSimulationObjectID();
+		unsigned int objId = (ret->getReceiver().getSimulationObjectID()) / LTSFCount;
 utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 	
 		this ->getObjectLock(threadId, objId);
