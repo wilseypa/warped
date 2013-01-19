@@ -28,9 +28,9 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 	scheduleQScheme = initSimulationManager->getScheduleQScheme();
 
 	if( scheduleQScheme == "MULTILTSF") {
-		LTSF = new ThreadedTimeWarpMultiSetLTSF *[LTSFCount];
-
 		LTSFCount = initSimulationManager->getScheduleQCount();
+
+		LTSF = new ThreadedTimeWarpMultiSetLTSF *[LTSFCount];
 
 		// Assert whether object count greater than or equal to LTSF queue count
 		ASSERT(objectCount >= LTSFCount);
