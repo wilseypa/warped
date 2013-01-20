@@ -28,8 +28,7 @@ ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
 
 void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
 	utils::debug << "( "<<threadId<<" T ) Getting the Sche Lock." << endl;
-	while (!scheduleQueueLock->setLock(threadId, syncMechanism))
-		;
+	while (!scheduleQueueLock->setLock(threadId, syncMechanism));
 	ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
