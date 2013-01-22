@@ -1,0 +1,4 @@
+3
+AND1 2 1 AND3 1 1 R AndGateEvents_1 AndGateEvents_2 null
+AND2 2 1 AND3 2 1 R AndGateEvents_3 AndGateEvents_4 null
+AND3 2 0 null 0 1 W null null Output

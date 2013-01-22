@@ -1,0 +1,13 @@
+5
+circuitsimulationmodels/fulladder/iofiles/CarryIn 2 I 1 1 XOR2 AND2 8
+circuitsimulationmodels/fulladder/iofiles/inputA 2 I 1 1 XOR1 AND1 8
+circuitsimulationmodels/fulladder/iofiles/inputB 2 I 2 2 XOR1 AND1 8
+circuitsimulationmodels/fulladder/iofiles/Sum 0 O 0 null 8
+circuitsimulationmodels/fulladder/iofiles/CarryOut 0 O 0 null 8
+5
+XOR1 2 2 XOR2 AND2 2 2 1 
+AND1 2 1 OR 2 1
+XOR2 2 1 circuitsimulationmodels/fulladder/iofiles/Sum 0 1
+AND2 2 1 OR 1 1
+OR 2 1 circuitsimulationmodels/fulladder/iofiles/CarryOut 0 1
+

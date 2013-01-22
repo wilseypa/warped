@@ -1,0 +1,8 @@
+This directory contains two types of tests, functional tests, and unit tests.
+The unit tests are based on cpp_unit and to enable them, configure needed
+--with-cpp-unit specified on the command line.  The functional tests
+exist in the following libraries:
+pingPong
+phold
+
+As of this writing, pingPong is the only working functional test.

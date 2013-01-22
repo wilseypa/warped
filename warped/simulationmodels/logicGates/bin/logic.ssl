@@ -1,0 +1,19 @@
+LogicFactoryTest(0, 0) {
+  NAryBitGenerator(0, 2): LogicFactory.NAryBitGenerator "2 2 10 true";
+  NotGate(1, 1)         : LogicFactory.NotGate "10";
+  NAryBitPrinter(2, 0)  : LogicFactory.NAryBitPrinter "2 true";
+}
+
+{
+  BitGen1 : NAryBitGenerator;
+  NotGate1: NotGate;
+  NotGate2: NotGate;
+  printer : NAryBitPrinter;
+}
+
+{
+  BitGen1(OUT, 1) : NotGate1(IN, 1);
+  BitGen1(OUT, 2) : NotGate2(IN, 1);
+  NotGate1(OUT, 1): printer(IN, 1);
+  NotGate2(OUT, 1): printer(IN, 2);
+}

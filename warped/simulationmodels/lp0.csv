@@ -1,0 +1,2 @@
+ ./logicGatesSim -configuration parallel.config -simulate logicGates/FullAdder
+0.00635695,7,0,1

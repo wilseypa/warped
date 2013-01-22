@@ -1,0 +1,20 @@
+# Process this file with automake to produce Makefile.in
+
+# See copyright notice in file Copyright in the root directory of this archive.
+
+ADAPT_TEST_PROGRAM=adapttest
+
+adapttest_SOURCES= \
+	adaptTest/AdaptTestEvent.cpp \
+	adaptTest/AdaptTestEvent.h \
+	adaptTest/AdaptTestObject.cpp \
+	adaptTest/AdaptTestObject.h \
+	adaptTest/AdaptTestObjectState.h \
+	adaptTest/AdaptTestApplication.h \
+	adaptTest/AdaptTestApplication.cpp \
+	adaptTest/adaptTestMain.cpp
+
+adapttest_LDFLAGS=-static
+adapttest_LDADD=$(top_builddir)/src/libwarped.la
+
+#EXTRA_DIST=adapttest/Makefile.am.stub

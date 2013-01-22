@@ -1,0 +1,13 @@
+5
+CarryIn 2 I 1 1 XOR2 AND2 8
+inputA 2 I 1 1 XOR1 AND1 8
+inputB 2 I 2 2 XOR1 AND1 8
+Sum 0 O 0 null 8
+CarryOut 0 O 0 null 8
+5
+XOR1 2 2 XOR2 AND2 2 2 1 
+AND1 2 1 OR 2 1
+XOR2 2 1 Sum 0 1
+AND2 2 1 OR 1 1
+OR 2 1 CarryOut 0 1
+

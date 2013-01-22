@@ -1,0 +1,21 @@
+LOGICGATES_PROGRAM=logicGatesSim
+
+logicGatesSim_SOURCES= \
+	logicGates/factory/include/FullAdderApplication.h \
+	logicGates/factory/src/FullAdderApplication.cpp \
+	logicGates/factory/src/FullAdderMain.cpp \
+	logicGates/factory/include/LogicEvent.h \
+	logicGates/factory/src/LogicEvent.cpp \
+	logicGates/factory/include/NInputGateState.h \
+	logicGates/factory/include/LogicComponent.h \
+	logicGates/factory/src/LogicComponent.cpp \
+	logicGates/factory/include/TwoInputAndGate.h \
+	logicGates/factory/src/TwoInputAndGate.cpp \
+	logicGates/factory/include/TwoInputXorGate.h \
+	logicGates/factory/src/TwoInputXorGate.cpp \
+	logicGates/factory/include/TwoInputOrGate.h \
+	logicGates/factory/src/TwoInputOrGate.cpp 
+
+logicGatesSim_LDFLAGS=-static
+logicGatesSim_LDADD=$(top_builddir)/src/libwarped.la \
+		    $(top_builddir)/test/libRnd.la
