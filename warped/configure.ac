@@ -174,7 +174,7 @@ AC_SUBST(LDFLAGS)
 AC_SUBST(LIBS)
 AC_SUBST(CXX)
 AC_SUBST(MAKEDEPEND)
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile simulationmodels/Makefile])
 AC_OUTPUT
 
 echo "You have now configured the warped system for building with dlg, antlr,\
