@@ -1,0 +1,38 @@
+(*
+ * FileName	: raid.ssl
+ * Written By	: Jorgen Dahl (dahlj@ececs.uc.edu)
+ * Purpose	: Example RAID application
+ *)
+
+RAID(0, 0) {
+  RAIDProcess(0, 1) : RAIDFactory.RAIDProcess "4 FUJITSU";
+  RAIDFork(1, 4) : RAIDFactory.RAIDFork "4";
+  RAIDDisk(2, 0) : RAIDFactory.RAIDDisk "FUJITSU";
+}
+
+{
+  Source1 : RAIDProcess "6005 1";
+  Source2 : RAIDProcess "6009 1";
+  Fork1   : RAIDFork "1";
+  Fork2   : RAIDFork "1";
+  Disk1   : RAIDDisk;
+  Disk2   : RAIDDisk;
+  Disk3   : RAIDDisk;
+  Disk4   : RAIDDisk;
+}
+
+{
+  Source1(OUT, 1) : Fork1(IN, 1);
+  Source2(OUT, 1) : Fork2(IN, 1);
+
+  Fork1(OUT, 1)   : Disk1(IN, 1);
+  Fork1(OUT, 2)   : Disk2(IN, 1);
+  Fork1(OUT, 3)   : Disk3(IN, 1);
+  Fork1(OUT, 4)   : Disk4(IN, 1);
+
+  Fork2(OUT, 1)   : Disk1(IN, 2);
+  Fork2(OUT, 2)   : Disk2(IN, 2);
+  Fork2(OUT, 3)   : Disk3(IN, 2);
+  Fork2(OUT, 4)   : Disk4(IN, 2);
+}
+

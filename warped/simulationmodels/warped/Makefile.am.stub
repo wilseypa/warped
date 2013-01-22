@@ -1,0 +1,94 @@
+# Process this file with automake to produce Makefile.in
+
+# Copyright (c) 2002 Clifton Labs, Inc.
+# All rights reserved.
+
+# CLIFTON LABS MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY
+# OF THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+# PURPOSE, OR NON-INFRINGEMENT.  CLIFTON LABS SHALL NOT BE LIABLE FOR ANY
+# DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, RESULT OF USING,
+# MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES.
+
+# By using or copying this Software, Licensee agrees to abide by the
+# intellectual property laws, and all other applicable laws of the U.S.,
+# and the terms of this license.
+
+# You may modify, distribute, and use the software contained in this
+# package under the terms of the "GNU LIBRARY GENERAL PUBLIC LICENSE"
+# version 2, June 1991. A copy of this license agreement can be found in
+# the file "LGPL", distributed with this archive.
+
+# Authors: dmartin@cliftonlabs.com
+
+if USE_CPPUNIT
+UNIT_TEST_PROGRAM=warpedUnitTests
+
+warpedUnitTests_SOURCES = \
+	warped/warpedUnitTestsMain.cpp	\
+	warped/AdaptiveOutputManagerTest.cpp \
+	warped/AdaptiveOutputManagerTest.h \
+	warped/AdaptiveStateManagerBaseTest.cpp \
+	warped/AdaptiveStateManagerBaseTest.h \
+	warped/AggressiveOutputManagerTest.cpp \
+	warped/AggressiveOutputManagerTest.h \
+	warped/CirculateInitializationMessageTest.cpp \
+	warped/CirculateInitializationMessageTest.h \
+	warped/CostAdaptiveStateManagerTest.cpp \
+	warped/CostAdaptiveStateManagerTest.h \
+	warped/DefaultSchedulingManagerTest.cpp \
+	warped/DefaultSchedulingManagerTest.h \
+	warped/DefaultTimeWarpEventSetTest.cpp \
+	warped/DefaultTimeWarpEventSetTest.h \
+	warped/DefaultTimeWarpEventSetOneAntiMsgTest.cpp \
+	warped/DefaultTimeWarpEventSetOneAntiMsgTest.h \
+	warped/EventMessageBaseTest.cpp \
+	warped/EventMessageBaseTest.h \
+	warped/EventMessageTest.cpp \
+	warped/EventMessageTest.h \
+	warped/EventTest.cpp \
+	warped/EventTest.h \
+	warped/GVTUpdateMessageTest.cpp \
+	warped/GVTUpdateMessageTest.h \
+	warped/InitializationMessageTest.cpp \
+	warped/InitializationMessageTest.h \
+	warped/KernelMessageTest.cpp \
+	warped/KernelMessageTest.h \
+	warped/LazyOutputManagerTest.cpp \
+	warped/LazyOutputManagerTest.h \
+	warped/MatternGVTMessageTest.cpp \
+	warped/MatternGVTMessageTest.h \
+	warped/NegativeEventMessageTest.cpp \
+	warped/NegativeEventMessageTest.h \
+	warped/OutputManagerTest.cpp \
+	warped/OutputManagerTest.h \
+	warped/RestoreCkptMessageTest.cpp \
+	warped/RestoreCkptMessageTest.h \
+	warped/SchedulingManagerTest.cpp \
+	warped/SchedulingManagerTest.h \
+	warped/SerializableTest.cpp \
+	warped/SerializableTest.h \
+	warped/SerializedInstanceTest.cpp \
+	warped/SerializedInstanceTest.h \
+	warped/StartMessageTest.cpp \
+	warped/StartMessageTest.h \
+	warped/TerminateTokenTest.cpp \
+	warped/TerminateTokenTest.h \
+	warped/TimeWarpEventSetTest.h \
+	warped/TimeWarpEventSetTest.cpp \
+	warped/TimeWarpMultiSetTest.h \
+	warped/TimeWarpMultiSetTest.cpp \
+	warped/TimeWarpMultiSetOneAntiMsgTest.h \
+	warped/TimeWarpMultiSetOneAntiMsgTest.cpp \
+	warped/TimeWarpSimulationManagerAdapter.cpp \
+	warped/WarpedUnitTest.cpp \
+	warped/WarpedUnitTest.h
+
+
+warpedUnitTests_LDFLAGS=-static
+warpedUnitTests_LDADD=$(top_builddir)/src/libwarped.la
+
+# EXTRA_DIST=warpedUnitTests/Makefile.am.stub
+
+
+endif

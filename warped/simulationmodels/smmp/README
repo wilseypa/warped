@@ -1,0 +1,114 @@
+SMMP: A WARPED simulation kernel application
+
+Authors: Randall King, Radharamanan Radhakrishnan, and Philip A.  Wilsey
+Computer Architecture Design Laboratory
+Dept of ECECS, PO Box 210030 
+Cincinnati, OH  45221--0030
+
+Copyright 1995--1999 The University of Cincinnati.  All rights reserved.  
+
+Published by the University of Cincinnati
+Dept of ECECS, PO Box 210030
+Cincinnati, OH  45221--0030 USA
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions.
+
+
+Introduction
+This document describes the SMMP symmetric multiprocessor application
+model. The SMMP application models a shared memory multiprocessor. Each
+processor is assumed to have a local cache with access to a common global
+memory (The model is somewhat contrived in that requests to the memory is
+not serialized -- i.e., main memory can have multiple requests
+pending at any given moment). The model is generated from a configuration file
+which lets the user adjust several model parameters. The next section deals with 
+the configuration file.
+
+
+Configuration File
+The model generator program lets the user adjust the following parameters
+before writing out the model:
+
+(a) Number of processors or caches to simulate - This is the number
+of SMMP processors that are required to be simulated. Each SMMP processor
+is represented by a set of queuing objects that perform the task of
+symmetric multiprocessor. In our model, a processor along with its cache
+memory is modeled with six queuing objects (Source, Join, Queue, Fork,
+Server and another Join).
+
+(b) Speed of cache - This is a model parameter that needs to be set
+by the user. We assume that the speed of the cache is an integer quantity
+which is smaller than the speed of the main memory. A typical value for
+the speed of the cache would be 10, whereas the speed of the main memory
+can be 100, implying that the cache is 10 times faster than the main
+memory. The main objective here is to model the latencies of the cache and
+the main memory.
+
+(c) Cache Hit ratio - again this is another model parameter that
+determines what percentage of the requests are sent to the cache memory
+instead of the main memory. Obviously, the lower this number is, the more
+requests that are sent out to the main memory ( i.e., more cache misses). 
+
+(d) Speed of main memory - Basically the latency of the main memory
+represented as a multiple of the cache speed. Again we assume here that
+this is an integer quantity.
+
+(e) Number of requests per processor - This is the number of memory
+requests each processor with generate during the lifetime of the
+simulation.
+
+
+Example Configuration File:
+An example configuration file would be the following (this is the SMMPDefault file):
+8
+10
+0.85
+100
+1000
+
+
+Acknowledgments
+This research has been conducted with the participation of many
+investigators.  While not an complete list, the following individuals
+have made notable direct and/or indirect contributions to this effort
+(in alphabetical order):
+Perry Alexander,
+Scott Bilik,
+Harold Carter,
+Dale E. Martin,
+David A. Charley,
+Girindra D. Sharma,
+Praveen Chawla,
+Debra A. Hensgen
+John Hines,
+Balakrishnan Kannikeswaran,
+Venkatram Krishnaswamy,
+Lantz Moore,
+Avinash Palaniswamy,
+John Penix,
+Radharamanan Radhakrishnan,
+Raghunandan Rajan, 
+Dhananjai Madhava Rao, and
+Christopher Young.
+
+We wish to express our sincerest gratitude for the time that you spent
+reviewing and commenting on our designs.
+
+
+This research was supported in part by the Advanced Research Projects
+Agency, monitored by the Department of Justice under contract number
+J--FBI--93--116.  In addition, we benefited greatly from the technical
+support and guidance by the ARPA and DOJ program managers, notably: Bob
+Parker, John Hoyt, and Lt. Col. John Toole.  Without this support and
+interaction, the work documented in this report would not have been
+possible.  Thank you.
