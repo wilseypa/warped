@@ -345,7 +345,6 @@ bool ThreadedTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) 
 			<< *receivedEvent << " - " << threadId << "\n";
 	multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator itee;
 	itee = unProcessedQueue[objId]->begin();
-	this->releaseunProcessedLock(threadId, objId);
 	// The event was just inserted at the beginning, so update the Schedule Queue
 	if (receivedEvent == *(itee)) {
 		if(scheduleQScheme == "MULTILTSF") {
@@ -357,7 +356,7 @@ bool ThreadedTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) 
 			LTSFByObj[objId]->releaseScheduleQueueLock(threadId);
 		}
 	}
-
+	this->releaseunProcessedLock(threadId, objId);
 	//ASSERT( LTSFByObj[objId]->getScheduleQueueSize() <= mySimulationManager->getNumberOfSimulationObjects() );
 	//return false;
 }
@@ -597,15 +596,14 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int th
 	const Event* firstEvent = NULL;
 	ASSERT(this->isObjectScheduledBy(threadId, objId));
 
+	if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism))
+		this->getunProcessedLock(threadId, objId);
 	if(scheduleQScheme == "MULTILTSF") {
 		LTSFByObj[objId]->getScheduleQueueLock(threadId);
 	}
-	if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism))
-		this->getunProcessedLock(threadId, objId);
 	if (unProcessedQueue[objId]->size() > 0) {
 		firstEvent = *(unProcessedQueue[objId]->begin());
 	}
-	this->releaseunProcessedLock(threadId, objId);
 
 	// Check that lowest object position for this objId is scheduleQueue->end
 	
@@ -623,6 +621,7 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int th
 		LTSFByObj[objId]->releaseObjectLock(threadId, objId / LTSFCount);
 		LTSFByObj[objId]->releaseScheduleQueueLock(threadId);
 	}
+	this->releaseunProcessedLock(threadId, objId);
 }
 
 //Dont Know, Who call this function. Its not completely tested
