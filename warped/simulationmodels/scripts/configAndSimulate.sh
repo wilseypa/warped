@@ -10,7 +10,7 @@ function set_config {
 	scheduleQScheme=$2
 	scheduleQCount=$3
 	
-	# Set threads
+	# Set configuration parameters
 	sed -i "s/WorkerThreadCount : [0-9]*$/WorkerThreadCount : "$threads"/g" parallel.config
 	sed -i "s/ScheduleQScheme : [A-Z]*$/ScheduleQScheme : "$scheduleQScheme"/g" parallel.config
 	sed -i "s/ScheduleQCount : [0-9]*$/ScheduleQCount : "$scheduleQCount"/g" parallel.config
@@ -25,7 +25,8 @@ function run_LargeRaid {
 	
 	set_config $threads $scheduleQScheme $scheduleQCount
 	runCommand="./raidSim -configuration parallel.config -simulate raid/LargeRaid"
-	logFile="LargeRaid_${threads}T_${scheduleQScheme}_${scheduleQCount}SQ.log"
+	date=`date +"%m-%d-%y_%T"`
+	logFile="scripts/logs/LargeRaid-${threads}T-${scheduleQScheme}-${scheduleQCount}SQ_${date}.log"
 	$runCommand > $logFile
 }
 
