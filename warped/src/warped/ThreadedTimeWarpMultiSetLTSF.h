@@ -10,6 +10,7 @@
 #include "NegativeEvent.h"
 #include "EventFunctors.h"
 #include "ThreadedTimeWarpSimulationManager.h"
+#include "LadderQ.h"
 
 using std::multiset;
 using std::list;
@@ -21,7 +22,7 @@ class ThreadedTimeWarpSimulationManager;
 class ThreadedTimeWarpMultiSetLTSF {
 public:
 	// Creates an LTSF queue with 'objectCount' input queues
-	ThreadedTimeWarpMultiSetLTSF(int objectCount, int LTSFCountVal, const string syncMechanism);
+	ThreadedTimeWarpMultiSetLTSF(int objectCount, int LTSFCountVal, const string syncMechanism, const string scheduleQScheme);
 	~ThreadedTimeWarpMultiSetLTSF();
 
 	void getScheduleQueueLock(int threadId);
@@ -72,12 +73,19 @@ public:
 	// Release all the object locks during a catastrophic rollback.
 	void releaseObjectLocksRecovery(int objNum);
 private:
-	//Lowest event position pointer
+	//Lowest event position pointer for MULTILTSF
 	vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator>
 			lowestObjectPosition;
 
-	///Schedule Queue - LTSF
+	///Schedule Queue - MULTILTSF
 	multiset<const Event*, receiveTimeLessThanEventIdLessThan> *scheduleQueue;
+
+	//Lowest event position pointer for LadderQ
+	vector<const Event*> lowestLadderObjectPosition;
+
+	///Schedule Queue - LadderQ
+	LadderQueue *ladderQ;
+
 	///Schedule Queue Lock
 	LockState* scheduleQueueLock;
 
@@ -86,6 +94,9 @@ private:
 
 	//Specfiy the synchronization mechanism in the config
 	string syncMechanism;
+
+	//Specify the scheduleQ scheme in the config
+	string scheduleQScheme;
 
 	// Number of LTSF Queues in use
 	int LTSFCount;
