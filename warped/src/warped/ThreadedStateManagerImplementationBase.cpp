@@ -24,11 +24,9 @@ ThreadedStateManagerImplementationBase::ThreadedStateManagerImplementationBase(
 			lastRollbackTime(simMgr->getNumberOfSimulationObjects(), NULL),
 			periodCounter(simMgr->getNumberOfSimulationObjects(), -1),
 			stateQueueLock(
-					new AtomicState*[simMgr->getNumberOfSimulationObjects()]) {
-	/*unsigned int numberOfObjects = (unsigned int)simMgr->getNumberOfSimulationObjects();
-	 for (int i = 0; i < 8; i++) {
-	 stateQueueLock[i] = new AtomicState();
-	 }*/
+					new LockState*[simMgr->getNumberOfSimulationObjects()]) {
+
+	syncMechanism = simMgr->getSyncMechanism();
 	initStateQueueLocks(simMgr);
 }
 
@@ -332,19 +330,19 @@ void ThreadedStateManagerImplementationBase::ofcPurge(unsigned int objId,
 
 bool ThreadedStateManagerImplementationBase::getStateQueueLock(int threadId,
 		int objId) {
-	while (!stateQueueLock[objId]->setLock(threadId))
+	while (!stateQueueLock[objId]->setLock(threadId, syncMechanism))
 		;
-	ASSERT(stateQueueLock[objId]->hasLock(threadId));
+	ASSERT(stateQueueLock[objId]->hasLock(threadId, syncMechanism));
 }
 bool ThreadedStateManagerImplementationBase::releaseStateQueueLock(int threadId,
 		int objId) {
-	ASSERT(stateQueueLock[objId]->hasLock(threadId));
-	stateQueueLock[objId]->releaseLock(threadId);
+	ASSERT(stateQueueLock[objId]->hasLock(threadId, syncMechanism));
+	stateQueueLock[objId]->releaseLock(threadId, syncMechanism);
 }
 void ThreadedStateManagerImplementationBase::initStateQueueLocks(
 		ThreadedTimeWarpSimulationManager *simMgr) {
 	for (int i = 0; i < simMgr->getNumberOfSimulationObjects(); i++) {
-		stateQueueLock[i] = new AtomicState();
+		stateQueueLock[i] = new LockState();
 	}
 }
 const unsigned int ThreadedStateManagerImplementationBase::getEventIdForRollback(
@@ -370,7 +368,7 @@ void ThreadedStateManagerImplementationBase::releaseStateLocksRecovery() {
 			< mySimulationManager->getNumberOfSimulationObjects(); objNum++) {
 		if (stateQueueLock[objNum]->isLocked()) {
 			stateQueueLock[objNum]->releaseLock(
-					stateQueueLock[objNum]->whoHasLock());
+					stateQueueLock[objNum]->whoHasLock(), syncMechanism);
 			utils::debug << "Releasing State Queue Object " << objNum
 					<< " during recovery." << endl;
 		}
