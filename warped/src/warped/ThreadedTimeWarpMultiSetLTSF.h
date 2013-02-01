@@ -60,7 +60,7 @@ public:
 	int getScheduleQueueSize();
 
 	// ??
-	const Event* peekIt(int threadId);
+	const Event* peekIt(int threadId, int *LTSFObjId);
 
 	void getObjectLock(int threadId, int objId);
 
@@ -100,5 +100,7 @@ private:
 
 	// Number of LTSF Queues in use
 	int LTSFCount;
+
+	unsigned int minReceiveTime;
 };
 #endif /* ThreadedTIMEWARPMULTISETLTSF_H_ */

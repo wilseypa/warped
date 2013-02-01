@@ -205,6 +205,7 @@ private:
 	// ScheduleQueue (LTSF) Lookup Tables
 	ThreadedTimeWarpMultiSetLTSF** LTSFByObj;
 	ThreadedTimeWarpMultiSetLTSF** LTSFByThread;
+	int* LTSFObjId;
 };
 
 #endif /* ThreadedTIMEWARPMULTISET_H_ */

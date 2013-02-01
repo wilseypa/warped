@@ -23,6 +23,8 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int 
 
 	LTSFCount = LTSFCountVal;
 
+	minReceiveTime = 0;
+
 	//Initialize LTSF Event Queue
 	for (int i = 0; i < objectCount; i++) {
 		objectStatusLock[i] = new LockState();
@@ -63,8 +65,9 @@ const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int thread
 	const VTime* ret = NULL;
 	this->getScheduleQueueLock(threadID);
 	if( scheduleQScheme == "MULTILTSF" ) {
-		if (scheduleQueue->size() > 0)
+		if (scheduleQueue->size() > 0) {
 			ret = &((*scheduleQueue->begin())->getReceiveTime());
+		}
 	} else if( scheduleQScheme == "LADDERQ" ) {
 		if(!ladderQ->empty())
 			//cout << "nextEvent" << endl;
@@ -186,7 +189,7 @@ int ThreadedTimeWarpMultiSetLTSF::getScheduleQueueSize()
 		cout << "Invalid schedule queue scheme" << endl;
 	}
 }
-const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId)
+const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int* LTSFObjId)
 {
 	const Event* ret = NULL;
 	this->getScheduleQueueLock(threadId);
@@ -196,7 +199,8 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId)
 			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 
 			ret = *(scheduleQueue->begin());
-			unsigned int objId = (ret->getReceiver().getSimulationObjectID()) / LTSFCount;
+			//cout << "T" << threadId << ": Getting event with timestamp " << ret->getReceiveTime().getApproximateIntTime() << endl;
+			unsigned int objId = LTSFObjId[(ret->getReceiver().getSimulationObjectID())];
 			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 	
 			this ->getObjectLock(threadId, objId);
@@ -217,7 +221,10 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId)
 			if(ret == NULL) {
 				cout << "empty() func returned NULL" << endl;
 			}
-			unsigned int objId = (ret->getReceiver().getSimulationObjectID()) / LTSFCount;
+			unsigned int newMinTime = ret->getReceiveTime().getApproximateIntTime();
+			if ( newMinTime < minReceiveTime )
+				cout << "Event received out of order" << endl;
+			unsigned int objId = LTSFObjId[(ret->getReceiver().getSimulationObjectID())];
 
 			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 
@@ -237,8 +244,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId)
 }
 
 void ThreadedTimeWarpMultiSetLTSF::getObjectLock(int threadId, int objId) {
-	while (!objectStatusLock[objId]->setLock(threadId, syncMechanism))
-		;
+	while (!objectStatusLock[objId]->setLock(threadId, syncMechanism));
 	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 	 << " ) Object - " << objId << " is Locked by the thread - "
 	 << threadId << "\n";*/
