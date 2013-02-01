@@ -7,7 +7,7 @@
 #include "SetObject.h"
 #include "ThreadedStateManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "AtomicState.h"
+#include "LockState.h"
 
 #include <set>
 using std::multiset;
@@ -144,7 +144,7 @@ protected:
 	/// A state queue for every object on this simulation manager.
 	multiset<SetObject<State> > *myStateQueue;
 
-	AtomicState** stateQueueLock;
+	LockState** stateQueueLock;
 
 	vector<unsigned int> rollbackEventNumber;
 
@@ -155,6 +155,10 @@ protected:
 	vector<unsigned int> lastRollbackSenderObjectSimId;
 
 	//@} // End of Protected Class Attributes of ThreadedStateManagerImplementationBase.
+
+private:
+	string syncMechanism;
+
 };
 
 #endif /* ThreadedSTATEMANAGERIMPLEMENTATIONBASE_H_ */

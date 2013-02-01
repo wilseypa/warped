@@ -484,7 +484,6 @@ public:
 
 				/* Intentionally let the bottom continue to overflow */
 				if( isBucketWidthStatic ) {
-					nBot++;
 					bottom.insert(newEvent);
 					nBot     = (unsigned int) bottom.size();
 					botMinTS = (*bottom.begin())->getReceiveTime().getApproximateIntTime();
@@ -550,7 +549,6 @@ public:
 				return newEvent;
 
 			} else { /* If BOTTOM is within threshold */
-				nBot++;
 				bottom.insert(newEvent);
 				nBot     = (unsigned int) bottom.size();
 				botMinTS = (*bottom.begin())->getReceiveTime().getApproximateIntTime();
