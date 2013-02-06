@@ -11,6 +11,8 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int 
 				receiveTimeLessThanEventIdLessThan> ;
 	} else if( scheduleQScheme == "LADDERQ" ) {
 		ladderQ = new LadderQueue;
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		splayTree = new SplayTree;
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -33,6 +35,8 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int 
 			lowestObjectPosition.push_back(scheduleQueue->end());
 		} else if( scheduleQScheme == "LADDERQ" ) {
 			lowestLadderObjectPosition.push_back(ladderQ->end());
+		} else if( scheduleQScheme == "SPLAYTREE" ) {
+			lowestLadderObjectPosition.push_back(splayTree->end());
 		} else {
 			cout << "Invalid schedule queue scheme" << endl;
 		}
@@ -46,6 +50,8 @@ ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
 		delete scheduleQueue;
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		delete ladderQ;
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		delete splayTree;
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -72,6 +78,10 @@ const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int thread
 		if(!ladderQ->empty())
 			//cout << "nextEvent" << endl;
 			ret = &(ladderQ->begin()->getReceiveTime());
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		if(splayTree->peekEvent()) {
+			ret = &(splayTree->peekEvent()->getReceiveTime());
+		}
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -88,6 +98,8 @@ int ThreadedTimeWarpMultiSetLTSF::getMessageCount(int threadId) {
 		count = scheduleQueue->size();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		cout << "LadderQ message count not handled for now" << endl;
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		count = splayTree->size();
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -100,6 +112,8 @@ bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty() {
 		return scheduleQueue->empty();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		return ladderQ->empty();
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		return (splayTree->size() == 0) ? true : false;
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}	
@@ -119,6 +133,8 @@ void ThreadedTimeWarpMultiSetLTSF::clearScheduleQueue(int threadId)
 		scheduleQueue->clear();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		ladderQ->clear();
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		splayTree->clear();
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -131,6 +147,8 @@ void ThreadedTimeWarpMultiSetLTSF::setLowestObjectPosition(int threadId, int ind
 		lowestObjectPosition[index] = scheduleQueue->end();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		lowestLadderObjectPosition[index] = ladderQ->end();
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		lowestLadderObjectPosition[index] = splayTree->end();
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -144,6 +162,10 @@ void ThreadedTimeWarpMultiSetLTSF::insertEvent(int objId, const Event* newEvent)
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		ASSERT(newEvent);
 		lowestLadderObjectPosition[objId] = ladderQ->insert(newEvent);
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		ASSERT(newEvent);
+		splayTree->insert(newEvent);
+		lowestLadderObjectPosition[objId] = newEvent;
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -154,6 +176,8 @@ void ThreadedTimeWarpMultiSetLTSF::insertEventEnd(int objId)
 		lowestObjectPosition[objId] = scheduleQueue->end();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		lowestLadderObjectPosition[objId] = ladderQ->end();
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		lowestLadderObjectPosition[objId] = splayTree->end();
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -174,7 +198,11 @@ void ThreadedTimeWarpMultiSetLTSF::eraseSkipFirst(int objId)
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		if(lowestLadderObjectPosition[objId] != ladderQ->end()) {
 			ladderQ->erase(lowestLadderObjectPosition[objId]);
-		} else {}
+		}
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		if(lowestLadderObjectPosition[objId] != splayTree->end()) {
+			splayTree->erase(lowestLadderObjectPosition[objId]);
+		}
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -185,6 +213,8 @@ int ThreadedTimeWarpMultiSetLTSF::getScheduleQueueSize()
 		return scheduleQueue->size();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		cout << "LadderQ message count not handled for now" << endl;
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		return splayTree->size();
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -220,6 +250,8 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int* LTSFObjId)
 			ret = ladderQ->dequeue();
 			if(ret == NULL) {
 				cout << "empty() func returned NULL" << endl;
+				this->releaseScheduleQueueLock(threadId);
+				return ret;
 			}
 			unsigned int newMinTime = ret->getReceiveTime().getApproximateIntTime();
 			if ( newMinTime < minReceiveTime )
@@ -228,12 +260,29 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int* LTSFObjId)
 
 			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 
-			this ->getObjectLock(threadId, objId);
+			this->getObjectLock(threadId, objId);
 
 			//set the indexer/pointer to NULL
 			lowestLadderObjectPosition[objId] = ladderQ->end();
 
 
+		}
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		if( splayTree->peekEvent() ) {
+			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
+			if(NULL == (ret = splayTree->getEvent()) ) {
+				cout << "getEvent() func returned NULL" << endl;
+				this->releaseScheduleQueueLock(threadId);
+				return ret;
+			}
+			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()];
+
+			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
+
+			this->getObjectLock(threadId, objId);
+
+			//set the indexer/pointer to NULL
+			lowestLadderObjectPosition[objId] = splayTree->end();
 		}
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;

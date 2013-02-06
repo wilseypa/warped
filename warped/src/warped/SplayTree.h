@@ -50,6 +50,27 @@ public:
   /// Delete any old, unwanted events.
   void cleanUp();
 
+  /// Delete the entire splay tree
+  void clear();
+
+  /** Return a reference to the end of the event set.
+
+      @return A reference to the end of the event set.
+  */
+  const Event *end();
+
+  /** Delete an event from the event set.
+
+      @param event A pointer to the event to delete.
+  */
+  void erase(const Event *delEvent);
+
+  /** Return the size of the splay tree.
+
+      @return The count of elements in splay tree.
+  */
+  int size();
+
   virtual void configure( SimulationConfiguration & ){}
 
   static const string &getType();
@@ -83,8 +104,17 @@ private:
 
   /// The compareEvent method for SplayTree...
   inline int CompareEvent(const Event *a, const Event *b){
+    ASSERT(a != NULL);
+    ASSERT(b != NULL);
     if (a->getReceiveTime() == b->getReceiveTime()) {
-      return ((a->getReceiver() > b->getReceiver() ? 1 : -1));
+      //return ((a->getReceiver() > b->getReceiver() ? 1 : -1));
+      if(a->getReceiver() > b->getReceiver()) {
+        return 1;
+      } else if(a->getReceiver() == b->getReceiver()) {
+        return 0;
+      } else {
+        return -1;
+      }
     }
     else {
       return ((a->getReceiveTime() > b->getReceiveTime()) ? 1 : -1);

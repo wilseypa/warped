@@ -11,6 +11,7 @@
 #include "EventFunctors.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "LadderQ.h"
+#include "SplayTree.h"
 
 using std::multiset;
 using std::list;
@@ -80,11 +81,14 @@ private:
 	///Schedule Queue - MULTILTSF
 	multiset<const Event*, receiveTimeLessThanEventIdLessThan> *scheduleQueue;
 
-	//Lowest event position pointer for LadderQ
+	//Lowest event position pointer for LadderQ. Also used by Splay Tree.
 	vector<const Event*> lowestLadderObjectPosition;
 
 	///Schedule Queue - LadderQ
 	LadderQueue *ladderQ;
+
+	///Schedule Queue - SplayTree
+	SplayTree *splayTree;
 
 	///Schedule Queue Lock
 	LockState* scheduleQueueLock;

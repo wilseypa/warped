@@ -1,7 +1,10 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
+#include <iostream>
 #include "Event.h"
 #include "SplayTree.h"
+
+using namespace std;
 
 SplayTree::SplayTree() {
    root = NULL;
@@ -18,6 +21,7 @@ SplayTree::insert( const Event *newElement ){
    TreeElement* node = NULL;
    TreeElement* left = NULL;
    TreeElement* right = NULL;
+   ASSERT(newElement != NULL);
    TreeElement* newTreeElement = new TreeElement(newElement);
    numberOfElements++;
 
@@ -27,7 +31,16 @@ SplayTree::insert( const Event *newElement ){
       return;
    }
 
-   if(CompareEvent(newTreeElement->getEvent(), current->getEvent()) <= 0) {
+   if(current->getEvent() == NULL) {
+      node = root;
+      while(node->getLeftElement() != NULL) {
+         node = node->getLeftElement();
+      }
+      current = node;
+      ASSERT(current->getEvent() != NULL);
+   }
+
+   if(CompareEvent(newElement, current->getEvent()) <= 0) {
       current->setLeftElement(newTreeElement);
       newTreeElement->setParentElement(current);
       current = newTreeElement;
@@ -38,7 +51,7 @@ SplayTree::insert( const Event *newElement ){
    node = root;
 
    while (1) {
-      if(CompareEvent(newTreeElement->getEvent(), node->getEvent()) <= 0) {
+      if(CompareEvent(newElement, node->getEvent()) <= 0) {
 
          left = node->getLeftElement();
 
@@ -104,16 +117,27 @@ SplayTree::getEvent() {
    }
 
    processedElements.insert(node);
+   numberOfElements--;
 
    return node->getEvent();
 }
 
 const Event*
 SplayTree::peekEvent() {
-  if (root == NULL) {
+
+  if( (root == NULL) || (numberOfElements == 0) ) {
+    root = current = NULL;
+    numberOfElements = 0;
     return NULL;
-  }
-  else {
+
+  } else {
+    if(current == NULL) {
+      TreeElement *node = root;
+      while(node->getLeftElement() != NULL) {
+        node = node->getLeftElement();
+      }
+      current = node;
+    }
     return current->getEvent();
   }
 }
@@ -128,13 +152,140 @@ SplayTree::cleanUp() {
    while( treeElementPtr != NULL ) {
 
       //deleting the Event pointed by the tree element
-      delete treeElementPtr->getEvent();
+      //delete treeElementPtr->getEvent();
 
       //deleting the tree element
       delete treeElementPtr;
 
       treeElementPtr = processedElements.remove();
    }
+}
+
+void
+SplayTree::clear() {
+   cleanUp();
+
+   if(root == NULL) {
+      return;
+   }
+
+   while(current != NULL) {
+      erase(current->getEvent());
+   }
+
+   numberOfElements = 0;
+}
+
+const Event *
+SplayTree::end() {
+   return NULL;
+}
+
+void
+SplayTree::erase(const Event *delEvent) {
+
+   TreeElement *delNode = NULL;
+   TreeElement *node    = NULL;
+   TreeElement *left    = NULL;
+   TreeElement *right   = NULL;
+
+   if(delEvent == NULL) {
+      cout << "Erase received NULL event." << endl;
+      return;
+   }
+
+   if(root == NULL) {
+      if(current != NULL) {
+         current = NULL;
+         cout << "1.Something is wrong with erase." << endl;
+      }
+      return;
+   }
+
+   if(current == NULL) {
+      cout << "2.Something is wrong with erase." << endl;
+      node = root;
+      while(node->getLeftElement() != NULL) {
+         node = node->getLeftElement();
+      }
+      current = node;
+
+      return;
+   }
+
+   /* Search for the event to be deleted */
+
+   /* Also handles the condition when current = root */
+   if( CompareEvent(delEvent, current->getEvent()) <= 0) {
+      node = current;
+   } else {
+      node = root;
+   }
+
+   while(node != NULL) {
+
+      if( CompareEvent(delEvent, node->getEvent()) < 0 ) {
+         node = node->getLeftElement();
+      } else if( CompareEvent(delEvent, node->getEvent()) == 0 ) {
+         break;
+      } else {
+         node = node->getRightElement();
+      }
+   }
+
+   if(node == NULL) {
+      return;
+   }
+
+   /* Remove the node if found */
+   if(node != root) {
+      splay(node);
+      if(node != root) {
+         cout << "Splay not working properly." << endl;
+         return;
+      }
+   }
+
+   left  = root->getLeftElement();
+   right = root->getRightElement();
+
+   /* Deallocate the root */
+   //delete root->getEvent();
+   delete root;
+   numberOfElements--;
+
+   /* Re-construct the tree */
+   if(left != NULL) {
+      root = left;
+      root->setParentElement(NULL);
+
+      if(right != NULL) {
+         while(left->getRightElement() != NULL) {
+            left = left->getRightElement();
+         }
+         left->setRightElement(right);
+         right->setParentElement(left);
+      }
+   } else {
+      root = right;
+
+      if(root != NULL) {
+         root->setParentElement(NULL);
+      }
+   }
+
+   /* Re-calculate the current */
+   if(root != NULL) {
+      current = root;
+      while(current->getLeftElement() != NULL) {
+         current = current->getLeftElement();
+      }
+   }
+}
+
+int
+SplayTree::size() {
+   return numberOfElements;
 }
 
 void
