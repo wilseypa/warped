@@ -6,7 +6,7 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int 
 	scheduleQScheme = scheQScheme;
 
 	// Set up scheduleQueue (LTSF queue)
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		scheduleQueue = new multiset<const Event*,
 				receiveTimeLessThanEventIdLessThan> ;
 	} else if( scheduleQScheme == "LADDERQ" ) {
@@ -31,7 +31,7 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int 
 	for (int i = 0; i < objectCount; i++) {
 		objectStatusLock[i] = new LockState();
 		//Schedule queue
-		if( scheduleQScheme == "MULTILTSF" ) {
+		if( scheduleQScheme == "MULTISET" ) {
 			lowestObjectPosition.push_back(scheduleQueue->end());
 		} else if( scheduleQScheme == "LADDERQ" ) {
 			lowestLadderObjectPosition.push_back(ladderQ->end());
@@ -46,7 +46,7 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int 
 ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
 	delete objectStatusLock;
 	delete scheduleQueueLock;
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		delete scheduleQueue;
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		delete ladderQ;
@@ -70,7 +70,7 @@ void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
 const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int threadID) {
 	const VTime* ret = NULL;
 	this->getScheduleQueueLock(threadID);
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		if (scheduleQueue->size() > 0) {
 			ret = &((*scheduleQueue->begin())->getReceiveTime());
 		}
@@ -94,7 +94,7 @@ int ThreadedTimeWarpMultiSetLTSF::getMessageCount(int threadId) {
 	int count = 0;
 	getScheduleQueueLock(threadId);
 
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		count = scheduleQueue->size();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		cout << "LadderQ message count not handled for now" << endl;
@@ -108,7 +108,7 @@ int ThreadedTimeWarpMultiSetLTSF::getMessageCount(int threadId) {
 	return count;
 }
 bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty() {
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		return scheduleQueue->empty();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		return ladderQ->empty();
@@ -129,7 +129,7 @@ void ThreadedTimeWarpMultiSetLTSF::releaseAllScheduleQueueLocks()
 void ThreadedTimeWarpMultiSetLTSF::clearScheduleQueue(int threadId)
 {
 	this->getScheduleQueueLock(threadId);
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		scheduleQueue->clear();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		ladderQ->clear();
@@ -143,7 +143,7 @@ void ThreadedTimeWarpMultiSetLTSF::clearScheduleQueue(int threadId)
 void ThreadedTimeWarpMultiSetLTSF::setLowestObjectPosition(int threadId, int index)
 {
 	this->getScheduleQueueLock(threadId);
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		lowestObjectPosition[index] = scheduleQueue->end();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		lowestLadderObjectPosition[index] = ladderQ->end();
@@ -156,7 +156,7 @@ void ThreadedTimeWarpMultiSetLTSF::setLowestObjectPosition(int threadId, int ind
 }
 void ThreadedTimeWarpMultiSetLTSF::insertEvent(int objId, const Event* newEvent)
 {
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		ASSERT(newEvent);
 		lowestObjectPosition[objId] = scheduleQueue->insert(newEvent);
 	} else if ( scheduleQScheme == "LADDERQ" ) {
@@ -172,7 +172,7 @@ void ThreadedTimeWarpMultiSetLTSF::insertEvent(int objId, const Event* newEvent)
 }
 void ThreadedTimeWarpMultiSetLTSF::insertEventEnd(int objId)
 {
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		lowestObjectPosition[objId] = scheduleQueue->end();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		lowestLadderObjectPosition[objId] = ladderQ->end();
@@ -185,7 +185,7 @@ void ThreadedTimeWarpMultiSetLTSF::insertEventEnd(int objId)
 void ThreadedTimeWarpMultiSetLTSF::eraseSkipFirst(int objId)
 {
 	// Do not erase the first time.
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		if (lowestObjectPosition[objId] != scheduleQueue->end()) {
 			scheduleQueue->erase(lowestObjectPosition[objId]);
 		} else {
@@ -209,7 +209,7 @@ void ThreadedTimeWarpMultiSetLTSF::eraseSkipFirst(int objId)
 }
 int ThreadedTimeWarpMultiSetLTSF::getScheduleQueueSize()
 {
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		return scheduleQueue->size();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		cout << "LadderQ message count not handled for now" << endl;
@@ -224,7 +224,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int* LTSFObjId)
 	const Event* ret = NULL;
 	this->getScheduleQueueLock(threadId);
 
-	if( scheduleQScheme == "MULTILTSF" ) {
+	if( scheduleQScheme == "MULTISET" ) {
 		if (scheduleQueue->size() > 0) {
 			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 
