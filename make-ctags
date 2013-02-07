@@ -1,0 +1,33 @@
+#if [ $SHELL == '/bin/bash' ]; then
+    PWD=`pwd`;
+#elif [ $SHELL == '/bin/csh' ]; then
+#    set PWD `pwd`;
+#else
+#    echo "Unknown shell: $SHELL - must be /bin/bash or /bin/csh";
+#    exit;
+#fi
+
+#Create the top-level tags file using the absolute path.
+#The c-types option allows local variables to be tagged.
+ctags -R --c-types=+l ${PWD}
+
+#experiment for C++ specific code
+#The extra option allows class-qualified tag for each class member 
+#(data and function/method) in the form class::member for C++
+#The excmd option allows for browsing the file containing the tag 
+#without rebuilding the tag file after a change (i.e. when the 
+#location of tag in the tag file no longer match the current 
+#location after the change)
+#ctags -R --c-types=+l --extra=+q --excmd=p ${PWD}
+
+#Create links in all sub-folders to the top-level tags file.
+#Do not create a link in . (this folder) - doing so will cause a loop.
+#Skip all .git folders.
+#Remove old links before creating the links.
+#Use absolute paths everywhere so that tagged files can be edited 
+#from any folder.
+#need to remove the doc folders from the tagging process (yet to be implemented)
+
+find . -type d \( -name \. -o \( -name \.git -prune \) -o \
+    -exec rm -rf {}/tags \; \
+    -exec ln -s ${PWD}/tags {}/tags \; \)
