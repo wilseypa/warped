@@ -249,7 +249,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int* LTSFObjId)
 			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 			ret = ladderQ->dequeue();
 			if(ret == NULL) {
-				cout << "empty() func returned NULL" << endl;
+				cout << "dequeue() func returned NULL" << endl;
 				this->releaseScheduleQueueLock(threadId);
 				return ret;
 			}
