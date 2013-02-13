@@ -1,0 +1,32 @@
+ISCAS85_PROGRAM=iscas85Sim
+
+iscas85Sim_SOURCES= \
+	circuitsimulationmodels/iscas85/iscas85Sim/LogicEvent.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/LogicEvent.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputGateState.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/LogicComponent.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/LogicComponent.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/FileReaderWriter.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/FileReaderWriter.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/FileState.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputGate.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputGate.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputAndGate.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputAndGate.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputXorGate.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputXorGate.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputOrGate.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputOrGate.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputNandGate.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputNandGate.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/NotGate.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/NotGate.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputNorGate.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/NInputNorGate.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/Iscas85Application.h \
+	circuitsimulationmodels/iscas85/iscas85Sim/Iscas85Application.cpp \
+	circuitsimulationmodels/iscas85/iscas85Sim/Iscas85Main.cpp
+
+iscas85Sim_LDFLAGS=-static
+iscas85Sim_LDADD=$(top_builddir)/src/libwarped.la \
+		    $(top_builddir)/simulationmodels/libRnd.la
