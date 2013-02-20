@@ -338,9 +338,12 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 		}
 		//Clear message Buffer
 		sendPendingMessages();
-		if (WorkerInformation::getStillBusyCount() < numberOfWorkerThreads) { // Check if any workers are still sleeping
+		// numberOfWorkerThreads includes manager thread for some reason...
+		if (WorkerInformation::getStillBusyCount() < numberOfWorkerThreads - 1) { // Check if any workers are still sleeping
+			//cout << WorkerInformation::getStillBusyCount() << "/" << numberOfWorkerThreads << endl;
 			for (unsigned int ltsfIndex = 0; ltsfIndex < scheduleQCount; ltsfIndex++) {
 				if (!myEventSet->isScheduleQueueEmpty(ltsfIndex)) { // Check if there are items in the scheduleQueue
+					//cout << "Resuming threads attached to ltsf " << ltsfIndex << endl;
 					for(unsigned int threadIndex = ltsfIndex; threadIndex < numberOfWorkerThreads - 1; threadIndex = threadIndex + scheduleQCount) {
 						workerStatus[threadIndex+1]->resume();
 					}
