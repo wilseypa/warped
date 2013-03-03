@@ -32,7 +32,7 @@ const VTime & ThreadedTimeWarpMultiSetSchedulingManager::getLastEventScheduledTi
 		utils::debug << "(" << mySimulationManager->getSimulationManagerID()
 				<< ")" << "NextEvent Time from Schedule Queue is NULL" << endl;
 	/*	const VTime *minTime =
-	 &(dynamic_cast<ThreadedTimeWarpMultiSet*> (eventSet)->getMinimumOfAll(0));*/
+	 &(dynamic_cast<ThreadedTimeWarpMultiSet*> (eventSet)->getMinimumOfAll(1));*/
 	const VTime *minTime = mySimulationManager->getLVT();
 	if (nextEventTime != NULL && *minTime > *nextEventTime)
 		minTime = nextEventTime;

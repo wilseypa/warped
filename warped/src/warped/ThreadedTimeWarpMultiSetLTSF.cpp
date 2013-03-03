@@ -1,6 +1,7 @@
 #include "ThreadedTimeWarpMultiSetLTSF.h"
 
-ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int LTSFCountVal, const string syncMech, const string scheQScheme) {
+ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, int LTSFCountVal, const string syncMech, const string scheQScheme) {
+	objectCount = inObjectCount;
 
 	//scheduleQ scheme
 	scheduleQScheme = scheQScheme;
@@ -17,7 +18,7 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int 
 		cout << "Invalid schedule queue scheme" << endl;
 	}
 
-	objectStatusLock = new LockState *[objectCount];
+	//objectStatusLock = new LockState *[objectCount];
 	scheduleQueueLock = new LockState();
 
 	//synchronization mechanism
@@ -29,7 +30,7 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int 
 
 	//Initialize LTSF Event Queue
 	for (int i = 0; i < objectCount; i++) {
-		objectStatusLock[i] = new LockState();
+		objectStatusLock.push_back(new LockState());
 		//Schedule queue
 		if( scheduleQScheme == "MULTISET" ) {
 			lowestObjectPosition.push_back(scheduleQueue->end());
@@ -44,7 +45,8 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int objectCount, int 
 }
 
 ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
-	delete objectStatusLock;
+	objectStatusLock.clear();
+	lowestObjectPosition.clear();
 	delete scheduleQueueLock;
 	if( scheduleQScheme == "MULTISET" ) {
 		delete scheduleQueue;
@@ -154,6 +156,63 @@ void ThreadedTimeWarpMultiSetLTSF::setLowestObjectPosition(int threadId, int ind
 	}
 	this->releaseScheduleQueueLock(threadId);
 }
+// Removes the Event for the given Obj from the schedule queue,
+//  and returns the event - used for reassigning LPs
+const Event* ThreadedTimeWarpMultiSetLTSF::removeLP(int objId)
+{
+	// Decrement number of LPs (so we know size of lowestObjectPosition
+	const Event* removedEvent;
+	// BUG: Update to work for other schemes...
+	if( scheduleQScheme == "MULTISET" ) {
+		if (lowestObjectPosition[objId] == scheduleQueue->end() ) {
+			removedEvent = NULL;
+		} else {
+			removedEvent = *(lowestObjectPosition[objId]);
+		}
+	} else if ( scheduleQScheme == "LADDERQ" ) {
+		if (lowestLadderObjectPosition[objId] == ladderQ->end() ) {
+			removedEvent = NULL;
+		} else {
+			removedEvent = lowestLadderObjectPosition[objId];
+		}
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		if (lowestLadderObjectPosition[objId] == splayTree->end() ) {
+			removedEvent = NULL;
+		} else {
+			removedEvent = lowestLadderObjectPosition[objId];
+		}
+	} else {
+		cout << "Invalid schedule queue scheme" << endl;
+	}
+	eraseSkipFirst(objId);
+	// We need to remap objectStatusLock
+	lowestObjectPosition.erase(lowestObjectPosition.begin() + objId);
+	objectStatusLock.erase(objectStatusLock.begin() + objId);
+	objectCount--;
+	return removedEvent;
+}
+// Adds an LP to the schedule queue, and returns the new mapped objId for it
+int ThreadedTimeWarpMultiSetLTSF::addLP(int oldLockOwner)
+{
+	if( scheduleQScheme == "MULTISET" ) {
+		lowestObjectPosition.push_back(scheduleQueue->end());
+	} else if ( scheduleQScheme == "LADDERQ" ) {
+		lowestLadderObjectPosition.push_back(ladderQ->end());
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		lowestLadderObjectPosition.push_back(splayTree->end());
+	} else {
+		cout << "Invalid schedule queue scheme" << endl;
+	}
+
+	objectStatusLock.push_back(new LockState());
+	if (oldLockOwner != -1) { // -1 if not locked
+		getObjectLock(oldLockOwner, objectCount);
+		cout << "Obtaining object lock on " << objectCount << endl;
+	}
+
+	// Expand array sizes
+	return ++objectCount;
+}
 void ThreadedTimeWarpMultiSetLTSF::insertEvent(int objId, const Event* newEvent)
 {
 	if( scheduleQScheme == "MULTISET" ) {
@@ -219,7 +278,7 @@ int ThreadedTimeWarpMultiSetLTSF::getScheduleQueueSize()
 		cout << "Invalid schedule queue scheme" << endl;
 	}
 }
-const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int* LTSFObjId)
+const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int **LTSFObjId)
 {
 	const Event* ret = NULL;
 	this->getScheduleQueueLock(threadId);
@@ -230,10 +289,10 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int* LTSFObjId)
 
 			ret = *(scheduleQueue->begin());
 			//cout << "T" << threadId << ": Getting event with timestamp " << ret->getReceiveTime().getApproximateIntTime() << endl;
-			unsigned int objId = LTSFObjId[(ret->getReceiver().getSimulationObjectID())];
+			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
 			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 	
-			this ->getObjectLock(threadId, objId);
+			getObjectLock(threadId, objId);
 			//remove the object out of schedule
 			scheduleQueue->erase(scheduleQueue->begin());
 			//set the indexer/pointer to NULL
@@ -256,7 +315,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int* LTSFObjId)
 			unsigned int newMinTime = ret->getReceiveTime().getApproximateIntTime();
 			if ( newMinTime < minReceiveTime )
 				cout << "Event received out of order" << endl;
-			unsigned int objId = LTSFObjId[(ret->getReceiver().getSimulationObjectID())];
+			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
 
 			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 
@@ -275,7 +334,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int* LTSFObjId)
 				this->releaseScheduleQueueLock(threadId);
 				return ret;
 			}
-			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()];
+			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
 
 			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 
@@ -310,7 +369,10 @@ void ThreadedTimeWarpMultiSetLTSF::releaseObjectLock(int threadId, int objId) {
 bool ThreadedTimeWarpMultiSetLTSF::isObjectScheduled(int objId) {
 	return objectStatusLock[objId]->isLocked();
 }
-
+// Returns owner of object lock - used when transferring
+int ThreadedTimeWarpMultiSetLTSF::whoHasObjectLock(int objId) {
+	return objectStatusLock[objId]->whoHasLock();
+}
 bool ThreadedTimeWarpMultiSetLTSF::isObjectScheduledBy(int threadId, int objId) {
 	return (objectStatusLock[objId]->whoHasLock() == threadId) ? true : false;
 }

@@ -51,6 +51,9 @@ public:
 
 	void insertEventUpdate(int objId, const Event* newEvent);
 
+	const Event* removeLP(int objId);
+	int addLP(int oldLockOwner);
+
 	// Inserts new event into scheduleQueue and updates lowestObjectPosition
 	void insertEvent(int objId, const Event* newEvent);
 	void insertEventEnd(int objId);
@@ -61,7 +64,7 @@ public:
 	int getScheduleQueueSize();
 
 	// ??
-	const Event* peekIt(int threadId, int *LTSFObjId);
+	const Event* peekIt(int threadId, int **LTSFObjId);
 
 	void getObjectLock(int threadId, int objId);
 
@@ -73,6 +76,8 @@ public:
 
 	// Release all the object locks during a catastrophic rollback.
 	void releaseObjectLocksRecovery(int objNum);
+
+	int whoHasObjectLock(int objId);
 private:
 	//Lowest event position pointer for MULTILTSF
 	vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator>
@@ -94,7 +99,7 @@ private:
 	LockState* scheduleQueueLock;
 
 	///Object Status Lock
-	LockState** objectStatusLock;
+	vector<LockState*> objectStatusLock;
 
 	//Specfiy the synchronization mechanism in the config
 	string syncMechanism;
@@ -104,6 +109,8 @@ private:
 
 	// Number of LTSF Queues in use
 	int LTSFCount;
+
+	int objectCount;
 
 	unsigned int minReceiveTime;
 };

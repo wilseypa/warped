@@ -281,6 +281,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 	cout << "SimulationManager(" << mySimulationManagerID
 			<< "): Starting simulation - End time: " << simulateUntil << ")"
 			<< endl;
+	bool LTSFDestTemp = 1;
 	printObjectMaaping();
 	//Do ASSERT for all components of the kernel
 	bool pastSimulationCompleteTime = false; // Use it to terminate
@@ -319,6 +320,10 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 				if (GVTTokenPending) {
 					if (updateLVTfromArray()) {
 						myGVTManager->calculateGVT();
+						//myEventSet->moveLP(2,(int)LTSFDestTemp);
+						//myEventSet->moveLP(4,(int)LTSFDestTemp);
+						//myEventSet->moveLP(6,(int)LTSFDestTemp);
+						//LTSFDestTemp = !LTSFDestTemp;
 						//Reset the GVT flag so the Worker thread can increase GVT Period
 						bool checkGVTOn = __sync_bool_compare_and_swap(
 								&checkGVT, true, false);
