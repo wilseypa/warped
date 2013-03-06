@@ -1,7 +1,7 @@
 #include "../include/FileReaderWriter.h"
 #include "../include/LogicEvent.h"
 #include "../include/FileState.h"
-#include <iostream>
+#include <iostream> 
 
 //See copyright notice in file Copyright in the root directory of this archive.
 
@@ -13,13 +13,7 @@ FileReaderWriter::FileReaderWriter(string &filename,int numofgates,
 																	 fileName(filename),numOfGates(numofgates),IO(io),desPortId(desportid),
 																	 desGatesNames(desgatesnames),maxNumLines(maxnumlines),fileIoStream(0){}
 
-FileReaderWriter::~FileReaderWriter(){
-	if(numOfGates != 0){
-		delete desGatesNames;
-		delete [] outputHandles;
-		delete fileIoStream;
-	}
-}
+FileReaderWriter::~FileReaderWriter(){ }
 
 void
 FileReaderWriter::initialize(){
@@ -69,7 +63,7 @@ FileReaderWriter::initialize(){
 }
 
 void
-FileReaderWriter::finalize(){}
+FileReaderWriter::finalize(){ /*fileIoStream -> flush();*/}
 
 void
 FileReaderWriter::executeProcess(){
@@ -118,14 +112,21 @@ FileReaderWriter::executeProcess(){
 					}
 				}	
 				if("O"==IO){
+					int writetimes = state->numLinesProcessed;
+					if(writetimes<maxNumLines){
 					ostringstream outstream;
 					outstream<<logicEvent->bitValue;
+					cout<<"write to file!"<<endl;
 					fileIoStream->insert(outstream);
 					fileIoStream->flush();
+					cout<<"finish write"<<endl;
+				//	fileIoStream->put('a');
+					state->numLinesProcessed++;
+					}
 				}
 			}
 		}
-	}
+		}
 
 
 State*
