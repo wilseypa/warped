@@ -883,6 +883,7 @@ void ThreadedTimeWarpSimulationManager::receiveKernelMessage(KernelMessage *msg)
 
 void ThreadedTimeWarpSimulationManager::fossilCollect(
 		const VTime& fossilCollectTime) {
+  
 	ASSERT( localArrayOfSimObjPtrs != 0);
 	//Hard Coded ZERO, since this function is always called by the Master
 	int threadID = 0;
