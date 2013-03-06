@@ -30,16 +30,16 @@ LogicEvent::LogicEvent(const VTime &initRecvTime,
                        const VTime &initSendTime,
                        SimulationObject *initSender,
                        SimulationObject *initReceiver) :
-  DefaultEvent(initRecvTime, initSendTime, initSender, initReceiver),
-  bitValue(0),
-  sourcePort(0), 
-  destinationPort(0){}
+                       DefaultEvent(initRecvTime, initSendTime, initSender, initReceiver),
+                       bitValue(0),
+                       sourcePort(0), 
+                       destinationPort(0){}
 
 LogicEvent::~LogicEvent(){}
 
 unsigned int
 LogicEvent::getEventSize() const {
-   return sizeof(LogicEvent);
+  return sizeof(LogicEvent);
 }
 
 void 
@@ -74,26 +74,26 @@ LogicEvent::serialize(SerializedInstance *addTo) const{
 Serializable*
 LogicEvent::deserialize(SerializedInstance *instance){
 
-   VTime *sendTime = dynamic_cast<VTime *>(instance->getSerializable());
-   VTime *receiveTime = dynamic_cast<VTime *>(instance->getSerializable());
-   unsigned int senderSimManID = instance->getUnsigned(); 
-   unsigned int senderSimObjID = instance->getUnsigned();
-   unsigned int receiverSimManID = instance->getUnsigned();
-   unsigned int receiverSimObjID = instance->getUnsigned();
-   unsigned int eventId = instance->getUnsigned();
+  VTime *sendTime = dynamic_cast<VTime *>(instance->getSerializable());
+  VTime *receiveTime = dynamic_cast<VTime *>(instance->getSerializable());
+  unsigned int senderSimManID = instance->getUnsigned(); 
+  unsigned int senderSimObjID = instance->getUnsigned();
+  unsigned int receiverSimManID = instance->getUnsigned();
+  unsigned int receiverSimObjID = instance->getUnsigned();
+  unsigned int eventId = instance->getUnsigned();
    
-   ObjectID sender(senderSimObjID, senderSimManID);
-   ObjectID receiver(receiverSimObjID, receiverSimManID);
+  ObjectID sender(senderSimObjID, senderSimManID);
+  ObjectID receiver(receiverSimObjID, receiverSimManID);
    
-   LogicEvent *event = new LogicEvent(*sendTime, *receiveTime, sender, receiver, eventId);
+  LogicEvent *event = new LogicEvent(*sendTime, *receiveTime, sender, receiver, eventId);
   
-   event->setbitValue(instance->getInt());
-   event->setsourcePort(instance->getInt());
-   event->setdestinationPort(instance->getInt());
+  event->setbitValue(instance->getInt());
+  event->setsourcePort(instance->getInt());
+  event->setdestinationPort(instance->getInt());
 
-   delete sendTime;
-   delete receiveTime;
-   return event;
+  delete sendTime;
+  delete receiveTime;
+  return event;
 }
 
 

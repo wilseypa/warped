@@ -41,48 +41,46 @@ NInputGate::NInputGate(string &objectName, const int numInputs,/*const int numIn
                        const int numOutputs,vector<string> *outputs,
                        vector<int> *destInputPorts,
                        int objectDelay)
-   : LogicComponent(objectName, numOutputs, outputs,
-                    destInputPorts, objectDelay),
-                          numberOfInputs(numInputs),
-                          numInputValue(0){}
+                      :LogicComponent(objectName, numOutputs, outputs,
+                       destInputPorts, objectDelay),
+                       numberOfInputs(numInputs),
+                       numInputValue(0){}
 
-NInputGate::~NInputGate(){
-   deallocateState(getState());
-}
+NInputGate::~NInputGate(){}
 
 void
 NInputGate::initialize() {
-	 cout<<endl;
-	 cout<<"this is "<<getName()<<endl;
-   LogicComponent::initialize();
-   NInputGateState *newState = (NInputGateState *) getState();
-   for(int i = 0; i < numberOfInputs; i++){
-      newState->inputBits[i] = 0;
-   }
-   cout<<"numberOfInputs is:"<<numberOfInputs<<endl;
-   newState->outputBit1 = 0;
+  cout<<endl;
+  cout<<"this is "<<getName()<<endl;
+  LogicComponent::initialize();
+  NInputGateState *newState = (NInputGateState *) getState();
+  for(int i = 0; i < numberOfInputs; i++){
+    newState->inputBits[i] = 0;
+  }
+  cout<<"numberOfInputs is:"<<numberOfInputs<<endl;
+  newState->outputBit1 = 0;
 }
 
 void
 NInputGate::executeProcess() {
-	cout<<endl;
-	cout<<"in the executePorcess()"<<getName()<<endl;
+  cout<<endl;
+  cout<<"in the executePorcess()"<<getName()<<endl;
   NInputGateState *state = static_cast<NInputGateState *>( getState());
   LogicEvent *logicEvent  = NULL;
-	while(true==haveMoreEvents()){
-		logicEvent = (LogicEvent *)getEvent();
-			if(logicEvent != NULL){
-  			if(numInputValue != numberOfInputs-1){
-  				state->inputBits[logicEvent->destinationPort - 1] = logicEvent->bitValue;
-					numInputValue++;
-				}
-			else{
-				state->inputBits[logicEvent->destinationPort - 1] = logicEvent->bitValue;
-				updateOutput();
-				numInputValue=0;
-			}
-			}
- 	}
+  while(true==haveMoreEvents()){
+    logicEvent = (LogicEvent *)getEvent();
+    if(logicEvent != NULL){
+      if(numInputValue != numberOfInputs-1){
+        state->inputBits[logicEvent->destinationPort - 1] = logicEvent->bitValue;
+	numInputValue++;
+      }
+      else{
+	state->inputBits[logicEvent->destinationPort - 1] = logicEvent->bitValue;
+	updateOutput();
+	numInputValue=0;
+      }
+    }
+  }
 }
 
        

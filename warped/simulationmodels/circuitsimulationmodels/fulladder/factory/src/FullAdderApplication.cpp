@@ -36,8 +36,8 @@ using namespace std;
 
 
 FullAdderApplication::FullAdderApplication()
-  : inputFileName( "" ),
-    numObjects( 0 ){}
+:inputFileName( "" ),
+ numObjects( 0 ){}
 
 int
 FullAdderApplication::initialize( vector<string> &arguments ){
@@ -67,20 +67,15 @@ FullAdderApplication::getPartitionInfo(unsigned int numberOfProcessorsAvailable)
   
   const PartitionInfo *retval = 0;
   Partitioner *myPartitioner = new RoundRobinPartitioner();
-
-  
   int numFileObjects;
-	string fileName;
-	int numOfGates;  
+  string fileName;
+  int numOfGates;  
   string type;
   int desPort;  
-	string desGateName;
-
+  string desGateName;
   int maxLines;
 
-
   ifstream configfile;
-
   configfile.open(inputFileName.c_str());
 
   if(configfile.fail()){
@@ -89,48 +84,42 @@ FullAdderApplication::getPartitionInfo(unsigned int numberOfProcessorsAvailable)
     abort();
   }
 
- 	vector<SimulationObject *> *objects = new vector<SimulationObject *>;
+  vector<SimulationObject *> *objects = new vector<SimulationObject *>;
   configfile>>numFileObjects;
 
   for(int i=0; i < numFileObjects; i++){
-		configfile>>fileName>>numOfGates>>type;	
-		
-		vector<int> *desPortId = new vector<int>;
-		vector<string> *desGatesNames = new vector<string>;
-		
-		if(0==numOfGates){
-			configfile>>desPort;
-			cout<<"numOfGates is:"<<numOfGates<<endl;
-			cout<<"desPort Value is:"<<desPort<<endl;
-			desPortId->push_back(desPort);
-
-			configfile>>desGateName;
-			//cout<<"numOfGates is:"<<numOfGates<<endl;
-			//cout<<"desPort Value is:"<<desPort<<endl;
-			desGatesNames->push_back(desGateName);
-		}
-		else{
-			for(int j= 0;j<numOfGates;j++){
-				configfile>>desPort;
-				cout<<"numOfGates is:"<<numOfGates<<endl;
-				cout<<"desPort Value is:"<<desPort<<endl;
-				desPortId->push_back(desPort);
-			}
+    configfile>>fileName>>numOfGates>>type;	
+    vector<int> *desPortId = new vector<int>;
+    vector<string> *desGatesNames = new vector<string>;
+    if(0==numOfGates){
+      configfile>>desPort;
+      cout<<"numOfGates is:"<<numOfGates<<endl;
+      cout<<"desPort Value is:"<<desPort<<endl;
+      desPortId->push_back(desPort);
+      configfile>>desGateName;
+      //cout<<"numOfGates is:"<<numOfGates<<endl;
+      //cout<<"desPort Value is:"<<desPort<<endl;
+      desGatesNames->push_back(desGateName);
+    }
+    else{
+      for(int j= 0;j<numOfGates;j++){
+        configfile>>desPort;
+	cout<<"numOfGates is:"<<numOfGates<<endl;
+	cout<<"desPort Value is:"<<desPort<<endl;
+	desPortId->push_back(desPort);
+      }
 		 
-			for(int j= 0;j<numOfGates;j++){
-				configfile>>desGateName;
-				desGatesNames->push_back(desGateName);
-			}
-		}
+      for(int j= 0;j<numOfGates;j++){
+        configfile>>desGateName;
+	desGatesNames->push_back(desGateName);
+      }
+    }
 
-		configfile>>maxLines;
-    
-		SimulationObject *newObject = new FileReaderWriter(fileName,numOfGates,type,
-		                                                   desPortId,desGatesNames,
- 																											 maxLines); 
+    configfile>>maxLines;
+    SimulationObject *newObject = new FileReaderWriter(fileName,numOfGates,type,desPortId,desGatesNames,maxLines); 
     objects->push_back(newObject);
-		cout<<"construct FileReaderWriter object!"<<endl;
-	}
+    cout<<"construct FileReaderWriter object!"<<endl;
+  }
 
 
   int totalGates; // total gates number in the circuit 
@@ -142,70 +131,64 @@ FullAdderApplication::getPartitionInfo(unsigned int numberOfProcessorsAvailable)
   int desInputPort;    // pin id of the gate which receives the object output
   int delay;           // the delay between event receiving and event sending  
 
-	configfile >> totalGates;
+  configfile >> totalGates;
 
   for(int i = 0; i < totalGates; i++){
-
     configfile >> myObjName >> numberOfInputs >> numberOfOutputs;// >> destObjName >> desInputPort; 
     vector<string> *outputObjectNames = new vector<string>;
     vector<int> *destinationPorts = new vector<int>;
-    
-		for(int i = 0; i < numberOfOutputs; i++){
-			configfile >> destObjName;
-			cout<<"object name is "<< destObjName<<endl;
-			outputObjectNames -> push_back(destObjName);	
-	  }
-																
-	  for(int i =0; i < numberOfOutputs; i++){
-			configfile >> desInputPort;
-		  destinationPorts->push_back(desInputPort);
-		}
+      for(int i = 0; i < numberOfOutputs; i++){
+        configfile >> destObjName;
+        cout<<"object name is "<< destObjName<<endl;
+	outputObjectNames -> push_back(destObjName);	
+      }
+      for(int i =0; i < numberOfOutputs; i++){
+	configfile >> desInputPort;
+	destinationPorts->push_back(desInputPort);
+      }
 	  
    // outputObjectNames->push_back(destObjName);    
    // destinationPorts->push_back(desInputPort);	
     
     configfile >> delay;
-
     string gate= myObjName.substr(0,1);
-
-	if("A"==gate){
-	  
-		 SimulationObject *newObject = new NInputAndGate(myObjName,
-                                                       numberOfInputs,
-                                                       numberOfOutputs,
-                                                       outputObjectNames,
-                                                       destinationPorts,
-                                                       delay);
-
-     objects->push_back(newObject);
-    // cout << "building object with R !"<<endl;
-		// cout << "the address of the object is " << newObject<<endl;
-    }
-
-  if ("X"==gate){
-		 SimulationObject *newObject = new NInputXorGate(myObjName,
-                                                       numberOfInputs,
-                                                       numberOfOutputs,
-                                                       outputObjectNames,
-                                                       destinationPorts,
-                                                       delay);
-
-     objects->push_back(newObject);
-    // cout << "building object with R !"<<endl;
-		// cout << "the address of the object is " << newObject<<endl;
-	}	
-  if ("O"==gate){
-		 SimulationObject *newObject = new NInputOrGate(myObjName,
+    if("A"==gate){
+      SimulationObject *newObject = new NInputAndGate(myObjName,
                                                       numberOfInputs,
                                                       numberOfOutputs,
                                                       outputObjectNames,
                                                       destinationPorts,
                                                       delay);
 
-     objects->push_back(newObject);
+    objects->push_back(newObject);
     // cout << "building object with R !"<<endl;
 		// cout << "the address of the object is " << newObject<<endl;
-	}	  
+    }
+
+    if ("X"==gate){
+      SimulationObject *newObject = new NInputXorGate(myObjName,
+                                                      numberOfInputs,
+                                                      numberOfOutputs,
+                                                      outputObjectNames,
+                                                      destinationPorts,
+                                                      delay);
+
+      objects->push_back(newObject);
+      // cout << "building object with R !"<<endl;
+      // cout << "the address of the object is " << newObject<<endl;
+    }	
+    if ("O"==gate){
+      SimulationObject *newObject = new NInputOrGate(myObjName,
+                                                     numberOfInputs,
+                                                     numberOfOutputs,
+                                                     outputObjectNames,
+                                                     destinationPorts,
+                                                     delay);
+
+      objects->push_back(newObject);
+     // cout << "building object with R !"<<endl;
+		// cout << "the address of the object is " << newObject<<endl;
+    }	  
 }
   cout<<"objects size is"<<objects->size()<<endl;
 
@@ -218,18 +201,17 @@ FullAdderApplication::getPartitionInfo(unsigned int numberOfProcessorsAvailable)
 
 void 
 FullAdderApplication::registerDeserializers(){
-  DeserializerManager::instance()->registerDeserializer(LogicEvent::getLogicEventDataType(),
-                                                       &LogicEvent::deserialize);
+  DeserializerManager::instance()->registerDeserializer(LogicEvent::getLogicEventDataType(),&LogicEvent::deserialize);
 }
 
 ArgumentParser & 
 FullAdderApplication::getArgumentParser(){
   static ArgumentParser::ArgRecord args[] = {
-    {"-simulate", "input file name", &inputFileName, ArgumentParser::STRING,false},
+  {"-simulate", "input file name", &inputFileName, ArgumentParser::STRING,false},
     
-    {"","",0 }
+  {"","",0 }
    
-  };
+};
 
   static ArgumentParser *myArgParser = new ArgumentParser(args);
   return *myArgParser;
