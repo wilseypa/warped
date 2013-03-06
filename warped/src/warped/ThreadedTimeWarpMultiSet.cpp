@@ -49,7 +49,7 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 
 	LTSFByThread = new ThreadedTimeWarpMultiSetLTSF *[threadCount];
 	LTSFByObj = new ThreadedTimeWarpMultiSetLTSF *[objectCount];
-	LTSFObjId = new int[objectCount]; 
+	LTSFObjId = new int *[objectCount]; 
 
 	// Assign threads to LTSF queues
 	for (int i=0; i < threadCount; i++) {
@@ -81,7 +81,10 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 		//Create lookup table to associate between an unprocessed queue id
 		// and the appropriate LTSF queue 
 		LTSFByObj[i] = LTSF[ i % LTSFCount ];
-		LTSFObjId[i] = i / LTSFCount;
+		LTSFObjId[i] = new int[2];
+		LTSFObjId[i][OBJID] = i / LTSFCount;
+		LTSFObjId[i][LTSFOWNER] = i % LTSFCount;
+		
 		
 		//LTSFByObj[i] = LTSF[ i / (objectCount / LTSFCount) ];
 		//cout << i << ":" << endl << "LTSF " << i/(objectCount/LTSFCount) << endl;
@@ -114,6 +117,51 @@ ThreadedTimeWarpMultiSet::~ThreadedTimeWarpMultiSet() {
 	//	deleting each Threads Iterator
 	delete vectorIterator;
 	delete multisetIterator;
+}
+
+// Moves the given LP to the new LP
+// BUG: If thread accesses schedule queue during reassignment, it will
+// get the old LTSF queue (when it uses LTSFByObj)
+void ThreadedTimeWarpMultiSet::moveLP(int sourceObj, int destLTSF) {
+	// Update LTSFByOBJ - here, or after locking?
+	// Also update LTSFObjId
+	//cout << "Moving " << sourceObj << " from " << LTSFObjId[sourceObj][LTSFOWNER] << " to " << destLTSF << endl;
+
+	// Lock LTSF Destination
+	LTSF[destLTSF]->getScheduleQueueLock(0);
+	ThreadedTimeWarpMultiSetLTSF* sourceLTSF = LTSFByObj[sourceObj];
+	LTSFByObj[sourceObj] = LTSF[destLTSF];
+	// Lock LTSF Source
+	sourceLTSF->getScheduleQueueLock(0);
+
+	// Copy and Delete Event from source LTSF
+	int mappedSourceId = LTSFObjId[sourceObj][OBJID];
+	int removedLockOwner = sourceLTSF->whoHasObjectLock(mappedSourceId);
+	const Event* removedEvent = sourceLTSF->removeLP(mappedSourceId);
+
+	// Shift all objId mappings after removedLP back one
+	int sourceLTSFOwner = LTSFObjId[sourceObj][LTSFOWNER];
+	for (int i = 0; i<objectCount; i++) {
+		if (LTSFObjId[i][LTSFOWNER] == sourceLTSFOwner) {
+			if (LTSFObjId[i][OBJID] > mappedSourceId) {
+				LTSFObjId[i][OBJID]--;
+			}
+		}
+	}
+
+	// Insert Event into destination LTSF - subtract one since it is an array
+	LTSFObjId[sourceObj][OBJID] = LTSF[destLTSF]->addLP(removedLockOwner) - 1;
+	LTSFObjId[sourceObj][LTSFOWNER] = destLTSF;
+	if (removedEvent != NULL) {
+		//cout << "removedEvent = " << *removedEvent << endl;
+		LTSF[destLTSF]->insertEvent(LTSFObjId[sourceObj][OBJID], removedEvent);
+	}
+
+	// Unlock LTSF Destination
+	LTSF[destLTSF]->releaseScheduleQueueLock(0);
+	// Unlock LTSF Source
+	sourceLTSF->releaseScheduleQueueLock(0);
+	cout << "LP Swap Completed " << sourceObj << " moved to " << destLTSF << endl;
 }
 
 bool ThreadedTimeWarpMultiSet::threadHasUnprocessedQueueLock(int threadId,
@@ -149,11 +197,11 @@ void ThreadedTimeWarpMultiSet::releaseremovedLock(int threadId, int objId) {
 }
 
 bool ThreadedTimeWarpMultiSet::isObjectScheduled(int objId) {
-	return LTSFByObj[objId]->isObjectScheduled(LTSFObjId[objId]);
+	return LTSFByObj[objId]->isObjectScheduled(LTSFObjId[objId][OBJID]);
 }
 
 bool ThreadedTimeWarpMultiSet::isObjectScheduledBy(int threadId, int objId) {
-	return LTSFByObj[objId]->isObjectScheduledBy(threadId, LTSFObjId[objId]);
+	return LTSFByObj[objId]->isObjectScheduledBy(threadId, LTSFObjId[objId][OBJID]);
 }
 
 //not thread Safe
@@ -189,7 +237,7 @@ const Event* ThreadedTimeWarpMultiSet::getEvent(SimulationObject *simObj,
 	} else {
 		this->releaseunProcessedLock(threadId, objId);
 	}
-	ASSERT(this->isObjectScheduledBy(threadId, objId));
+	//ASSERT(this->isObjectScheduledBy(threadId, objId));
 	return ret;
 }
 const Event* ThreadedTimeWarpMultiSet::getEventWhileRollback(
@@ -213,7 +261,7 @@ const Event* ThreadedTimeWarpMultiSet::getEventWhileRollback(
 		processedQueue[objId]->push_back(ret);
 		this->releaseProcessedLock(threadId, objId);
 	}
-	ASSERT(this->isObjectScheduledBy(threadId, objId));
+	//ASSERT(this->isObjectScheduledBy(threadId, objId));
 	return ret;
 }
 const Event* ThreadedTimeWarpMultiSet::getEventIfStraggler(
@@ -233,7 +281,7 @@ const Event* ThreadedTimeWarpMultiSet::getEventIfStraggler(
 	} else
 		this->releaseunProcessedLock(threadId, objId);
 
-	ASSERT(this->isObjectScheduledBy(threadId, objId));
+	//ASSERT(this->isObjectScheduledBy(threadId, objId));
 
 	return ret;
 }
@@ -342,8 +390,8 @@ bool ThreadedTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) 
 	if (receivedEvent == *(itee)) {
 		LTSFByObj[objId]->getScheduleQueueLock(threadId);
 		if (!this->isObjectScheduled(objId)) {
-			LTSFByObj[objId]->eraseSkipFirst(LTSFObjId[objId]);
-			LTSFByObj[objId]->insertEvent(LTSFObjId[objId], receivedEvent);
+			LTSFByObj[objId]->eraseSkipFirst(LTSFObjId[objId][OBJID]);
+			LTSFByObj[objId]->insertEvent(LTSFObjId[objId][OBJID], receivedEvent);
 		}
 		LTSFByObj[objId]->releaseScheduleQueueLock(threadId);
 	}
@@ -584,7 +632,7 @@ void ThreadedTimeWarpMultiSet::fossilCollect(const Event *toRemove,
 void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int threadId) {
 
 	const Event* firstEvent = NULL;
-	ASSERT(this->isObjectScheduledBy(threadId, objId));
+	//ASSERT(this->isObjectScheduledBy(threadId, objId));
 
 	if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism))
 		this->getunProcessedLock(threadId, objId);
@@ -596,14 +644,14 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int th
 	// Check that lowest object position for this objId is scheduleQueue->end
 	
 	if (firstEvent != NULL) {
-		LTSFByObj[objId]->insertEvent(LTSFObjId[objId], firstEvent);
+		LTSFByObj[objId]->insertEvent(LTSFObjId[objId][OBJID], firstEvent);
 	} else {
-		LTSFByObj[objId]->insertEventEnd(LTSFObjId[objId]);
+		LTSFByObj[objId]->insertEventEnd(LTSFObjId[objId][OBJID]);
 	}
 
 	utils::debug <<" ( "<< threadId << ") Returning object " <<objId <<" back to SCheQ"<<endl;
 
-	LTSFByObj[objId]->releaseObjectLock(threadId, LTSFObjId[objId]);
+	LTSFByObj[objId]->releaseObjectLock(threadId, LTSFObjId[objId][OBJID]);
 	LTSFByObj[objId]->releaseScheduleQueueLock(threadId);
 	this->releaseunProcessedLock(threadId, objId);
 }
@@ -648,7 +696,7 @@ void ThreadedTimeWarpMultiSet::ofcPurge(int threadId) {
 			unProcessedQueue[i]->erase(msit++);
 		}
 		this->releaseunProcessedLock(threadId, i);
-		LTSFByObj[i]->setLowestObjectPosition(threadId, LTSFObjId[i]);
+		LTSFByObj[i]->setLowestObjectPosition(threadId, LTSFObjId[i][OBJID]);
 	}
 	for (int i = 0; i < mySimulationManager->getNumberOfSimulationObjects(); i++) {
 		this->getProcessedLock(threadId, i);
@@ -712,7 +760,7 @@ void ThreadedTimeWarpMultiSet::releaseObjectLocksRecovery() {
 	for (int objNum = 0; objNum
 			< mySimulationManager->getNumberOfSimulationObjects(); objNum++) {
 		for (int i = 0; i<LTSFCount; i++) {
-			LTSF[i]->releaseObjectLocksRecovery(LTSFObjId[objNum]);
+			LTSF[i]->releaseObjectLocksRecovery(LTSFObjId[objNum][OBJID]);
 		}
 		if (unprocessedQueueLockState[objNum]->isLocked()) {
 			unprocessedQueueLockState[objNum]->releaseLock(

@@ -281,6 +281,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 	cout << "SimulationManager(" << mySimulationManagerID
 			<< "): Starting simulation - End time: " << simulateUntil << ")"
 			<< endl;
+	bool LTSFDestTemp = 1;
 	printObjectMaaping();
 	//Do ASSERT for all components of the kernel
 	bool pastSimulationCompleteTime = false; // Use it to terminate
@@ -319,6 +320,10 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 				if (GVTTokenPending) {
 					if (updateLVTfromArray()) {
 						myGVTManager->calculateGVT();
+						//myEventSet->moveLP(2,(int)LTSFDestTemp);
+						//myEventSet->moveLP(4,(int)LTSFDestTemp);
+						//myEventSet->moveLP(6,(int)LTSFDestTemp);
+						//LTSFDestTemp = !LTSFDestTemp;
 						//Reset the GVT flag so the Worker thread can increase GVT Period
 						bool checkGVTOn = __sync_bool_compare_and_swap(
 								&checkGVT, true, false);
@@ -338,9 +343,12 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 		}
 		//Clear message Buffer
 		sendPendingMessages();
-		if (WorkerInformation::getStillBusyCount() < numberOfWorkerThreads) { // Check if any workers are still sleeping
+		// numberOfWorkerThreads includes manager thread for some reason...
+		if (WorkerInformation::getStillBusyCount() < numberOfWorkerThreads - 1) { // Check if any workers are still sleeping
+			//cout << WorkerInformation::getStillBusyCount() << "/" << numberOfWorkerThreads << endl;
 			for (unsigned int ltsfIndex = 0; ltsfIndex < scheduleQCount; ltsfIndex++) {
 				if (!myEventSet->isScheduleQueueEmpty(ltsfIndex)) { // Check if there are items in the scheduleQueue
+					//cout << "Resuming threads attached to ltsf " << ltsfIndex << endl;
 					for(unsigned int threadIndex = ltsfIndex; threadIndex < numberOfWorkerThreads - 1; threadIndex = threadIndex + scheduleQCount) {
 						workerStatus[threadIndex+1]->resume();
 					}

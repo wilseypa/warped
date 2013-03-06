@@ -156,6 +156,8 @@ public:
 	// Release all the object locks during a catastrophic rollback.
 	void releaseObjectLocksRecovery();
 
+	void moveLP(int sourceObj, int destLTSF);
+
 private:
 	LockState** unprocessedQueueLockState;
 	LockState** processedQueueLockState;
@@ -205,7 +207,9 @@ private:
 	// ScheduleQueue (LTSF) Lookup Tables
 	ThreadedTimeWarpMultiSetLTSF** LTSFByObj;
 	ThreadedTimeWarpMultiSetLTSF** LTSFByThread;
-	int* LTSFObjId;
+	int **LTSFObjId;
+	#define OBJID 0
+	#define LTSFOWNER 1
 };
 
 #endif /* ThreadedTIMEWARPMULTISET_H_ */
