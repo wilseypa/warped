@@ -1,5 +1,5 @@
-#ifndef AND_GATE_APPLICATION
-#define AND_GATE_APPLICATION
+#ifndef FULLADDER_APPLICATION
+#define FULLADDER_APPLICATION
 
 #include <warped/Application.h>
 #include <warped/IntVTime.h>

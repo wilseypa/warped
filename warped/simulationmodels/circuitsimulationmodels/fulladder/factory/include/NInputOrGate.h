@@ -6,26 +6,25 @@
 #include "NInputGate.h"
 
 /** The NInputOrGate class.
-
-    This class represents an N input and gate.
+  This class represents an N input and gate.
 */
+
 class NInputOrGate : public NInputGate {
 public:
    
-   /**@name Public Class Methods of NInputOrGate. */
-   //@{
+  /**@name Public Class Methods of NInputOrGate. */
+  //@{
 
-   /// Default constructor
-   NInputOrGate(string &objectName, const int numInputs,/*const int numInValue,*/const int numOutputs,
-                 vector<string> *outputs, vector<int> *destInputPorts,
-                 int objectDelay);
-   /// Default Destructor
-   ~NInputOrGate(){}
+  /// Default constructor
+  NInputOrGate(string &objectName, const int numInputs,/*const int numInValue,*/const int numOutputs,
+               vector<string> *outputs, vector<int> *destInputPorts,int objectDelay);
+  /// Default Destructor
+  ~NInputOrGate(){}
 
-   /// compute the outputs of this gate
-   int computeOutput(const int* inputBits);
+  /// compute the outputs of this gate
+  int computeOutput(const int* inputBits);
   
-   //@} // End of Public Class Methods of NInputOrGate.
+  //@} // End of Public Class Methods of NInputOrGate.
 };
 
 #endif

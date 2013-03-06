@@ -47,11 +47,10 @@ public:
    
    /// update the output of this component
    virtual void updateOutput();
+   /// compute the output of this component
+   virtual int computeOutput(const int*) = 0;
 
-	 /// compute the output of this component
-	 virtual int computeOutput(const int*) = 0;
-
-  //@} // End of Public Class Methods of NInputGate.
+   //@} // End of Public Class Methods of NInputGate.
 
 protected:
 
@@ -70,8 +69,7 @@ protected:
    int numberOfInputs;
    /// record times of reading files
    int numInputValue;     
-
-	 //@} // End of Public Class Methods of NInputGate.
+   //@} // End of Public Class Methods of NInputGate.
 };
 
 #endif

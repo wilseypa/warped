@@ -13,37 +13,37 @@ using std::string;
 using std::vector;
 
 /**
-	The FileReaderWriter class.
+  The FileReaderWriter class.
 
-	This class is able to form a simulation object which can read the content from and 
-	write simulation results to files. When the circuit model runs, the object constructs 
-	events based on values read from files, then sends them to gates which connect to it.
+  This class is able to form a simulation object which can read the content from and 
+  write simulation results to files. When the circuit model runs, the object constructs 
+  events based on values read from files, then sends them to gates which connect to it.
 */
 
 class FileReaderWriter : public SimulationObject {
-	public:
-	/**@name Public Class Methods of FileReaderWriter. */
-   //@{
-	/// Default Constructor
-	FileReaderWriter(string &filename,int numgates,string io,vector<int> *desportid,
+  public:
+  /**@name Public Class Methods of FileReaderWriter. */
+  //@{
+  /// Default Constructor
+  FileReaderWriter(string &filename,int numgates,string io,vector<int> *desportid,
 	                 vector<string> *desgatename,int maxnumlines);
-	/// Default Destructor
+  /// Default Destructor
   virtual ~FileReaderWriter();
 
   /// get the name of this object
-	virtual const string &getName() const {return fileName; };
+  virtual const string &getName() const {return fileName; };
 
-	/// initialize this object
+  /// initialize this object
   virtual void initialize();
 							 
   /// finish up
-	virtual void finalize();
+  virtual void finalize();
 										 
   /// execute an event
-	virtual void executeProcess();
+  virtual void executeProcess();
 													 
-	/// allocate state for the kernel
-	virtual State* allocateState();
+  /// allocate state for the kernel
+  virtual State* allocateState();
 																 
   /// deallocate state for the kernel
   virtual void deallocateState(const State* state);
@@ -52,57 +52,57 @@ class FileReaderWriter : public SimulationObject {
   virtual void reclaimEvent(const Event *event);
 																						    
   /// report any errors in the simulation
-	virtual void reportError(const string& msg, SEVERITY level);
+  virtual void reportError(const string& msg, SEVERITY level);
 																											
   /// send envets to gates which connet to this object														 
-	void sendEvent(const int outputBitValue); 
+  void sendEvent(const int outputBitValue); 
 	
-	/// get a handle to a simulation input stream
-	SimulationStream* openInputFile(string& filename);
+  /// get a handle to a simulation input stream
+  SimulationStream* openInputFile(string& filename);
 	 
   /// determine whether there are more lines for reading or not
   bool haveMoreLines(SimulationStream* simPt);
 	
-	/// read one line from the file 
+  /// read one line from the file 
   string getLine(SimulationStream* simPt, ostringstream& ost);
 	
   /// clear the ostringstream object
   void clearOstringstream(ostringstream& ost);
 			
   /// change the string value to the bit value
-	int getBitValue(string logicBit);
+  int getBitValue(string logicBit);
 	 
-	/// open the output file
-	SimulationStream* openOutputFile(string& filename, ios::openmode mode);
+  /// open the output file
+  SimulationStream* openOutputFile(string& filename, ios::openmode mode);
   //@}//End of Public Class Methods of FileReaderWriter.
 
-	/**@name Private Class Attributes of FileReaderWriter*/
-	//@{
-	private:
+  /**@name Private Class Attributes of FileReaderWriter*/
+  //@{
+  private:
 
   /// input or output file name
-	string fileName;
+  string fileName;
 
-	/// indicate this file is input file or output file
+  /// indicate this file is input file or output file
   string IO;
 
   /// number of gates the file drive 
-	int numOfGates;
+  int numOfGates;
 
   /// destination port id 
-	vector<int> *desPortId;
+  vector<int> *desPortId;
 
-	/// names of object which the input file connects to
-	vector<string> *desGatesNames;
+  /// names of object which the input file connects to
+  vector<string> *desGatesNames;
 
-	/// simulation stream of the input file or the output file
-	SimulationStream* fileIoStream;  
+  /// simulation stream of the input file or the output file
+  SimulationStream* fileIoStream;  
 
   /// number of lines in the file will be prcessed 
   int maxNumLines;
 
   /// set of destination object handles
-	SimulationObject **outputHandles;
+  SimulationObject **outputHandles;
 
   //@} // End of Private Class Attributes of FileReaderWriter
 };
