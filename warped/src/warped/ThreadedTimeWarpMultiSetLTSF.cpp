@@ -1,7 +1,9 @@
 #include "ThreadedTimeWarpMultiSetLTSF.h"
 
-ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, int LTSFCountVal, const string syncMech, const string scheQScheme) {
+ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, int LTSFCountVal,
+        const string syncMech, const string scheQScheme, int **inLTSFObjId) {
 	objectCount = inObjectCount;
+    LTSFObjId = inLTSFObjId;
 
 	//scheduleQ scheme
 	scheduleQScheme = scheQScheme;
@@ -278,7 +280,7 @@ int ThreadedTimeWarpMultiSetLTSF::getScheduleQueueSize()
 		cout << "Invalid schedule queue scheme" << endl;
 	}
 }
-const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId, int **LTSFObjId)
+const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId)
 {
 	const Event* ret = NULL;
 	this->getScheduleQueueLock(threadId);

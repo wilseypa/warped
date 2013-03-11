@@ -37,19 +37,19 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 	// Assert whether thread count greater than or equal  to LTSF queue count
 	ASSERT(threadCount >= LTSFCount);
 
-	// Initialize schedule queues / setup lookup table to associate unprocessed
-	// objId with schedule queue 
-	for (int i=0; i < LTSFCount; i++) {
-		if(i < objectCount % LTSFCount) {
-			LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount + 1, LTSFCount, syncMechanism, scheduleQScheme);
-		} else {
-			LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount, LTSFCount, syncMechanism, scheduleQScheme);
-		}
-	}
-
 	LTSFByThread = new ThreadedTimeWarpMultiSetLTSF *[threadCount];
 	LTSFByObj = new ThreadedTimeWarpMultiSetLTSF *[objectCount];
 	LTSFObjId = new int *[objectCount]; 
+
+    // Initialize schedule queues / setup lookup table to associate unprocessed
+	// objId with schedule queue 
+	for (int i=0; i < LTSFCount; i++) {
+		if(i < objectCount % LTSFCount) {
+			LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount + 1, LTSFCount, syncMechanism, scheduleQScheme, LTSFObjId);
+		} else {
+			LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount, LTSFCount, syncMechanism, scheduleQScheme, LTSFObjId);
+		}
+	}
 
 	// Assign threads to LTSF queues
 	for (int i=0; i < threadCount; i++) {
@@ -316,7 +316,7 @@ const Event* ThreadedTimeWarpMultiSet::peekEvent(SimulationObject *simObj,
 	bool releaseWhileReturn = true;
 	SimulationObject *simObject = NULL;
 	if (simObj == NULL) {
-		ret = LTSFByThread[threadId-1]->peekIt(threadId, LTSFObjId);
+		ret = LTSFByThread[threadId-1]->peekIt(threadId);
 	} else if (simObj != NULL) {
 		unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
 		if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) {
