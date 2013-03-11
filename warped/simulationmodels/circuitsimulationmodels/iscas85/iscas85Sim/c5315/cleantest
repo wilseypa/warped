@@ -1,0 +1,13 @@
+#!/bin/bash 
+
+script_path=$(dirname "$0")
+
+FILE_NUM=5315
+
+for((i=1;i<=FILE_NUM;i++))
+do
+  rm -rf $script_path"/G$i"
+  rm -rf $script_path"/G$i~"
+done
+exit 0
+

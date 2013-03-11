@@ -69,9 +69,6 @@ protected:
    /// vector of destination object input port numbers
    vector<int> *destinationInputPorts;
 
-   /// vector of number of fanout objects on each port
-   /// vector<int> *fanOuts;
-
    /// delay of this object
    int delay;
 

@@ -31,11 +31,10 @@
 
 NInputAndGate::NInputAndGate(string &objectName, const int numInputs,
                              const int numObjects,
-                            /* const int numInValue,*/
                              vector<string> *outputs,
                              vector<int> *desInputPorts,
                              int objectDelay)
-   : NInputGate(objectName, numInputs, numObjects,/*numInValue*/outputs, desInputPorts,objectDelay){}
+                             :NInputGate(objectName, numInputs, numObjects,outputs, desInputPorts,objectDelay){}
 
 int
 NInputAndGate::computeOutput(const int* inputBits) {

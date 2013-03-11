@@ -52,13 +52,13 @@ LogicComponent::~LogicComponent(){
 
 void
 LogicComponent::initialize(){
-   if(numberOfOutputs != 0){
-      outputHandles = new SimulationObject *[numberOfOutputs];
-      for (int i = 0; i < numberOfOutputs; i++) {
-         outputHandles[i] = getObjectHandle((*outputNames)[i]);
-				 cout<<"the gate's des gate is " << (*outputNames)[i]<<endl;
-      }
-   }// else do nothing. this object is a sink
+  if(numberOfOutputs != 0){
+    outputHandles = new SimulationObject *[numberOfOutputs];
+    for (int i = 0; i < numberOfOutputs; i++) {
+      outputHandles[i] = getObjectHandle((*outputNames)[i]);
+      //cout<<"the gate's des gate is " << (*outputNames)[i]<<endl;
+    }
+  }// else do nothing. this object is a sink
 }
 
 void
@@ -69,8 +69,7 @@ LogicComponent::executeProcess(){}
 
 State*
 LogicComponent::allocateState(){
-  // cerr << "LogicComponent::allocateState() called !!" << endl;
-   return NULL;
+  return NULL;
 }
 
 void
@@ -90,24 +89,20 @@ LogicComponent::sendEvent(const int outputBitValue) {
    LogicEvent *newEvent = NULL;
    for(int count = 0; count < numberOfOutputs; count++){
 
-   cout<<getName()<<" will send an event "<<endl;
-	 
-      IntVTime sendTime = static_cast<const IntVTime&>(getSimulationTime());
-      double ldelay = 1.0;
-      IntVTime recvTime = sendTime +(int)ldelay;
-      SimulationObject *receiver = outputHandles[count]; 
-			cout<<"the receiver is "<<receiver->getName()<<endl;
-      newEvent = new LogicEvent(sendTime,
-                                recvTime,
-                                this,
-                                receiver);
-      newEvent->bitValue = outputBitValue;
-		  cout<<"OutputBitValue is "<<outputBitValue<<endl;
-      newEvent->sourcePort = 1;
-      newEvent->destinationPort = (*destinationInputPorts)[count];
-			cout<<"des port is :"<<newEvent->destinationPort<<endl;
-      receiver->receiveEvent(newEvent);
-    //  delete newEvent;
+   //cout<<getName()<<" will send an event "<<endl;
+     IntVTime sendTime = static_cast<const IntVTime&>(getSimulationTime());
+     double ldelay = 1.0;
+     IntVTime recvTime = sendTime +(int)ldelay;
+     SimulationObject *receiver = outputHandles[count]; 
+     //cout<<"the receiver is "<<receiver->getName()<<endl;
+     newEvent = new LogicEvent(sendTime,recvTime,this,receiver);
+     newEvent->bitValue = outputBitValue;
+     //cout<<"OutputBitValue is "<<outputBitValue<<endl;
+     newEvent->sourcePort = 1;
+     newEvent->destinationPort = (*destinationInputPorts)[count];
+     //cout<<"des port is :"<<newEvent->destinationPort<<endl;
+     receiver->receiveEvent(newEvent);
+     //  delete newEvent;
    }
 }
 

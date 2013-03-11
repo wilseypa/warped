@@ -16,7 +16,7 @@ public:
    //@{
 
    /// Default constructor
-   NInputAndGate(string &objectName, const int numInputs,/*const int numInValue,*/const int numOutputs,
+   NInputAndGate(string &objectName, const int numInputs,const int numOutputs,
                  vector<string> *outputs, vector<int> *destInputPorts,
                  int objectDelay);
    /// Default Destructor

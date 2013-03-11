@@ -13,10 +13,9 @@
 // intellectual property laws, and all other applicable laws of the
 // U.S., and the terms of this license.
 
-// Authors: Radharamanan Radhakrishnan  ramanan@ececs.uc.edu
-//          Xinyu Guo                   guox2@mail.uc.edu        
+// Authors: Xinyu Guo                   guox2@mail.uc.edu        
 //          Philip A. Wilsey            phil.wilsey@uc.edu
-
+//
 //---------------------------------------------------------------------------
 //
 // $Id: LogicEvent.cpp
