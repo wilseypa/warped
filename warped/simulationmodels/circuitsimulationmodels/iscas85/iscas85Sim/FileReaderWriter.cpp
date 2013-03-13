@@ -86,9 +86,9 @@ FileReaderWriter::executeProcess(){
       }
       //read one line and send an event to itself
       int lineprocessed = state->numLinesProcessed;
-      if(lineprocessed < maxNumLines){
-        ostringstream bitstring;
-        string bitS = getLine(fileIoStream,bitstring);
+      ostringstream bitstring;
+      string bitS = getLine(fileIoStream,bitstring);
+      if( bitS != "" ){ // Check if we are at the end of the file or not
         int bit = getBitValue(bitS);
         clearOstringstream(bitstring);
         LogicEvent *sendToSelf = new LogicEvent(sendTime,sendTime+1,this,this);
@@ -97,7 +97,9 @@ FileReaderWriter::executeProcess(){
         sendToSelf->setdestinationPort(0);
         state->numLinesProcessed++;
         this->receiveEvent(sendToSelf);
-      }
+      } else {
+					break;
+			}
     }	
     if("O"==IO){
       ostringstream outstream;
