@@ -44,6 +44,7 @@ Iscas85Application::Iscas85Application()
 int
 Iscas85Application::initialize( vector<string> &arguments ){
   string path="circuitsimulationmodels/iscas85/iscas85Sim/";
+  arguments[2] = path+arguments[2]+"/"+arguments[2]+"config";
 
   getArgumentParser().checkArgs( arguments );
 
