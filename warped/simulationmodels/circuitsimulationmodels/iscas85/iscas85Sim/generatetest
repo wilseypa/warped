@@ -27,6 +27,6 @@ do
 		echo $[ ($RANDOM % 2) ] >>$script_path"/G$j"
 	done
 done 
-echo -n "Finish filling out $NUM_INPUTS files. "
+echo -n "Finished filling out $NUM_INPUTS files."
 echo "The testcase is constructed!"
 exit 0
