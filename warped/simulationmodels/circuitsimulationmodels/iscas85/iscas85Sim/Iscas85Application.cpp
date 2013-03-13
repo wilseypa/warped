@@ -44,16 +44,6 @@ Iscas85Application::Iscas85Application()
 int
 Iscas85Application::initialize( vector<string> &arguments ){
   string path="circuitsimulationmodels/iscas85/iscas85Sim/";
-  if(("c2670config_small"==arguments[2])||"c2670config_large"==arguments[2])
-    arguments[2]=path+"c2670/"+arguments[2]; 
-  if(("c3540config_small"==arguments[2])||"c3540config_large"==arguments[2])
-    arguments[2]=path+"c3540/"+arguments[2]; // the configuration file name is in the arguments[2]
-  if(("c5315config_small"==arguments[2])||"c5315config_large"==arguments[2])
-    arguments[2]=path+"c5315/"+arguments[2];
-  if(("c6288config_small"==arguments[2])||"c6288config_large"==arguments[2])
-    arguments[2]=path+"c6288/"+arguments[2];
-  if(("c7552config_small"==arguments[2])||"c7552config_large"==arguments[2])
-    arguments[2]=path+"c7552/"+arguments[2];
 
   getArgumentParser().checkArgs( arguments );
 
