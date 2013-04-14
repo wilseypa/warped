@@ -38,11 +38,15 @@ static pthread_key_t threadKey;
 
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
 		unsigned int numberOfWorkerThreads, const string syncMechanism, 
-		const string scheduleQScheme, unsigned int scheduleQCount, 
+		const string loadBalancing, const string loadBalancingMetric, 
+		unsigned int intervalCount, const string scheduleQScheme, 
+		unsigned int scheduleQCount, 
 		Application *initApplication) :
-			numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism), 
-			scheduleQScheme(scheduleQScheme), scheduleQCount(scheduleQCount), masterID(0),
-			coastForwardTime(0), myrealFossilCollManager(0), myStateManager(0),
+			numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism),
+			loadBalancing(loadBalancing), loadBalancingMetric(loadBalancingMetric),
+			intervalCount(intervalCount), scheduleQScheme(scheduleQScheme), 
+			scheduleQCount(scheduleQCount), masterID(0), coastForwardTime(0),
+			myrealFossilCollManager(0), myStateManager(0),
 			messageBuffer(new LockedQueue<KernelMessage*> ),
 			workerStatus(new WorkerInformation*[numberOfWorkerThreads + 1]),
 			myOutputManager(0), mySchedulingManager(0), checkGVT(false),

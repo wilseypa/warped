@@ -24,8 +24,10 @@ template<class element> class LockedQueue;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
 	ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
-			const string syncMechanism, const string scheduleQScheme,
-			unsigned int scheduleQCount, Application *initApplication);
+			const string syncMechanism, const string loadBalancing, 
+			const string loadBalancingMetric, unsigned int intervalCount, 
+			const string scheduleQScheme, unsigned int scheduleQCount, 
+							Application *initApplication);
 	virtual ~ThreadedTimeWarpSimulationManager();
 	/** Return a handle to the state manager.
 
@@ -65,6 +67,18 @@ public:
 
 	const string getSyncMechanism() {
 		return syncMechanism;
+	}
+
+	const string getLoadBalancing() {
+		return loadBalancing;
+	}
+
+	const string getLoadBalancingMetric() {
+		return loadBalancingMetric;
+	}
+
+	int getLoadBalancingInterval() {
+		return intervalCount;
 	}
 
 	const string getScheduleQScheme() {
@@ -339,6 +353,15 @@ private:
 
 	//Specfied in the ThreadControl scope the configuraion file
 	const string syncMechanism;
+
+	//Specfied in the ThreadControl scope the configuraion file
+	const string loadBalancing;
+
+	//Specfied in the ThreadControl scope the configuraion file
+	const string loadBalancingMetric;
+
+	//Specified in the ThreadControl scope of the configuration file
+	unsigned int intervalCount;
 
 	//Specfiy the Scheduler scope of the configuraion file
 	const string scheduleQScheme;
