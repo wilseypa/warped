@@ -14,6 +14,9 @@ using std::endl;
 
 ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 		ThreadedTimeWarpSimulationManager* initSimulationManager) {
+	// Disable load balancing until explicitly enabled
+	lbType = 0;
+
 	//Input queues
 	objectCount = initSimulationManager->getNumberOfSimulationObjects();
 
@@ -65,6 +68,16 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 	vectorIterator = new vIterate[threadCount];
 	multisetIterator = new mIterate[threadCount];
 
+	// Load balancer - ininialize variables for use, and reset to zero
+	committedEventsByObj = new unsigned int[objectCount];
+	committedEventsByLTSF = new unsigned int[LTSFCount];
+	rolledBackEventsByObj = new unsigned int[objectCount];
+	rolledBackEventsByLTSF = new unsigned int[LTSFCount];
+	memset(rolledBackEventsByLTSF, 0, LTSFCount*sizeof(*rolledBackEventsByLTSF));
+	memset(committedEventsByObj, 0, objectCount*sizeof(*committedEventsByObj));
+	memset(committedEventsByLTSF, 0, LTSFCount*sizeof(*committedEventsByLTSF));
+	memset(rolledBackEventsByObj, 0, objectCount*sizeof(*rolledBackEventsByObj));
+
 	//Initializing Unprocessed Event Queue
 	for (int i = 0; i < objectCount; i++) {
 		multiset<const Event*, receiveTimeLessThanEventIdLessThan> *objSet =
@@ -84,6 +97,7 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 		LTSFObjId[i] = new int[2];
 		LTSFObjId[i][OBJID] = i / LTSFCount;
 		LTSFObjId[i][LTSFOWNER] = i % LTSFCount;
+
 		
 		
 		//LTSFByObj[i] = LTSF[ i / (objectCount / LTSFCount) ];
@@ -117,6 +131,28 @@ ThreadedTimeWarpMultiSet::~ThreadedTimeWarpMultiSet() {
 	//	deleting each Threads Iterator
 	delete vectorIterator;
 	delete multisetIterator;
+}
+
+// The following functions return the values necessary for load balancing
+unsigned int* ThreadedTimeWarpMultiSet::getCommittedEventsByObj() {
+	return committedEventsByObj;
+}
+unsigned int* ThreadedTimeWarpMultiSet::getCommittedEventsByLTSF() {
+	return committedEventsByLTSF;
+}
+unsigned int* ThreadedTimeWarpMultiSet::getRolledBackEventsByObj() {
+	return rolledBackEventsByObj;
+}
+unsigned int* ThreadedTimeWarpMultiSet::getRolledBackEventsByLTSF() {
+	return rolledBackEventsByLTSF;
+}
+int** ThreadedTimeWarpMultiSet::getObjectMapping() {
+	return LTSFObjId;
+}
+void ThreadedTimeWarpMultiSet::enLoadBalancer(
+		ThreadedTimeWarpLoadBalancer* loadBalancer) {
+	myLoadBalancer = loadBalancer;
+	lbType = 1;
 }
 
 // Moves the given LP to the new LP
@@ -510,6 +546,7 @@ void ThreadedTimeWarpMultiSet::rollback(SimulationObject *simObj,
 		}
 		tempCount = processedQueue[objId]->size() - tempCount;
 	}
+
 	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
 			<< " ) Object - " << objId << " Rollback returns : " << tempCount
 			<< " events back to Unprocessed Queue - " << threadId << endl;
@@ -519,6 +556,16 @@ void ThreadedTimeWarpMultiSet::rollback(SimulationObject *simObj,
 			processedQueue[objId]->end());
 	this->releaseProcessedLock(threadId, objId);
 
+	// Increment number of rolled back events
+	//cout << "rollback completed " << tempCount << " events rolled back, LTSF " << LTSFObjId[objId][LTSFOWNER] << endl;
+	__sync_fetch_and_add( &(rolledBackEventsByObj[objId]), tempCount);
+	__sync_fetch_and_add( &(rolledBackEventsByLTSF[ LTSFObjId[objId][LTSFOWNER] ]), tempCount);
+
+	// Perform calculation to see if a load balance 'action' is necessary
+	// Load balancing function is performed using the currently running thread
+	if (lbType) {
+		myLoadBalancer->rollbackBalanceCheck(LTSFObjId[objId][LTSFOWNER]);
+	}
 }
 void ThreadedTimeWarpMultiSet::fossilCollect(SimulationObject *simObj,
 		const VTime &fossilCollectTime, int threadId) {
@@ -630,6 +677,12 @@ void ThreadedTimeWarpMultiSet::fossilCollect(const Event *toRemove,
 }
 
 void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int threadId) {
+
+	// Increment number of committed events
+	//committedEventsByObj[objId]++;
+	__sync_fetch_and_add( &(committedEventsByObj[objId]), 1);
+	//committedEventsByLTSF[ LTSFObjId[objId][LTSFOWNER] ]++;
+	__sync_fetch_and_add( &(committedEventsByLTSF[ LTSFObjId[objId][LTSFOWNER] ]), 1);
 
 	const Event* firstEvent = NULL;
 	//ASSERT(this->isObjectScheduledBy(threadId, objId));

@@ -10,6 +10,7 @@
 #include "ThreadedStateManager.h"
 #include "ThreadedTimeWarpEventSet.h"
 #include "ThreadedOptFossilCollManager.h"
+#include "ThreadedTimeWarpLoadBalancer.h"
 
 class Application;
 //class ThreadedSchedulingManager;
@@ -19,6 +20,7 @@ class VTime;
 class WorkerInformation;
 class AtomicState;
 class ThreadedOptFossilCollManager;
+class ThreadedTimeWarpLoadBalancer;
 
 template<class element> class LockedQueue;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
@@ -410,6 +412,8 @@ private:
 	unsigned int numberOfRemoteAntimessages;
 
 	unsigned int numberOfLocalAntimessages;
+
+	ThreadedTimeWarpLoadBalancer* loadBalancer;
 };
 
 #endif /* ThreadedTIMEWARPSIMULATIONMANAGER_H_ */
