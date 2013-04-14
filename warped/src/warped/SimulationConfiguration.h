@@ -127,6 +127,12 @@ public:
 
 	const string getSyncMechanism() const;
 
+	const string getLoadBalancing() const;
+
+	const string getLoadBalancingMetric() const;
+
+	bool getLoadBalancingInterval(unsigned int &intervalCount) const;
+
 	bool getOptFossilCollPeriod(unsigned int &period);
 
 	bool getOptFossilCollMinSamples(unsigned int &minSamples);

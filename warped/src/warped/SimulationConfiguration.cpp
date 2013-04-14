@@ -80,6 +80,9 @@ public:
 
 	bool getWorkerThreadCount(unsigned int &workerThreadCount) const;
 	const string getSyncMechanism() const;
+	const string getLoadBalancing() const;
+	const string getLoadBalancingMetric() const;
+	bool getLoadBalancingInterval(unsigned int &intervalCount) const;
 
 	Implementation() :
 		myOuterScope(0) {
@@ -423,6 +426,19 @@ bool SimulationConfiguration::getWorkerThreadCount(
 
 const string SimulationConfiguration::getSyncMechanism() const {
 	return _impl->getSyncMechanism();
+}
+
+const string SimulationConfiguration::getLoadBalancing() const {
+	return _impl->getLoadBalancing();
+}
+
+const string SimulationConfiguration::getLoadBalancingMetric() const {
+	return _impl->getLoadBalancingMetric();
+}
+
+bool SimulationConfiguration::getLoadBalancingInterval(
+		unsigned int &intervalCount) const {
+	return _impl->getLoadBalancingInterval(intervalCount);
 }
 
 const ConfigurationChoice *
@@ -1003,6 +1019,43 @@ const string SimulationConfiguration::Implementation::getSyncMechanism() const {
 				"SyncMechanism");
 		if (scope != 0) {
 			retval = stringToUpper(scope->getStringValue());
+		}
+	}
+	return retval;
+}
+
+const string SimulationConfiguration::Implementation::getLoadBalancing() const {
+	string retval = "(none)";
+	if (getThreadControlScope() != 0) {
+		const ConfigurationChoice *scope = getThreadControlScope()->findChoice(
+				"LoadBalancing");
+		if (scope != 0) {
+			retval = stringToUpper(scope->getStringValue());
+		}
+	}
+	return retval;
+}
+
+const string SimulationConfiguration::Implementation::getLoadBalancingMetric() const {
+	string retval = "(none)";
+	if (getThreadControlScope() != 0) {
+		const ConfigurationChoice *scope = getThreadControlScope()->findChoice(
+				"LoadBalancingMetric");
+		if (scope != 0) {
+			retval = stringToUpper(scope->getStringValue());
+		}
+	}
+	return retval;
+}
+
+bool SimulationConfiguration::Implementation::getLoadBalancingInterval(
+		unsigned int &intervalCount) const {
+	bool retval = false;
+	const ConfigurationScope *scope = getThreadControlScope();
+	if (scope != 0) {
+		if (scope->getIntValue("LoadBalancingInterval") != -1) {
+			intervalCount = scope->getIntValue("LoadBalancingInterval");
+			retval = true;
 		}
 	}
 	return retval;

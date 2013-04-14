@@ -89,6 +89,15 @@ public:
 						rCur[nRung-1] = bucketWidth[nRung-1] = 0;
 					nRung--;
 				}
+			} else {
+				while( (++bucketIndex < numBucket[nRung-1]) && 
+					(true == RUNG(nRung-1,bucketIndex)->empty()) );
+				if(bucketIndex < numBucket[nRung-1]) {
+					rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
+				} else {
+					cout << "numBucket handling needs improvement." << endl;
+					return NULL;
+				}
 			}
 
 			if( true == bottom.empty() ) {
@@ -113,6 +122,7 @@ public:
 		}
 
 		/* Transfer events from Top to 1st rung of Ladder */
+		rCur[0] = rStart[0] + NUM_BUCKETS(0)*bucketWidth[0];
 		for(lIterate = top.begin(); lIterate != top.end(); ) {
 			bucketIndex = 
 				(unsigned int) ((*lIterate)->getReceiveTime().getApproximateIntTime() -
@@ -125,9 +135,12 @@ public:
 				RUNG(0,bucketIndex)->push_front(*lIterate);
 				lIterate = top.erase(lIterate);
 
-				/* Update the numBucket parameter */
+				/* Update the numBucket and rCur parameter */
 				if( numBucket[0] < bucketIndex+1 ) {
 					numBucket[0] = bucketIndex+1;
+				}
+				if( rCur[0] > rStart[0] + bucketIndex*bucketWidth[0] ) {
+					rCur[0] = rStart[0] + bucketIndex*bucketWidth[0];
 				}
 			}
 		}
@@ -151,6 +164,14 @@ public:
 		if ( numBucket[0] == bucketIndex+1) {
 			numBucket[0] = rStart[0] = rCur[0] = bucketWidth[0] = 0;
 			nRung--;
+		} else {
+			while( (++bucketIndex < numBucket[0]) && (true == RUNG(0,bucketIndex)->empty()) );
+			if(bucketIndex < numBucket[0]) {
+				rCur[0] = rStart[0] + bucketIndex*bucketWidth[0];
+			} else {
+				cout << "rung 1 numBucket handling needs improvement." << endl;
+				return NULL;
+			}
 		}
 
 		if( true == bottom.empty() ) {
@@ -197,12 +218,7 @@ public:
 	/* Check whether the LadderQ has any events or not */
 	inline bool empty() {
 
-		bool isEmpty = false;
-
-		if(0 == nRung) isEmpty = true;
-		isEmpty = ( isEmpty & top.empty() ) & bottom.empty();
-
-		return isEmpty;
+		return ( (0==nRung) & top.empty() & bottom.empty() );
 	}
 
 	/* Refers to the end of LadderQ; always returns NULL */
@@ -418,21 +434,23 @@ public:
 			if( NUM_BUCKETS(rungIndex) <= bucketIndex ) {
 				if(rungIndex > 0 ) {
 					cout << "Ran out of bucket space." << endl;
-					return NULL;
 				} else {
 					cout << "Rung 1 ran out of space." << endl;
-					return NULL;
 				}
+				return NULL;
 			}
 
+			/* Adjust the numBucket and rCur parameters */
 			if( numBucket[rungIndex] < bucketIndex+1 ) {
 				numBucket[rungIndex] = bucketIndex+1;
+			}
+			if( rCur[rungIndex] > rStart[rungIndex] + bucketIndex*bucketWidth[rungIndex] ) {
+				rCur[rungIndex] = rStart[rungIndex] + bucketIndex*bucketWidth[rungIndex];
 			}
 
 			RUNG(rungIndex,bucketIndex)->push_front(newEvent);
 
 			return newEvent;
-
 		}
 
 		/* If rung not found */
@@ -442,9 +460,15 @@ public:
 
 			} else { /* Check if failed to create a rung */
 
-				if( (false == create_new_rung(bottom.size(), 
-						(*bottom.begin())->getReceiveTime().getApproximateIntTime(), 
-							&isBucketWidthStatic)) && (false == isBucketWidthStatic) ) {
+				/* Check if new event to be inserted is smaller than what is present in BOTTOM */
+				unsigned int uiBucketStartVal = (*bottom.begin())->getReceiveTime().getApproximateIntTime();
+				if( uiBucketStartVal > newEvent->getReceiveTime().getApproximateIntTime() )
+				{
+					uiBucketStartVal = newEvent->getReceiveTime().getApproximateIntTime();
+				}
+
+				if( (false == create_new_rung(bottom.size(), uiBucketStartVal, &isBucketWidthStatic)) && 
+											(false == isBucketWidthStatic) ) {
 					cout << "Failed to create the required rung." << endl;
 					return NULL;
 				}
@@ -462,27 +486,27 @@ public:
 
 			for(mIterate = bottom.begin(); mIterate != bottom.end(); mIterate++) {
 
-				//temp
-				ASSERT(*mIterate != NULL);
-				//ASSERT((*mIterate)->getReceiveTime().getApproximateIntTime() >= rStart[nRung-1]);
-
 				bucketIndex = 
 					(unsigned int) (((*mIterate)->getReceiveTime().getApproximateIntTime() -
 								rStart[nRung-1]) / bucketWidth[nRung-1]);
 
 				if( NUM_BUCKETS(nRung-1) <= bucketIndex ) {
 					if(nRung > 1 ) {
-						cout << "Ran out of bucket space." << endl;
+						cout << "Ran out of bucket space. Need more." << endl;
 						return NULL;
 					} else {
 						cout << "Rung 1 needs more space (available = " << numRung0Buckets
-								 << ", required = " << bucketIndex << ")" << endl;
+								 << ", required = " << bucketIndex+1 << ")" << endl;
 						return NULL;
 					}
 				}
 
+				/* Adjust the numBucket and rCur parameters */
 				if( numBucket[nRung-1] < bucketIndex+1 ) {
 					numBucket[nRung-1] = bucketIndex+1;
+				}
+				if(mIterate == bottom.begin()) {
+					rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
 				}
 
 				RUNG(nRung-1,bucketIndex)->push_front(*mIterate);
@@ -495,10 +519,10 @@ public:
 							rStart[nRung-1]) / bucketWidth[nRung-1]);
 			if( NUM_BUCKETS(nRung-1) <= bucketIndex ) {
 				if(nRung > 1 ) {
-					cout << "Ran out of bucket space." << endl;
+					cout << "Ran out of bucket space. Needs more space." << endl;
 					return NULL;
 				} else {
-					cout << "3. Rung 1 needs more space." << endl;
+					cout << "Rung 1 needs more space. Always hungry." << endl;
 					return NULL;
 				}
 			}
@@ -506,16 +530,19 @@ public:
 			if( numBucket[nRung-1] < bucketIndex+1 ) {
 				numBucket[nRung-1] = bucketIndex+1;
 			}
+			if( rCur[nRung-1] > rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1] ) {
+				rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
+			}
 
 			RUNG(nRung-1,bucketIndex)->push_front(newEvent);
 
-			return newEvent;
 
 		} else { /* If BOTTOM is within threshold */
 
 			bottom.insert(newEvent);
-			return newEvent;
 		}
+
+		return newEvent;
 	}
 
 private:
@@ -564,7 +591,7 @@ private:
 				cout << "Max TS less than min TS." << endl;
 				return false;
 			} else if (minTS == maxTS) {
-				//cout << "Pretty unusual thing is happening." << endl;
+				cout << "Pretty unusual thing is happening." << endl;
 				bucketWidth[0] = MIN_BUCKET_WIDTH;
 			} else {
 				bucketWidth[0] = (maxTS - minTS + numEvents -1) / numEvents;
@@ -625,7 +652,7 @@ private:
 			isRungNotEmpty = false;
 			bucketIndex = 0;
 
-			if( (0 == nRung) || (MAX_RUNG_NUM <= nRung)) {
+			if( (0 == nRung) || (MAX_RUNG_NUM < nRung) ) {
 				if(MAX_RUNG_NUM <= nRung) {
 					cout << "Invalid number of rungs available for recurse_rung." << endl;
 				}
