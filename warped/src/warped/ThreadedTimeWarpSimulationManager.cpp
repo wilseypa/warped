@@ -348,7 +348,9 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 			}
 		}
 		// Initiate load balancer measurement / movement
-		loadBalancer->poll();
+		if (loadBalancing == "ON") {
+			loadBalancer->poll();
+		}
 		//Clear message Buffer
 		sendPendingMessages();
 		// numberOfWorkerThreads includes manager thread for some reason...
@@ -1046,8 +1048,10 @@ void ThreadedTimeWarpSimulationManager::configure(
 	// Setup load balancer
 	//Configurable *loadBalancer = myLoadBalancerFactory->allocate(configuration, this);
 	//myLoadBalancer = dynamic_cast<ThreadedTimeWarpLoadBalancer *>(loadBalancer);
-	loadBalancer = new ThreadedTimeWarpLoadBalancer(this, dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet), 100, 3);
-	dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet)->enLoadBalancer(loadBalancer);
+	if (loadBalancing == "ON") {
+		loadBalancer = new ThreadedTimeWarpLoadBalancer(this, dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet), 100, intervalCount);
+		dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet)->enLoadBalancer(loadBalancer);
+	}
 
 	// lets now set up and configure the state manager
 	const StateManagerFactory *myStateFactory = StateManagerFactory::instance();

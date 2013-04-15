@@ -29,6 +29,7 @@ private:
 	void updateOffsets();
 	double getMetricByLTSF(int LTSFId);
 	double getMetricByObj(int objId);
+	double getVariance();
 
 	int myMeasurementPeriod;
 	int myQuietPeriod;

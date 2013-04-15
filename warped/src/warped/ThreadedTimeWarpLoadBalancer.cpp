@@ -66,7 +66,6 @@ double ThreadedTimeWarpLoadBalancer::getMetricByLTSF(int LTSFId) {
 		cout << "committed = " << committedEvents << endl;
 		cout << "rolled back = " << rolledBackEvents << endl;
 	if (committedEvents != 0) {
-		//return ( (double)(committedEvents - rolledBackEvents) )/( (double)committedEvents);
 		return ( (double)committedEvents - (double)rolledBackEvents )/( (double)committedEvents);
 	}
 	return 0;
@@ -81,13 +80,31 @@ double ThreadedTimeWarpLoadBalancer::getMetricByObj(int objId) {
 	return 0;
 }
 
+// Returns the variance between the largest and smallest 'metric'
+double ThreadedTimeWarpLoadBalancer::getVariance() {
+	double minVal = 1000000;
+	double maxVal = 0;
+	for (int i=0; i<LTSFCount; i++) {
+		double workMetric = getMetricByLTSF(i);
+		// Update max
+		if (workMetric > maxVal) {
+			maxVal = workMetric;
+		}
+		// Update min
+		if (workMetric < minVal) {
+			minVal = workMetric;
+		}
+	}
+	return maxVal - minVal;
+}
+
 // Checks the current LTSF to see if a load balance should be performed
 void ThreadedTimeWarpLoadBalancer::rollbackBalanceCheck(int LTSFId) {
 	if ( outsideQuietPeriod() ) {
-		double workMetric = getMetricByLTSF(LTSFId);
-		cout << "metric = " << workMetric << endl;
+		double variance = getVariance();
+		cout << "variance = " << variance << endl;
 		//if (workMetric <= prevAvgMetric) {
-		if (workMetric <= 0.7) {
+		if (variance >= 0.2) {
 			lastRebalance.reset();
 			lastRebalance.start();
 			rebalance();
