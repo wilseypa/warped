@@ -1,0 +1,28 @@
+DFF_PROGRAM=DFFSim
+
+DFFSim_SOURCES= \
+	circuitsimulationmodels/iscas89/DFF/LogicEvent.h \
+	circuitsimulationmodels/iscas89/DFF/LogicEvent.cpp \
+	circuitsimulationmodels/iscas89/DFF/NInputGateState.h \
+	circuitsimulationmodels/iscas89/DFF/LogicComponent.h \
+	circuitsimulationmodels/iscas89/DFF/LogicComponent.cpp \
+	circuitsimulationmodels/iscas89/DFF/FileReaderWriter.h \
+	circuitsimulationmodels/iscas89/DFF/FileReaderWriter.cpp \
+        circuitsimulationmodels/iscas89/DFF/DFF.h \
+        circuitsimulationmodels/iscas89/DFF/DFFInitializer.h \
+        circuitsimulationmodels/iscas89/DFF/DFFInitializer.cpp \
+        circuitsimulationmodels/iscas89/DFF/InitializerState.h \
+	circuitsimulationmodels/iscas89/DFF/FileState.h \
+	circuitsimulationmodels/iscas89/DFF/NInputGate.h \
+	circuitsimulationmodels/iscas89/DFF/NInputGate.cpp \
+	circuitsimulationmodels/iscas89/DFF/NInputNandGate.h \
+	circuitsimulationmodels/iscas89/DFF/NInputNandGate.cpp \
+        circuitsimulationmodels/iscas89/DFF/NotGate.h \
+        circuitsimulationmodels/iscas89/DFF/NotGate.cpp \
+	circuitsimulationmodels/iscas89/DFF/DFFApplication.h \
+	circuitsimulationmodels/iscas89/DFF/DFFApplication.cpp \
+	circuitsimulationmodels/iscas89/DFF/DFFMain.cpp
+
+DFFSim_LDFLAGS=-static
+DFFSim_LDADD=$(top_builddir)/src/libwarped.la \
+		    $(top_builddir)/simulationmodels/libRnd.la

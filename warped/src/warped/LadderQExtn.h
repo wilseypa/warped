@@ -229,95 +229,6 @@ public:
 	/* Delete the specified event from LadderQ (if found) */
 	inline void erase(const Event *delEvent) {
 
-#if 0
-		cout << "Erase" << endl;
-		if(NULL == insert(delEvent))
-		{
-			cout << "Erase failed" << endl;
-		}
-
-#endif
-
-#if 1
-		list<const Event *>::iterator lIterate;
-		unsigned int rungIndex = 0, bucketIndex = 0, newBucketIndex = 0;
-		bool isDeleteSuccess = false, isRCurNew = false;
-
-		/* Check whether valid event received */
-		if(NULL == delEvent) {
-			cout << "Invalid event erase request received." << endl;
-			return;
-		}
-
-		/* Check and erase in top, if found */
-		if(false == top.empty()) {
-			minTS = maxTS = (*top.begin())->getReceiveTime().getApproximateIntTime();
-		}
-		for(lIterate = top.begin(); lIterate != top.end(); ) {
-			if(*lIterate == delEvent) {
-				lIterate = top.erase(lIterate);
-				isDeleteSuccess = true;
-			} else {
-				if( minTS > (*lIterate)->getReceiveTime().getApproximateIntTime() ) {
-					minTS = (*lIterate)->getReceiveTime().getApproximateIntTime();
-				}
-				if( maxTS < (*lIterate)->getReceiveTime().getApproximateIntTime() ) {
-					maxTS = (*lIterate)->getReceiveTime().getApproximateIntTime();
-				}
-				lIterate++;
-			}
-		}
-
-		/* Check and delete in rungs, if found */
-		for(rungIndex = 0; (rungIndex < nRung) && (false == isDeleteSuccess); rungIndex++) {
-			for(bucketIndex = 0; (bucketIndex < numBucket[rungIndex]) && 
-								(false == isDeleteSuccess); bucketIndex++) {
-				if(false == RUNG(rungIndex,bucketIndex)->empty()) {
-					for(lIterate = RUNG(rungIndex,bucketIndex)->begin();
-						lIterate != RUNG(rungIndex,bucketIndex)->end(); ) {
-						if(*lIterate == delEvent) {
-							lIterate = RUNG(rungIndex,bucketIndex)->erase(lIterate);
-							isDeleteSuccess = true;
-						} else {
-							lIterate++;
-						}
-					}
-				}
-			}
-
-			/* Update the rung parameters if deletion occured */
-			for(bucketIndex = 0; (bucketIndex < numBucket[rungIndex]) && 
-								(true == isDeleteSuccess); bucketIndex++) {
-				if(false == RUNG(rungIndex,bucketIndex)->empty()) {
-					if(false == isRCurNew) {
-						rCur[rungIndex] = rStart[rungIndex] + 
-									bucketIndex*bucketWidth[rungIndex];
-						isRCurNew = true;
-					}
-					newBucketIndex = bucketIndex;
-				}
-			}
-
-			/* If rung parameter were updated */
-			if(0 < newBucketIndex) {
-				numBucket[rungIndex] = newBucketIndex+1;
-			}
-
-			/* Check if last rung needs deletion */
-			if((true == isDeleteSuccess) && (false == isRCurNew) && (rungIndex == nRung-1)) {
-				rStart[nRung-1] = rCur[nRung-1] = bucketWidth[nRung-1] = numBucket[nRung-1] = 0;
-				nRung--;
-			}
-		}
-
-		/* Check and erase in bottom, if found */
-		if(false == isDeleteSuccess) {
-			(void) bottom.erase(delEvent);
-		}
-
-#endif
-#if 0
-		cout << "Enter erase" << endl;
 		list<const Event *>::iterator lIterate;
 		unsigned int rungIndex = 0, bucketIndex = 0;
 
@@ -327,16 +238,21 @@ public:
 			return;
 		}
 
-		cout << delEvent << endl;
-
 		/* Check and erase in top, if found */
 		if( (false == top.empty()) && (topStart < delEvent->getReceiveTime().getApproximateIntTime()) ) {
-			for(lIterate = top.begin(); lIterate != top.end(); lIterate++) {
-				if(*lIterate == delEvent) {
-					(void)top.erase(lIterate);
-					return;
+			for(lIterate = top.begin(); lIterate != top.end(); ) {
+				if(( (*lIterate)->getReceiveTime().getApproximateIntTime() == 
+							delEvent->getReceiveTime().getApproximateIntTime()) &&
+						((*lIterate)->getEventId() == delEvent->getEventId()) &&
+						((*lIterate)->getSender() == delEvent->getSender())	) {
+
+					lIterate = top.erase(lIterate);
+				} else {
+					lIterate++;
 				}
 			}
+			//cout << "Part 1" << endl;
+			return;
 		}
 
 		/* Step through rungs */
@@ -355,11 +271,17 @@ public:
 			}
 
 			rung_bucket = RUNG(rungIndex,bucketIndex);
+
 			if( false == rung_bucket->empty() ) {
-				for(lIterate = rung_bucket->begin(); lIterate != rung_bucket->end(); lIterate++) {
-					if(*lIterate == delEvent) {
-						(void)rung_bucket->erase(lIterate);
-						break;
+				for(lIterate = rung_bucket->begin(); lIterate != rung_bucket->end(); ) {
+					if(( (*lIterate)->getReceiveTime().getApproximateIntTime() == 
+								delEvent->getReceiveTime().getApproximateIntTime()) &&
+							((*lIterate)->getEventId() == delEvent->getEventId()) &&
+							((*lIterate)->getSender() == delEvent->getSender())	) {
+
+						lIterate = rung_bucket->erase(lIterate);
+					} else {
+						lIterate++;
 					}
 				}
 
@@ -384,15 +306,15 @@ public:
 					}
 				}
 			}
+			//cout << "Part 2" << endl;
 			return;
 		}
 
 		/* Check and erase from bottom, if present */
 		if(false == bottom.empty()) {
 			(void) bottom.erase(delEvent);
+			//cout << "Part 3" << endl;
 		}
-#endif
-
 	}
 
 	/* Inserts the specified event into LadderQ (if already not present) */
@@ -591,7 +513,6 @@ private:
 				cout << "Max TS less than min TS." << endl;
 				return false;
 			} else if (minTS == maxTS) {
-				cout << "Pretty unusual thing is happening." << endl;
 				bucketWidth[0] = MIN_BUCKET_WIDTH;
 			} else {
 				bucketWidth[0] = (maxTS - minTS + numEvents -1) / numEvents;
