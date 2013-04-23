@@ -105,22 +105,24 @@ void ThreadedTimeWarpLoadBalancer::rollbackBalanceCheck(int LTSFId) {
 		cout << "variance = " << variance << endl;
 		//if (workMetric <= prevAvgMetric) {
 		if (variance >= 0.2) {
-			lastRebalance.reset();
-			lastRebalance.start();
+			//lastRebalance.reset();
+			//lastRebalance.start();
 			rebalance();
+		} else {
+			updateOffsets();
 		}
 	}
 }
 
 // Check if a rebalance was performed within the given period
 bool ThreadedTimeWarpLoadBalancer::outsideQuietPeriod() {
-	return (lastRebalance.elapsed() > myQuietPeriod);
-	/*if (lastRebalance.elapsed() > myQuietPeriod) {
+	//return (lastRebalance.elapsed() > myQuietPeriod);
+	if (lastRebalance.elapsed() > myQuietPeriod) {
 		lastRebalance.reset();
 		lastRebalance.start();
 		return true;
 	}
-	return false;*/
+	return false;
 }
 
 void ThreadedTimeWarpLoadBalancer::rebalance() {
