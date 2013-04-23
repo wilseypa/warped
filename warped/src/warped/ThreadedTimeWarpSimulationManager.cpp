@@ -30,6 +30,7 @@
 #include "StragglerEvent.h"
 #include "ThreadedMatternGVTManager.h"
 #include "SimulationConfiguration.h"
+#include "ThreadedTimeWarpLoadBalancer.h"
 
 int WorkerInformation::globalStillBusyCount = 0;
 bool WorkerInformation::workRemaining = true;
@@ -38,11 +39,15 @@ static pthread_key_t threadKey;
 
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
 		unsigned int numberOfWorkerThreads, const string syncMechanism, 
-		const string scheduleQScheme, unsigned int scheduleQCount, 
+		const string loadBalancing, const string loadBalancingMetric, 
+		unsigned int intervalCount, const string scheduleQScheme, 
+		unsigned int scheduleQCount, 
 		Application *initApplication) :
-			numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism), 
-			scheduleQScheme(scheduleQScheme), scheduleQCount(scheduleQCount), masterID(0),
-			coastForwardTime(0), myrealFossilCollManager(0), myStateManager(0),
+			numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism),
+			loadBalancing(loadBalancing), loadBalancingMetric(loadBalancingMetric),
+			intervalCount(intervalCount), scheduleQScheme(scheduleQScheme), 
+			scheduleQCount(scheduleQCount), masterID(0), coastForwardTime(0),
+			myrealFossilCollManager(0), myStateManager(0),
 			messageBuffer(new LockedQueue<KernelMessage*> ),
 			workerStatus(new WorkerInformation*[numberOfWorkerThreads + 1]),
 			myOutputManager(0), mySchedulingManager(0), checkGVT(false),
@@ -53,6 +58,7 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
 			computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
 			rollbackCompleted(new bool[numberOfObjects]), inRecovery(false),
 			GVTTokenPending(false), TimeWarpSimulationManager(initApplication) {
+
 	LVT = &getZero();
 	LVTArray = new const VTime *[numberOfWorkerThreads + 1];
 	sendMinTimeArray = new const VTime *[numberOfWorkerThreads + 1];
@@ -340,6 +346,10 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 					resetGVTTokenPending();
 				}
 			}
+		}
+		// Initiate load balancer measurement / movement
+		if (loadBalancing == "ON") {
+			loadBalancer->poll();
 		}
 		//Clear message Buffer
 		sendPendingMessages();
@@ -1034,6 +1044,14 @@ void ThreadedTimeWarpSimulationManager::configure(
 	myEventSet = dynamic_cast<ThreadedTimeWarpEventSet *> (eventSet);
 	ASSERT( myEventSet != 0);
 	myEventSet->configure(configuration);
+
+	// Setup load balancer
+	//Configurable *loadBalancer = myLoadBalancerFactory->allocate(configuration, this);
+	//myLoadBalancer = dynamic_cast<ThreadedTimeWarpLoadBalancer *>(loadBalancer);
+	if (loadBalancing == "ON") {
+		loadBalancer = new ThreadedTimeWarpLoadBalancer(this, dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet), 100, intervalCount);
+		dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet)->enLoadBalancer(loadBalancer);
+	}
 
 	// lets now set up and configure the state manager
 	const StateManagerFactory *myStateFactory = StateManagerFactory::instance();

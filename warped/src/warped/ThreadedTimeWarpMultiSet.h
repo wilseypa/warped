@@ -18,6 +18,8 @@ using std::list;
 class Event;
 class NegativeEvent;
 class ThreadedTimeWarpSimulationManager;
+class ThreadedTimeWarpMultiSetLTSF;
+class ThreadedTimeWarpLoadBalancer;
 //class ThreadedTimeWarpMultiSetSchedulingManager;
 //class SimulationObject;
 
@@ -156,7 +158,15 @@ public:
 	// Release all the object locks during a catastrophic rollback.
 	void releaseObjectLocksRecovery();
 
+	// Load balancing functions
 	void moveLP(int sourceObj, int destLTSF);
+
+	unsigned int* getCommittedEventsByObj();
+	unsigned int* getCommittedEventsByLTSF();
+	unsigned int* getRolledBackEventsByObj();
+	unsigned int* getRolledBackEventsByLTSF();
+	int** getObjectMapping();
+	void enLoadBalancer(ThreadedTimeWarpLoadBalancer* loadBalancer);
 
 private:
 	LockState** unprocessedQueueLockState;
@@ -210,6 +220,15 @@ private:
 	int **LTSFObjId;
 	#define OBJID 0
 	#define LTSFOWNER 1
+
+	// Variables used for load balancing - arrays
+	// Reset to 0 at beginning of simulation.
+	unsigned int *committedEventsByObj;
+	unsigned int *committedEventsByLTSF;
+	unsigned int *rolledBackEventsByObj;
+	unsigned int *rolledBackEventsByLTSF;
+	ThreadedTimeWarpLoadBalancer* myLoadBalancer;
+	int lbType;
 };
 
 #endif /* ThreadedTIMEWARPMULTISET_H_ */
