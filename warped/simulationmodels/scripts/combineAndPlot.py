@@ -11,7 +11,7 @@ TITLE = "RAID Load Balancing Performance"
 # What to filter by (what data to use) - ex only use threads = 16
 FILTER = 1
 FILTERCOLUMN = "Threads"
-FILTERVALUE = "8"
+FILTERVALUE = "48"
 
 # Lines (what to split into lines by) - enter column header
 LINES = "LoadBalancing"
@@ -74,8 +74,8 @@ def main():
 
 	if FILTER:
 		reader = [i for i in reader if i[nFilterColumn] == FILTERVALUE]
-	reader = sorted(reader, key=operator.itemgetter(nLines), reverse=False)
-	reader = sorted(reader, key=operator.itemgetter(nXaxis), reverse=False)
+	reader = sorted(reader, key=lambda x: x[nLines], reverse=False)
+	reader = sorted(reader, key=lambda x: int(x[nXaxis]), reverse=False)
 
 	outData = {'header':[],'data':{}}
 	# First sorting criteria (loadBalancing) - different lines
