@@ -29,7 +29,7 @@
 using namespace std;
 
 int main (int argc, char* argv[]){
- 
+  
   char oneLine[LINE_LENGTH];  
   ifstream iscasBenchMark;
   ofstream simModelConfig;
@@ -55,28 +55,46 @@ int main (int argc, char* argv[]){
   while(iscasBenchMark.getline(oneLine,LINE_LENGTH)){ //for each line in the isacs85 benchmark
     if(true == isUsefull(oneLine))
       continue;
+    
     stripTokens(oneLine);
-    string NodeName;
-    string NodeNum;
+    string NodeName;  
+    string NodeNum;  
     istringstream thisLine(oneLine,istringstream::in);
     thisLine>>NodeName;
-    thisLine>>NodeNum;
-    addNodeVec(nodesVec,NodeName,NodeNum,gatesNum,numnameMap);
-    
+    thisLine>>NodeNum; 
+
+    int identity;
+    if("INPUT"==NodeName || "OUTPUT"==NodeName){
+      addNodeVec(nodesVec,NodeName,NodeNum,gatesNum,numnameMap);
+    }  
+    else{  
+      identity = extractNodeId(NodeName);
+      if(numnameMap.find(identity)!=numnameMap.end()){
+        string temp = numnameMap.find(identity)->second;
+        if('G'==temp[0])
+          addNodeVec(nodesVec,NodeName,NodeNum,gatesNum,numnameMap);
+      }
+      else
+        addNodeVec(nodesVec,NodeName,NodeNum,gatesNum,numnameMap);
+    }
+
     string inputGateNum;
     int portId = 0;
 			
     while(thisLine>>inputGateNum){//attach the information of the current gate to its input gates
 				  //cout<<"the inputGateNum is"<<inputGateNum<<endl;
-      int id = extractNodeId(inputGateNum);
+      int id = extractNodeId(NodeName);
       if(numnameMap.find(id)!=numnameMap.end()){// this node is in the vector
-        attachNode(nodesVec,inputGateNum,numnameMap.find(id)->second,portId);  
+        attachNode(nodesVec,NodeName,numnameMap.find(id)->second,inputGateNum,portId);  
       }
       else{ // this node is not in the vector
-        string gateType = searchBenchFile(inputGateNum,iscasBenchMark);    
+        int filePos = iscasBenchMark.tellg();
+        string gateType = searchBenchFile(inputGateNum,iscasBenchMark);
+        iscasBenchMark.seekg(filePos);    
         addNodeVec(nodesVec,inputGateNum,gateType,gatesNum,numnameMap);
-        id = extractNodeId(NodeName);
-        attachNode(nodesVec,NodeName,numnameMap.find(id)->second,portId);//
+        id = extractNodeId(NodeName); 
+        attachNode(nodesVec,NodeName,numnameMap.find(id)->second,inputGateNum,portId);//
+      
       }   
       portId++; 
     }
@@ -90,4 +108,4 @@ int main (int argc, char* argv[]){
   iscasBenchMark.close();
   simModelConfig.close();
   
-}  
+} 

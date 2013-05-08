@@ -91,7 +91,7 @@ void stripTokens(char(&singleLine)[LINE_LENGTH]){
 
 /*--detect the component type by seraching its ID in the bench file--*/
 /*--eg.in s536 bench, the gate with ID G60, its component type is NOR--*/
-string searchBenchFile(string ID, ifstream &file){
+string searchBenchFile(string ID, ifstream& file){
   char benchLine[LINE_LENGTH];
   string nodeID;
   string nodeType = "noType";
@@ -210,13 +210,15 @@ void addNodeVec(vector<CircuitNode*> *nodes,string thisNodeName,string thisNodeN
 }
 
 /*--attach the node to the end of a certain linked list--*/
-void attachNode(vector<CircuitNode*> *nodes,string thisNodeNum, string thisNodeName,int portid){
+void attachNode(vector<CircuitNode*> *nodes,string thisNodeNum, string thisNodeName,string attachTo, int portid){
   int size = nodes->size();
+  cout<<"the size of vec is "<<size<<endl; // debug 
+  cout<<"attach node "<<thisNodeNum<<endl;// debug 
   CircuitNode* inputNode = new CircuitNode();
   inputNode->nodeNum =thisNodeNum;
   inputNode->nodeName =thisNodeName;
   for(int n = size-1; n >= 0 ; n--){
-    if((*nodes)[n]->nodeNum == thisNodeNum){
+    if((*nodes)[n]->nodeNum == attachTo){
       CircuitNode* nextNodePt = (*nodes)[n]->nextNode;
       CircuitNode* currentPt =nextNodePt;
       if(nextNodePt==NULL){
