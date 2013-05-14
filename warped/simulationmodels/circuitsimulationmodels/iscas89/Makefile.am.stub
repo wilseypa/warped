@@ -34,5 +34,4 @@ iscas89Sim_SOURCES= \
 
 iscas89Sim_LDFLAGS=-static
 iscas89Sim_LDADD=$(top_builddir)/src/libwarped.la \
-                    $(top_builddir)/simulationmodels/libRnd.la
-~                                                                  
+		$(top_builddir)/simulationmodels/libRnd.la
