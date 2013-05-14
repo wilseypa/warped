@@ -16,6 +16,12 @@
 //Authors: Xinyu Guo                   guox2@mail.uc.edu
 //         Philip A. Wilsey            phil.wilsey@uc.edu
 
+//----------------------------------------------------------------------
+//
+//  $Id: Iscas89Application.cpp
+//
+//----------------------------------------------------------------------
+
 #include "Iscas89Application.h"
 #include "LogicEvent.h"
 #include "FileReaderWriter.h"
@@ -25,6 +31,7 @@
 #include "NInputNandGate.h"
 #include "NInputNorGate.h"
 #include "NotGate.h"
+#include "DFF.h"
 #include <warped/PartitionInfo.h>
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
@@ -33,6 +40,8 @@
 #include "iostream"
 #include "fstream"
 #include "stdlib.h"
+
+#define PATH  "circuitsimulationmodels/iscas89/iscas89Sim/"
 
 using namespace std;
 
@@ -43,9 +52,9 @@ Iscas89Application::Iscas89Application()
 
 int
 Iscas89Application::initialize( vector<string> &arguments ){
-  string path="circuitsimulationmodels/iscas85/iscas85Sim/";
-  arguments[2] = path+arguments[2]+"/"+arguments[2]+"config";
-
+  string path= PATH;  //"circuitsimulationmodels/iscas89/iscas89Sim/";
+  arguments[2] = path+arguments[2]+"/"+arguments[2]+"config"; 
+  cout<<"configuration file is : "<<arguments[2]<<endl;  
   getArgumentParser().checkArgs( arguments );
 
   if( inputFileName.empty() ){
@@ -99,6 +108,7 @@ Iscas89Application::getPartitionInfo(unsigned int numberOfProcessorsAvailable){
 
   for(int i=0; i < numFileObjects; i++){
     configfile>>fileName>>numOfGates>>type;	
+    cout<<"file name is: "<<fileName<<endl;
     vector<int> *desPortId = new vector<int>;
     vector<string> *desGatesNames = new vector<string>;
 		 
@@ -197,6 +207,20 @@ Iscas89Application::getPartitionInfo(unsigned int numberOfProcessorsAvailable){
         // cout << "building object with R !"<<endl;
         // cout << "the address of the object is " << newObject<<endl;
       }
+      else if ("D" == gate){
+        DFF* newDFF = new DFF(myObjName,
+                              numberOfInputs,
+                              numberOfOutputs,
+                              outputObjectNames,
+                              destinationPorts,
+                              delay);
+        newDFF->genDFFObj();
+        vector<SimulationObject*> *DFFobjects = newDFF->getDFFObjects();
+        int size = DFFobjects->size();
+        for(int i = 0; i < size; i++){
+          objects->push_back((*DFFobjects)[i]);  
+        }  
+      }
       else {
         if("NOT"==gate1){
           SimulationObject *newObject = new NotGate(myObjName,
@@ -211,8 +235,8 @@ Iscas89Application::getPartitionInfo(unsigned int numberOfProcessorsAvailable){
 	  objects->push_back(newObject);
 	}
 
-       if("NOR"==gate1){
-         SimulationObject *newObject = new NotGate(myObjName,
+        if("NOR"==gate1){
+          SimulationObject *newObject = new NotGate(myObjName,
                                                    numberOfInputs,numberOfOutputs,outputObjectNames,
                                                    destinationPorts,delay);	
          objects->push_back(newObject);
