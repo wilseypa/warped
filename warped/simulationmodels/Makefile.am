@@ -18,6 +18,12 @@ include rnd/Makefile.am.stub
 # SMMP stuff
 include smmp/Makefile.am.stub
 # iscas85 stuff
-include circuitsimulationmodels/iscas85/Makefile.am.stub
+# include circuitsimulationmodels/iscas85/Makefile.am.stub
+# DFF stuff
+# include circuitsimulationmodels/iscas89/Makefile.am.DFF
+# iscas89 stuff
+include circuitsimulationmodels/iscas89/Makefile.am.stub
+# fulladder stuff
+# include circuitsimulationmodels/fulladder/Makefile.am.stub
 
-noinst_PROGRAMS = $(PING_PONG_PROGRAM) $(UNIT_TEST_PROGRAM) $(ADAPT_TEST_PROGRAM) $(PHOLD_PROGRAM) $(RAID_PROGRAM) $(SMMP_PROGRAM) $(ISCAS85_PROGRAM) 
+noinst_PROGRAMS = $(PING_PONG_PROGRAM) $(UNIT_TEST_PROGRAM) $(ADAPT_TEST_PROGRAM) $(PHOLD_PROGRAM) $(RAID_PROGRAM) $(SMMP_PROGRAM) $(ISCAS89_PROGRAM) #$(FULLADDER_PROGRAM)
