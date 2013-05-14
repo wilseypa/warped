@@ -27,18 +27,12 @@
 #include <vector>
 #include <map>
 
-#define AND_NUM   0
-#define OR_NUM    1
-#define NAND_NUM  2
-#define XOR_NUM   3
-#define NOT_NUM   4
-#define NOR_NUM   5
-#define DFF_NUM   6
-#define FILES_NUM 7
-#define GATES_NUM 8
+#define FILES_NUM 0
+#define GATES_NUM 1
 #define LINE_LENGTH 256
 #define LINE_NUMBER 8
 #define OBJECT_DELAY 1
+#define FILE_PATH  "circuitsimulationmodels/iscas89/iscas89Sim/s526/"
 
 using namespace std;
 
@@ -68,9 +62,9 @@ int extractNodeId(string nName){
 
 /*--get rid of comments and empty lines--*/
 bool isUsefull(char(&singleLine)[LINE_LENGTH]){
-  bool usefull = false;
+  bool usefull = true;
   if('#' == singleLine[0] || '\0'==singleLine[0])
-    usefull = true;
+    usefull = false;
   return usefull;
 }
 
@@ -89,6 +83,16 @@ void stripTokens(char(&singleLine)[LINE_LENGTH]){
     }
 }
 
+/*--produce a name for a node--*/
+string genNodeName(int id, string type){
+  string thisNodeName;
+  stringstream out;
+  out<<id;
+  string curNum = out.str();
+  thisNodeName = type + curNum;
+  return thisNodeName; 
+}
+
 /*--detect the component type by seraching its ID in the bench file--*/
 /*--eg.in s536 bench, the gate with ID G60, its component type is NOR--*/
 string searchBenchFile(string ID, ifstream& file){
@@ -96,7 +100,7 @@ string searchBenchFile(string ID, ifstream& file){
   string nodeID;
   string nodeType = "noType";
   while(file.getline(benchLine,LINE_LENGTH)){
-    if(true == isUsefull(benchLine)) 
+    if(!isUsefull(benchLine)) 
       continue;
     stripTokens(benchLine);
     istringstream curLine(benchLine,istringstream::in);
@@ -109,111 +113,36 @@ string searchBenchFile(string ID, ifstream& file){
 }	
 
 /*--push new node to the nodes vector--*/
-void addNodeVec(vector<CircuitNode*> *nodes,string thisNodeName,string thisNodeNum,int(&gNum)[9],
-                map<int,string> &numNameMap){
-  int nId;
+void addNodeVec(vector<CircuitNode*> *nodes,string thisNodeName,string thisNodeNum,map<int,string> &numNameMap){
   CircuitNode* currentNode = new CircuitNode();
-
-  if(thisNodeName == "INPUT"){ //construct the node with the type INPUT
-    gNum[FILES_NUM]++; //numOfFiles++;
+  int nId;
+  if(thisNodeName == "INPUT" || thisNodeName == "OUTPUT"){ //construct the node with the type INPUT
     currentNode->nodeName =thisNodeName;
-    nId = extractNodeId(thisNodeNum);
-    numNameMap[nId] = thisNodeNum;
     currentNode->nodeNum = thisNodeNum;
     currentNode->inputPortId=0;
     currentNode->nextNode = NULL;
     nodes->push_back(currentNode);
-    //cout<<"this is the INPUT node !"<<endl;
-  }
-  else if(thisNodeName == "OUTPUT"){//construct the node with the type OUTPUT
-    gNum[FILES_NUM]++; //numOfFiles++;
-    currentNode->nodeName =thisNodeName;
-    nId = extractNodeId(thisNodeNum);
-    numNameMap[nId] = thisNodeNum;
-    currentNode->nodeNum = thisNodeNum;
-    currentNode->inputPortId=0;
-    currentNode->nextNode = NULL;
-    nodes->push_back(currentNode);
-      //cout<<"this is the OUTPUT node!"<<endl;
+    if(thisNodeName == "INPUT"){
+      nId = extractNodeId(thisNodeNum);
+      numNameMap[nId] = thisNodeNum;
+    }
   }
   else{ // construct other gates 
-    //string curNodeNum = thisNodeName;//this value hold the node number for any gate
-    currentNode->nodeNum = thisNodeName;//curNodeNum;
+    currentNode->nodeNum = thisNodeName;
     nId = extractNodeId(thisNodeName);
-    string gateName = thisNodeNum;
-    stringstream out;
-    //cout<<"this is the gate!"<<endl;
-    //check the gate name,and count how many gates in the benchmark
-    if("AND"==gateName) {
-      gNum[GATES_NUM]++;//numOfGates++;
-      gNum[AND_NUM]++;  //andNum++;
-      out<<gNum[AND_NUM];
-      string curNum = out.str();
-      gateName = gateName + curNum;
-      numNameMap[nId]=gateName;
-    }
-    if("OR"==gateName){
-      gNum[GATES_NUM]++;//numOfGates++;
-      gNum[OR_NUM]++;   //orNum++;
-      out<<gNum[OR_NUM];
-      string curNum = out.str();
-      gateName = gateName + curNum;
-      numNameMap[nId]=gateName;
-    }
-    if("NAND"==gateName){
-      gNum[GATES_NUM]++;  //numOfGates++;
-      gNum[NAND_NUM]++;   //nandNum++;
-      out<<gNum[NAND_NUM];//nandNum;
-      string curNum = out.str();
-      gateName = gateName + curNum;
-      numNameMap[nId]=gateName;
-    }
-    if("NOR"==gateName){
-      gNum[GATES_NUM]++; //numOfGates++;
-      gNum[NOR_NUM]++;   //norNum++;
-      out<<gNum[NOR_NUM];//norNum;
-      string curNum = out.str();
-      gateName = gateName + curNum;
-      numNameMap[nId]=gateName;
-    }
-    if("NOT"==gateName){
-      gNum[GATES_NUM]++; //numOfGates++;
-      gNum[NOT_NUM]++;   //notNum++;
-      out<<gNum[NOT_NUM];//notNum;
-      string curNum = out.str();
-      gateName = gateName + curNum;
-      numNameMap[nId]=gateName;
-    }
-    if("XOR"==gateName){
-      gNum[GATES_NUM]++; //numOfGates++;
-      gNum[XOR_NUM]++;   //xorNum++;
-      out<<gNum[XOR_NUM];//xorNum;
-      string curNum = out.str();
-      gateName = gateName + curNum;
-      numNameMap[nId]=gateName;
-    }
-    /*detect D-flip flop*/
-    if("DFF"==gateName){
-      gNum[GATES_NUM]++; 
-      gNum[DFF_NUM]++;   //numOfDFFs++;
-      out<<gNum[DFF_NUM];//numOfDFFs;
-      string curNum = out.str();
-      gateName = gateName + curNum;
-      numNameMap[nId]=gateName;
-    }
+    string gateName = genNodeName(nId,thisNodeNum); 
     currentNode->nodeName = gateName;
     currentNode->inputPortId = 0;//this Id should always be 0 when the node is at the beginning at
                                  //the linklist
     currentNode->nextNode = NULL;
     nodes->push_back(currentNode);
+    numNameMap[nId] = gateName;
   }
 }
 
 /*--attach the node to the end of a certain linked list--*/
 void attachNode(vector<CircuitNode*> *nodes,string thisNodeNum, string thisNodeName,string attachTo, int portid){
   int size = nodes->size();
-  cout<<"the size of vec is "<<size<<endl; // debug 
-  cout<<"attach node "<<thisNodeNum<<endl;// debug 
   CircuitNode* inputNode = new CircuitNode();
   inputNode->nodeNum =thisNodeNum;
   inputNode->nodeName =thisNodeName;
@@ -238,11 +167,20 @@ void attachNode(vector<CircuitNode*> *nodes,string thisNodeNum, string thisNodeN
     }
   }
 }
+/*--given the name of a gate, judge whether it's DFF or not--*/
+bool isDFF(string gateName){
+  bool is = false;
+  string temp = gateName;
+  string DFF = temp.substr(0,3);
+  if("DFF"==DFF){
+    is = true;
+  }
+  return is;
+}
 
 /*--generate one configuration line for ISCAS89 circuit simulation model--*/
 void genConfigLine(int position,vector<CircuitNode*> *nodesVec,ofstream& outputStream,
-                   vector<int>* numInputs,int lineId,string path){
-//      int lineNum = 8; // 
+                   map<string,int>& gatesInputs,string path){ 
   vector<int> inPortId;
   vector<string> gatesName;
   CircuitNode* first = (*nodesVec)[position];
@@ -258,14 +196,17 @@ void genConfigLine(int position,vector<CircuitNode*> *nodesVec,ofstream& outputS
       gatesName.push_back(current->nodeName);
       inPortId.push_back(current->inputPortId);
       next=next->nextNode;
-      cout<<"list length is :"<<listLength<<endl;//}
-    }//while
+      //cout<<"list length is :"<<listLength<<endl;
+    }
     if("INPUT"==ioType){ // generate one line for the configuration file, the information is for the input file. 
       outputStream<<first->nodeNum<<" ";
       outputStream<<listLength<<" "<<"I"<<" ";
       for(int i = 0; i < listLength;i++){
         outputStream<<inPortId[i]<<" ";}
       for(int i = 0; i < listLength;i++){
+        if(isDFF(gatesName[i])){
+          gatesName[i] = gatesName[i]+"NAND1";
+        }
         outputStream<<gatesName[i]<<" ";}
         outputStream<<LINE_NUMBER<<endl;
       }
@@ -275,38 +216,42 @@ void genConfigLine(int position,vector<CircuitNode*> *nodesVec,ofstream& outputS
          if(first->nodeNum==(*nodesVec)[i]->nodeNum){// find an output gate 
            isToFile = true;
            outputStream<<first->nodeName<<" ";
-           outputStream<<(*numInputs)[lineId]<<" ";
+           outputStream<<gatesInputs.find(first->nodeNum)->second<<" ";//outputStream<<(*numInputs)[lineId]<<" ";
            outputStream<<"1"<<" ";
            outputStream<<path+(*nodesVec)[i]->nodeNum<<" "; //output file name
            outputStream<<"0"<<" "<<OBJECT_DELAY<<endl;}
          }
          if(isToFile==false){
-           outputStream<<first->nodeName<<" "<<(*numInputs)[lineId]<<" "<<listLength<<" ";
+           outputStream<<first->nodeName<<" "<<gatesInputs.find(first->nodeNum)->second<<" "<<listLength<<" ";
            for(int i = 0; i < listLength;i++){
+             if(isDFF(gatesName[i])){
+               gatesName[i]=gatesName[i]+"NAND1";
+             }
              outputStream<<gatesName[i]<<" ";}
            for(int i = 0; i < listLength;i++){
              outputStream<<inPortId[i]<<" ";}
              outputStream<<OBJECT_DELAY<<endl;}}
-  }//if
+  }
   else{
     outputStream<<first->nodeNum<<" "<<0<<" "<<"O"<<" ";
     outputStream<<0<<" "<<"null"<<" "<<LINE_NUMBER<<endl;}
 }
 
 /*--generate the simulation configuration file for a ISCAS89 circuit --*/
-void conFileGen(vector<CircuitNode*> *nodes,ofstream& conFile,int(&gNum)[9],
-                vector<int>* numinputs){
+void conFileGen(vector<CircuitNode*> *nodes,ofstream& conFile,int (&gNum) [2],
+                map<string,int>& gateinputNumber){
+  string PATH = FILE_PATH;
+  conFile<<PATH<<endl;
   conFile<<gNum[FILES_NUM]<<endl;
   conFile<<gNum[GATES_NUM]<<endl;
-  string filePath = "circuitsimulationmodels/iscas89/iscas89Sim/s536/";
-
+  string filePath = FILE_PATH;
   int size =nodes->size();
   for (int i = 0; i < size; i++){
-    genConfigLine(i, nodes,conFile,numinputs,i,filePath );
+    genConfigLine(i, nodes,conFile,gateinputNumber,filePath );
   }
 }
 
-/*--for the debugging purpose : shows the content in linked lists --*/
+/*--for the debugging purpose : display the content in linked lists --*/
 void showContent(vector<CircuitNode*> *nodes){
   int size = nodes->size();
   for(int i = 0; i < size; i++){
