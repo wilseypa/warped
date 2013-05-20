@@ -1,28 +1,37 @@
-DFF_PROGRAM=DFFSim
+ISCAS89_PROGRAM=iscas89Sim
 
-DFFSim_SOURCES= \
-	circuitsimulationmodels/iscas89/DFF/LogicEvent.h \
-	circuitsimulationmodels/iscas89/DFF/LogicEvent.cpp \
-	circuitsimulationmodels/iscas89/DFF/NInputGateState.h \
-	circuitsimulationmodels/iscas89/DFF/LogicComponent.h \
-	circuitsimulationmodels/iscas89/DFF/LogicComponent.cpp \
-	circuitsimulationmodels/iscas89/DFF/FileReaderWriter.h \
-	circuitsimulationmodels/iscas89/DFF/FileReaderWriter.cpp \
-        circuitsimulationmodels/iscas89/DFF/DFF.h \
-        circuitsimulationmodels/iscas89/DFF/DFFInitializer.h \
-        circuitsimulationmodels/iscas89/DFF/DFFInitializer.cpp \
-        circuitsimulationmodels/iscas89/DFF/InitializerState.h \
-	circuitsimulationmodels/iscas89/DFF/FileState.h \
-	circuitsimulationmodels/iscas89/DFF/NInputGate.h \
-	circuitsimulationmodels/iscas89/DFF/NInputGate.cpp \
-	circuitsimulationmodels/iscas89/DFF/NInputNandGate.h \
-	circuitsimulationmodels/iscas89/DFF/NInputNandGate.cpp \
-        circuitsimulationmodels/iscas89/DFF/NotGate.h \
-        circuitsimulationmodels/iscas89/DFF/NotGate.cpp \
-	circuitsimulationmodels/iscas89/DFF/DFFApplication.h \
-	circuitsimulationmodels/iscas89/DFF/DFFApplication.cpp \
-	circuitsimulationmodels/iscas89/DFF/DFFMain.cpp
+iscas89Sim_SOURCES= \
+        circuitsimulationmodels/iscas89/iscas89Sim/LogicEvent.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/LogicEvent.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputGateState.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/LogicComponent.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/LogicComponent.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/FileReaderWriter.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/FileReaderWriter.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/FileState.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputGate.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputGate.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputAndGate.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputAndGate.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputXorGate.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputXorGate.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputOrGate.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputOrGate.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputNandGate.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputNandGate.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/NotGate.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/NotGate.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputNorGate.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/NInputNorGate.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/DFF.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/DFF.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/DFFInitializer.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/DFFInitializer.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/InitializerState.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/Iscas89Application.h \
+        circuitsimulationmodels/iscas89/iscas89Sim/Iscas89Application.cpp \
+        circuitsimulationmodels/iscas89/iscas89Sim/Iscas89Main.cpp
 
-DFFSim_LDFLAGS=-static
-DFFSim_LDADD=$(top_builddir)/src/libwarped.la \
-		    $(top_builddir)/simulationmodels/libRnd.la
+iscas89Sim_LDFLAGS=-static
+iscas89Sim_LDADD=$(top_builddir)/src/libwarped.la \
+		$(top_builddir)/simulationmodels/libRnd.la

@@ -22,6 +22,9 @@ using namespace std;
 #define RUNG(x,y) (((x)==0) ? (rung0[(y)]) : (rung1_to_n[(x)-1][(y)]))
 #define NUM_BUCKETS(x) (((x)==0) ? (numRung0Buckets) : (MAX_BUCKET_NUM))
 
+#define BOTTOM_RELAX     1
+
+/* Ladder Queue class */
 class LadderQueue {
 
 public:
@@ -78,7 +81,11 @@ public:
 		if(nRung > 0) { /* Check required because recurse_rung() can affect nRung value */
 			for(lIterate = RUNG(nRung-1,bucketIndex)->begin(); 
 					lIterate != RUNG(nRung-1,bucketIndex)->end(); lIterate++) {
+#if BOTTOM_RELAX
+				bottom.push_back(*lIterate);
+#else
 				bottom.insert(*lIterate);
+#endif
 			}
 			RUNG(nRung-1,bucketIndex)->clear();
 
@@ -154,7 +161,11 @@ public:
 
 		for(lIterate = RUNG(0,bucketIndex)->begin(); 
 				lIterate != RUNG(0,bucketIndex)->end(); lIterate++) {
+#if BOTTOM_RELAX
+			bottom.push_back(*lIterate);
+#else
 			bottom.insert(*lIterate);
+#endif
 		}
 
 		/* Clear that bucket */
@@ -312,7 +323,11 @@ public:
 
 		/* Check and erase from bottom, if present */
 		if(false == bottom.empty()) {
+#if BOTTOM_RELAX
+			bottom.remove(delEvent);
+#else
 			(void) bottom.erase(delEvent);
+#endif
 			//cout << "Part 3" << endl;
 		}
 	}
@@ -399,12 +414,20 @@ public:
 			/* Intentionally let the bottom continue to overflow */
 			//ref sec 2.4 of ladderq + when bucket width becomes static
 			if( true == isBucketWidthStatic ) {
+#if BOTTOM_RELAX
+				bottom.push_back(newEvent);
+#else
 				bottom.insert(newEvent);
+#endif
 				return newEvent;
 			}
 
 			/* Transfer bottom to new rung */
+#if BOTTOM_RELAX
+			list<const Event*>::iterator mIterate;
+#else
 			multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
+#endif
 
 			for(mIterate = bottom.begin(); mIterate != bottom.end(); mIterate++) {
 
@@ -460,8 +483,11 @@ public:
 
 
 		} else { /* If BOTTOM is within threshold */
-
+#if BOTTOM_RELAX
+			bottom.push_back(newEvent);
+#else
 			bottom.insert(newEvent);
+#endif
 		}
 
 		return newEvent;
@@ -487,8 +513,11 @@ private:
 	unsigned int        rCur[MAX_RUNG_NUM];
 
 	/* Bottom */
+#if BOTTOM_RELAX
+	list<const Event *> bottom;
+#else
 	multiset<const Event *, receiveTimeLessThanEventIdLessThan> bottom;
-
+#endif
 
 	/* Create (here implicitly allocate) a new rung */
 	inline bool create_new_rung(unsigned int numEvents, unsigned int initStartAndCurVal, bool *isBucketWidthStatic) {

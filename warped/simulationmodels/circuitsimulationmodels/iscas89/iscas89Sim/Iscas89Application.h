@@ -7,7 +7,7 @@
 class Iscas89Application : public Application{
 public:
 
-  Iscas85Application();
+  Iscas89Application();
 
   int initialize( vector<string> &arguments);
 
