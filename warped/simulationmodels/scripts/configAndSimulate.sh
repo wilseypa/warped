@@ -29,7 +29,7 @@ function set_config {
 	sed -i "s/WorkerThreadCount : [0-9]*$/WorkerThreadCount : "$threads"/g" $configFile
 	sed -i "s/ScheduleQScheme : [A-Z]*$/ScheduleQScheme : "$scheduleQScheme"/g" $configFile
 	sed -i "s/ScheduleQCount : [0-9]*$/ScheduleQCount : "$scheduleQCount"/g" $configFile
-	sed -i "s/LoadBalancing: [A-Z]*$/LoadBalancing : "$loadBalancing"/g" $configFile
+	sed -i "s/LoadBalancing : [A-Z]*$/LoadBalancing : "$loadBalancing"/g" $configFile
 	sed -i "s/LoadBalancingMetric : [A-Za-z]*$/LoadBalancingMetric : "$loadBalancingMetric"/g" $configFile
 	sed -i "s/LoadBalancingInterval : [0-9]*$/LoadBalancingInterval : "$loadBalancingInterval"/g" $configFile
 }
