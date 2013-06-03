@@ -32,6 +32,8 @@ TimeWarpSimulationManagerFactory::allocate(
 		unsigned int intervalCount = 0;
 		//Specify the schedule queue scheme
 		string scheduleQScheme = "(none)";
+		//Specify the schedule queue causality type
+		string causalityType = "(none)";
 		//Count the number of schedule queues, if none specified try reading the proc file
 		unsigned int scheduleQCount = 0;
 
@@ -54,13 +56,16 @@ TimeWarpSimulationManagerFactory::allocate(
 		if ( (scheduleQScheme = configuration.getScheduleQScheme()) == "(none)" ) {
 			cerr << "Schedule Queue scheme has not been mentioned in the file!" << endl;
 		}
+		if ( (causalityType = configuration.getCausalityType()) == "(none)" ) {
+			cerr << "Schedule Queue causality type has not been mentioned in the file!" << endl;
+		}
 		if (!configuration.getScheduleQCount(scheduleQCount)) {
 			cerr << "Number of schedule queues has not been mentioned in the file!" << endl;
 		}
 		ThreadedTimeWarpSimulationManager *retvalue = 0;
         	retvalue = new ThreadedTimeWarpSimulationManager(numberOfWorkerThreads, syncMechanism, 
 					loadBalancing, loadBalancingMetric, intervalCount, 
-						scheduleQScheme, scheduleQCount, (Application *) parent);
+						scheduleQScheme, causalityType, scheduleQCount, (Application *) parent);
 		return retvalue;
 	} else {
 		retval = new TimeWarpSimulationManager((Application *) parent);

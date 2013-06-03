@@ -10,7 +10,7 @@
 #include "NegativeEvent.h"
 #include "EventFunctors.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "LadderQ.h"
+#include "LadderQExtn.h"
 #include "SplayTree.h"
 
 using std::multiset;
@@ -23,7 +23,8 @@ class ThreadedTimeWarpSimulationManager;
 class ThreadedTimeWarpMultiSetLTSF {
 public:
 	// Creates an LTSF queue with 'objectCount' input queues
-	ThreadedTimeWarpMultiSetLTSF(int objectCount, int LTSFCountVal, const string syncMechanism, const string scheduleQScheme, int **inLTSFObjId);
+	ThreadedTimeWarpMultiSetLTSF(int objectCount, int LTSFCountVal, const string syncMechanism, 
+			const string scheduleQScheme, const string causalityType, int **inLTSFObjId);
 	~ThreadedTimeWarpMultiSetLTSF();
 
 	void getScheduleQueueLock(int threadId);

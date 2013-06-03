@@ -116,6 +116,7 @@ public:
 	bool schedulerTypeIs(const string &testValue) const;
 	const string getSchedulerType() const;
 	const string getScheduleQScheme() const;
+	const string getCausalityType() const;
 	bool getScheduleQCount(unsigned int &scheduleQCount) const;
 
 	bool stateManagerTypeIs(const string &testValue) const;
