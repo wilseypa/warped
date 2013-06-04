@@ -49,14 +49,13 @@ public:
 	// Sets lowest object positions
 	void setLowestObjectPosition(int threadId, int index);
 
-	void insertEventUpdate(int objId, const Event* newEvent);
-
 	const Event* removeLP(int objId);
 	int addLP(int oldLockOwner);
 
 	// Inserts new event into scheduleQueue and updates lowestObjectPosition
 	void insertEvent(int objId, const Event* newEvent);
-	void insertEventEnd(int objId);
+	// Inserts a blank event
+	void insertEmptyEvent(int objId);
 
 	// Erases the given event from the given objId, skipping the first time ??
 	void eraseSkipFirst(int objId);
@@ -64,7 +63,7 @@ public:
 	int getScheduleQueueSize();
 
 	// ??
-	const Event* peekIt(int threadId);
+	const Event* peek(int threadId);
 
 	void getObjectLock(int threadId, int objId);
 

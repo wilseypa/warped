@@ -94,6 +94,7 @@ const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int thread
 }
 
 // Lock based Counting -- Don't call this function in a loop
+// No one uses this - possibly remove
 int ThreadedTimeWarpMultiSetLTSF::getMessageCount(int threadId) {
 	int count = 0;
 	getScheduleQueueLock(threadId);
@@ -231,7 +232,7 @@ void ThreadedTimeWarpMultiSetLTSF::insertEvent(int objId, const Event* newEvent)
 		cout << "Invalid schedule queue scheme" << endl;
 	}
 }
-void ThreadedTimeWarpMultiSetLTSF::insertEventEnd(int objId)
+void ThreadedTimeWarpMultiSetLTSF::insertEmptyEvent(int objId)
 {
 	if( scheduleQScheme == "MULTISET" ) {
 		lowestObjectPosition[objId] = scheduleQueue->end();
@@ -280,7 +281,7 @@ int ThreadedTimeWarpMultiSetLTSF::getScheduleQueueSize()
 		cout << "Invalid schedule queue scheme" << endl;
 	}
 }
-const Event* ThreadedTimeWarpMultiSetLTSF::peekIt(int threadId)
+const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 {
 	const Event* ret = NULL;
 	this->getScheduleQueueLock(threadId);

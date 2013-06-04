@@ -352,7 +352,7 @@ const Event* ThreadedTimeWarpMultiSet::peekEvent(SimulationObject *simObj,
 	bool releaseWhileReturn = true;
 	SimulationObject *simObject = NULL;
 	if (simObj == NULL) {
-		ret = LTSFByThread[threadId-1]->peekIt(threadId);
+		ret = LTSFByThread[threadId-1]->peek(threadId);
 	} else if (simObj != NULL) {
 		unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
 		if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) {
@@ -699,7 +699,7 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int th
 	if (firstEvent != NULL) {
 		LTSFByObj[objId]->insertEvent(LTSFObjId[objId][OBJID], firstEvent);
 	} else {
-		LTSFByObj[objId]->insertEventEnd(LTSFObjId[objId][OBJID]);
+		LTSFByObj[objId]->insertEmptyEvent(LTSFObjId[objId][OBJID]);
 	}
 
 	utils::debug <<" ( "<< threadId << ") Returning object " <<objId <<" back to SCheQ"<<endl;
