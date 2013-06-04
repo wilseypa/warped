@@ -30,7 +30,7 @@ class LadderQueue {
 public:
 
 	/* Default constructor */
-	inline LadderQueue() {
+	inline LadderQueue(const string causalityType) {
 		maxTS = minTS = topStart = nRung = 0;
 		numRung0Buckets = 0;
 		std::fill_n( bucketWidth, MAX_RUNG_NUM, 0 );
@@ -50,6 +50,7 @@ public:
 				rung1_to_n[rungIndex][bucketIndex] = rung_bucket;
 			}
 		}
+		eventCausality = causalityType;
 	}
 
 	/* Destructor */
@@ -513,6 +514,7 @@ private:
 	unsigned int        rCur[MAX_RUNG_NUM];
 
 	/* Bottom */
+	string              eventCausality;
 #if BOTTOM_RELAX
 	list<const Event *> bottom;
 #else

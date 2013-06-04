@@ -57,6 +57,7 @@ public:
 	bool schedulerTypeIs(const string &testValue) const;
 	const string getSchedulerType() const;
 	const string getScheduleQScheme() const;
+	const string getCausalityType() const;
 	bool getScheduleQCount(unsigned int &scheduleQCount) const;
 
 	bool stateManagerTypeIs(const string &testValue) const;
@@ -345,6 +346,10 @@ const string SimulationConfiguration::getSchedulerType() const {
 
 const string SimulationConfiguration::getScheduleQScheme() const {
 	return _impl->getScheduleQScheme();
+}
+
+const string SimulationConfiguration::getCausalityType() const {
+	return _impl->getCausalityType();
 }
 
 bool SimulationConfiguration::getScheduleQCount(
@@ -879,6 +884,18 @@ const string SimulationConfiguration::Implementation::getScheduleQScheme() const
 	if (getSchedulerScope() != 0) {
 		const ConfigurationChoice *type = getSchedulerScope()->findChoice(
 				"ScheduleQScheme");
+		if (type != 0) {
+			retval = stringToUpper(type->getStringValue());
+		}
+	}
+	return retval;
+}
+
+const string SimulationConfiguration::Implementation::getCausalityType() const {
+	string retval = "(none)";
+	if (getSchedulerScope() != 0) {
+		const ConfigurationChoice *type = getSchedulerScope()->findChoice(
+				"CausalityType");
 		if (type != 0) {
 			retval = stringToUpper(type->getStringValue());
 		}

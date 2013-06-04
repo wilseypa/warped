@@ -29,6 +29,7 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 
 	int threadCount = initSimulationManager->getNumberofThreads();
 	scheduleQScheme = initSimulationManager->getScheduleQScheme();
+	causalityType   = initSimulationManager->getCausalityType();
 
 	LTSFCount = initSimulationManager->getScheduleQCount();
 
@@ -48,9 +49,11 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 	// objId with schedule queue 
 	for (int i=0; i < LTSFCount; i++) {
 		if(i < objectCount % LTSFCount) {
-			LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount + 1, LTSFCount, syncMechanism, scheduleQScheme, LTSFObjId);
+			LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount + 1, 
+					LTSFCount, syncMechanism, scheduleQScheme, causalityType, LTSFObjId);
 		} else {
-			LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount, LTSFCount, syncMechanism, scheduleQScheme, LTSFObjId);
+			LTSF[i] = new ThreadedTimeWarpMultiSetLTSF(objectCount/LTSFCount, 
+					LTSFCount, syncMechanism, scheduleQScheme, causalityType, LTSFObjId);
 		}
 	}
 

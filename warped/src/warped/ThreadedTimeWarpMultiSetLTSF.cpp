@@ -1,19 +1,18 @@
 #include "ThreadedTimeWarpMultiSetLTSF.h"
 
 ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, int LTSFCountVal,
-        const string syncMech, const string scheQScheme, int **inLTSFObjId) {
+        const string syncMech, const string scheQScheme, const string causalityType, int **inLTSFObjId) {
 	objectCount = inObjectCount;
-    LTSFObjId = inLTSFObjId;
+	LTSFObjId = inLTSFObjId;
 
 	//scheduleQ scheme
 	scheduleQScheme = scheQScheme;
 
 	// Set up scheduleQueue (LTSF queue)
 	if( scheduleQScheme == "MULTISET" ) {
-		scheduleQueue = new multiset<const Event*,
-				receiveTimeLessThanEventIdLessThan> ;
+		scheduleQueue = new multiset<const Event*,receiveTimeLessThanEventIdLessThan> ;
 	} else if( scheduleQScheme == "LADDERQ" ) {
-		ladderQ = new LadderQueue;
+		ladderQ = new LadderQueue(causalityType);
 	} else if( scheduleQScheme == "SPLAYTREE" ) {
 		splayTree = new SplayTree;
 	} else {

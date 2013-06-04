@@ -212,6 +212,7 @@ private:
 	//ScheduleQueues (LTSF)
 	ThreadedTimeWarpMultiSetLTSF** LTSF;
 	string scheduleQScheme;
+	string causalityType;
 	int LTSFCount;
 
 	// ScheduleQueue (LTSF) Lookup Tables

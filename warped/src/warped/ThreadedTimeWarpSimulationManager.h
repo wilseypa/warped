@@ -28,8 +28,8 @@ public:
 	ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
 			const string syncMechanism, const string loadBalancing, 
 			const string loadBalancingMetric, unsigned int intervalCount, 
-			const string scheduleQScheme, unsigned int scheduleQCount, 
-							Application *initApplication);
+			const string scheduleQScheme, const string causalityType, 
+			unsigned int scheduleQCount, Application *initApplication);
 	virtual ~ThreadedTimeWarpSimulationManager();
 	/** Return a handle to the state manager.
 
@@ -85,6 +85,10 @@ public:
 
 	const string getScheduleQScheme() {
 		return scheduleQScheme;
+	}
+
+	const string getCausalityType() {
+		return causalityType;
 	}
 
 	unsigned int getScheduleQCount() {
@@ -367,6 +371,9 @@ private:
 
 	//Specfiy the Scheduler scope of the configuraion file
 	const string scheduleQScheme;
+
+	//Specfiy the Scheduler causality type of the configuraion file
+	const string causalityType;
 
 	//Specified in the Scheduler scope of the configuration file
 	unsigned int scheduleQCount;
