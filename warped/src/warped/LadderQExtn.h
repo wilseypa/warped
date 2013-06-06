@@ -22,7 +22,7 @@ using namespace std;
 #define RUNG(x,y) (((x)==0) ? (rung0[(y)]) : (rung1_to_n[(x)-1][(y)]))
 #define NUM_BUCKETS(x) (((x)==0) ? (numRung0Buckets) : (MAX_BUCKET_NUM))
 
-#define BOTTOM_RELAX     1
+#define BOTTOM_RELAX     0
 
 /* Ladder Queue class */
 class LadderQueue {

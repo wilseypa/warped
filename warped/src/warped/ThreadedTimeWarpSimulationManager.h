@@ -27,7 +27,8 @@ class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
 	ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
 			const string syncMechanism, const string loadBalancing, 
-			const string loadBalancingMetric, unsigned int intervalCount, 
+			const string loadBalancingMetric, const string loadBalancingTrigger, 
+			unsigned int intervalCount, 
 			const string scheduleQScheme, const string causalityType, 
 			unsigned int scheduleQCount, Application *initApplication);
 	virtual ~ThreadedTimeWarpSimulationManager();
@@ -77,6 +78,10 @@ public:
 
 	const string getLoadBalancingMetric() {
 		return loadBalancingMetric;
+	}
+
+	const string getLoadBalancingTrigger() {
+		return loadBalancingTrigger;
 	}
 
 	int getLoadBalancingInterval() {
@@ -365,6 +370,9 @@ private:
 
 	//Specfied in the ThreadControl scope the configuraion file
 	const string loadBalancingMetric;
+
+	//Specfied in the ThreadControl scope the configuraion file
+	const string loadBalancingTrigger;
 
 	//Specified in the ThreadControl scope of the configuration file
 	unsigned int intervalCount;

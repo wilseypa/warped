@@ -28,6 +28,8 @@ TimeWarpSimulationManagerFactory::allocate(
 		string loadBalancing = "(none)";
 		//Specify the load balancing metric
 		string loadBalancingMetric = "(none)";
+		//Specify the load balancing trigger 
+		string loadBalancingTrigger = "(none)";
 		//Read the specified interval for load balancing
 		unsigned int intervalCount = 0;
 		//Specify the schedule queue scheme
@@ -50,6 +52,9 @@ TimeWarpSimulationManagerFactory::allocate(
 		if ( (loadBalancingMetric = configuration.getLoadBalancingMetric()) == "(none)" ) {
 			cerr << "Load balancing metric has not been mentioned in the file!" << endl;
 		}
+		if ( (loadBalancingTrigger = configuration.getLoadBalancingTrigger()) == "(none)" ) {
+			cerr << "Load balancing trigger has not been mentioned in the file!" << endl;
+		}
 		if (!configuration.getLoadBalancingInterval(intervalCount)) {
 			cerr << "Load balancing interval has not been mentioned in the file!" << endl;
 		}
@@ -64,7 +69,7 @@ TimeWarpSimulationManagerFactory::allocate(
 		}
 		ThreadedTimeWarpSimulationManager *retvalue = 0;
         	retvalue = new ThreadedTimeWarpSimulationManager(numberOfWorkerThreads, syncMechanism, 
-					loadBalancing, loadBalancingMetric, intervalCount, 
+					loadBalancing, loadBalancingMetric, loadBalancingTrigger, intervalCount, 
 						scheduleQScheme, causalityType, scheduleQCount, (Application *) parent);
 		return retvalue;
 	} else {

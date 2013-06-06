@@ -83,6 +83,7 @@ public:
 	const string getSyncMechanism() const;
 	const string getLoadBalancing() const;
 	const string getLoadBalancingMetric() const;
+	const string getLoadBalancingTrigger() const;
 	bool getLoadBalancingInterval(unsigned int &intervalCount) const;
 
 	Implementation() :
@@ -439,6 +440,10 @@ const string SimulationConfiguration::getLoadBalancing() const {
 
 const string SimulationConfiguration::getLoadBalancingMetric() const {
 	return _impl->getLoadBalancingMetric();
+}
+
+const string SimulationConfiguration::getLoadBalancingTrigger() const {
+	return _impl->getLoadBalancingTrigger();
 }
 
 bool SimulationConfiguration::getLoadBalancingInterval(
@@ -1058,6 +1063,18 @@ const string SimulationConfiguration::Implementation::getLoadBalancingMetric() c
 	if (getThreadControlScope() != 0) {
 		const ConfigurationChoice *scope = getThreadControlScope()->findChoice(
 				"LoadBalancingMetric");
+		if (scope != 0) {
+			retval = stringToUpper(scope->getStringValue());
+		}
+	}
+	return retval;
+}
+
+const string SimulationConfiguration::Implementation::getLoadBalancingTrigger() const {
+	string retval = "(none)";
+	if (getThreadControlScope() != 0) {
+		const ConfigurationChoice *scope = getThreadControlScope()->findChoice(
+				"LoadBalancingTrigger");
 		if (scope != 0) {
 			retval = stringToUpper(scope->getStringValue());
 		}

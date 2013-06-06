@@ -132,6 +132,8 @@ public:
 
 	const string getLoadBalancingMetric() const;
 
+	const string getLoadBalancingTrigger() const;
+
 	bool getLoadBalancingInterval(unsigned int &intervalCount) const;
 
 	bool getOptFossilCollPeriod(unsigned int &period);
