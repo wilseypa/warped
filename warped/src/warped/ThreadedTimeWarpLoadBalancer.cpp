@@ -48,18 +48,6 @@ void ThreadedTimeWarpLoadBalancer::updateOffsets() {
 	cout << "Offsets updated" << endl;
 }
 
-void ThreadedTimeWarpLoadBalancer::poll() {
-	if ( checkMeasurementPeriod() )	{
-		// Start a measurement
-		cout << "Starting load balancer measurement" << endl;
-		// Print out stats for all LTSF queues
-		for (int i=0; i<LTSFCount; i++) {
-			double workMetric = getMetricByLTSF(i);
-			cout << i << ": rollbackBalanceCheck, metric = " << workMetric << endl;
-		}
-	}
-}
-
 double ThreadedTimeWarpLoadBalancer::getMetricByLTSF(int LTSFId) {
 	unsigned committedEvents = committedEventsByLTSF[LTSFId] - LcommittedEventsByLTSF[LTSFId];
 	unsigned rolledBackEvents = rolledBackEventsByLTSF[LTSFId] - LrolledBackEventsByLTSF[LTSFId];
@@ -99,7 +87,7 @@ double ThreadedTimeWarpLoadBalancer::getVariance() {
 }
 
 // Checks the current LTSF to see if a load balance should be performed
-void ThreadedTimeWarpLoadBalancer::rollbackBalanceCheck() {
+void ThreadedTimeWarpLoadBalancer::balanceCheck() {
 	if ( outsideQuietPeriod() ) {
 		double variance = getVariance();
 		cout << "variance = " << variance << endl;

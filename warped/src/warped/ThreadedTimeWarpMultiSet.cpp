@@ -567,7 +567,7 @@ void ThreadedTimeWarpMultiSet::rollback(SimulationObject *simObj,
 	// Perform calculation to see if a load balance 'action' is necessary
 	// Load balancing function is performed using the currently running thread
 	if (lbType) {
-		myLoadBalancer->rollbackBalanceCheck();
+		myLoadBalancer->balanceCheck();
 	}
 }
 void ThreadedTimeWarpMultiSet::fossilCollect(SimulationObject *simObj,

@@ -349,8 +349,8 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 			}
 		}
 		// Initiate load balancer measurement / movement
-		if (loadBalancing == "ON" && loadBalancingTrigger == "MasterPoll") {
-			loadBalancer->poll();
+		if (loadBalancing == "ON" && loadBalancingTrigger == "MASTERPOLL") {
+			loadBalancer->balanceCheck();
 		}
 		//Clear message Buffer
 		sendPendingMessages();
@@ -1051,7 +1051,7 @@ void ThreadedTimeWarpSimulationManager::configure(
 	//myLoadBalancer = dynamic_cast<ThreadedTimeWarpLoadBalancer *>(loadBalancer);
 	if (loadBalancing == "ON") {
 		loadBalancer = new ThreadedTimeWarpLoadBalancer(this, dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet), 100, intervalCount);
-		if (loadBalancingTrigger == "Rollback") {
+		if (loadBalancingTrigger == "ROLLBACK") {
 			dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet)->enLoadBalancer(loadBalancer);
 		}
 	}
