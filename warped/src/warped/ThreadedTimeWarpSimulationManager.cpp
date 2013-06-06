@@ -349,7 +349,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 			}
 		}
 		// Initiate load balancer measurement / movement
-		if (loadBalancing == "ON") {
+		if (loadBalancing == "ON" && loadBalancingTrigger == "MasterPoll") {
 			loadBalancer->poll();
 		}
 		//Clear message Buffer
@@ -1051,7 +1051,9 @@ void ThreadedTimeWarpSimulationManager::configure(
 	//myLoadBalancer = dynamic_cast<ThreadedTimeWarpLoadBalancer *>(loadBalancer);
 	if (loadBalancing == "ON") {
 		loadBalancer = new ThreadedTimeWarpLoadBalancer(this, dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet), 100, intervalCount);
-		dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet)->enLoadBalancer(loadBalancer);
+		if (loadBalancingTrigger == "Rollback") {
+			dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet)->enLoadBalancer(loadBalancer);
+		}
 	}
 
 	// lets now set up and configure the state manager

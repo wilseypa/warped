@@ -1,4 +1,4 @@
-# Combines and averages the given csv file(s)
+# Combines and averages the given csv file(s) using the given settings
 
 from __future__ import print_function
 import csv, sys
@@ -42,7 +42,7 @@ def median(mylist):
         return (sorts[length / 2] + sorts[length / 2 - 1]) / 2.0
     return sorts[length / 2]
 
-def plot(data, title, xaxisLabel, yaxisLabel, linePreface):
+def plot(data, title, xaxisLabel, yaxisLabel, linePreface, outFileName):
 	g = Gnuplot.Gnuplot()
 	g.title(title)
 	g("set terminal postscript eps size 3.5,2.62 enhanced color font 'Helvetica,20' linewidth 2")
@@ -58,8 +58,9 @@ def plot(data, title, xaxisLabel, yaxisLabel, linePreface):
 	g.plot(*d)
 
 def main():
-	fileName = sys.argv[1]
-	reader = csv.reader(open(fileName,'rb'))
+	inFileName = sys.argv[1]
+	outFileName = sys.argv[2]
+	reader = csv.reader(open(inFileName,'rb'))
 	header = reader.next()
 
 	writer = open("avg_data", "wb")
@@ -94,7 +95,7 @@ def main():
 				outData['data'][label] = []
 			outData['data'][label].append(medVal)
 
-	plot(outData, TITLE, XAXISLABEL, YAXISLABEL, LINEPREFACE)
+	plot(outData, TITLE, XAXISLABEL, YAXISLABEL, LINEPREFACE, outFileName)
 
 if __name__ == "__main__":
     main()

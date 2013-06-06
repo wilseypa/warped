@@ -19,7 +19,7 @@ public:
 			int measurementPeriod,
 			int quietPeriod);
 	~ThreadedTimeWarpLoadBalancer();
-	void rollbackBalanceCheck(int LTSFId);
+	void rollbackBalanceCheck();
 	void poll();
 
 private:

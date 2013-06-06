@@ -99,7 +99,7 @@ double ThreadedTimeWarpLoadBalancer::getVariance() {
 }
 
 // Checks the current LTSF to see if a load balance should be performed
-void ThreadedTimeWarpLoadBalancer::rollbackBalanceCheck(int LTSFId) {
+void ThreadedTimeWarpLoadBalancer::rollbackBalanceCheck() {
 	if ( outsideQuietPeriod() ) {
 		double variance = getVariance();
 		cout << "variance = " << variance << endl;
