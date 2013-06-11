@@ -10,21 +10,34 @@ else
   if [ -d "$1" ]
   then
     cd $1
-    NUM_INPUTS=$(<input_num)
+    declare -i linenum=0
+    declare -a var #an array hold the input file name 
     NUM_TESTS=$2
+    while read line 
+    do 
+      var[linenum]=$line 
+      echo $linenum
+      echo ${var[linenum]}
+      let "linenum=$linenum+1"
+    done<input_num #use file ridirection to get file content, can not use pipe. 
+    echo ${var[0]}
   else
     echo "Make sure the first perameter is a directory..."
     exit 1
   fi
 fi
 
-rm G*
+rm G* 
+rm g*
 
+echo $NUM_TESTS
+NUM_INPUTS=${var[0]};
+echo $NUM_INPUTS 
 for ((i=0;i<NUM_TESTS;i++))
 do
   for ((j=1;j<=NUM_INPUTS;j++))
   do
-  echo $[ ($RANDOM % 2) ] >>$script_path"/G$j"
+  echo $[ ($RANDOM % 2) ] >>$script_path"/${var[j]}"
 done
 done 
 echo -n "Finished filling out $NUM_INPUTS files."
