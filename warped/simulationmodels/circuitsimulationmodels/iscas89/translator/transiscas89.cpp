@@ -18,6 +18,8 @@
 //---------------------------------------------------------------------
 //
 // $Id: transiscas89.cpp 
+// this program can generate the configuration files of ISCAS89 circuits
+// simulation models: s526,s5378 and s9234. 
 //
 //--------------------------------------------------------------------- 
 
@@ -53,6 +55,7 @@ int main (int argc, char* argv[]){
 	                                         //each input file has 0 input.
   
   while(iscasBenchMark.getline(oneLine,LINE_LENGTH)){ //for each line in the isacs85 benchmark
+    cout<<"deal new line!"<<endl;
     if(!isUsefull(oneLine))
       continue;
     
@@ -69,7 +72,7 @@ int main (int argc, char* argv[]){
     } 
     else{
       int identity;
-      identity = extractNodeId(NodeName);
+      identity = produceID(NodeName);
       if(numnameMap.find(identity)==numnameMap.end()){
           addNodeVec(nodesVec,NodeName,NodeNum,numnameMap);
           componentNum[GATES_NUM]++;
@@ -80,12 +83,12 @@ int main (int argc, char* argv[]){
     int portId = 0;
 			
     while(thisLine>>inputGateNum){//attach the information of the current gate to its input gates
-      int id = extractNodeId(inputGateNum);
-      int ID = extractNodeId(NodeName);
+      int id = produceID(inputGateNum);
+      int ID = produceID(NodeName);
 
       if(numnameMap.find(id)!=numnameMap.end()){// this node is in the vector
         attachNode(nodesVec,NodeName,numnameMap.find(ID)->second,inputGateNum,portId);  
-      }
+     } 
       else{ // this node is not in the vector
         int filePos = iscasBenchMark.tellg();
         string gateType = searchBenchFile(inputGateNum,iscasBenchMark);

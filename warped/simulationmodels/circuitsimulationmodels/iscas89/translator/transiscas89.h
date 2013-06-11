@@ -32,7 +32,7 @@
 #define LINE_LENGTH 256
 #define LINE_NUMBER 8
 #define OBJECT_DELAY 1
-#define FILE_PATH  "circuitsimulationmodels/iscas89/iscas89Sim/s526/"
+#define FILE_PATH  "circuitsimulationmodels/iscas89/iscas89Sim/s5378/"
 
 using namespace std;
 
@@ -45,19 +45,37 @@ class CircuitNode{
     CircuitNode *nextNode;
 };
 
-
 /*--generate the ID for the component (gate or DFF)--*/
 int extractNodeId(string nName){
   string tempstr = nName;
-  if("G"==tempstr.substr(0,1)) 
-    tempstr.erase(0,1);
-  else 
+  if("II"==tempstr.substr(0,2))
     tempstr.erase(0,2);
+  else // begin with "G", "I" , "g" or "n"
+    tempstr.erase(0,1);
   stringstream sstream;
   int nodeId;
   sstream<<tempstr;
   sstream>>nodeId;
   return nodeId;
+}
+
+/*--produce node id. e.g. the id of n846gat should be 200846--*/
+int produceID(string node){
+  int nid = extractNodeId(node);
+  string temp = node.substr(0,1);
+  if("G" == temp)
+    nid = nid + 100000;
+  else if("n" == temp)
+    nid = nid + 200000;
+  else if("g" == temp)
+    nid = nid + 300000;
+  else{ // begin with "II"
+    if("II"==node.substr(0,2))
+      nid = nid + 400000;
+    else
+      nid = nid + 500000;
+  }
+  return nid;
 }
 
 /*--get rid of comments and empty lines--*/
@@ -123,20 +141,50 @@ void addNodeVec(vector<CircuitNode*> *nodes,string thisNodeName,string thisNodeN
     currentNode->nextNode = NULL;
     nodes->push_back(currentNode);
     if(thisNodeName == "INPUT"){
-      nId = extractNodeId(thisNodeNum);
+      nId = produceID(thisNodeNum);
       numNameMap[nId] = thisNodeNum;
     }
   }
   else{ // construct other gates 
     currentNode->nodeNum = thisNodeName;
     nId = extractNodeId(thisNodeName);
-    string gateName = genNodeName(nId,thisNodeNum); 
+    string gateName = genNodeName(nId,thisNodeNum);
+    string temp = thisNodeName.substr(0,1);
+    if("G"==temp){
+      nId = produceID(thisNodeName);
+      gateName = gateName + "G";
+      numNameMap[nId] = gateName;
+      
+    }
+    else if ("n" == temp){
+      nId = produceID(thisNodeName);
+      gateName = gateName + "n";
+      numNameMap[nId] = gateName;
+    }
+    else if ("g" == temp){
+      nId = produceID(thisNodeName);
+      gateName = gateName + "g";
+      numNameMap[nId] = gateName;
+    }
+    else {// "I" == temp 
+      if("II"==thisNodeName.substr(0,2)){
+        nId = produceID(thisNodeName);
+        gateName = gateName + "II";
+        numNameMap[nId] = gateName;
+      }
+      else{
+        nId = produceID(thisNodeName);
+        gateName = gateName + "I";
+        numNameMap[nId] = gateName;
+      }
+    }
+
     currentNode->nodeName = gateName;
     currentNode->inputPortId = 0;//this Id should always be 0 when the node is at the beginning at
                                  //the linklist
     currentNode->nextNode = NULL;
     nodes->push_back(currentNode);
-    numNameMap[nId] = gateName;
+
   }
 }
 
@@ -167,6 +215,7 @@ void attachNode(vector<CircuitNode*> *nodes,string thisNodeNum, string thisNodeN
     }
   }
 }
+
 /*--given the name of a gate, judge whether it's DFF or not--*/
 bool isDFF(string gateName){
   bool is = false;
