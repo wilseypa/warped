@@ -1,0 +1,32 @@
+# Process this file with automake to produce Makefile.in
+
+# Copyright (c) 2013 The University of Cincinnati.  
+# All rights reserved.
+
+# UC MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF THE
+# SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+# OR NON-INFRINGEMENT.  UC SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY
+# LICENSEE AS A RESULT OF USING, RESULT OF USING, MODIFYING OR
+# DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES.
+
+# By using or copying this Software, Licensee agrees to abide by the
+# intellectual property laws, and all other applicable laws of the U.S.,
+# and the terms of this license.
+
+# Authors: Philip A. Wilsey	phil.wilsey@uc.edu
+# 	    Sounak Gupta	sounak.besu@gmail.com
+#	    Xinyu Guo		aaronguo09@gmail.com
+
+#---------------------------------------------------------------------------
+
+EPIDEMIC_PROGRAM=epidemicSim
+
+epidemicSim_SOURCES= \
+     epidemic/EpidemicApplication.h \
+     epidemic/EpidemicApplication.cpp \
+     epidemic/EpidemicMain.cpp
+
+epidemicSim_LDFLAGS=-static
+epidemicSim_LDADD=$(top_builddir)/src/libwarped.la \
+            $(top_builddir)/simulationmodels/libRnd.la
