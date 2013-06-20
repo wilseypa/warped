@@ -22,7 +22,6 @@
 #include <fstream>
 
 using namespace std;
-using std::string;
 
 
 EpidemicApplication::EpidemicApplication(): inputFileName( "" ), numObjects( 0 ) { }
@@ -32,25 +31,24 @@ int EpidemicApplication::initialize( vector<string> &arguments ){
 	getArgumentParser().checkArgs( arguments );
 
 	if( inputFileName.empty() ) {
-		std::cerr << "A epidemicSim configuration file must be specified using -simulate" << std::endl;
+		cerr << "A epidemicSim configuration file must be specified using -simulate" << endl;
 		abort();
 	}
 	return 0;
 }
 
 int EpidemicApplication::getNumberOfSimulationObjects(int mgrId) const {
-
-  return numObjects;
+	return numObjects;
 }
 
 const PartitionInfo *EpidemicApplication::getPartitionInfo(
 					unsigned int numberOfProcessorsAvailable ) {
-  return NULL;
+	return NULL;
 }
 
 int EpidemicApplication::finalize() {
 
-  return 0;
+	return 0;
 }
 
 void EpidemicApplication::registerDeserializers() {

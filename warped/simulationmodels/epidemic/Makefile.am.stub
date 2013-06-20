@@ -23,7 +23,6 @@
 EPIDEMIC_PROGRAM=epidemicSim
 
 epidemicSim_SOURCES= \
-     epidemic/EpidemicApplication.h \
      epidemic/EpidemicApplication.cpp \
      epidemic/EpidemicMain.cpp
 
