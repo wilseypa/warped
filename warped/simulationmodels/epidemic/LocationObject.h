@@ -17,6 +17,7 @@
 
 #include "SimulationObject.h"
 #include "PersonState.h"
+#include <map>
 
 /* LocationObject Class */
 

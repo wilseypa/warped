@@ -13,7 +13,9 @@
 // U.S., and the terms of this license.
 
 #include "EpidemicApplication.h"
+#include "LocationObject.h"
 #include <warped/PartitionInfo.h>
+#include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
 #include <utils/ArgumentParser.h>
 
@@ -41,9 +43,39 @@ int EpidemicApplication::getNumberOfSimulationObjects(int mgrId) const {
 	return numObjects;
 }
 
+vector<SimulationObject *> *EpidemicApplication::getSimulationObjects() {
+
+	vector<SimulationObject *> *retval = new vector<SimulationObject *>;
+	string name;         /* Name of the location */
+	int    numLocations; /* Number of locations  */
+
+	ifstream configFile;
+	configFile.open( inputFileName.c_str() );
+	if(configFile.fail()) {
+		cerr << "Could not open file: '" << inputFileName << "'" << endl;
+		cerr << "Terminating simulation." << endl;
+		abort();
+	}
+
+	/* Read in the number of locations */
+	configFile >> numLocations;
+	numObjects = numLocations;
+
+	/* Setup the locations */
+	for( int index = 0; index < numLocations; index++ ) {
+		configFile >> name;
+		//retval->push_back( new LocationObject(name) );
+	}
+
+	configFile.close();
+	return retval;
+}
+
 const PartitionInfo *EpidemicApplication::getPartitionInfo(
 					unsigned int numberOfProcessorsAvailable ) {
-	return NULL;
+
+	Partitioner *myPartitioner = new RoundRobinPartitioner();
+	return  myPartitioner->partition( getSimulationObjects(), numberOfProcessorsAvailable );
 }
 
 int EpidemicApplication::finalize() {
