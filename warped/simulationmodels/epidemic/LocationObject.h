@@ -17,6 +17,8 @@
 
 #include "SimulationObject.h"
 #include "PersonState.h"
+
+#include <vector>
 #include <map>
 
 /* LocationObject Class */
@@ -48,9 +50,6 @@ public:
 
 	/* Reclaim an event */
 	void reclaimEvent(const Event *event);
-
-	/* Report an error */
-	void reportError(const string&, SEVERITY);
 
 	/* Accessor for objectName */
 	const string &getName() const {return locationName;}

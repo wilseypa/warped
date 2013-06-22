@@ -14,9 +14,9 @@
 # intellectual property laws, and all other applicable laws of the U.S.,
 # and the terms of this license.
 
-# Authors: Philip A. Wilsey	phil.wilsey@uc.edu
-# 	    Sounak Gupta	sounak.besu@gmail.com
-#	    Xinyu Guo		aaronguo09@gmail.com
+# Authors: Philip A. Wilsey phil.wilsey@uc.edu
+#            Sounak Gupta   sounak.besu@gmail.com
+#            Xinyu Guo      aaronguo09@gmail.com
 
 #---------------------------------------------------------------------------
 
@@ -24,7 +24,9 @@ EPIDEMIC_PROGRAM=epidemicSim
 
 epidemicSim_SOURCES= \
      epidemic/EpidemicApplication.cpp \
-     epidemic/EpidemicMain.cpp
+     epidemic/EpidemicPartitioner.cpp \
+     epidemic/EpidemicMain.cpp \
+     epidemic/LocationObject.cpp
 
 epidemicSim_LDFLAGS=-static
 epidemicSim_LDADD=$(top_builddir)/src/libwarped.la \

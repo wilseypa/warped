@@ -31,9 +31,8 @@ public:
 private:
   ArgumentParser &getArgumentParser();
 
-  vector<SimulationObject *> *getSimulationObjects();
-
   int numObjects;
+
   string inputFileName;
 };
 

@@ -14,8 +14,8 @@
 
 #include "EpidemicApplication.h"
 #include "LocationObject.h"
+#include "EpidemicPartitioner.h"
 #include <warped/PartitionInfo.h>
-#include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
 #include <utils/ArgumentParser.h>
 
@@ -43,11 +43,11 @@ int EpidemicApplication::getNumberOfSimulationObjects(int mgrId) const {
 	return numObjects;
 }
 
-vector<SimulationObject *> *EpidemicApplication::getSimulationObjects() {
+const PartitionInfo *EpidemicApplication::getPartitionInfo(
+					unsigned int numberOfProcessorsAvailable ) {
 
-	vector<SimulationObject *> *retval = new vector<SimulationObject *>;
-	string name;         /* Name of the location */
-	int    numLocations; /* Number of locations  */
+	EpidemicPartitioner *myPartitioner = new EpidemicPartitioner();
+	int numRegions = 0, numLocations = 0;
 
 	ifstream configFile;
 	configFile.open( inputFileName.c_str() );
@@ -56,26 +56,32 @@ vector<SimulationObject *> *EpidemicApplication::getSimulationObjects() {
 		cerr << "Terminating simulation." << endl;
 		abort();
 	}
+	configFile >> numRegions;
 
-	/* Read in the number of locations */
-	configFile >> numLocations;
-	numObjects = numLocations;
+	vector<SimulationObject*> *locObjs;
 
-	/* Setup the locations */
-	for( int index = 0; index < numLocations; index++ ) {
-		configFile >> name;
-		//retval->push_back( new LocationObject(name) );
+	/* For each region in the simulation, initialize the locations */
+	for( int regIndex = 0; regIndex < numRegions; regIndex++ ) {
+
+		locObjs = new vector<SimulationObject*>;  
+		numLocations = 0;
+		configFile >> numLocations;
+
+		for( int locIndex = 0; locIndex < numLocations; locIndex++ ) {
+			LocationObject *locObject = new LocationObject();
+			locObjs->push_back(locObject);
+		}
+		numObjects += numLocations;
+
+		/* Add the group of objects to the partition information */
+		myPartitioner->addObjectGroup(locObjs);
 	}
+
+	/* Perform the actual partitioning of groups */
+	const PartitionInfo *retval = myPartitioner->partition( NULL, numberOfProcessorsAvailable );
 
 	configFile.close();
 	return retval;
-}
-
-const PartitionInfo *EpidemicApplication::getPartitionInfo(
-					unsigned int numberOfProcessorsAvailable ) {
-
-	Partitioner *myPartitioner = new RoundRobinPartitioner();
-	return  myPartitioner->partition( getSimulationObjects(), numberOfProcessorsAvailable );
 }
 
 int EpidemicApplication::finalize() {
