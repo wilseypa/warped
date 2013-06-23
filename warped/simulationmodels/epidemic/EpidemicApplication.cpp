@@ -14,6 +14,7 @@
 
 #include "EpidemicApplication.h"
 #include "LocationObject.h"
+#include "PersonState.h"
 #include "EpidemicPartitioner.h"
 #include <warped/PartitionInfo.h>
 #include <warped/DeserializerManager.h>
@@ -47,7 +48,10 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 					unsigned int numberOfProcessorsAvailable ) {
 
 	EpidemicPartitioner *myPartitioner = new EpidemicPartitioner();
-	int numRegions = 0, numLocations = 0;
+	int numRegions = 0, numLocations = 0, numPersons = 0;
+	unsigned int pid = 0;
+	float susceptibility = 0.0;
+	string locationName = "";
 
 	ifstream configFile;
 	configFile.open( inputFileName.c_str() );
@@ -57,8 +61,14 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 		abort();
 	}
 	configFile >> numRegions;
+	if(numRegions > numberOfProcessorsAvailable) {
+		cerr << "Not enough processors alotted for all the regions." << endl;
+		abort();
+	}
 
 	vector<SimulationObject*> *locObjs;
+	vector<PersonState *> *occSet;
+	PersonState *person;
 
 	/* For each region in the simulation, initialize the locations */
 	for( int regIndex = 0; regIndex < numRegions; regIndex++ ) {
@@ -68,7 +78,19 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 		configFile >> numLocations;
 
 		for( int locIndex = 0; locIndex < numLocations; locIndex++ ) {
-			LocationObject *locObject = new LocationObject();
+
+			occSet = new vector<PersonState *>;
+			configFile >> locationName >> numPersons;
+
+			/* Read each person's details */
+			for(int perIndex = 0; perIndex < numPersons; perIndex++) {
+
+				configFile >> pid >> susceptibility;
+				person = new PersonState(pid, susceptibility);
+				occSet->push_back(person);
+			}
+
+			LocationObject *locObject = new LocationObject(locationName, occSet);
 			locObjs->push_back(locObject);
 		}
 		numObjects += numLocations;
@@ -85,7 +107,6 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 }
 
 int EpidemicApplication::finalize() {
-
 	return 0;
 }
 

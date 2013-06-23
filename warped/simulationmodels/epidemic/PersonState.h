@@ -24,27 +24,34 @@ class PersonState : public State {
 
 public:
 
-	/* Default constructor */
-	PersonState();
+	/* Constructor */
+	PersonState(unsigned int pid, float suceptibility) : 
+		pid(pid), suceptibility(suceptibility) {};
 
 	/* Destructor */
-	~PersonState();
+	~PersonState() {};
 
 	/* Copy the state */
-	void copyState(const State* state);
+	void copyState(const State* toCopy) {
+		ASSERT(toCopy != NULL);
+		const PersonState *copy = static_cast<const PersonState*>(toCopy);
+		pid = copy->pid;
+		suceptibility = copy->suceptibility;
+	}
 
 	/* Get the state size */
-	unsigned int getStateSize() const;
+	unsigned int getStateSize() const { return sizeof(PersonState); };
 
+	unsigned int getPID() const { return pid; };
 private:
 
 	/* Person type and/or traits */
-	float        suceptibility;
+	float suceptibility;
 
 	/* Infection details */
-	unsigned int currInfectState;
-	unsigned int prevInfectState;
-	unsigned int infectionDuration;
+	//unsigned int currInfectState;
+	//unsigned int prevInfectState;
+	//unsigned int infectionDuration;
 
 	/* Global identifier */
 	unsigned int pid;

@@ -15,13 +15,27 @@
 #include "LocationObject.h"
 #include "IntVTime.h"
 
-LocationObject::LocationObject() {}
+using namespace std;
+
+LocationObject::LocationObject(string locationName, vector <PersonState *> *occSet) :
+	locationName(locationName), occSet(occSet) {
+
+	depSet = new vector <PersonState *>;
+	occMap = new map <unsigned int, PersonState *>;
+	depMap = new map <unsigned int, PersonState *>;
+
+	for(int index = 0; index < occSet->size(); index++) {
+		occMap->insert( std::pair<unsigned int, PersonState *> ( ((*occSet)[index])->getPID(), ((*occSet)[index]) ) );
+	}
+}
 
 LocationObject::~LocationObject() {}
 
 void LocationObject::initialize() {}
 
 void LocationObject::finalize() {}
+
+void LocationObject::executeProcess() {}
 
 State* LocationObject::allocateState() {
 	return NULL;
@@ -32,6 +46,23 @@ void LocationObject::deallocateState( const State *state ) {
 }
 
 void LocationObject::reclaimEvent(const Event *event) {
-	delete event;
 }
 
+
+#if 0
+SMMPForkObject::~SMMPForkObject(){
+   deallocateState(getState());
+}
+
+void
+SMMPForkObject::initialize() {
+   SMMPForkState *myState = dynamic_cast<SMMPForkState*>(getState());
+   myState->gen = new MLCG(seed , seed + 1);
+   
+   fanOutHandles.resize(fanOutNames.size(),NULL);
+   for(int i = 0; i < fanOutHandles.size(); i++){
+     fanOutHandles[i] = getObjectHandle(fanOutNames[i]);
+   }
+}
+
+#endif

@@ -28,7 +28,7 @@ class LocationObject : public SimulationObject {
 public:
 
 	/* Default Constructor */
-	LocationObject();
+	LocationObject(string locationName, vector<PersonState *> *occSet);
 
 	/* Destructor */
 	~LocationObject();
@@ -60,16 +60,16 @@ private:
 	string locationName;
 
 	/* Occupant set of persons at this location */
-	vector <PersonState*> occSet;
+	vector <PersonState*> *occSet;
 
 	/* Map from ID to person  */
-	map <unsigned int, PersonState*> occMap;
+	map <unsigned int, PersonState*> *occMap;
 
 	/* Departed set of persons at this location */
-	vector <PersonState*> depSet;
+	vector <PersonState*> *depSet;
 
 	/* Map from ID to departed person */
-	map <unsigned int, PersonState*> depMap;
+	map <unsigned int, PersonState*> *depMap;
 
 };
 
