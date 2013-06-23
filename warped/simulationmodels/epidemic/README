@@ -1,0 +1,44 @@
+Epidemic: A WARPED simulation kernel application
+
+Authors: Sounak Gupta, Xinyu Guo and Philip A. Wilsey
+Experimental Computing Laboratory
+Dept of ECECS, PO Box 210030
+Cincinnati, OH  45221--0030
+
+Copyright The University of Cincinnati.  All rights reserved.  
+
+Published by the University of Cincinnati
+Dept of ECECS, PO Box 210030
+Cincinnati, OH  45221--0030 USA
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions.
+
+
+Introduction
+
+
+Configuration File
+The model generator program lets the user adjust the following parameters
+before writing out the model:
+
+<number_of_regions>
+foreach region 1..<no_of_regions>
+	<number_of_locations>
+	foreach location 1..<no_of_locations>
+		<lname> <number_of_persons>
+		foreach person 1..<number_of_persons>
+			<pid> <susceptibility>
+		endfor
+	endfor
+endfor
+

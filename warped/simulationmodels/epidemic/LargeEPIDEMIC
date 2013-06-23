@@ -1,57 +1,21 @@
-/* a disease specific parameter which is needed in between-host transmission function */
-<disease_transmissibility>
-
-/* the number of regions */
-5
-
-/* name of the first region and the number of locations in this region */
-<rname_1> <number_of_locations>
-
-/* the first location name, the number of people in this location, the range of global ids for people in this location */
-<lname_1> <number_of_people> <people_global_id_range>
-
-/* each person's information */
-<pid_1> <untreated/vaccine> <previous_exposure_time> <time_alread_in_state> <current_disease_state> <state_time> <susceptibility>
-<pid_2> ...
-...
-<pid_n> ...
-
-...
-
-/* a configuration file example */
-
-0.12
 2
-University_of_Cincinnati_WestCampus 3
-
-DAA_Addition_Area 1000 0-1000
-1 vaccine 1 0 infectious 5 0.0
-2 vaccine 0 0 uninfected 0 0.5
-...
-1000 untreated 1 1 aympt 2 0.0
-
-Wilson_Memorial_Hal 500 1001-1500
-1001 vaccine 1 0 infectious 5 0.0
-1002 vaccine 0 0 uninfected 0 0.5
-...
-1500 untreated 1 1 aympt 2 0.0
-
-BaldWin_Rhodes_ERC 1000 1501-2500
-1501 vaccine 1 0 infectious 5 0.0
-1002 vaccine 0 0 uninfected 0 0.5
-...
-2500 untreated 1 1 aympt 2 0.0
-
-University_of_Cincinnati_EastCampus 2
-University Hall 500
-1 vaccine 1 0 infectious 5 0.0
-2 vaccine 0 0 uninfected 0 0.5
-...
-500 untreated 1 1 aympt 2 0.0
-
-Procter Hall 300
-501 vaccine 1 0 infectious 5 0.0
-502 vaccine 0 0 uninfected 0 0.5
-...
-800 untreated 1 1 aympt 2 0.0
+3
+Rhodes_Hall 2
+1 0.8
+2 0.5
+Wilson_Hall 3
+3 0.2
+4 0.5
+5 0.1
+Baldwin_Hall 2
+6 0.0
+7 0.5
+2
+University_Hall 2
+8 0.9
+9 0.2
+Procter_Hall 3
+10 0.7
+11 0.3
+12 0.1
 
