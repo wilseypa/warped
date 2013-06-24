@@ -227,7 +227,7 @@ public:
   /** Receive an event.
       
   When one SimulationObject wants to send another SimulationObject an
-  Svent, it should call SimulationManager::getObjectHandle and then
+  Event, it should call SimulationManager::getObjectHandle and then
   SimulationObject::receiveEvent on the returned handle.
 
   @param A pointer to event to be delivered.
