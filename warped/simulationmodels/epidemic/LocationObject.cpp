@@ -13,6 +13,7 @@
 // U.S., and the terms of this license.
  
 #include "LocationObject.h"
+#include "LocationState.h"
 #include "IntVTime.h"
 
 #include <vector>
@@ -22,25 +23,22 @@ using namespace std;
 
 LocationObject::LocationObject( string locationName,
 								float transmissibility,
-								vector <unsigned int> *pidVec,
-								vector <float> *suscepVec,
-								vector <string> *infectVec) : 
-	locationName(locationName), transmissibility(transmissibility) {
-
-	vector <unsigned int>::iterator vecPIDIter;
-	vector <float>::iterator vecSusIter;
-	vector <string>::iterator vecInfectIter;
-
-	for(vecPIDIter = pidVec->begin(), vecSusIter = suscepVec->begin(), vecInfectIter = infectVec->begin();
-				vecPIDIter != pidVec->end(), vecSusIter != suscepVec->end(), vecInfectIter != infectVec->end();
-						vecPIDIter++, vecSusIter++, vecInfectIter++) {
-
-		suscepMap.insert( std::pair<unsigned int, float> (*vecPIDIter, *vecSusIter) );
-		infectionMap.insert( std::pair<unsigned int, string> (*vecPIDIter, *vecInfectIter) );
-	}
+								vector <Person *> *personVec) : 
+	locationName(locationName),
+	transmissibility(transmissibility),
+	personVec(personVec) {
 }
 
-LocationObject::~LocationObject() {}
+LocationObject::~LocationObject() {
+
+	deallocateState(getState());
+
+	for( vector<Person *>::iterator vecIter = personVec->begin();
+							vecIter != personVec->end(); vecIter++ ) {
+		delete *vecIter;
+	}
+	delete personVec;
+}
 
 void LocationObject::initialize() {}
 
