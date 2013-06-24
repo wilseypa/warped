@@ -18,34 +18,57 @@
 #include "DefaultEvent.h"
 #include "IntVTime.h"
 #include "SerializedInstance.h"
-#include "PersonState.h"
+#include "Person.h"
 
-enum eventType {arrival, departure, statechage};		
+enum eventType {arrival, departure, statechage,defualt};		
 
 class EpidemicEvent: public DefaultEvent {
-
 public:
 
-	/* Default Constructor */
-	EpidemicEvent();
+	/* constructor usded by application */
+	EpidemicEvent(const VTime &initSendTime,
+				const VTime &initRecvTime,
+				SimulationObject *initSender,
+				SimulationObject *initReceiver)	: 
+		DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver ),
+		person(NULL),randSeed(0),
+		pid(0){
+		}
 
 	/* Destructor */
-	~EpidemicEvent();
+	~EpidemicEvent(){
+		delete person;
+	}
 	
 	unsigned int getEventSize() const { return sizeof(EpidemicEvent); }
 
-    static Serializable *deserialize( SerializeInstance *instance){
+    static Serializable* deserialize( SerializedInstance *instance ){
+		VTime *sendTime = dynamic_cast<VTime *>(instance->getSerializable());
+		VTime *receiveTime = dynamic_cast<VTime *>(instance->getSerializable());
+		unsigned int senderSimManID = instance->getUnsigned();
+		unsigned int senderSimObjID = instance->getUnsigned();
+		unsigned int receiverSimManID = instance->getUnsigned();
+		unsigned int receiverSimObjID = instance->getUnsigned();
+		unsigned int eventId = instance->getUnsigned();
+		
+		ObjectID sender(senderSimObjID, senderSimManID);
+		ObjectID receiver(receiverSimObjID, receiverSimManID);
+			
 	}
 
 	void serialize( SerializedInstance *addTo ) const {
+		Event::serialize(addTo);
+		addTo->addUnsigned(randSeed);
+		addTo->addUnsigned(pid);
 	}
 
 	bool eventCompare(const Event* event){
+		
 	}
 
 private:
 	// data for arrival event
-	PersonState* personArrival;
+	Person *person;
 	unsigned int randSeed;
 	// data for departure and state change event
 	unsigned int pid;
