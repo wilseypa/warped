@@ -1,21 +1,25 @@
+0.12
+
 2
+
 3
 Rhodes_Hall 2
-1 0.8
-2 0.5
+01 0.80 uninfected
+02 0.50 latent
 Wilson_Hall 3
-3 0.2
-4 0.5
-5 0.1
+03 0.20 incubating
+04 0.50 asympt
+05 0.10 infectious
 Baldwin_Hall 2
-6 0.0
-7 0.5
+06 0.00 infectious
+07 0.50 uninfected
+
 2
 University_Hall 2
-8 0.9
-9 0.2
+08 0.90 recovered
+09 0.20 asympt
 Procter_Hall 3
-10 0.7
-11 0.3
-12 0.1
+10 0.70 infectious
+11 0.30 uninfected
+12 0.10 latent
 

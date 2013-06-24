@@ -31,13 +31,14 @@ Configuration File
 The model generator program lets the user adjust the following parameters
 before writing out the model:
 
+<transmissiblity>
 <number_of_regions>
 foreach region 1..<no_of_regions>
 	<number_of_locations>
 	foreach location 1..<no_of_locations>
 		<lname> <number_of_persons>
 		foreach person 1..<number_of_persons>
-			<pid> <susceptibility>
+			<pid> <susceptibility> <infection_state>
 		endfor
 	endfor
 endfor

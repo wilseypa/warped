@@ -12,49 +12,45 @@
 // intellectual property laws, and all other applicable laws of the
 // U.S., and the terms of this license.
 
-#ifndef PERSONSTATE_H
-#define PERSONSTATE_H
+#ifndef LOCATION_STATE_H
+#define LOCATION_STATE_H
 
 #include "State.h"
 #include "IntVTime.h"
 
+#include <map>
+
 using namespace std;
 
-class PersonState : public State {
+class LocationState : public State {
 
 public:
 
-	/* Constructor */
-	PersonState(unsigned int pid, float suceptibility) : 
-		pid(pid), suceptibility(suceptibility) {};
+	/* Default Constructor */
+	LocationState() {};
 
 	/* Destructor */
-	~PersonState() {};
+	~LocationState() {};
 
 	/* Copy the state */
 	void copyState(const State* toCopy) {
 		ASSERT(toCopy != NULL);
-		const PersonState *copy = static_cast<const PersonState*>(toCopy);
-		pid = copy->pid;
-		suceptibility = copy->suceptibility;
-	}
+		const LocationState *copy = static_cast<const LocationState*>(toCopy);
+
+		map <unsigned int, string> tempMap = copy->infectionState;
+		map <unsigned int, string>::iterator mapIter;
+		for( mapIter = tempMap.begin(); mapIter != tempMap.end(); mapIter++ ) {
+			infectionState.insert( std::pair <unsigned int, string> (mapIter->first, mapIter->second) );
+		}
+	};
 
 	/* Get the state size */
-	unsigned int getStateSize() const { return sizeof(PersonState); };
+	unsigned int getStateSize() const { return sizeof(LocationState); }
 
-	unsigned int getPID() const { return pid; };
 private:
 
-	/* Person type and/or traits */
-	float suceptibility;
-
-	/* Infection details */
-	//unsigned int currInfectState;
-	//unsigned int prevInfectState;
-	//unsigned int infectionDuration;
-
-	/* Global identifier */
-	unsigned int pid;
+	/* Map person ID to Infecton state */
+	map <unsigned int, string> infectionState;
 };
 
 #endif

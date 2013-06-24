@@ -15,17 +15,28 @@
 #include "LocationObject.h"
 #include "IntVTime.h"
 
+#include <vector>
+#include <map>
+
 using namespace std;
 
-LocationObject::LocationObject(string locationName, vector <PersonState *> *occSet) :
-	locationName(locationName), occSet(occSet) {
+LocationObject::LocationObject( string locationName,
+								float transmissibility,
+								vector <unsigned int> *pidVec,
+								vector <float> *suscepVec,
+								vector <string> *infectVec) : 
+	locationName(locationName), transmissibility(transmissibility) {
 
-	depSet = new vector <PersonState *>;
-	occMap = new map <unsigned int, PersonState *>;
-	depMap = new map <unsigned int, PersonState *>;
+	vector <unsigned int>::iterator vecPIDIter;
+	vector <float>::iterator vecSusIter;
+	vector <string>::iterator vecInfectIter;
 
-	for(int index = 0; index < occSet->size(); index++) {
-		occMap->insert( std::pair<unsigned int, PersonState *> ( ((*occSet)[index])->getPID(), ((*occSet)[index]) ) );
+	for(vecPIDIter = pidVec->begin(), vecSusIter = suscepVec->begin(), vecInfectIter = infectVec->begin();
+				vecPIDIter != pidVec->end(), vecSusIter != suscepVec->end(), vecInfectIter != infectVec->end();
+						vecPIDIter++, vecSusIter++, vecInfectIter++) {
+
+		suscepMap.insert( std::pair<unsigned int, float> (*vecPIDIter, *vecSusIter) );
+		infectionMap.insert( std::pair<unsigned int, string> (*vecPIDIter, *vecInfectIter) );
 	}
 }
 
@@ -38,7 +49,7 @@ void LocationObject::finalize() {}
 void LocationObject::executeProcess() {}
 
 State* LocationObject::allocateState() {
-	return NULL;
+	return (new LocationState());
 }
 
 void LocationObject::deallocateState( const State *state ) {
@@ -46,23 +57,6 @@ void LocationObject::deallocateState( const State *state ) {
 }
 
 void LocationObject::reclaimEvent(const Event *event) {
+	delete event;
 }
 
-
-#if 0
-SMMPForkObject::~SMMPForkObject(){
-   deallocateState(getState());
-}
-
-void
-SMMPForkObject::initialize() {
-   SMMPForkState *myState = dynamic_cast<SMMPForkState*>(getState());
-   myState->gen = new MLCG(seed , seed + 1);
-   
-   fanOutHandles.resize(fanOutNames.size(),NULL);
-   for(int i = 0; i < fanOutHandles.size(); i++){
-     fanOutHandles[i] = getObjectHandle(fanOutNames[i]);
-   }
-}
-
-#endif

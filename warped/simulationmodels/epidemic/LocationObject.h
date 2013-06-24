@@ -12,14 +12,16 @@
 // intellectual property laws, and all other applicable laws of the
 // U.S., and the terms of this license.
 
-#ifndef LOCATIONOBJECT_H
-#define LOCATIONOBJECT_H
+#ifndef LOCATION_OBJECT_H
+#define LOCATION_OBJECT_H
 
 #include "SimulationObject.h"
-#include "PersonState.h"
+#include "LocationState.h"
 
 #include <vector>
 #include <map>
+
+using namespace std;
 
 /* LocationObject Class */
 
@@ -28,7 +30,11 @@ class LocationObject : public SimulationObject {
 public:
 
 	/* Default Constructor */
-	LocationObject(string locationName, vector<PersonState *> *occSet);
+	LocationObject( string locationName,
+					float transmissibility,
+					vector<unsigned int> *pidSet,
+					vector<float> *susceptibilitySet,
+					vector<string> *infectionSet);
 
 	/* Destructor */
 	~LocationObject();
@@ -59,19 +65,14 @@ private:
 	/* Location name */
 	string locationName;
 
-	/* Occupant set of persons at this location */
-	vector <PersonState*> *occSet;
+	/* Transmissibility */
+	float transmissibility;
 
-	/* Map from ID to person  */
-	map <unsigned int, PersonState*> *occMap;
+	/* PID-Susceptibiliy map */
+	map <unsigned int, float> suscepMap;
 
-	/* Departed set of persons at this location */
-	vector <PersonState*> *depSet;
-
-	/* Map from ID to departed person */
-	map <unsigned int, PersonState*> *depMap;
-
+	/* PID-Infection map */
+	map <unsigned int, string> infectionMap;
 };
 
 #endif
-

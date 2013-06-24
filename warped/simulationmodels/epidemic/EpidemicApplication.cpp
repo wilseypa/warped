@@ -14,7 +14,6 @@
 
 #include "EpidemicApplication.h"
 #include "LocationObject.h"
-#include "PersonState.h"
 #include "EpidemicPartitioner.h"
 #include <warped/PartitionInfo.h>
 #include <warped/DeserializerManager.h>
@@ -50,8 +49,13 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 	EpidemicPartitioner *myPartitioner = new EpidemicPartitioner();
 	int numRegions = 0, numLocations = 0, numPersons = 0;
 	unsigned int pid = 0;
-	float susceptibility = 0.0;
-	string locationName = "";
+	float susceptibility = 0.0, transmissibility = 0.0;
+	string locationName = "", infectionState = "";
+
+	vector<SimulationObject*> *locObjs;
+	vector <unsigned int> *pidVec;
+	vector <string> *infectVec;
+	vector <float> *suscepVec;
 
 	ifstream configFile;
 	configFile.open( inputFileName.c_str() );
@@ -60,15 +64,11 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 		cerr << "Terminating simulation." << endl;
 		abort();
 	}
-	configFile >> numRegions;
+	configFile >> transmissibility >> numRegions;
 	if(numRegions > numberOfProcessorsAvailable) {
 		cerr << "Not enough processors alotted for all the regions." << endl;
 		abort();
 	}
-
-	vector<SimulationObject*> *locObjs;
-	vector<PersonState *> *occSet;
-	PersonState *person;
 
 	/* For each region in the simulation, initialize the locations */
 	for( int regIndex = 0; regIndex < numRegions; regIndex++ ) {
@@ -79,19 +79,31 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 
 		for( int locIndex = 0; locIndex < numLocations; locIndex++ ) {
 
-			occSet = new vector<PersonState *>;
+			pidVec    = new vector <unsigned int>;
+			infectVec = new vector <string>;
+			suscepVec = new vector <float>;
+
 			configFile >> locationName >> numPersons;
 
 			/* Read each person's details */
 			for(int perIndex = 0; perIndex < numPersons; perIndex++) {
 
-				configFile >> pid >> susceptibility;
-				person = new PersonState(pid, susceptibility);
-				occSet->push_back(person);
+				configFile >> pid >> susceptibility >> infectionState;
+				pidVec->push_back(pid);
+				suscepVec->push_back(susceptibility);
+				infectVec->push_back(infectionState);
 			}
 
-			LocationObject *locObject = new LocationObject(locationName, occSet);
+			LocationObject *locObject = new LocationObject( locationName,
+															transmissibility,
+															pidVec,
+															suscepVec,
+															infectVec);
 			locObjs->push_back(locObject);
+
+			delete pidVec;
+			delete infectVec;
+			delete suscepVec;
 		}
 		numObjects += numLocations;
 
