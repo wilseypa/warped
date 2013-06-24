@@ -18,7 +18,7 @@
 #include "SimulationObject.h"
 #include "LocationState.h"
 #include "Person.h"
-
+#include "EpidemicEvent.h"
 #include <vector>
 #include <map>
 
