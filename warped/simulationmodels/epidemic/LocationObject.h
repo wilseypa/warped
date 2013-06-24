@@ -17,6 +17,7 @@
 
 #include "SimulationObject.h"
 #include "LocationState.h"
+#include "Person.h"
 
 #include <vector>
 #include <map>
@@ -32,9 +33,7 @@ public:
 	/* Default Constructor */
 	LocationObject( string locationName,
 					float transmissibility,
-					vector<unsigned int> *pidSet,
-					vector<float> *susceptibilitySet,
-					vector<string> *infectionSet);
+					vector <Person *> *personVec );
 
 	/* Destructor */
 	~LocationObject();
@@ -68,11 +67,8 @@ private:
 	/* Transmissibility */
 	float transmissibility;
 
-	/* PID-Susceptibiliy map */
-	map <unsigned int, float> suscepMap;
-
-	/* PID-Infection map */
-	map <unsigned int, string> infectionMap;
+	/* Initial population */
+	vector <Person *> *personVec;
 };
 
 #endif

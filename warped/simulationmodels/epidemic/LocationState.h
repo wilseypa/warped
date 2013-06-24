@@ -17,6 +17,7 @@
 
 #include "State.h"
 #include "IntVTime.h"
+#include "Person.h"
 
 #include <map>
 
@@ -30,17 +31,28 @@ public:
 	LocationState() {};
 
 	/* Destructor */
-	~LocationState() {};
+	~LocationState() {
+		map <unsigned int, Person *>::iterator mapIter;
+		for(mapIter = personMap.begin(); mapIter != personMap.end(); mapIter++) {
+			delete (mapIter->second);
+		}
+	};
 
 	/* Copy the state */
 	void copyState(const State* toCopy) {
+		Person *person, *tempPerson;
 		ASSERT(toCopy != NULL);
 		const LocationState *copy = static_cast<const LocationState*>(toCopy);
 
-		map <unsigned int, string> tempMap = copy->infectionState;
-		map <unsigned int, string>::iterator mapIter;
+		map <unsigned int, Person *> tempMap = copy->personMap;
+		map <unsigned int, Person *>::iterator mapIter;
+
 		for( mapIter = tempMap.begin(); mapIter != tempMap.end(); mapIter++ ) {
-			infectionState.insert( std::pair <unsigned int, string> (mapIter->first, mapIter->second) );
+			tempPerson = mapIter->second;
+			person = new Person( 	tempPerson->pid,
+									tempPerson->susceptibility,
+									tempPerson->infectionState 	);
+			personMap.insert( std::pair <unsigned int, Person *> (mapIter->first, person) );
 		}
 	};
 
@@ -49,8 +61,8 @@ public:
 
 private:
 
-	/* Map person ID to Infecton state */
-	map <unsigned int, string> infectionState;
+	/* Person map */
+	map <unsigned int, Person *> personMap;
 };
 
 #endif
