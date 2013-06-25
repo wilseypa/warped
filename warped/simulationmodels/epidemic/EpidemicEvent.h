@@ -66,8 +66,6 @@ public:
 		return event;
 	}
 	
-	void addEventType(eventType type, SerializedInstance *addTo){}
-
 	void serialize( SerializedInstance *addTo ) const {
 		Event::serialize(addTo);
 		addTo->addUnsigned(person->pid);
@@ -88,10 +86,9 @@ public:
 			typeID = 3;
 			addTo->addInt(typeID);
 		}
-		else { // default 
+		else {  
 			addTo->addInt(typeID);
 		}
-		//	addEventType(currEventType,addTo);
 	}
 	
 	bool eventCompare(const Event* event){

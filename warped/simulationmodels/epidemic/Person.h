@@ -32,7 +32,7 @@ public:
 
 	unsigned int pid;
 
-	float susceptibility;
+	double susceptibility;
 
 	string infectionState;
 };
