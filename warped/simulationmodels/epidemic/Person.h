@@ -22,7 +22,7 @@ class Person {
 public:
 
 	Person( unsigned int pid,
-			float susceptibility,
+			double susceptibility,
 			string infectionState ) :
 		pid(pid),
 		susceptibility(susceptibility),

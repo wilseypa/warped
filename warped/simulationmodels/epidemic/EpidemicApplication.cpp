@@ -50,7 +50,8 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 	EpidemicPartitioner *myPartitioner = new EpidemicPartitioner();
 	int numRegions = 0, numLocations = 0, numPersons = 0;
 	unsigned int pid = 0;
-	float susceptibility = 0.0, transmissibility = 0.0;
+	double susceptibility = 0.0;
+	float transmissibility = 0.0;
 	string locationName = "", infectionState = "";
 
 	Person *person;
