@@ -61,9 +61,13 @@ public:
 		addTo->addUnsigned(randSeed);
 		addTo->addUnsigned(pid);
 	}
-
+	
 	bool eventCompare(const Event* event){
-		
+	}
+
+	static const string &getEpidemicEventDataType(){
+		static string epidemicEventDataType = "EpidemicEvent";
+    	return epidemicEventDataType;
 	}
 
 private:
