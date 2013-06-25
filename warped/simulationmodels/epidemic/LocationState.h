@@ -19,6 +19,7 @@
 #include "IntVTime.h"
 #include "Person.h"
 
+#include <vector>
 #include <map>
 
 using namespace std;
@@ -58,6 +59,15 @@ public:
 
 	/* Get the state size */
 	unsigned int getStateSize() const { return sizeof(LocationState); }
+
+	void populateLocation( vector <Person *> *personVec ) {
+
+		vector <Person *>::iterator vecIter;
+		for( vecIter = personVec->begin(); vecIter != personVec->end(); vecIter++ ) {
+			Person *person = *vecIter;
+			personMap.insert( std::pair<unsigned int, Person *>(person->pid, person) );
+		}
+	}
 
 private:
 

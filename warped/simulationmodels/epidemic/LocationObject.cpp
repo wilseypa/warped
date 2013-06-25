@@ -1,10 +1,10 @@
-// Copyright (c) The University of Cincinnati.  
+// Copyright (c) The University of Cincinnati.
 // All rights reserved.
 
 // UC MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF 
 // THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
 // TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE, OR NON-INFRINGEMENT.  UC SHALL NOT BE LIABLE
+// PARTICULAR PURPOSE, OR NON-INFRINGEMENT. UC SHALL NOT BE LIABLE
 // FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING,
 // RESULT OF USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
 // DERIVATIVES.
@@ -40,7 +40,10 @@ LocationObject::~LocationObject() {
 	delete personVec;
 }
 
-void LocationObject::initialize() {}
+void LocationObject::initialize() {
+	LocationState *myState = dynamic_cast<LocationState*>(getState());
+	myState->populateLocation(personVec);
+}
 
 void LocationObject::finalize() {}
 
