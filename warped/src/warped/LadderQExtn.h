@@ -66,8 +66,8 @@ public:
 		bool isBucketWidthStatic = false;
 
 		/* Remove from bottom if not empty */
-		if ( !bottom.empty() ) {
-			return *bottom.begin();
+		if ( !bottomEmpty() ) {
+			return bottomBegin();
 		}
 
 		/* If rungs exist, remove from rungs */
@@ -82,11 +82,7 @@ public:
 		if(nRung > 0) { /* Check required because recurse_rung() can affect nRung value */
 			for(lIterate = RUNG(nRung-1,bucketIndex)->begin(); 
 					lIterate != RUNG(nRung-1,bucketIndex)->end(); lIterate++) {
-#if BOTTOM_RELAX
-				bottom.push_back(*lIterate);
-#else
-				bottom.insert(*lIterate);
-#endif
+				bottomInsert(*lIterate);
 			}
 			RUNG(nRung-1,bucketIndex)->clear();
 
@@ -108,12 +104,12 @@ public:
 				}
 			}
 
-			if( true == bottom.empty() ) {
+			if( true == bottomEmpty() ) {
 				cout << "Bottom empty" << endl;
 				return NULL;
 			}
 
-			return *bottom.begin();
+			return bottomBegin();
 		}
 
 		/* Check if top has any events before proceeding further */
@@ -162,11 +158,7 @@ public:
 
 		for(lIterate = RUNG(0,bucketIndex)->begin(); 
 				lIterate != RUNG(0,bucketIndex)->end(); lIterate++) {
-#if BOTTOM_RELAX
-			bottom.push_back(*lIterate);
-#else
-			bottom.insert(*lIterate);
-#endif
+			bottomInsert(*lIterate);
 		}
 
 		/* Clear that bucket */
@@ -186,12 +178,12 @@ public:
 			}
 		}
 
-		if( true == bottom.empty() ) {
+		if( true == bottomEmpty() ) {
 			cout << "Bottom empty" << endl;
 			return NULL;
 		}
 
-		return *bottom.begin();
+		return bottomBegin();
 	}
 
 	/* Purge the entire LadderQ data */
@@ -214,7 +206,7 @@ public:
 		nRung = 0;
 
 		/* Purge bottom */
-		bottom.clear();
+		bottomClear();
 	}
 
 	/* Dequeue the event with lowest timestamp */
@@ -222,7 +214,11 @@ public:
 
 		const Event *retVal = NULL;
 		if( NULL != (retVal = begin()) ) {
-			bottom.erase(bottom.begin());
+			if(eventCausality == "RELAXED") {
+				bottom_relaxed.erase(bottom_relaxed.begin());
+			} else {
+				bottom_strict.erase(bottom_strict.begin());
+			}
 		}
 		return retVal;
 	}
@@ -230,7 +226,7 @@ public:
 	/* Check whether the LadderQ has any events or not */
 	inline bool empty() {
 
-		return ( (0==nRung) & top.empty() & bottom.empty() );
+		return ( (0==nRung) & top.empty() & bottomEmpty() );
 	}
 
 	/* Refers to the end of LadderQ; always returns NULL */
@@ -323,12 +319,8 @@ public:
 		}
 
 		/* Check and erase from bottom, if present */
-		if(false == bottom.empty()) {
-#if BOTTOM_RELAX
-			bottom.remove(delEvent);
-#else
-			(void) bottom.erase(delEvent);
-#endif
+		if(false == bottomEmpty()) {
+			bottomErase(delEvent);
 			//cout << "Part 3" << endl;
 		}
 	}
@@ -392,20 +384,20 @@ public:
 		}
 
 		/* If rung not found */
-		if( THRESHOLD < bottom.size() ) {
+		if( THRESHOLD < bottomSize() ) {
 			if(MAX_RUNG_NUM <= nRung) {
 				isBucketWidthStatic = true;
 
 			} else { /* Check if failed to create a rung */
 
 				/* Check if new event to be inserted is smaller than what is present in BOTTOM */
-				unsigned int uiBucketStartVal = (*bottom.begin())->getReceiveTime().getApproximateIntTime();
+				unsigned int uiBucketStartVal = bottomBegin()->getReceiveTime().getApproximateIntTime();
 				if( uiBucketStartVal > newEvent->getReceiveTime().getApproximateIntTime() )
 				{
 					uiBucketStartVal = newEvent->getReceiveTime().getApproximateIntTime();
 				}
 
-				if( (false == create_new_rung(bottom.size(), uiBucketStartVal, &isBucketWidthStatic)) && 
+				if( (false == create_new_rung(bottomSize(), uiBucketStartVal, &isBucketWidthStatic)) && 
 											(false == isBucketWidthStatic) ) {
 					cout << "Failed to create the required rung." << endl;
 					return NULL;
@@ -415,49 +407,74 @@ public:
 			/* Intentionally let the bottom continue to overflow */
 			//ref sec 2.4 of ladderq + when bucket width becomes static
 			if( true == isBucketWidthStatic ) {
-#if BOTTOM_RELAX
-				bottom.push_back(newEvent);
-#else
-				bottom.insert(newEvent);
-#endif
+				bottomInsert(newEvent);
 				return newEvent;
 			}
 
 			/* Transfer bottom to new rung */
-#if BOTTOM_RELAX
-			list<const Event*>::iterator mIterate;
-#else
-			multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
-#endif
+			if(eventCausality == "RELAXED") {
 
-			for(mIterate = bottom.begin(); mIterate != bottom.end(); mIterate++) {
+				list<const Event*>::iterator mIterate;
+				for(mIterate = bottom_relaxed.begin(); mIterate != bottom_relaxed.end(); mIterate++) {
 
-				bucketIndex = 
-					(unsigned int) (((*mIterate)->getReceiveTime().getApproximateIntTime() -
-								rStart[nRung-1]) / bucketWidth[nRung-1]);
+					bucketIndex = 
+						(unsigned int) (((*mIterate)->getReceiveTime().getApproximateIntTime() -
+									rStart[nRung-1]) / bucketWidth[nRung-1]);
 
-				if( NUM_BUCKETS(nRung-1) <= bucketIndex ) {
-					if(nRung > 1 ) {
-						cout << "Ran out of bucket space. Need more." << endl;
-						return NULL;
-					} else {
-						cout << "Rung 1 needs more space (available = " << numRung0Buckets
-								 << ", required = " << bucketIndex+1 << ")" << endl;
-						return NULL;
+					if( NUM_BUCKETS(nRung-1) <= bucketIndex ) {
+						if(nRung > 1 ) {
+							cout << "Ran out of bucket space. Need more." << endl;
+							return NULL;
+						} else {
+							cout << "Rung 1 needs more space (available = " << numRung0Buckets
+									 << ", required = " << bucketIndex+1 << ")" << endl;
+							return NULL;
+						}
 					}
+
+					/* Adjust the numBucket and rCur parameters */
+					if( numBucket[nRung-1] < bucketIndex+1 ) {
+						numBucket[nRung-1] = bucketIndex+1;
+					}
+					if(mIterate == bottom_relaxed.begin()) {
+						rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
+					}
+
+					RUNG(nRung-1,bucketIndex)->push_front(*mIterate);
 				}
 
-				/* Adjust the numBucket and rCur parameters */
-				if( numBucket[nRung-1] < bucketIndex+1 ) {
-					numBucket[nRung-1] = bucketIndex+1;
-				}
-				if(mIterate == bottom.begin()) {
-					rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
-				}
+			} else {
 
-				RUNG(nRung-1,bucketIndex)->push_front(*mIterate);
+				multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
+				for(mIterate = bottom_strict.begin(); mIterate != bottom_strict.end(); mIterate++) {
+
+					bucketIndex = 
+						(unsigned int) (((*mIterate)->getReceiveTime().getApproximateIntTime() -
+									rStart[nRung-1]) / bucketWidth[nRung-1]);
+
+					if( NUM_BUCKETS(nRung-1) <= bucketIndex ) {
+						if(nRung > 1 ) {
+							cout << "Ran out of bucket space. Need more." << endl;
+							return NULL;
+						} else {
+							cout << "Rung 1 needs more space (available = " << numRung0Buckets
+									 << ", required = " << bucketIndex+1 << ")" << endl;
+							return NULL;
+						}
+					}
+
+					/* Adjust the numBucket and rCur parameters */
+					if( numBucket[nRung-1] < bucketIndex+1 ) {
+						numBucket[nRung-1] = bucketIndex+1;
+					}
+					if(mIterate == bottom_strict.begin()) {
+						rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
+					}
+
+					RUNG(nRung-1,bucketIndex)->push_front(*mIterate);
+				}
 			}
-			bottom.clear();
+			bottomClear();
 
 			/* Insert new element in the new and populated rung */
 			bucketIndex = 
@@ -484,11 +501,7 @@ public:
 
 
 		} else { /* If BOTTOM is within threshold */
-#if BOTTOM_RELAX
-			bottom.push_back(newEvent);
-#else
-			bottom.insert(newEvent);
-#endif
+			bottomInsert(newEvent);
 		}
 
 		return newEvent;
@@ -515,11 +528,65 @@ private:
 
 	/* Bottom */
 	string              eventCausality;
-#if BOTTOM_RELAX
-	list<const Event *> bottom;
-#else
-	multiset<const Event *, receiveTimeLessThanEventIdLessThan> bottom;
-#endif
+	list<const Event *> bottom_relaxed;
+	multiset<const Event *, receiveTimeLessThanEventIdLessThan> bottom_strict;
+
+	/** BOTTOM Functionalities */
+	/* Bottom erase */
+	void bottomErase(const Event *delEvent) {
+		if(eventCausality == "RELAXED") {
+			bottom_relaxed.remove(delEvent);
+		} else {
+			(void) bottom_strict.erase(delEvent);
+		}
+	}
+
+	/* Bottom insert */
+	void bottomInsert(const Event *newEvent) {
+		if(eventCausality == "RELAXED") {
+			bottom_relaxed.push_back(newEvent);
+		} else {
+			bottom_strict.insert(newEvent);
+		}
+	}
+
+	/* Bottom empty */
+	bool bottomEmpty() {
+		if(eventCausality == "RELAXED") {
+			return bottom_relaxed.empty();
+		} else {
+			return bottom_strict.empty();
+		}
+	}
+
+	/* Bottom begin */
+	const Event *bottomBegin() {
+		if(eventCausality == "RELAXED") {
+			return (*bottom_relaxed.begin());
+		} else {
+			return (*bottom_strict.begin());
+		}
+	}
+
+	/* Bottom clear */
+	void bottomClear() {
+		if(eventCausality == "RELAXED") {
+			bottom_relaxed.clear();
+		} else {
+			bottom_strict.clear();
+		}
+	}
+
+	/* Bottom size */
+	unsigned int bottomSize() {
+		unsigned int val = 0;
+		if(eventCausality == "RELAXED") {
+			val = bottom_relaxed.size();
+		} else {
+			val = bottom_strict.size();
+		}
+		return val;
+	}
 
 	/* Create (here implicitly allocate) a new rung */
 	inline bool create_new_rung(unsigned int numEvents, unsigned int initStartAndCurVal, bool *isBucketWidthStatic) {
