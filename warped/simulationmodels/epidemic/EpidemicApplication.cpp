@@ -116,6 +116,8 @@ int EpidemicApplication::finalize() {
 }
 
 void EpidemicApplication::registerDeserializers() {
+	DeserializerManager::instance()->registerDeserializer(  EpidemicEvent::getEpidemicEventDataType(), 
+															&EpidemicEvent::deserialize );
 }
 
 ArgumentParser & EpidemicApplication::getArgumentParser() {
