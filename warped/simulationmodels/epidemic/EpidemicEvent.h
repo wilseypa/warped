@@ -20,145 +20,122 @@
 #include "SerializedInstance.h"
 #include "Person.h"
 
-enum eventType {ARRIVAL, DEPARTURE, STATECHANGE,DEFAULT};		
-
 class EpidemicEvent: public DefaultEvent {
+
 public:
 
-	/* constructor usded by application */
-	EpidemicEvent(const VTime &initSendTime,
-				const VTime &initRecvTime,
-				SimulationObject *initSender,
-				SimulationObject *initReceiver)	: 
-		DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver ),
-		person(NULL),randSeed(0),
-		pid(0),currEventType(DEFAULT){
+	/* Constructor */
+	EpidemicEvent(  const VTime &initSendTime,
+					const VTime &initRecvTime,
+					SimulationObject *initSender,
+					SimulationObject *initReceiver,
+					Person *person,
+					unsigned int randSeed  ) : 
+			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver ),
+			randSeed(randSeed), pid(0), susceptibility(0.0), infectionState("") {
+
+		if( person ) {
+			pid = person->pid;
+			susceptibility = person->susceptibility;
+			infectionState = person->infectionState;
 		}
+	};
 
 	/* Destructor */
-	~EpidemicEvent(){
-		delete person;
-	}
-	 
-	unsigned int getEventSize() const { return sizeof(EpidemicEvent); }
+	~EpidemicEvent() {};
 
-    static Serializable* deserialize( SerializedInstance *instance ){
+	static Serializable* deserialize( SerializedInstance *instance ) {
+
 		VTime *sendTime = dynamic_cast<VTime *>(instance->getSerializable());
 		VTime *receiveTime = dynamic_cast<VTime *>(instance->getSerializable());
 		unsigned int senderSimManID = instance->getUnsigned();
 		unsigned int senderSimObjID = instance->getUnsigned();
 		unsigned int receiverSimManID = instance->getUnsigned();
 		unsigned int receiverSimObjID = instance->getUnsigned();
-		unsigned int eventId = instance->getUnsigned();
-		
+		unsigned int eventId          = instance->getUnsigned();
+
 		ObjectID sender(senderSimObjID, senderSimManID);
 		ObjectID receiver(receiverSimObjID, receiverSimManID);
 
-		EpidemicEvent *event = new EpidemicEvent(*sendTime, *receiveTime, sender,receiver,eventId);	
-		
-		event->setPerson(instance->getUnsigned(),instance->getDouble(),instance->getString());
-		event->setRandSeed(instance->getUnsigned());
-		event->setPid(instance->getUnsigned());
-		event->setEventType(instance->getInt());
-		
+		EpidemicEvent *event = new EpidemicEvent(*sendTime, *receiveTime, sender, receiver, eventId);	
+
+		event->setRandSeed( instance->getUnsigned() );
+		event->setPID ( instance->getUnsigned() );
+		event->setSusceptibility ( instance->getDouble() );
+		event->setInfectionState ( instance->getString() );
+
 		delete sendTime;
 		delete receiveTime;
+
 		return event;
 	}
-	
+
 	void serialize( SerializedInstance *addTo ) const {
 		Event::serialize(addTo);
-		addTo->addUnsigned(person->pid);
-		addTo->addDouble(person->susceptibility);
-		addTo->addString(person->infectionState);
 		addTo->addUnsigned(randSeed);
 		addTo->addUnsigned(pid);
-		int typeID = 0;
-		if (currEventType == ARRIVAL){
-			typeID = 1;
-			addTo->addInt(typeID);
-		}
-		else if (currEventType == DEPARTURE){
-			typeID = 2;
-			addTo->addInt(typeID);
-		}
-		else if (currEventType == STATECHANGE){
-			typeID = 3;
-			addTo->addInt(typeID);
-		}
-		else {  
-			addTo->addInt(typeID);
-		}
-	}
-	
-	bool eventCompare(const Event* event){
-		EpidemicEvent* thisEvent = (EpidemicEvent*) event;
-		return (compareEvents(this,event)&&
-				randSeed == thisEvent->getRandSeed()&&
-				pid == thisEvent->getPid()&&
-				currEventType == getEventType()&&
-				person == getPerson());
+		addTo->addDouble(susceptibility);
+		addTo->addString(infectionState);
 	}
 
-	
+	bool eventCompare( const Event* event ) {
+
+		EpidemicEvent *thisEvent = (EpidemicEvent *) event;
+
+		return (	compareEvents ( this, event ) && 
+					( randSeed == thisEvent->getRandSeed() ) && 
+					( pid == thisEvent->getPID() ) &&
+					( susceptibility == thisEvent->getSusceptibility() ) &&
+					( infectionState == thisEvent->getInfectionState() )    );
+	}
+
 	static const string &getEpidemicEventDataType(){
 		static string epidemicEventDataType = "EpidemicEvent";
-    	return epidemicEventDataType;
-	}
-	
-	const string &getDataType() const {
-    	return getEpidemicEventDataType();
-  	}
-
-	void setPerson(unsigned int personid, double susValue, string stateValue ){
-		person->pid = personid;
-		person->susceptibility = susValue;
-		person->infectionState = stateValue;
+		return epidemicEventDataType;
 	}
 
-	void setRandSeed(unsigned int seed){
-		randSeed = seed;
-	}
+	const string &getDataType() const { return getEpidemicEventDataType(); }
 
-	void setPid(unsigned personid){
-		pid = personid;
-	}
+	unsigned int getEventSize() const { return sizeof(EpidemicEvent); }
 
-	void setEventType(int thisType){
-		if(1==thisType)
-			currEventType = ARRIVAL;
-		if(2==thisType)
-			currEventType = DEPARTURE;
-		if(3==thisType)
-			currEventType = STATECHANGE;
-		if(0==thisType)
-			currEventType = DEFAULT;
-	}
-	
-	Person* getPerson(){return person;}
-	unsigned int getRandSeed(){ return randSeed; }
-	unsigned int getPid() { return pid;}
-	eventType getEventType(){return currEventType;}
+	void setRandSeed(unsigned int seed) { randSeed = seed; }
+
+	unsigned int getRandSeed() { return randSeed; }
+
+	void setPID( unsigned int personId ) { pid = personId; }
+
+	unsigned int getPID() { return pid; }
+
+	void setSusceptibility( double susValue ) { susceptibility = susValue; }
+
+	double getSusceptibility() { return susceptibility; }
+
+	void setInfectionState( const string stateValue ) { infectionState = stateValue; }
+
+	const string &getInfectionState() { return infectionState; }
 
 private:
 
-EpidemicEvent(const VTime &initSendTime,
-              const VTime &initRecvTime,
-			  const ObjectID &initSender,
-			  const ObjectID &initReceiver,
-			  const unsigned int eventIdVal) :
-			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver,eventIdVal ),
-			person(NULL),randSeed(0),
-			pid(0),currEventType(DEFAULT){
-			}
+	EpidemicEvent(  const VTime &initSendTime,
+					const VTime &initRecvTime,
+					const ObjectID &initSender,
+					const ObjectID &initReceiver,
+					const unsigned int eventId  ) :
+			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver, eventId ),
+			randSeed(0), pid(0), susceptibility(0), infectionState("") {
+	};
 
-	// data for arrival event
-	Person *person;
+	/* Random seed */
 	unsigned int randSeed;
-	// data for departure and state change event
+
+	/* Person ID */
 	unsigned int pid;
-	//specify the event type
-	eventType currEventType;
+
+	/* Person's susceptibility */
+	double susceptibility;
+
+	/* Person's infection state */
+	string infectionState;
 };
 
 #endif
