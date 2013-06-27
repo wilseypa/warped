@@ -1,4 +1,4 @@
-Epidemic: A WARPED simulation kernel application
+EPIDEMIC: A WARPED simulation kernel application
 
 Authors: Sounak Gupta, Xinyu Guo and Philip A. Wilsey
 Experimental Computing Laboratory
@@ -25,9 +25,23 @@ into another language, under the above conditions for modified versions.
 
 
 Introduction
+------------
+
+Details to be added later ( hopefully :) ).
+
+
+NOTE: It has been assumed that all locations are connected to each other in 
+a star topology configuration to a central hub. This has been done to reduce
+complexity in design of diffusion network.
+
+Travel time from location 1 to location 2 = 
+                     Travel time from location 1 to central hub +
+                     Travel time from central hub to location 2
 
 
 Configuration File
+------------------
+
 The model generator program lets the user adjust the following parameters
 before writing out the model:
 
@@ -36,10 +50,26 @@ before writing out the model:
 foreach region 1..<no_of_regions>
 	<number_of_locations>
 	foreach location 1..<no_of_locations>
-		<lname> <number_of_persons>
+		<lname> <number_of_persons> <travel_time_to_central_hub>
 		foreach person 1..<number_of_persons>
 			<pid> <susceptibility> <infection_state>
 		endfor
 	endfor
 endfor
+
+
+References
+----------
+
+1. Kalyan S Perumalla and Sudip K Seal. 2012. Discrete event modeling 
+and massively parallel execution of epidemic outbreak phenomena. 
+Simulation 88, 7 (July 2012), 768-783.
+
+2. Christopher L. Barrett, Keith R. Bisset, Stephen G. Eubank, Xizhou Feng, 
+and Madhav V. Marathe. 2008. EpiSimdemics: an efficient algorithm for 
+simulating the spread of infectious disease over large realistic social networks. 
+In Proceedings of the 2008 ACM/IEEE conference on Supercomputing (SC '08). 
+IEEE Press, Piscataway, NJ, USA, , Article 37 , 12 pages.
+
+
 
