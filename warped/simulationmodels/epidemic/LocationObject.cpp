@@ -47,7 +47,21 @@ void LocationObject::initialize() {
 
 void LocationObject::finalize() {}
 
-void LocationObject::executeProcess() {}
+void LocationObject::executeProcess() {
+
+	LocationState *myState = static_cast<LocationState*>(getState());
+	IntVTime sendTime = static_cast<const IntVTime&> (getSimulationTime());
+	EpidemicEvent *recvEvent = NULL;
+	SimulationObject *receiver = NULL;
+
+	while(haveMoreEvents() == true) {
+
+		recvEvent = (EpidemicEvent *) getEvent();
+		if ( recvEvent != NULL ) {
+
+		}
+	}
+}
 
 State* LocationObject::allocateState() {
 	return (new LocationState());
