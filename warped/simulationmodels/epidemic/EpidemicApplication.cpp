@@ -21,6 +21,7 @@
 #include <utils/ArgumentParser.h>
 
 #include <vector>
+#include <map>
 #include <iostream>
 #include <fstream>
 
@@ -49,7 +50,7 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 
 	EpidemicPartitioner *myPartitioner = new EpidemicPartitioner();
 	int numRegions = 0, numLocations = 0, numPersons = 0;
-	unsigned int pid = 0;
+	unsigned int pid = 0, travelTimeToHub = 0;
 	double susceptibility = 0.0;
 	float transmissibility = 0.0;
 	string locationName = "", infectionState = "";
@@ -57,6 +58,9 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 	Person *person;
 	vector <SimulationObject*> *locObjs;
 	vector <Person *> *personVec;
+
+	vector <SimulationObject *> simulationObjVec;
+	map <string, unsigned int> travelMap;
 
 	ifstream configFile;
 	configFile.open( inputFileName.c_str() );
@@ -66,12 +70,6 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 		abort();
 	}
 	configFile >> transmissibility >> numRegions;
-
-	/* If needed (to limit the LPs of a region to a specific processor */
-	//if(numRegions > numberOfProcessorsAvailable) {
-	//	cerr << "Not enough processors alotted for all the regions." << endl;
-	//	abort();
-	//}
 
 	/* For each region in the simulation, initialize the locations */
 	for( int regIndex = 0; regIndex < numRegions; regIndex++ ) {
@@ -84,7 +82,9 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 
 			personVec = new vector <Person *>;
 
-			configFile >> locationName >> numPersons;
+			configFile >> locationName >> numPersons >> travelTimeToHub;
+
+			travelMap.insert( pair <string, unsigned int>(locationName, travelTimeToHub) );
 
 			/* Read each person's details */
 			for(int perIndex = 0; perIndex < numPersons; perIndex++) {
@@ -96,13 +96,22 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 
 			LocationObject *locObject = new LocationObject( locationName,
 															transmissibility,
-															personVec);
+															personVec,
+															travelTimeToHub);
 			locObjs->push_back(locObject);
+			simulationObjVec.push_back(locObject);
 		}
 		numObjects += numLocations;
 
 		/* Add the group of objects to the partition information */
 		myPartitioner->addObjectGroup(locObjs);
+	}
+
+	/* Send travel map to all the objects once all the objects have been created */
+	for( vector<SimulationObject*>::iterator vecIter = simulationObjVec.begin();
+									vecIter != simulationObjVec.end(); vecIter++ ) {
+		LocationObject *locObj = static_cast <LocationObject *> (*vecIter);
+		locObj->populateTravelMap(&travelMap);
 	}
 
 	/* Perform the actual partitioning of groups */

@@ -23,10 +23,12 @@ using namespace std;
 
 LocationObject::LocationObject( string locationName,
 								float transmissibility,
-								vector <Person *> *personVec) : 
+								vector <Person *> *personVec,
+								unsigned int travelTimeToHub) : 
 	locationName(locationName),
 	transmissibility(transmissibility),
-	personVec(personVec) {
+	personVec(personVec),
+	travelTimeToHub(travelTimeToHub) {
 }
 
 LocationObject::~LocationObject() {

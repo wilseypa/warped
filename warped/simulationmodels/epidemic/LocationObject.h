@@ -19,6 +19,7 @@
 #include "LocationState.h"
 #include "Person.h"
 #include "EpidemicEvent.h"
+
 #include <vector>
 #include <map>
 
@@ -33,7 +34,8 @@ public:
 	/* Default Constructor */
 	LocationObject( string locationName,
 					float transmissibility,
-					vector <Person *> *personVec );
+					vector <Person *> *personVec,
+					unsigned int travelTimeToHub );
 
 	/* Destructor */
 	~LocationObject();
@@ -59,10 +61,21 @@ public:
 	/* Accessor for objectName */
 	const string &getName() const {return locationName;}
 
+	void populateTravelMap( map <string, unsigned int> *travelMap ) {
+		travelTimeMap.insert( travelMap->begin(), travelMap->end() );
+		travelTimeMap.erase(locationName);
+	}
+
 private:
 
 	/* Location name */
 	string locationName;
+
+	/* Location Travel Time from Hub */
+	map <string, unsigned int> travelTimeMap;
+
+	/* Trave Time from home to Hub */
+	unsigned int travelTimeToHub;
 
 	/* Transmissibility */
 	float transmissibility;
