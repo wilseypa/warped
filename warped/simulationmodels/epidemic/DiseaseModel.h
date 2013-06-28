@@ -29,6 +29,10 @@ public:
 					unsigned int incubatingDwellTime,
 					unsigned int infectiousDwellTime,
 					unsigned int asymptDwellTime,
+					float latentInfectivity,
+					float incubatingInfectivity,
+					float infectiousInfectivity,
+					float asymptInfectivity,
 					float probULU,
 					float probULV,
 					float probURV,
@@ -39,17 +43,22 @@ public:
 		incubatingDwellTime(incubatingDwellTime),
 		infectiousDwellTime(infectiousDwellTime),
 		asymptDwellTime(asymptDwellTime),
+		latentInfectivity(latentInfectivity),
+		incubatingInfectivity(incubatingInfectivity),
+		infectiousInfectivity(infectiousInfectivity),
+		asymptInfectivity(asymptInfectivity),
 		probULU(probULU),
 		probULV(probULV),
 		probURV(probURV),
 		probUIV(probUIV),
-		probUIU(probUIU) {}
+		probUIU(probUIU) {
+	}
 
 	/* Destructor */
 	~DiseaseModel() {}
 
 	/* Probabilistic Timed Transition System */
-	void diseasePTTS( ) {
+	void diseasePTTS( /* args have to be decided */ ) {
 	}
 
 	/* Reaction function */
@@ -64,6 +73,10 @@ private:
 	/* Disease dwell times */
 	unsigned int latentDwellTime, incubatingDwellTime, 
 					infectiousDwellTime, asymptDwellTime;
+
+	/* Disease state infectivity */
+	float latentInfectivity, incubatingInfectivity, 
+					infectiousInfectivity, asymptInfectivity;
 
 	/* Disease state transition probabilities */
 	float probULU, probULV, probURV, probUIV, probUIU;

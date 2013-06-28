@@ -27,6 +27,10 @@ LocationObject::LocationObject( string locationName,
 								unsigned int incubatingDwellTime,
 								unsigned int infectiousDwellTime,
 								unsigned int asymptDwellTime,
+								float latentInfectivity,
+								float incubatingInfectivity,
+								float infectiousInfectivity,
+								float asymptInfectivity,
 								float probULU,
 								float probULV,
 								float probURV,
@@ -40,6 +44,8 @@ LocationObject::LocationObject( string locationName,
 
 	diseaseModel = new DiseaseModel(	transmissibility, latentDwellTime, 
 										incubatingDwellTime, infectiousDwellTime, asymptDwellTime,
+										latentInfectivity, incubatingInfectivity,
+										infectiousInfectivity, asymptInfectivity,
 										probULU, probULV, probURV, probUIV, probUIU   );
 }
 

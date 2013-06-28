@@ -46,7 +46,10 @@ The model generator program lets the user adjust the following parameters
 before writing out the model:
 
 <transmissiblity>
-<latent_dwell_time> <incubating_dwell_time> <infectious_dwell_time> <asympt_dwell_time>
+<latent_dwell_time> <latent_infectivity>
+<incubating_dwell_time> <incubating_infectivity>
+<infectious_dwell_time> <infectious_infectivity>
+<asympt_dwell_time> <asympt_infectivity>
 <prob_ul_u> <prob_ul_v> <prob_ur_v> <prob_ui_v> <prob_ui_u>
 <number_of_regions>
 foreach region 1..<no_of_regions>

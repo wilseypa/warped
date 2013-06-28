@@ -55,7 +55,9 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 			asymptDwellTime = 0;
 	double susceptibility = 0.0;
 	float transmissibility = 0.0, probULU = 0.0, probULV = 0.0, 
-			probURV = 0.0, probUIV = 0.0, probUIU = 0.0;
+			probURV = 0.0, probUIV = 0.0, probUIU = 0.0, 
+			latentInfectivity = 0.0, incubatingInfectivity = 0.0, 
+			infectiousInfectivity = 0.0, asymptInfectivity = 0.0;
 	string locationName = "", infectionState = "", vaccinationStatus = "", 
 			regionName = "";
 
@@ -77,7 +79,10 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 	configFile >> transmissibility;
 
 	/* Refer to README for more details */
-	configFile >> latentDwellTime >> incubatingDwellTime >> infectiousDwellTime >> asymptDwellTime;
+	configFile >> latentDwellTime >> latentInfectivity;
+	configFile >> incubatingDwellTime >> incubatingInfectivity;
+	configFile >> infectiousDwellTime >> infectiousInfectivity;
+	configFile >> asymptDwellTime >> asymptInfectivity;
 	configFile >> probULU >> probULV >> probURV >> probUIV >> probUIU;
 
 	configFile >> numRegions;
@@ -114,6 +119,8 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 			LocationObject *locObject = new LocationObject( locationName, transmissibility,
 															latentDwellTime, incubatingDwellTime,
 															infectiousDwellTime, asymptDwellTime,
+															latentInfectivity, incubatingInfectivity,
+															infectiousInfectivity, asymptInfectivity,
 															probULU, probULV, probURV, probUIV, probUIU,
 															personVec,
 															travelTimeToHub);
