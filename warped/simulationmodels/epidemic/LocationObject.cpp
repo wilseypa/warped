@@ -23,12 +23,24 @@ using namespace std;
 
 LocationObject::LocationObject( string locationName,
 								float transmissibility,
+								unsigned int latentDwellTime,
+								unsigned int incubatingDwellTime,
+								unsigned int infectiousDwellTime,
+								unsigned int asymptDwellTime,
+								float probULU,
+								float probULV,
+								float probURV,
+								float probUIV,
+								float probUIU,
 								vector <Person *> *personVec,
 								unsigned int travelTimeToHub) : 
 	locationName(locationName),
-	transmissibility(transmissibility),
 	personVec(personVec),
 	travelTimeToHub(travelTimeToHub) {
+
+	diseaseModel = new DiseaseModel(	transmissibility, latentDwellTime, 
+										incubatingDwellTime, infectiousDwellTime, asymptDwellTime,
+										probULU, probULV, probURV, probUIV, probUIU   );
 }
 
 LocationObject::~LocationObject() {
@@ -40,6 +52,7 @@ LocationObject::~LocationObject() {
 		delete *vecIter;
 	}
 	delete personVec;
+	delete diseaseModel;
 }
 
 void LocationObject::initialize() {

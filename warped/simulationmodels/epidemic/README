@@ -27,11 +27,11 @@ into another language, under the above conditions for modified versions.
 Introduction
 ------------
 
-Details to be added later ( hopefully :) ).
-
+Details to be added later ( hopefully :) ). Most of the details needed can 
+be found in the papers mentioned in the Reference section.
 
 NOTE: It has been assumed that all locations are connected to each other in 
-a star topology configuration to a central hub. This has been done to reduce
+a star topology configuration via a central hub. This has been done to reduce
 complexity in design of diffusion network.
 
 Travel time from location 1 to location 2 = 
@@ -46,16 +46,27 @@ The model generator program lets the user adjust the following parameters
 before writing out the model:
 
 <transmissiblity>
+<latent_dwell_time> <incubating_dwell_time> <infectious_dwell_time> <asympt_dwell_time>
+<prob_ul_u> <prob_ul_v> <prob_ur_v> <prob_ui_v> <prob_ui_u>
 <number_of_regions>
 foreach region 1..<no_of_regions>
-	<number_of_locations>
+	<region_name> <number_of_locations>
 	foreach location 1..<no_of_locations>
-		<lname> <number_of_persons> <travel_time_to_central_hub>
+		<location_name> <number_of_persons> <travel_time_to_central_hub>
 		foreach person 1..<number_of_persons>
-			<pid> <susceptibility> <infection_state>
+			<pid> <susceptibility> <is_vaccinated> <infection_state>
 		endfor
 	endfor
 endfor
+
+Legend:
+	Refer to Figure 2 of ref[2] for the disease model
+	Transition Probabilities:
+		prob_ul_u : uninfected->latent (untreated)
+		prob_ul_v : uninfected->latent (vaccinated)
+		prob_ur_v : uninfected->recovered (vaccinated)
+		prob_ui_v : uninfected->incubating (vaccinated)
+		prob_ui_u : uninfected->incubating (untreated)
 
 
 References

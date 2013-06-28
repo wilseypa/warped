@@ -50,10 +50,14 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 
 	EpidemicPartitioner *myPartitioner = new EpidemicPartitioner();
 	int numRegions = 0, numLocations = 0, numPersons = 0;
-	unsigned int pid = 0, travelTimeToHub = 0;
+	unsigned int pid = 0, travelTimeToHub = 0, latentDwellTime = 0, 
+			incubatingDwellTime = 0, infectiousDwellTime = 0, 
+			asymptDwellTime = 0;
 	double susceptibility = 0.0;
-	float transmissibility = 0.0;
-	string locationName = "", infectionState = "";
+	float transmissibility = 0.0, probULU = 0.0, probULV = 0.0, 
+			probURV = 0.0, probUIV = 0.0, probUIU = 0.0;
+	string locationName = "", infectionState = "", vaccinationStatus = "", 
+			regionName = "";
 
 	Person *person;
 	vector <SimulationObject*> *locObjs;
@@ -69,33 +73,48 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 		cerr << "Terminating simulation." << endl;
 		abort();
 	}
-	configFile >> transmissibility >> numRegions;
+
+	configFile >> transmissibility;
+
+	/* Refer to README for more details */
+	configFile >> latentDwellTime >> incubatingDwellTime >> infectiousDwellTime >> asymptDwellTime;
+	configFile >> probULU >> probULV >> probURV >> probUIV >> probUIU;
+
+	configFile >> numRegions;
 
 	/* For each region in the simulation, initialize the locations */
 	for( int regIndex = 0; regIndex < numRegions; regIndex++ ) {
 
 		locObjs = new vector<SimulationObject*>;  
 		numLocations = 0;
-		configFile >> numLocations;
+		configFile >> regionName >> numLocations;
 
 		for( int locIndex = 0; locIndex < numLocations; locIndex++ ) {
 
 			personVec = new vector <Person *>;
 
 			configFile >> locationName >> numPersons >> travelTimeToHub;
+			locationName += ",";
+			locationName += regionName;
 
 			travelMap.insert( pair <string, unsigned int>(locationName, travelTimeToHub) );
 
 			/* Read each person's details */
 			for(int perIndex = 0; perIndex < numPersons; perIndex++) {
 
-				configFile >> pid >> susceptibility >> infectionState;
-				person = new Person( pid, susceptibility, infectionState );
+				configFile >> pid >> susceptibility >> vaccinationStatus >> infectionState;
+				if(vaccinationStatus == "yes") {
+					person = new Person( pid, susceptibility, true, infectionState );
+				} else {
+					person = new Person( pid, susceptibility, false, infectionState );
+				}
 				personVec->push_back( person );
 			}
 
-			LocationObject *locObject = new LocationObject( locationName,
-															transmissibility,
+			LocationObject *locObject = new LocationObject( locationName, transmissibility,
+															latentDwellTime, incubatingDwellTime,
+															infectiousDwellTime, asymptDwellTime,
+															probULU, probULV, probURV, probUIV, probUIU,
 															personVec,
 															travelTimeToHub);
 			locObjs->push_back(locObject);

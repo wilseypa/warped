@@ -18,6 +18,7 @@
 #include "SimulationObject.h"
 #include "LocationState.h"
 #include "Person.h"
+#include "DiseaseModel.h"
 #include "EpidemicEvent.h"
 
 #include <vector>
@@ -34,6 +35,15 @@ public:
 	/* Default Constructor */
 	LocationObject( string locationName,
 					float transmissibility,
+					unsigned int latentDwellTime,
+					unsigned int incubatingDwellTime,
+					unsigned int infectiousDwellTime,
+					unsigned int asymptDwellTime,
+					float probULU,
+					float probULV,
+					float probURV,
+					float probUIV,
+					float probUIU,
 					vector <Person *> *personVec,
 					unsigned int travelTimeToHub );
 
@@ -71,17 +81,17 @@ private:
 	/* Location name */
 	string locationName;
 
+	/* Disease model */
+	DiseaseModel *diseaseModel;
+
 	/* Location Travel Time from Hub */
 	map <string, unsigned int> travelTimeMap;
 
-	/* Trave Time from home to Hub */
-	unsigned int travelTimeToHub;
-
-	/* Transmissibility */
-	float transmissibility;
-
 	/* Initial population */
 	vector <Person *> *personVec;
+
+	/* Trave Time from home to Hub */
+	unsigned int travelTimeToHub;
 };
 
 #endif

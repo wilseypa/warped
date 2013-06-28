@@ -23,16 +23,20 @@ public:
 
 	Person( unsigned int pid,
 			double susceptibility,
+			bool isVaccinated,
 			string infectionState ) :
 		pid(pid),
 		susceptibility(susceptibility),
-		infectionState(infectionState) {};
+		isVaccinated(isVaccinated),
+		infectionState(infectionState) {}
 
 	~Person() {};
 
 	unsigned int pid;
 
 	double susceptibility;
+
+	bool isVaccinated;
 
 	string infectionState;
 };
