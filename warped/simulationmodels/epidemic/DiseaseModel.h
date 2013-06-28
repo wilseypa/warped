@@ -16,6 +16,7 @@
 #define DISEASE_MODEL_H
 
 #include "Person.h"
+#include <cmath>
 
 using namespace std;
 
@@ -58,12 +59,74 @@ public:
 	~DiseaseModel() {}
 
 	/* Probabilistic Timed Transition System */
-	void diseasePTTS( /* args have to be decided */ ) {
+	void diseasePTTS( /* args have to be decided */ ){
 	}
 
 	/* Reaction function */
-	void diseaseReaction( map <unsigned int, Person *> *personMap ) {
-	}
+	map<Person*,double> diseaseReaction( map <unsigned int, Person *> *personMap ){
+    	int latentNum = 0;
+    	int incubatingNum = 0;
+    	int asymptNum = 0;
+    	int infectiousNum = 0;
+    	int uninfectedNum = 0;
+   		vector<Person*> uninfectedSet;
+    	map<Person*,double> getInfectedProbability;
+
+    	for(map<unsigned int, Person*>::iterator it = personMap->begin(); it!=personMap->end(); it++){
+        	if ("latent" == (it->second)->infectionState)
+            	latentNum++;
+        	if ("incubating" == (it->second)->infectionState)
+            	incubatingNum++;
+        	if ("asympt" == (it->second)->infectionState)
+            	asymptNum++;
+        	if ("infectious" == (it->second)->infectionState)
+            	infectiousNum++;
+        	if ("uninfected" == (it->second)->infectionState){
+            	uninfectedNum++;
+            	uninfectedSet.push_back(it->second);
+        	}
+    	}
+
+    	if(0==uninfectedNum) // all people in the locatoin are infected or recovery
+        	return getInfectedProbability;
+    	else{
+        	for(vector<Person*>::iterator it=uninfectedSet.begin(); it!=uninfectedSet.end(); it++){
+            	double si = (*it)->susceptibility;
+            	double pLatent;
+            	double pIncubating;
+            	double pInfectious;
+            	double pAsympt;
+            	if (0!=latentNum){
+                	pLatent = 1 - si*transmissibility*latentInfectivity;
+                	pLatent = pow(pLatent,latentNum);
+            	}
+            	else
+                	pLatent = 1.0;
+            	if (0!=incubatingNum){
+                	pIncubating = 1 - si*transmissibility*incubatingInfectivity;
+                	pIncubating = pow(pIncubating,incubatingNum);
+            	}
+           		else
+                	pIncubating = 1.0;
+            	if(0!=infectiousNum){
+                	pInfectious = 1 - si*transmissibility*infectiousInfectivity;
+                	pInfectious = pow(pInfectious,infectiousNum);                                    	}
+				else
+                	pInfectious = 1.0;
+            	if(0!=asymptNum){
+                	pAsympt = 1 - si*transmissibility*asymptInfectivity;
+                	pAsympt = pow(pAsympt,asymptNum);
+            	}
+            	else
+                	pAsympt = 1.0;
+            	double multiply = pLatent*pIncubating*pInfectious*pAsympt;
+            	double time = 2.0;
+            	double pi = 1 - pow(multiply,time);
+            	getInfectedProbability.insert(pair<Person*,double>((*it),pi));
+        	}
+        return getInfectedProbability;
+    }
+}
 
 private:
 
@@ -75,7 +138,7 @@ private:
 					infectiousDwellTime, asymptDwellTime;
 
 	/* Disease state infectivity */
-	float latentInfectivity, incubatingInfectivity, 
+	double latentInfectivity, incubatingInfectivity, 
 					infectiousInfectivity, asymptInfectivity;
 
 	/* Disease state transition probabilities */
