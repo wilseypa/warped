@@ -29,10 +29,9 @@ public:
 					const VTime &initRecvTime,
 					SimulationObject *initSender,
 					SimulationObject *initReceiver,
-					Person *person,
-					unsigned int randSeed  ) : 
+					Person *person  ) : 
 			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver ),
-			randSeed(randSeed), pid(0), susceptibility(0.0), infectionState("") {
+			pid(0), susceptibility(0.0), infectionState("") {
 
 		if( person ) {
 			pid = person->pid;
@@ -59,7 +58,6 @@ public:
 
 		EpidemicEvent *event = new EpidemicEvent(*sendTime, *receiveTime, sender, receiver, eventId);	
 
-		event->setRandSeed( instance->getUnsigned() );
 		event->setPID ( instance->getUnsigned() );
 		event->setSusceptibility ( instance->getDouble() );
 		event->setInfectionState ( instance->getString() );
@@ -72,7 +70,6 @@ public:
 
 	void serialize( SerializedInstance *addTo ) const {
 		Event::serialize(addTo);
-		addTo->addUnsigned(randSeed);
 		addTo->addUnsigned(pid);
 		addTo->addDouble(susceptibility);
 		addTo->addString(infectionState);
@@ -83,7 +80,6 @@ public:
 		EpidemicEvent *thisEvent = (EpidemicEvent *) event;
 
 		return (	compareEvents ( this, event ) && 
-					( randSeed == thisEvent->getRandSeed() ) && 
 					( pid == thisEvent->getPID() ) &&
 					( susceptibility == thisEvent->getSusceptibility() ) &&
 					( infectionState == thisEvent->getInfectionState() )    );
@@ -97,10 +93,6 @@ public:
 	const string &getDataType() const { return getEpidemicEventDataType(); }
 
 	unsigned int getEventSize() const { return sizeof(EpidemicEvent); }
-
-	void setRandSeed(unsigned int seed) { randSeed = seed; }
-
-	unsigned int getRandSeed() { return randSeed; }
 
 	void setPID( unsigned int personId ) { pid = personId; }
 
@@ -122,11 +114,8 @@ private:
 					const ObjectID &initReceiver,
 					const unsigned int eventId  ) :
 			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver, eventId ),
-			randSeed(0), pid(0), susceptibility(0), infectionState("") {
+			pid(0), susceptibility(0), infectionState("") {
 	}
-
-	/* Random seed */
-	unsigned int randSeed;
 
 	/* Person ID */
 	unsigned int pid;
