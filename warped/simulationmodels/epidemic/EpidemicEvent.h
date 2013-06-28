@@ -39,10 +39,10 @@ public:
 			susceptibility = person->susceptibility;
 			infectionState = person->infectionState;
 		}
-	};
+	}
 
 	/* Destructor */
-	~EpidemicEvent() {};
+	~EpidemicEvent() {}
 
 	static Serializable* deserialize( SerializedInstance *instance ) {
 
@@ -123,7 +123,7 @@ private:
 					const unsigned int eventId  ) :
 			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver, eventId ),
 			randSeed(0), pid(0), susceptibility(0), infectionState("") {
-	};
+	}
 
 	/* Random seed */
 	unsigned int randSeed;

@@ -15,6 +15,8 @@
 #ifndef DISEASE_MODEL_H
 #define DISEASE_MODEL_H
 
+#include "Person.h"
+
 using namespace std;
 
 class DiseaseModel {
@@ -41,10 +43,20 @@ public:
 		probULV(probULV),
 		probURV(probURV),
 		probUIV(probUIV),
-		probUIU(probUIU) {};
+		probUIU(probUIU) {}
 
 	/* Destructor */
-	~DiseaseModel() {};
+	~DiseaseModel() {}
+
+	/* Probabilistic Timed Transition System */
+	void diseasePTTS( ) {
+	}
+
+	/* Reaction function */
+	void diseaseReaction( map <unsigned int, Person *> *personMap ) {
+	}
+
+private:
 
 	/* Transmissibility */
 	float transmissibility;

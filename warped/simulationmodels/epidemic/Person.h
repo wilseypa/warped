@@ -15,6 +15,8 @@
 #ifndef PERSON_H
 #define PERSON_H
 
+#define INVALID_PID 0
+
 using namespace std;
 
 class Person {
@@ -30,7 +32,7 @@ public:
 		isVaccinated(isVaccinated),
 		infectionState(infectionState) {}
 
-	~Person() {};
+	~Person() {}
 
 	unsigned int pid;
 

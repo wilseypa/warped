@@ -29,7 +29,7 @@ class LocationState : public State {
 public:
 
 	/* Default Constructor */
-	LocationState() {};
+	LocationState() {}
 
 	/* Destructor */
 	~LocationState() {
@@ -37,7 +37,7 @@ public:
 		for(mapIter = personMap.begin(); mapIter != personMap.end(); mapIter++) {
 			delete (mapIter->second);
 		}
-	};
+	}
 
 	/* Copy the state */
 	void copyState(const State* toCopy) {
@@ -56,7 +56,7 @@ public:
 									tempPerson->infectionState 	);
 			personMap.insert( std::pair <unsigned int, Person *> (mapIter->first, person) );
 		}
-	};
+	}
 
 	/* Get the state size */
 	unsigned int getStateSize() const { return sizeof(LocationState); }
@@ -68,6 +68,11 @@ public:
 			Person *person = *vecIter;
 			personMap.insert( std::pair<unsigned int, Person *>(person->pid, person) );
 		}
+	}
+
+	/* Fetch the Person map address */
+	map <unsigned int, Person *> *getPersonMap() {
+		return &personMap;
 	}
 
 private:
