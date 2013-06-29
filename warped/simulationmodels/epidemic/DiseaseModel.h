@@ -66,22 +66,21 @@ public:
 	/* Probabilistic Timed Transition System */
 	void diseasePTTS( Person *person ) {
 
-		/* the state time part needs furthur implementation */
 		string iState = person->infectionState;
 		if ("latent" == iState){
-			latentDwellTime;
+			person->lastStateChangeTime + (int) latentDwellTime;
 			person->infectionState = "infectious";	
 		}
 		if ("incubating" == iState){
-			incubatingDwellTime;		
+			person->lastStateChangeTime + (int) incubatingDwellTime;		
 			person->infectionState = "asympt";	
 		}
 		if ("infectious" == iState){
-			infectiousDwellTime;
+			person->lastStateChangeTime + (int) infectiousDwellTime;
 			person->infectionState = "recovered";	
 		}
 		if ("asympt" == iState){
-			asymptDwellTime;
+			person->lastStateChangeTime + (int) asymptDwellTime;
 			person->infectionState = "recovered";	
 		}
 	}
