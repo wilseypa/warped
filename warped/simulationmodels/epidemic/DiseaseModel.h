@@ -17,6 +17,9 @@
 
 #include "Person.h"
 #include <cmath>
+#include "RandomNumGen.h"
+
+#define PROB_MULTIPLIER 100
 
 using namespace std;
 
@@ -53,80 +56,104 @@ public:
 		probURV(probURV),
 		probUIV(probUIV),
 		probUIU(probUIU) {
+
+		randNumGen.seedRandNumGen();
 	}
 
 	/* Destructor */
 	~DiseaseModel() {}
 
 	/* Probabilistic Timed Transition System */
-	void diseasePTTS( /* args have to be decided */ ){
+	void diseasePTTS( /* args have to be decided */ ) {
 	}
 
 	/* Reaction function */
-	map<Person*,double> diseaseReaction( map <unsigned int, Person *> *personMap ){
-    	int latentNum = 0;
-    	int incubatingNum = 0;
-    	int asymptNum = 0;
-    	int infectiousNum = 0;
-    	int uninfectedNum = 0;
-   		vector<Person*> uninfectedSet;
-    	map<Person*,double> getInfectedProbability;
+	void diseaseReaction( map <unsigned int, Person *> *personMap ) {
 
-    	for(map<unsigned int, Person*>::iterator it = personMap->begin(); it!=personMap->end(); it++){
-        	if ("latent" == (it->second)->infectionState)
-            	latentNum++;
-        	if ("incubating" == (it->second)->infectionState)
-            	incubatingNum++;
-        	if ("asympt" == (it->second)->infectionState)
-            	asymptNum++;
-        	if ("infectious" == (it->second)->infectionState)
-            	infectiousNum++;
-        	if ("uninfected" == (it->second)->infectionState){
-            	uninfectedNum++;
-            	uninfectedSet.push_back(it->second);
-        	}
-    	}
+		unsigned int latentNum = 0, incubatingNum = 0, 
+						infectiousNum = 0, asymptNum = 0, uninfectedNum = 0;
+		vector< Person* > uninfectedVec;
 
-    	if(0==uninfectedNum) // all people in the locatoin are infected or recovery
-        	return getInfectedProbability;
-    	else{
-        	for(vector<Person*>::iterator it=uninfectedSet.begin(); it!=uninfectedSet.end(); it++){
-            	double si = (*it)->susceptibility;
-            	double pLatent;
-            	double pIncubating;
-            	double pInfectious;
-            	double pAsympt;
-            	if (0!=latentNum){
-                	pLatent = 1 - si*transmissibility*latentInfectivity;
-                	pLatent = pow(pLatent,latentNum);
-            	}
-            	else
-                	pLatent = 1.0;
-            	if (0!=incubatingNum){
-                	pIncubating = 1 - si*transmissibility*incubatingInfectivity;
-                	pIncubating = pow(pIncubating,incubatingNum);
-            	}
-           		else
-                	pIncubating = 1.0;
-            	if(0!=infectiousNum){
-                	pInfectious = 1 - si*transmissibility*infectiousInfectivity;
-                	pInfectious = pow(pInfectious,infectiousNum);                                    	}
-				else
-                	pInfectious = 1.0;
-            	if(0!=asymptNum){
-                	pAsympt = 1 - si*transmissibility*asymptInfectivity;
-                	pAsympt = pow(pAsympt,asymptNum);
-            	}
-            	else
-                	pAsympt = 1.0;
-            	double multiply = pLatent*pIncubating*pInfectious*pAsympt;
-            	double time = 2.0;
-            	double pi = 1 - pow(multiply,time);
-            	getInfectedProbability.insert(pair<Person*,double>((*it),pi));
-        	}
-        return getInfectedProbability;
-    }
-}
+		for( map<unsigned int, Person*>::iterator mapIter = personMap->begin(); 
+												mapIter != personMap->end(); mapIter++) {
+
+			string infectionState = (mapIter->second)->infectionState;
+			if ("uninfected" == infectionState) {
+				uninfectedNum++;
+				uninfectedVec.push_back(mapIter->second);
+			} else if ("latent" == infectionState) {
+				latentNum++;
+			} else if ("incubating" == infectionState) {
+				incubatingNum++;
+			} else if ("infectious" == infectionState) {
+				infectiousNum++;
+			} else if ("asympt" == infectionState) {
+				asymptNum++;
+			} else {
+				ASSERT("recovered" == infectionState);
+			}
+		}
+
+		/* If some persons remain uninfected */
+		if ( uninfectedNum ) {
+			for( vector <Person*>::iterator vecIter = uninfectedVec.begin(); 
+												vecIter != uninfectedVec.end(); vecIter++) {
+				double susceptibility = (*vecIter)->susceptibility;
+				double suscepMultTrans = (double) susceptibility * transmissibility;
+				double probLatent = 1.0, probIncubating = 1.0, probInfectious = 1.0, 
+													probAsympt = 1.0, diseaseProb = 1.0;
+				if (latentNum) {
+					probLatent -= (double) suscepMultTrans * latentInfectivity;
+					probLatent = pow( probLatent, (double) latentNum );
+				}
+				if (incubatingNum) {
+					probIncubating -= (double) suscepMultTrans * incubatingInfectivity;
+					probIncubating = pow( probIncubating, (double) incubatingNum );
+				}
+				if (infectiousNum) {
+					probInfectious -= (double) suscepMultTrans * infectiousInfectivity;
+					probInfectious = pow( probInfectious, (double) infectiousNum);
+				}
+				if (asymptNum) {
+					probAsympt -= (double) suscepMultTrans * asymptInfectivity;
+					probAsympt = pow( probAsympt, (double) asymptNum);
+				}
+
+				/* Incomplete : Formula will change with introduction of time */
+				diseaseProb -= (probLatent * probIncubating * probInfectious * probAsympt);
+
+				/* Decide whether the person gets infected */
+				unsigned int diseaseNum = (unsigned int) diseaseProb * PROB_MULTIPLIER;
+				if( diseaseNum > randNumGen.genRandNum(PROB_MULTIPLIER) ) {
+
+					unsigned int randNum = randNumGen.genRandNum(PROB_MULTIPLIER);
+
+					/* Check whether the person is vaccinated */
+					if( (*vecIter)->isVaccinated ) {
+
+						unsigned int ulvNum = (unsigned int) probULV * PROB_MULTIPLIER;
+						unsigned int urvPlusUlvNum = (unsigned int) (probURV + probULV) * PROB_MULTIPLIER;
+						if( ulvNum > randNum ) {
+							(*vecIter)->infectionState = "latent";
+						} else if( urvPlusUlvNum > randNum ) {
+							(*vecIter)->infectionState = "recovered";
+						} else {
+							(*vecIter)->infectionState = "incubating";
+						}
+
+					} else {
+
+						unsigned int uluNum = (unsigned int) probULU * PROB_MULTIPLIER;
+						if( uluNum > randNum ) {
+							(*vecIter)->infectionState = "latent";
+						} else {
+							(*vecIter)->infectionState = "incubating";
+						}
+					}
+				}
+			}
+		}
+	}
 
 private:
 
@@ -138,11 +165,14 @@ private:
 					infectiousDwellTime, asymptDwellTime;
 
 	/* Disease state infectivity */
-	double latentInfectivity, incubatingInfectivity, 
+	float latentInfectivity, incubatingInfectivity, 
 					infectiousInfectivity, asymptInfectivity;
 
 	/* Disease state transition probabilities */
 	float probULU, probULV, probURV, probUIV, probUIU;
+
+	/* Random Number Generator */
+	RandomNumGen randNumGen;
 };
 
 #endif
