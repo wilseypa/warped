@@ -64,7 +64,8 @@ public:
 	~DiseaseModel() {}
 
 	/* Probabilistic Timed Transition System */
-	void diseasePTTS( /* args have to be decided */ ) {
+	void diseasePTTS( Person *person ) {
+
 	}
 
 	/* Reaction function */
