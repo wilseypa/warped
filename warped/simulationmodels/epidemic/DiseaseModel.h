@@ -65,7 +65,8 @@ public:
 
 	/* Probabilistic Timed Transition System */
 	void diseasePTTS( Person *person ) {
-		/* the state time part need furthure implementation */
+
+		/* the state time part needs furthur implementation */
 		string iState = person->infectionState;
 		if ("latent" == iState){
 			latentDwellTime;
@@ -117,23 +118,23 @@ public:
 			for( vector <Person*>::iterator vecIter = uninfectedVec.begin(); 
 												vecIter != uninfectedVec.end(); vecIter++) {
 				double susceptibility = (*vecIter)->susceptibility;
-				double suscepMultTrans = (double) susceptibility * transmissibility;
+				double suscepMultTrans = (double) (susceptibility * transmissibility);
 				double probLatent = 1.0, probIncubating = 1.0, probInfectious = 1.0, 
 													probAsympt = 1.0, diseaseProb = 1.0;
 				if (latentNum) {
-					probLatent -= (double) suscepMultTrans * latentInfectivity;
+					probLatent -= (double) (suscepMultTrans * latentInfectivity);
 					probLatent = pow( probLatent, (double) latentNum );
 				}
 				if (incubatingNum) {
-					probIncubating -= (double) suscepMultTrans * incubatingInfectivity;
+					probIncubating -= (double) (suscepMultTrans * incubatingInfectivity);
 					probIncubating = pow( probIncubating, (double) incubatingNum );
 				}
 				if (infectiousNum) {
-					probInfectious -= (double) suscepMultTrans * infectiousInfectivity;
+					probInfectious -= (double) (suscepMultTrans * infectiousInfectivity);
 					probInfectious = pow( probInfectious, (double) infectiousNum);
 				}
 				if (asymptNum) {
-					probAsympt -= (double) suscepMultTrans * asymptInfectivity;
+					probAsympt -= (double) (suscepMultTrans * asymptInfectivity);
 					probAsympt = pow( probAsympt, (double) asymptNum);
 				}
 
@@ -147,7 +148,7 @@ public:
 					unsigned int randNum = randNumGen.genRandNum(PROB_MULTIPLIER);
 
 					/* Check whether the person is vaccinated */
-					if( (*vecIter)->isVaccinated ) {
+					if( "yes" == (*vecIter)->vaccinationStatus ) {
 
 						unsigned int ulvNum = (unsigned int) probULV * PROB_MULTIPLIER;
 						unsigned int urvPlusUlvNum = (unsigned int) (probURV + probULV) * PROB_MULTIPLIER;

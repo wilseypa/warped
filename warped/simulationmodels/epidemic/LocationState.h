@@ -52,8 +52,10 @@ public:
 			tempPerson = mapIter->second;
 			person = new Person( 	tempPerson->pid,
 									tempPerson->susceptibility,
-									tempPerson->isVaccinated,
-									tempPerson->infectionState 	);
+									tempPerson->vaccinationStatus,
+									tempPerson->infectionState, 
+									tempPerson->arrivalTimeAtLoc,
+									tempPerson->lastStateChangeTime );
 			personMap.insert( std::pair <unsigned int, Person *> (mapIter->first, person) );
 		}
 	}

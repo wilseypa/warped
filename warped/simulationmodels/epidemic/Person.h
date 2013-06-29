@@ -15,6 +15,8 @@
 #ifndef PERSON_H
 #define PERSON_H
 
+#include "IntVTime.h"
+
 #define INVALID_PID 0
 
 using namespace std;
@@ -23,24 +25,40 @@ class Person {
 
 public:
 
+	/* Constructor */
 	Person( unsigned int pid,
 			double susceptibility,
-			bool isVaccinated,
-			string infectionState ) :
+			string vaccinationStatus,
+			string infectionState,
+			IntVTime arrivalTimeAtLoc,
+			IntVTime lastStateChangeTime ) :
 		pid(pid),
 		susceptibility(susceptibility),
-		isVaccinated(isVaccinated),
-		infectionState(infectionState) {}
+		vaccinationStatus(vaccinationStatus),
+		infectionState(infectionState),
+		arrivalTimeAtLoc(arrivalTimeAtLoc),
+		lastStateChangeTime(lastStateChangeTime) {}
 
+	/* Destructor */
 	~Person() {}
 
+	/* PID */
 	unsigned int pid;
 
+	/* Susceptibility */
 	double susceptibility;
 
-	bool isVaccinated;
+	/* Vaccination status */
+	string vaccinationStatus;
 
+	/* Infection state */
 	string infectionState;
+
+	/* Time when the person arrived at the location */
+	IntVTime arrivalTimeAtLoc;
+
+	/* Time when the last infection state change occured */
+	IntVTime lastStateChangeTime;
 };
 
 #endif

@@ -25,6 +25,8 @@
 #include <iostream>
 #include <fstream>
 
+#define INIT_VTIME 0
+
 using namespace std;
 
 
@@ -108,11 +110,7 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 			for(int perIndex = 0; perIndex < numPersons; perIndex++) {
 
 				configFile >> pid >> susceptibility >> vaccinationStatus >> infectionState;
-				if(vaccinationStatus == "yes") {
-					person = new Person( pid, susceptibility, true, infectionState );
-				} else {
-					person = new Person( pid, susceptibility, false, infectionState );
-				}
+				person = new Person( pid, susceptibility, vaccinationStatus, infectionState, INIT_VTIME, INIT_VTIME );
 				personVec->push_back( person );
 			}
 
