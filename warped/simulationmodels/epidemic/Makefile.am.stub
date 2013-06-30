@@ -26,8 +26,7 @@ epidemicSim_SOURCES= \
      epidemic/EpidemicApplication.cpp \
      epidemic/EpidemicPartitioner.cpp \
      epidemic/EpidemicMain.cpp \
-     epidemic/LocationObject.cpp \
-     epidemic/LocationState.h
+     epidemic/LocationObject.cpp
 
 epidemicSim_LDFLAGS=-static
 epidemicSim_LDADD=$(top_builddir)/src/libwarped.la \
