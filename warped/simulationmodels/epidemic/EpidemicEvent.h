@@ -29,14 +29,18 @@ public:
 					const VTime &initRecvTime,
 					SimulationObject *initSender,
 					SimulationObject *initReceiver,
-					Person *person  ) : 
+					Person *person,
+					IntVTime currentTime  ) : 
 			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver ),
-			pid(0), susceptibility(0.0), infectionState("") {
+			pid(0), susceptibility(0.0), vaccinationStatus(""), 
+			infectionState(""), timeSpentInCurrState(0) {
 
 		if( person ) {
 			pid = person->pid;
 			susceptibility = person->susceptibility;
+			vaccinationStatus = person->vaccinationStatus;
 			infectionState = person->infectionState;
+			timeSpentInCurrState = currentTime.getTime() - person->lastStateChangeTime;
 		}
 	}
 
@@ -60,7 +64,9 @@ public:
 
 		event->setPID ( instance->getUnsigned() );
 		event->setSusceptibility ( instance->getDouble() );
+		event->setVaccinationStatus (instance->getString() );
 		event->setInfectionState ( instance->getString() );
+		event->setTimeSpentInCurrState ( instance->getInt() );
 
 		delete sendTime;
 		delete receiveTime;
@@ -72,7 +78,9 @@ public:
 		Event::serialize(addTo);
 		addTo->addUnsigned(pid);
 		addTo->addDouble(susceptibility);
+		addTo->addString(vaccinationStatus);
 		addTo->addString(infectionState);
+		addTo->addInt( timeSpentInCurrState );
 	}
 
 	bool eventCompare( const Event* event ) {
@@ -82,7 +90,9 @@ public:
 		return (	compareEvents ( this, event ) && 
 					( pid == thisEvent->getPID() ) &&
 					( susceptibility == thisEvent->getSusceptibility() ) &&
-					( infectionState == thisEvent->getInfectionState() )    );
+					( vaccinationStatus == thisEvent->getVaccinationStatus() ) &&
+					( infectionState == thisEvent->getInfectionState() ) &&
+					( timeSpentInCurrState == thisEvent->getTimeSpentInCurrState() )   );
 	}
 
 	static const string &getEpidemicEventDataType(){
@@ -102,9 +112,19 @@ public:
 
 	double getSusceptibility() { return susceptibility; }
 
+	void setVaccinationStatus( const string statusValue ) { vaccinationStatus = statusValue; }
+
+	const string &getVaccinationStatus() { return vaccinationStatus; }
+
 	void setInfectionState( const string stateValue ) { infectionState = stateValue; }
 
 	const string &getInfectionState() { return infectionState; }
+
+	void setTimeSpentInCurrState( int timeSpent ) { 
+		timeSpentInCurrState = timeSpent;
+	}
+
+	int getTimeSpentInCurrState() { return timeSpentInCurrState; }
 
 private:
 
@@ -114,7 +134,8 @@ private:
 					const ObjectID &initReceiver,
 					const unsigned int eventId  ) :
 			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver, eventId ),
-			pid(0), susceptibility(0), infectionState("") {
+			pid(0), susceptibility(0), vaccinationStatus(""), 
+			infectionState(""), timeSpentInCurrState(0) {
 	}
 
 	/* Person ID */
@@ -123,8 +144,14 @@ private:
 	/* Person's susceptibility */
 	double susceptibility;
 
+	/* Vaccination status */
+	string vaccinationStatus;
+
 	/* Person's infection state */
 	string infectionState;
+
+	/* Time spent in the current state */
+	int timeSpentInCurrState;
 };
 
 #endif

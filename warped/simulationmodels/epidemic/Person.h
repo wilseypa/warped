@@ -15,8 +15,6 @@
 #ifndef PERSON_H
 #define PERSON_H
 
-#include "IntVTime.h"
-
 #define INVALID_PID 0
 
 using namespace std;
@@ -30,8 +28,8 @@ public:
 			double susceptibility,
 			string vaccinationStatus,
 			string infectionState,
-			IntVTime arrivalTimeAtLoc,
-			IntVTime lastStateChangeTime ) :
+			int arrivalTimeAtLoc,
+			int lastStateChangeTime ) :
 		pid(pid),
 		susceptibility(susceptibility),
 		vaccinationStatus(vaccinationStatus),
@@ -55,10 +53,10 @@ public:
 	string infectionState;
 
 	/* Time when the person arrived at the location */
-	IntVTime arrivalTimeAtLoc;
+	int arrivalTimeAtLoc;
 
 	/* Time when the last infection state change occured */
-	IntVTime lastStateChangeTime;
+	int lastStateChangeTime;
 };
 
 #endif
