@@ -64,29 +64,36 @@ public:
 	~DiseaseModel() {}
 
 	/* Probabilistic Timed Transition System */
-	void diseasePTTS( Person *person ) {
+	void diseasePTTS( Person *person, int currentTime ) {
 
 		string iState = person->infectionState;
 		if ("latent" == iState){
-			person->lastStateChangeTime + (int) latentDwellTime;
-			person->infectionState = "infectious";	
-		}
-		if ("incubating" == iState){
-			person->lastStateChangeTime + (int) incubatingDwellTime;		
-			person->infectionState = "asympt";	
-		}
-		if ("infectious" == iState){
-			person->lastStateChangeTime + (int) infectiousDwellTime;
-			person->infectionState = "recovered";	
-		}
-		if ("asympt" == iState){
-			person->lastStateChangeTime + (int) asymptDwellTime;
-			person->infectionState = "recovered";	
+			if( (currentTime - person->lastStateChangeTime) >= (int) latentDwellTime ) {
+				person->infectionState = "infectious";
+				person->lastStateChangeTime = currentTime;
+			}
+		} else if ("incubating" == iState){
+			if( (currentTime - person->lastStateChangeTime) >= (int) incubatingDwellTime ) {
+				person->infectionState = "asympt";
+				person->lastStateChangeTime = currentTime;
+			}
+		} else if ("infectious" == iState){
+			if( (currentTime - person->lastStateChangeTime) >= (int) infectiousDwellTime ) {
+				person->infectionState = "recovered";
+				person->lastStateChangeTime = currentTime;
+			}
+		} else if ("asympt" == iState){
+			if( (currentTime - person->lastStateChangeTime) >= (int) asymptDwellTime ) {
+				person->infectionState = "recovered";
+				person->lastStateChangeTime = currentTime;
+			}
+		} else {
+			ASSERT( ("uninfected" == iState) || ("recovered" == iState) );
 		}
 	}
 
 	/* Reaction function */
-	void diseaseReaction( map <unsigned int, Person *> *personMap ) {
+	void diseaseReaction( map <unsigned int, Person *> *personMap, int currentTime ) {
 
 		unsigned int latentNum = 0, incubatingNum = 0, 
 						infectiousNum = 0, asymptNum = 0, uninfectedNum = 0;
@@ -137,8 +144,8 @@ public:
 					probAsympt = pow( probAsympt, (double) asymptNum);
 				}
 
-				/* Incomplete : Formula will change with introduction of time */
-				diseaseProb -= (probLatent * probIncubating * probInfectious * probAsympt);
+				double prodProb = probLatent * probIncubating * probInfectious * probAsympt;
+				diseaseProb -= pow( prodProb, (double) (currentTime - (*vecIter)->arrivalTimeAtLoc) );
 
 				/* Decide whether the person gets infected */
 				unsigned int diseaseNum = (unsigned int) diseaseProb * PROB_MULTIPLIER;
@@ -149,8 +156,8 @@ public:
 					/* Check whether the person is vaccinated */
 					if( "yes" == (*vecIter)->vaccinationStatus ) {
 
-						unsigned int ulvNum = (unsigned int) probULV * PROB_MULTIPLIER;
-						unsigned int urvPlusUlvNum = (unsigned int) (probURV + probULV) * PROB_MULTIPLIER;
+						unsigned int ulvNum = (unsigned int) (probULV * PROB_MULTIPLIER);
+						unsigned int urvPlusUlvNum = (unsigned int) ((probURV + probULV) * PROB_MULTIPLIER);
 						if( ulvNum > randNum ) {
 							(*vecIter)->infectionState = "latent";
 						} else if( urvPlusUlvNum > randNum ) {
@@ -161,7 +168,7 @@ public:
 
 					} else {
 
-						unsigned int uluNum = (unsigned int) probULU * PROB_MULTIPLIER;
+						unsigned int uluNum = (unsigned int) (probULU * PROB_MULTIPLIER);
 						if( uluNum > randNum ) {
 							(*vecIter)->infectionState = "latent";
 						} else {
