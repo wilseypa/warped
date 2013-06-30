@@ -78,8 +78,7 @@ public:
 	const string &getName() const {return locationName;}
 
 	void populateTravelMap( map <string, unsigned int> *travelMap ) {
-		travelTimeMap.insert( travelMap->begin(), travelMap->end() );
-		travelTimeMap.erase(locationName);
+		diffusionNetwork->populateTravelCost(travelMap, locationName);
 	}
 
 private:
@@ -96,14 +95,8 @@ private:
 	/* Diffusion Network */
 	DiffusionNetwork *diffusionNetwork;
 
-	/* Location Travel Time from Hub */
-	map <string, unsigned int> travelTimeMap;
-
 	/* Initial population */
 	vector <Person *> *personVec;
-
-	/* Trave Time from home to Hub */
-	unsigned int travelTimeToHub;
 };
 
 #endif

@@ -39,8 +39,7 @@ LocationObject::LocationObject( string locationName,
 								vector <Person *> *personVec,
 								unsigned int travelTimeToHub) : 
 		locationName(locationName),
-		personVec(personVec),
-		travelTimeToHub(travelTimeToHub) {
+		personVec(personVec) {
 
 	/* Create and seed the random number class */
 	randNumGen = new RandomNumGen();
@@ -55,7 +54,7 @@ LocationObject::LocationObject( string locationName,
 										probUIV, probUIU, randNumGen  );
 
 	/* Create the diffusion network */
-	diffusionNetwork = new DiffusionNetwork( randNumGen );
+	diffusionNetwork = new DiffusionNetwork( randNumGen, travelTimeToHub );
 }
 
 LocationObject::~LocationObject() {

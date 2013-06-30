@@ -23,31 +23,42 @@ class DiffusionNetwork {
 public:
 
 	/* Constructor */
-	DiffusionNetwork( RandomNumGen *randNumGen ) : 
-		randNumGen(randNumGen) {
-	}
+	DiffusionNetwork( RandomNumGen *randNumGen, unsigned int travelTimeToHub ) : 
+		randNumGen(randNumGen),
+		travelTimeToHub(travelTimeToHub) {}
 
 	/* Destructor */
 	~DiffusionNetwork() {}
 
-	/* Choose a location */
-	const string &getLocationName( map <string, unsigned int> *locationMap ) {
+	/* To choose or not to choose a random location, that is the question :) */
+	const string &getLocationName() {
 
 		/* Fill this up to return a location of choice */
 		/* It can also choose none, in which case "" will be returned */
 	}
 
 	/* Get travel time for the chosen location */
-	unsigned int travelTimeToChosenLoc (	map <string, unsigned int> *locationMap,
-											unsigned int travelTimeToHub,
-											string locationChoice			) {
+	unsigned int travelTimeToChosenLoc( string locationChoice ) {
+
 		/* Travel time = travel time from hub to location + travel time from home loc to hub */
+	}
+
+	/* Populate the travel cost details */
+	void populateTravelCost( map <string, unsigned int> *travelMap, string locationName ) {
+		travelTimeMap.insert( travelMap->begin(), travelMap->end() );
+		travelTimeMap.erase(locationName);
 	}
 
 private:
 
 	/* Random class variable */
 	RandomNumGen *randNumGen;
+
+	/* Travel time from Home location to Hub */
+	unsigned int travelTimeToHub;
+
+	/* Location travel time from Hub */
+	map <string, unsigned int> travelTimeMap;
 };
 
 #endif
