@@ -35,12 +35,30 @@ public:
 
 		/* Fill this up to return a location of choice */
 		/* It can also choose none, in which case "" will be returned */
+		string nullString = "";
+		string &locationName = nullString;
+		unsigned int locationNum = travelTimeMap.size();
+		if ( locationNum ) { // there is at least one location in travelTimeMap
+			randNumGen = new RandomNumGen();
+			randNumGen->seedRandNumGen();
+			unsigned int locationID = randNumGen->genRandNum(locationNum);	
+			map<string, unsigned int>::iterator mapIter = travelTimeMap.begin();
+			for(int count = 0; count < locationID ; count++ )
+				mapIter++;
+			locationName = mapIter->first;
+			return locationName;
+		}
+		else{
+			return locationName;
+		}
 	}
 
 	/* Get travel time for the chosen location */
 	unsigned int travelTimeToChosenLoc( string locationChoice ) {
 
 		/* Travel time = travel time from hub to location + travel time from home loc to hub */
+		unsigned int travelTime = travelTimeMap[locationChoice] + travelTimeToHub;
+		return travelTime; 	
 	}
 
 	/* Populate the travel cost details */
