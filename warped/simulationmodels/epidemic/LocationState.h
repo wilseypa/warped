@@ -16,7 +16,6 @@
 #define LOCATION_STATE_H
 
 #include "State.h"
-#include "IntVTime.h"
 #include "Person.h"
 
 #include <vector>

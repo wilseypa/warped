@@ -9,31 +9,36 @@
 #include <warped/IntVTime.h>
 
 class EpidemicApplication : public Application {
+
 public:
-  EpidemicApplication();
 
-  int initialize( vector<string> &arguments );
+	/* Constructor */
+	EpidemicApplication();
 
-  int getNumberOfSimulationObjects(int mgrId) const;
+	int initialize( vector<string> &arguments );
 
-  const PartitionInfo *getPartitionInfo( unsigned int numberOfProcessorsAvailable );
+	int getNumberOfSimulationObjects(int mgrId) const;
+
+	const PartitionInfo *getPartitionInfo( unsigned int numberOfProcessorsAvailable );
   
-  int finalize();
+	int finalize();
 
-  void registerDeserializers();
+	void registerDeserializers();
   
-  string getCommandLineParameters() const { return "foo"; }
+	string getCommandLineParameters() const { return "foo"; }
 
-  const VTime &getPositiveInfinity(){ return IntVTime::getIntVTimePositiveInfinity(); }
-  const VTime &getZero(){ return IntVTime::getIntVTimeZero(); }
-  const VTime &getTime(string &){ return IntVTime::getIntVTimeZero(); }
+	const VTime &getPositiveInfinity(){ return IntVTime::getIntVTimePositiveInfinity(); }
+
+	const VTime &getZero(){ return IntVTime::getIntVTimeZero(); }
+
+	const VTime &getTime(string &){ return IntVTime::getIntVTimeZero(); }
 
 private:
-  ArgumentParser &getArgumentParser();
+	ArgumentParser &getArgumentParser();
 
-  int numObjects;
+	int numObjects;
 
-  string inputFileName;
+	string inputFileName;
 };
 
 #endif
