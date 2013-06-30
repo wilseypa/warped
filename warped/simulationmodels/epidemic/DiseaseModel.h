@@ -41,7 +41,8 @@ public:
 					float probULV,
 					float probURV,
 					float probUIV,
-					float probUIU ) :
+					float probUIU,
+					RandomNumGen *randNumGen ) :
 		transmissibility(transmissibility),
 		latentDwellTime(latentDwellTime),
 		incubatingDwellTime(incubatingDwellTime),
@@ -55,10 +56,8 @@ public:
 		probULV(probULV),
 		probURV(probURV),
 		probUIV(probUIV),
-		probUIU(probUIU) {
-
-		randNumGen.seedRandNumGen();
-	}
+		probUIU(probUIU),
+		randNumGen(randNumGen) {}
 
 	/* Destructor */
 	~DiseaseModel() {}
@@ -149,9 +148,9 @@ public:
 
 				/* Decide whether the person gets infected */
 				unsigned int diseaseNum = (unsigned int) diseaseProb * PROB_MULTIPLIER;
-				if( diseaseNum > randNumGen.genRandNum(PROB_MULTIPLIER) ) {
+				if( diseaseNum > randNumGen->genRandNum(PROB_MULTIPLIER) ) {
 
-					unsigned int randNum = randNumGen.genRandNum(PROB_MULTIPLIER);
+					unsigned int randNum = randNumGen->genRandNum(PROB_MULTIPLIER);
 
 					/* Check whether the person is vaccinated */
 					if( "yes" == (*vecIter)->vaccinationStatus ) {
@@ -197,7 +196,7 @@ private:
 	float probULU, probULV, probURV, probUIV, probUIU;
 
 	/* Random Number Generator */
-	RandomNumGen randNumGen;
+	RandomNumGen *randNumGen;
 };
 
 #endif

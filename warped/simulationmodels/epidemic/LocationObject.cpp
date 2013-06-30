@@ -38,15 +38,24 @@ LocationObject::LocationObject( string locationName,
 								float probUIU,
 								vector <Person *> *personVec,
 								unsigned int travelTimeToHub) : 
-	locationName(locationName),
-	personVec(personVec),
-	travelTimeToHub(travelTimeToHub) {
+		locationName(locationName),
+		personVec(personVec),
+		travelTimeToHub(travelTimeToHub) {
 
+	/* Create and seed the random number class */
+	randNumGen = new RandomNumGen();
+	randNumGen->seedRandNumGen();
+
+	/* Create the disease model */
 	diseaseModel = new DiseaseModel(	transmissibility, latentDwellTime, 
-										incubatingDwellTime, infectiousDwellTime, asymptDwellTime,
-										latentInfectivity, incubatingInfectivity,
-										infectiousInfectivity, asymptInfectivity,
-										probULU, probULV, probURV, probUIV, probUIU   );
+										incubatingDwellTime, infectiousDwellTime, 
+										asymptDwellTime, latentInfectivity, 
+										incubatingInfectivity, infectiousInfectivity, 
+										asymptInfectivity, probULU, probULV, probURV, 
+										probUIV, probUIU, randNumGen  );
+
+	/* Create the diffusion network */
+	diffusionNetwork = new DiffusionNetwork( randNumGen );
 }
 
 LocationObject::~LocationObject() {
@@ -57,8 +66,11 @@ LocationObject::~LocationObject() {
 							vecIter != personVec->end(); vecIter++ ) {
 		delete *vecIter;
 	}
+
 	delete personVec;
+	delete randNumGen;
 	delete diseaseModel;
+	delete diffusionNetwork;
 }
 
 void LocationObject::initialize() {

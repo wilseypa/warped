@@ -18,7 +18,9 @@
 #include "SimulationObject.h"
 #include "LocationState.h"
 #include "Person.h"
+#include "RandomNumGen.h"
 #include "DiseaseModel.h"
+#include "DiffusionNetwork.h"
 #include "EpidemicEvent.h"
 
 #include <vector>
@@ -85,8 +87,14 @@ private:
 	/* Location name */
 	string locationName;
 
+	/* Random Number Generator */
+	RandomNumGen *randNumGen;
+
 	/* Disease model */
 	DiseaseModel *diseaseModel;
+
+	/* Diffusion Network */
+	DiffusionNetwork *diffusionNetwork;
 
 	/* Location Travel Time from Hub */
 	map <string, unsigned int> travelTimeMap;
