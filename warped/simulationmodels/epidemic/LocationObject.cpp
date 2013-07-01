@@ -104,7 +104,17 @@ void LocationObject::executeProcess() {
 				refreshLocStateEvent(currentTime);
 
 			} else {
-
+				int timeSpentInCurrState = 
+						currentTime.getApproximateIntTime() - 
+											recvEvent->getTimeSpentInCurrState();
+				Person *person = new Person(recvEvent->getPID(),
+											recvEvent->getSusceptibility(),
+											recvEvent->getVaccinationStatus(),
+											recvEvent->getInfectionState(),
+											currentTime.getApproximateIntTime(),
+											timeSpentInCurrState);
+				(myState->getPersonMap())->insert( 
+								std::pair <unsigned int, Person *> (recvEvent->getPID(), person) );
 			}
 		}
 	}
