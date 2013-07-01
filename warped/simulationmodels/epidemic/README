@@ -56,7 +56,7 @@ before writing out the model:
 foreach region 1..<no_of_regions>
 	<region_name> <number_of_locations>
 	foreach location 1..<no_of_locations>
-		<location_name> <number_of_persons> <travel_time_to_central_hub>
+		<location_name> <number_of_persons> <travel_time_to_central_hub> <diffusion_trigger_interval>
 		foreach person 1..<number_of_persons>
 			<pid> <susceptibility> <is_vaccinated> <infection_state>
 		endfor

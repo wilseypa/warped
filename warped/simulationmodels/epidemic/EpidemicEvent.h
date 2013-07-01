@@ -20,6 +20,9 @@
 #include "SerializedInstance.h"
 #include "Person.h"
 
+#define DISEASE "disease"
+#define DIFFUSION "diffusion"
+
 class EpidemicEvent: public DefaultEvent {
 
 public:
@@ -29,10 +32,12 @@ public:
 					const VTime &initRecvTime,
 					SimulationObject *initSender,
 					SimulationObject *initReceiver,
-					Person *person ) : 
+					Person *person,
+					string diseaseOrDiffusion ) : 
 			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver ),
 			pid(0), susceptibility(0.0), vaccinationStatus(""), 
-			infectionState(""), timeSpentInCurrState(0) {
+			infectionState(""), timeSpentInCurrState(0),
+			diseaseOrDiffusion(diseaseOrDiffusion) {
 
 		if( person ) {
 			pid = person->pid;
@@ -66,6 +71,7 @@ public:
 		event->setVaccinationStatus (instance->getString() );
 		event->setInfectionState ( instance->getString() );
 		event->setTimeSpentInCurrState ( instance->getInt() );
+		event->setDiseaseOrDiffusion ( instance->getString() );
 
 		delete sendTime;
 		delete receiveTime;
@@ -80,6 +86,7 @@ public:
 		addTo->addString(vaccinationStatus);
 		addTo->addString(infectionState);
 		addTo->addInt( timeSpentInCurrState );
+		addTo->addString(diseaseOrDiffusion);
 	}
 
 	bool eventCompare( const Event* event ) {
@@ -91,7 +98,8 @@ public:
 					( susceptibility == thisEvent->getSusceptibility() ) &&
 					( vaccinationStatus == thisEvent->getVaccinationStatus() ) &&
 					( infectionState == thisEvent->getInfectionState() ) &&
-					( timeSpentInCurrState == thisEvent->getTimeSpentInCurrState() )   );
+					( timeSpentInCurrState == thisEvent->getTimeSpentInCurrState() ) &&
+					( diseaseOrDiffusion == thisEvent->getDiseaseOrDiffusion() )   );
 	}
 
 	static const string &getEpidemicEventDataType(){
@@ -125,6 +133,10 @@ public:
 
 	int getTimeSpentInCurrState() { return timeSpentInCurrState; }
 
+	void setDiseaseOrDiffusion( const string eventTypeValue ) { diseaseOrDiffusion = eventTypeValue; }
+
+	const string &getDiseaseOrDiffusion() { return diseaseOrDiffusion; }
+
 private:
 
 	EpidemicEvent(  const VTime &initSendTime,
@@ -134,7 +146,8 @@ private:
 					const unsigned int eventId  ) :
 			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver, eventId ),
 			pid(0), susceptibility(0), vaccinationStatus(""), 
-			infectionState(""), timeSpentInCurrState(0) {
+			infectionState(""), timeSpentInCurrState(0), 
+			diseaseOrDiffusion("") {
 	}
 
 	/* Person ID */
@@ -151,6 +164,9 @@ private:
 
 	/* Time spent in the current state */
 	int timeSpentInCurrState;
+
+	/* Distinguish between "disease" and "diffusion" event */
+	string diseaseOrDiffusion;
 };
 
 #endif

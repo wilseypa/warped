@@ -7,21 +7,21 @@
 1
 2
 Ohio 3
-Hamilton 2 100
+Hamilton 2 100 1
 01 0.80 yes uninfected
 02 0.50  no latent
-Butler 3 50
+Butler 3 50 1
 03 0.20  no incubating
 04 0.50  no asympt
 05 0.10  no infectious
-Clermont 2 150
+Clermont 2 150 1
 06 0.00  no infectious
 07 0.50  no uninfected
 Kentucky 2
-Boone 2 40
+Boone 2 40 1
 08 0.90 yes recovered
 09 0.20  no asympt
-Kenton 3 60
+Kenton 3 60 1
 10 0.70  no infectious
 11 0.30 yes uninfected
 12 0.10 yes latent

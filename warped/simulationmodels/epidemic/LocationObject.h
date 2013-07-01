@@ -51,6 +51,7 @@ public:
 					float probUIV,
 					float probUIU,
 					unsigned int locStateRefreshInterval,
+					unsigned int locDiffusionTrigInterval,
 					vector <Person *> *personVec,
 					unsigned int travelTimeToHub );
 
@@ -87,6 +88,9 @@ private:
 	/* Create and send the refresh location state event */
 	void refreshLocStateEvent( IntVTime currentTime );
 
+	/* Create and send the diffusion trigger event */
+	void triggerDiffusionEvent( IntVTime currentTime );
+
 	/* Location name */
 	string locationName;
 
@@ -104,6 +108,9 @@ private:
 
 	/* Location state refresh interval */
 	unsigned int locStateRefreshInterval;
+
+	/* Location diffusion trigger interval */
+	unsigned int locDiffusionTrigInterval;
 };
 
 #endif

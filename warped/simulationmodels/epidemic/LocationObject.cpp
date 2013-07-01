@@ -37,11 +37,13 @@ LocationObject::LocationObject( string locationName,
 								float probUIV,
 								float probUIU,
 								unsigned int locStateRefreshInterval,
+								unsigned int locDiffusionTrigInterval,
 								vector <Person *> *personVec,
 								unsigned int travelTimeToHub) : 
 		locationName(locationName),
 		personVec(personVec),
-		locStateRefreshInterval(locStateRefreshInterval) {
+		locStateRefreshInterval(locStateRefreshInterval),
+		locDiffusionTrigInterval(locDiffusionTrigInterval) {
 
 	/* Create and seed the random number class */
 	randNumGen = new RandomNumGen();
@@ -78,9 +80,10 @@ void LocationObject::initialize() {
 	LocationState *myState = dynamic_cast<LocationState*>(getState());
 	myState->populateLocation(personVec);
 
-	/* Create and send the initial event */
+	/* Create and send the initial events */
 	IntVTime currentTime = static_cast<const IntVTime&> (getSimulationTime());
 	refreshLocStateEvent(currentTime);
+	triggerDiffusionEvent(currentTime);
 }
 
 void LocationObject::finalize() {}
@@ -99,14 +102,24 @@ void LocationObject::executeProcess() {
 
 			/* Check if the event was sent by the same location */
 			if( recvEvent->getSender() == *(this->getObjectID()) ) {
-				diseaseModel->diseaseReaction(	myState->getPersonMap(),
-												currentTime.getApproximateIntTime() );
-				refreshLocStateEvent(currentTime);
 
+				if( DISEASE == recvEvent->getDiseaseOrDiffusion() ) {
+					diseaseModel->diseaseReaction(	myState->getPersonMap(),
+													currentTime.getApproximateIntTime() );
+					refreshLocStateEvent(currentTime);
+
+				} else if( DIFFUSION == recvEvent->getDiseaseOrDiffusion() ){
+					/* Incomplete: choose person and send event to other location */
+					triggerDiffusionEvent(currentTime);
+				} else {
+					cerr << "Invalid event at " << locationName << endl;
+					abort();
+				}
 			} else {
 				int timeSpentInCurrState = 
 						currentTime.getApproximateIntTime() - 
 											recvEvent->getTimeSpentInCurrState();
+				ASSERT(timeSpentInCurrState >= 0);
 				Person *person = new Person(recvEvent->getPID(),
 											recvEvent->getSusceptibility(),
 											recvEvent->getVaccinationStatus(),
@@ -136,7 +149,15 @@ void LocationObject::refreshLocStateEvent( IntVTime currentTime ) {
 
 	EpidemicEvent *refreshEvent = new EpidemicEvent(	currentTime,
 														currentTime + (int)locStateRefreshInterval,
-														this, this, NULL	);
+														this, this, NULL, DISEASE  );
 	this->receiveEvent(refreshEvent);
+}
+
+void LocationObject::triggerDiffusionEvent( IntVTime currentTime ) {
+
+	EpidemicEvent *diffusionEvent = new EpidemicEvent(	currentTime,
+														currentTime + (int)locDiffusionTrigInterval,
+														this, this, NULL, DIFFUSION  );
+	this->receiveEvent(diffusionEvent);
 }
 
