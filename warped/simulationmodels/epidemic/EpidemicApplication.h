@@ -31,7 +31,10 @@ public:
 
 	const VTime &getZero(){ return IntVTime::getIntVTimeZero(); }
 
-	const VTime &getTime(string &){ return IntVTime::getIntVTimeZero(); }
+	const VTime &getTime(string &time ){ 
+		IntVTime *vtime = new IntVTime (atoi(time.c_str())); 
+		return *vtime;
+	}
 
 private:
 	ArgumentParser &getArgumentParser();
