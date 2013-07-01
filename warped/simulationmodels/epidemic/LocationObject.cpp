@@ -78,11 +78,9 @@ void LocationObject::initialize() {
 	LocationState *myState = dynamic_cast<LocationState*>(getState());
 	myState->populateLocation(personVec);
 
+	/* Create and send the initial event */
 	IntVTime currentTime = static_cast<const IntVTime&> (getSimulationTime());
-	EpidemicEvent *reactionEvent = new EpidemicEvent(	currentTime,
-														currentTime + (int)locStateRefreshInterval,
-														this, this, NULL	);
-	this->receiveEvent(reactionEvent);
+	refreshLocStateEvent(currentTime);
 }
 
 void LocationObject::finalize() {}
@@ -90,7 +88,7 @@ void LocationObject::finalize() {}
 void LocationObject::executeProcess() {
 
 	LocationState *myState = static_cast<LocationState*>(getState());
-	IntVTime sendTime = static_cast<const IntVTime&> (getSimulationTime());
+	IntVTime currentTime = static_cast<const IntVTime&> (getSimulationTime());
 	EpidemicEvent *recvEvent = NULL;
 	SimulationObject *receiver = NULL;
 
@@ -99,6 +97,15 @@ void LocationObject::executeProcess() {
 		recvEvent = (EpidemicEvent *) getEvent();
 		if ( recvEvent != NULL ) {
 
+			/* Check if the event was sent by the same location */
+			if( recvEvent->getSender() == *(this->getObjectID()) ) {
+				diseaseModel->diseaseReaction(	myState->getPersonMap(),
+												currentTime.getApproximateIntTime() );
+				refreshLocStateEvent(currentTime);
+
+			} else {
+
+			}
 		}
 	}
 }
@@ -113,5 +120,13 @@ void LocationObject::deallocateState( const State *state ) {
 
 void LocationObject::reclaimEvent(const Event *event) {
 	delete event;
+}
+
+void LocationObject::refreshLocStateEvent( IntVTime currentTime ) {
+
+	EpidemicEvent *refreshEvent = new EpidemicEvent(	currentTime,
+														currentTime + (int)locStateRefreshInterval,
+														this, this, NULL	);
+	this->receiveEvent(refreshEvent);
 }
 

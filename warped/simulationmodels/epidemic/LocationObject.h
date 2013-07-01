@@ -84,6 +84,9 @@ public:
 
 private:
 
+	/* Create and send the refresh location state event */
+	void refreshLocStateEvent( IntVTime currentTime );
+
 	/* Location name */
 	string locationName;
 
