@@ -54,7 +54,7 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 	int numRegions = 0, numLocations = 0, numPersons = 0;
 	unsigned int pid = 0, travelTimeToHub = 0, latentDwellTime = 0, 
 			incubatingDwellTime = 0, infectiousDwellTime = 0, 
-			asymptDwellTime = 0;
+			asymptDwellTime = 0, locStateRefreshInterval = 0;
 	double susceptibility = 0.0;
 	float transmissibility = 0.0, probULU = 0.0, probULV = 0.0, 
 			probURV = 0.0, probUIV = 0.0, probUIU = 0.0, 
@@ -87,6 +87,7 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 	configFile >> asymptDwellTime >> asymptInfectivity;
 	configFile >> probULU >> probULV >> probURV >> probUIV >> probUIU;
 
+	configFile >> locStateRefreshInterval;
 	configFile >> numRegions;
 
 	/* For each region in the simulation, initialize the locations */
@@ -120,8 +121,7 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 															latentInfectivity, incubatingInfectivity,
 															infectiousInfectivity, asymptInfectivity,
 															probULU, probULV, probURV, probUIV, probUIU,
-															personVec,
-															travelTimeToHub);
+															locStateRefreshInterval, personVec, travelTimeToHub);
 			locObjs->push_back(locObject);
 			simulationObjVec.push_back(locObject);
 		}

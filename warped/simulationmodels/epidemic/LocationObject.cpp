@@ -36,10 +36,12 @@ LocationObject::LocationObject( string locationName,
 								float probURV,
 								float probUIV,
 								float probUIU,
+								unsigned int locStateRefreshInterval,
 								vector <Person *> *personVec,
 								unsigned int travelTimeToHub) : 
 		locationName(locationName),
-		personVec(personVec) {
+		personVec(personVec),
+		locStateRefreshInterval(locStateRefreshInterval) {
 
 	/* Create and seed the random number class */
 	randNumGen = new RandomNumGen();

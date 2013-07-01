@@ -50,6 +50,7 @@ public:
 					float probURV,
 					float probUIV,
 					float probUIU,
+					unsigned int locStateRefreshInterval,
 					vector <Person *> *personVec,
 					unsigned int travelTimeToHub );
 
@@ -97,6 +98,9 @@ private:
 
 	/* Initial population */
 	vector <Person *> *personVec;
+
+	/* Location state refresh interval */
+	unsigned int locStateRefreshInterval;
 };
 
 #endif

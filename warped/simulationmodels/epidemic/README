@@ -51,6 +51,7 @@ before writing out the model:
 <infectious_dwell_time> <infectious_infectivity>
 <asympt_dwell_time> <asympt_infectivity>
 <prob_ul_u> <prob_ul_v> <prob_ur_v> <prob_ui_v> <prob_ui_u>
+<location_state_refresh_interval>
 <number_of_regions>
 foreach region 1..<no_of_regions>
 	<region_name> <number_of_locations>
@@ -70,6 +71,9 @@ Legend:
 		prob_ur_v : uninfected->recovered (vaccinated)
 		prob_ui_v : uninfected->incubating (vaccinated)
 		prob_ui_u : uninfected->incubating (untreated)
+
+	Location state refresh interval:
+		Intervals at which the disease spread at any location is re-computed
 
 
 References
