@@ -77,6 +77,12 @@ LocationObject::~LocationObject() {
 void LocationObject::initialize() {
 	LocationState *myState = dynamic_cast<LocationState*>(getState());
 	myState->populateLocation(personVec);
+
+	IntVTime currentTime = static_cast<const IntVTime&> (getSimulationTime());
+	EpidemicEvent *reactionEvent = new EpidemicEvent(	currentTime,
+														currentTime + (int)locStateRefreshInterval,
+														this, this, NULL	);
+	this->receiveEvent(reactionEvent);
 }
 
 void LocationObject::finalize() {}

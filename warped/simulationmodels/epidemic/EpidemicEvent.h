@@ -29,8 +29,7 @@ public:
 					const VTime &initRecvTime,
 					SimulationObject *initSender,
 					SimulationObject *initReceiver,
-					Person *person,
-					IntVTime currentTime  ) : 
+					Person *person ) : 
 			DefaultEvent( initSendTime, initRecvTime, initSender, initReceiver ),
 			pid(0), susceptibility(0.0), vaccinationStatus(""), 
 			infectionState(""), timeSpentInCurrState(0) {
@@ -40,7 +39,7 @@ public:
 			susceptibility = person->susceptibility;
 			vaccinationStatus = person->vaccinationStatus;
 			infectionState = person->infectionState;
-			timeSpentInCurrState = currentTime.getTime() - person->lastStateChangeTime;
+			timeSpentInCurrState = initRecvTime.getApproximateIntTime() - person->lastStateChangeTime;
 		}
 	}
 
