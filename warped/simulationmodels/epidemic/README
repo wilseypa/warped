@@ -27,12 +27,23 @@ into another language, under the above conditions for modified versions.
 Introduction
 ------------
 
-Details to be added later ( hopefully :) ). Most of the details needed can 
-be found in the papers mentioned in the Reference section.
+This simulation model simulates the epidemic outbreak phenomena. A new parallel
+discrete event formulation of the reaction-diffusion model was developed. It is 
+motivated by the one reported in [2]. The epidemic is modeled using a combination 
+of reaction and diffusion processes. The reaction is defined as a result of inter-
+entity interactions, (e.g.,influenza or physical proximity). The mobility of the 
+entities leads to the dynamic chances for interactions (e.g., watching movie in a 
+cinema and other co-located activities). Geographical diffusion of entities provides
+chances for interactions among different sample sets of entities. This model contains
+four parts[1]. (1) a set of interacting entities. (2) a network graph that shows the 
+interaction structure of entities. (3) a reaction process, called within-host progression
+which models the the progress of the disease in an individual entity. (4) a diffusion 
+process, called between-host transmission, which models the transmission of the disease 
+among individual entities.
 
-NOTE: It has been assumed that all locations are connected to each other in 
-a star topology configuration via a central hub. This has been done to reduce
-complexity in design of diffusion network.
+NOTE: In the network graph design, it has been assumed that all locations are connected 
+to each other in a star topology configuration via a central hub. This has been done to 
+reduce complexity in design of diffusion network.
 
 Travel time from location 1 to location 2 = 
                      Travel time from location 1 to central hub +
@@ -79,11 +90,11 @@ Legend:
 References
 ----------
 
-1. Kalyan S Perumalla and Sudip K Seal. 2012. Discrete event modeling 
+[1]. Kalyan S Perumalla and Sudip K Seal. 2012. Discrete event modeling 
 and massively parallel execution of epidemic outbreak phenomena. 
 Simulation 88, 7 (July 2012), 768-783.
 
-2. Christopher L. Barrett, Keith R. Bisset, Stephen G. Eubank, Xizhou Feng, 
+[2]. Christopher L. Barrett, Keith R. Bisset, Stephen G. Eubank, Xizhou Feng, 
 and Madhav V. Marathe. 2008. EpiSimdemics: an efficient algorithm for 
 simulating the spread of infectious disease over large realistic social networks. 
 In Proceedings of the 2008 ACM/IEEE conference on Supercomputing (SC '08). 
