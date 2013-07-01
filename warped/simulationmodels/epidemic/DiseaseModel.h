@@ -62,35 +62,6 @@ public:
 	/* Destructor */
 	~DiseaseModel() {}
 
-	/* Probabilistic Timed Transition System */
-	void diseasePTTS( Person *person, int currentTime ) {
-
-		string iState = person->infectionState;
-		if ("latent" == iState){
-			if( (currentTime - person->lastStateChangeTime) >= (int) latentDwellTime ) {
-				person->infectionState = "infectious";
-				person->lastStateChangeTime = currentTime;
-			}
-		} else if ("incubating" == iState){
-			if( (currentTime - person->lastStateChangeTime) >= (int) incubatingDwellTime ) {
-				person->infectionState = "asympt";
-				person->lastStateChangeTime = currentTime;
-			}
-		} else if ("infectious" == iState){
-			if( (currentTime - person->lastStateChangeTime) >= (int) infectiousDwellTime ) {
-				person->infectionState = "recovered";
-				person->lastStateChangeTime = currentTime;
-			}
-		} else if ("asympt" == iState){
-			if( (currentTime - person->lastStateChangeTime) >= (int) asymptDwellTime ) {
-				person->infectionState = "recovered";
-				person->lastStateChangeTime = currentTime;
-			}
-		} else {
-			ASSERT( ("uninfected" == iState) || ("recovered" == iState) );
-		}
-	}
-
 	/* Reaction function */
 	void diseaseReaction( map <unsigned int, Person *> *personMap, int currentTime ) {
 
@@ -100,6 +71,9 @@ public:
 
 		for( map<unsigned int, Person*>::iterator mapIter = personMap->begin(); 
 												mapIter != personMap->end(); mapIter++) {
+
+			/* Update the disease status of individuals */
+			diseasePTTS( mapIter->second, currentTime);
 
 			string infectionState = (mapIter->second)->infectionState;
 			if ("uninfected" == infectionState) {
@@ -180,6 +154,35 @@ public:
 	}
 
 private:
+
+	/* Probabilistic Timed Transition System */
+	void diseasePTTS( Person *person, int currentTime ) {
+
+		string iState = person->infectionState;
+		if ("latent" == iState){
+			if( (currentTime - person->lastStateChangeTime) >= (int) latentDwellTime ) {
+				person->infectionState = "infectious";
+				person->lastStateChangeTime = currentTime;
+			}
+		} else if ("incubating" == iState){
+			if( (currentTime - person->lastStateChangeTime) >= (int) incubatingDwellTime ) {
+				person->infectionState = "asympt";
+				person->lastStateChangeTime = currentTime;
+			}
+		} else if ("infectious" == iState){
+			if( (currentTime - person->lastStateChangeTime) >= (int) infectiousDwellTime ) {
+				person->infectionState = "recovered";
+				person->lastStateChangeTime = currentTime;
+			}
+		} else if ("asympt" == iState){
+			if( (currentTime - person->lastStateChangeTime) >= (int) asymptDwellTime ) {
+				person->infectionState = "recovered";
+				person->lastStateChangeTime = currentTime;
+			}
+		} else {
+			ASSERT( ("uninfected" == iState) || ("recovered" == iState) );
+		}
+	}
 
 	/* Transmissibility */
 	float transmissibility;
