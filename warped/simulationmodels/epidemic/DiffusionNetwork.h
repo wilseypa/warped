@@ -56,7 +56,21 @@ public:
 
 	/* To choose or not to choose a random person, that is the question :) */
 	Person *getPerson( map <unsigned int, Person *> *personMap ) {
-		return NULL;
+
+		Person *person = NULL;
+		unsigned int personCount = personMap->size();
+
+		/* Check if there is atleast one person present at location */
+		if ( personCount ) {
+			unsigned int randomNum = randNumGen->genRandNum(personCount);	
+
+			map<unsigned int, Person *>::iterator mapIter = personMap->begin();
+			for(unsigned int count = 0; count < randomNum ; count++ ) {
+				mapIter++;
+			}
+			person = mapIter->second;
+		}
+		return person;
 	}
 
 	/* Populate the travel cost details */
