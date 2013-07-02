@@ -76,6 +76,13 @@ public:
 		return &personMap;
 	}
 
+	void deletePersonFromLocation( Person *person ) {
+
+		if(person) {
+			personMap.erase( personMap.find(person->pid) );
+		}
+	}
+
 private:
 
 	/* Person map */

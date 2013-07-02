@@ -19,6 +19,8 @@
 #include <vector>
 #include <map>
 
+#define BINARY 2
+
 using namespace std;
 
 LocationObject::LocationObject( string locationName,
@@ -109,7 +111,7 @@ void LocationObject::executeProcess() {
 					refreshLocStateEvent(currentTime);
 
 				} else if( DIFFUSION == recvEvent->getDiseaseOrDiffusion() ){
-					migrateLocationEvent(currentTime);
+					migrateLocationEvent(currentTime, myState);
 					triggerDiffusionEvent(currentTime);
 
 				} else {
@@ -162,8 +164,34 @@ void LocationObject::triggerDiffusionEvent( IntVTime currentTime ) {
 	this->receiveEvent(diffusionEvent);
 }
 
-void LocationObject::migrateLocationEvent( IntVTime currentTime ) {
+void LocationObject::migrateLocationEvent(	IntVTime currentTime,
+											LocationState *locationState  ) {
 
+	/* Randomly decide whether to migrate any person */
+	if( randNumGen->genRandNum(BINARY) ) {
+
+		/* Decide a random location */
+		string selectedLocation = diffusionNetwork->getLocationName();
+		if( "" != selectedLocation ) {
+
+			int travelTime = (int) ( diffusionNetwork->travelTimeToChosenLoc(selectedLocation) );
+			SimulationObject *receiver = getObjectHandle(selectedLocation);
+
+			/* Decide a random person */
+			Person *person = diffusionNetwork->getPerson( locationState->getPersonMap() );
+
+			if(person) {
+				EpidemicEvent *migrateLocEvent = new EpidemicEvent(	currentTime,
+																	currentTime + travelTime,
+																	this,
+																	receiver,
+																	person,
+																	DIFFUSION );
+				receiver->receiveEvent(migrateLocEvent);
+				locationState->deletePersonFromLocation(person);
+			}
+		}
+	}
 }
 
 

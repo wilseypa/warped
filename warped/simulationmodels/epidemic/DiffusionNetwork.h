@@ -54,6 +54,11 @@ public:
 		return (travelTimeMap[locationChoice] + travelTimeToHub);
 	}
 
+	/* To choose or not to choose a random person, that is the question :) */
+	Person *getPerson( map <unsigned int, Person *> *personMap ) {
+		return NULL;
+	}
+
 	/* Populate the travel cost details */
 	void populateTravelCost( map <string, unsigned int> *travelMap, string locationName ) {
 		travelTimeMap.insert( travelMap->begin(), travelMap->end() );

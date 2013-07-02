@@ -92,7 +92,8 @@ private:
 	void triggerDiffusionEvent( IntVTime currentTime );
 
 	/* Migrate person(s) to different location event */
-	void migrateLocationEvent( IntVTime currentTime );
+	void migrateLocationEvent(	IntVTime currentTime, 
+								LocationState *locationState  );
 
 	/* Location name */
 	string locationName;
