@@ -159,28 +159,32 @@ private:
 	void diseasePTTS( Person *person, int currentTime ) {
 
 		string iState = person->infectionState;
-		if ("latent" == iState){
+		if ("latent" == iState) {
 			if( (currentTime - person->lastStateChangeTime) >= (int) latentDwellTime ) {
 				person->infectionState = "infectious";
-				person->lastStateChangeTime = currentTime;
+				person->lastStateChangeTime += (int) latentDwellTime;
 			}
-		} else if ("incubating" == iState){
+		}
+		if ("incubating" == iState) {
 			if( (currentTime - person->lastStateChangeTime) >= (int) incubatingDwellTime ) {
 				person->infectionState = "asympt";
-				person->lastStateChangeTime = currentTime;
+				person->lastStateChangeTime += (int) incubatingDwellTime;
 			}
-		} else if ("infectious" == iState){
+		}
+		if ("infectious" == iState) {
 			if( (currentTime - person->lastStateChangeTime) >= (int) infectiousDwellTime ) {
 				person->infectionState = "recovered";
-				person->lastStateChangeTime = currentTime;
+				person->lastStateChangeTime += (int) infectiousDwellTime;
 			}
-		} else if ("asympt" == iState){
+		}
+		if ("asympt" == iState) {
 			if( (currentTime - person->lastStateChangeTime) >= (int) asymptDwellTime ) {
 				person->infectionState = "recovered";
-				person->lastStateChangeTime = currentTime;
+				person->lastStateChangeTime += (int) asymptDwellTime;
 			}
-		} else {
-			ASSERT( ("uninfected" == iState) || ("recovered" == iState) );
+		}
+		if ( ("uninfected" == iState) || ("recovered" == iState) ) {
+			person->lastStateChangeTime = 0;
 		}
 	}
 

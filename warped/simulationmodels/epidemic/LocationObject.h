@@ -91,6 +91,9 @@ private:
 	/* Create and send the diffusion trigger event */
 	void triggerDiffusionEvent( IntVTime currentTime );
 
+	/* Migrate person(s) to different location event */
+	void migrateLocationEvent( IntVTime currentTime );
+
 	/* Location name */
 	string locationName;
 

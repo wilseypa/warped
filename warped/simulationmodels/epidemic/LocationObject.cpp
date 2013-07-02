@@ -109,8 +109,9 @@ void LocationObject::executeProcess() {
 					refreshLocStateEvent(currentTime);
 
 				} else if( DIFFUSION == recvEvent->getDiseaseOrDiffusion() ){
-					/* Incomplete: choose person and send event to other location */
+					migrateLocationEvent(currentTime);
 					triggerDiffusionEvent(currentTime);
+
 				} else {
 					cerr << "Invalid event at " << locationName << endl;
 					abort();
@@ -160,4 +161,9 @@ void LocationObject::triggerDiffusionEvent( IntVTime currentTime ) {
 														this, this, NULL, DIFFUSION  );
 	this->receiveEvent(diffusionEvent);
 }
+
+void LocationObject::migrateLocationEvent( IntVTime currentTime ) {
+
+}
+
 
