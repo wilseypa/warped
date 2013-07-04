@@ -16,6 +16,7 @@
 #include "LocationObject.h"
 #include "EpidemicPartitioner.h"
 #include "Person.h"
+#include "tinyxml2.h"
 #include <warped/PartitionInfo.h>
 #include <warped/DeserializerManager.h>
 #include <utils/ArgumentParser.h>
@@ -28,6 +29,7 @@
 #define INIT_VTIME 0
 
 using namespace std;
+using namespace tinyxml2;
 
 
 EpidemicApplication::EpidemicApplication(): inputFileName( "" ), numObjects( 0 ) { }
@@ -70,39 +72,65 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 
 	vector <SimulationObject *> simulationObjVec;
 	map <string, unsigned int> travelMap;
+	
+	/* open the XML file */
+	XMLDocument EpidemicConfig;
+    int errorID = EpidemicConfig.LoadFile(inputFileName.c_str());
+    if(errorID){
+        cerr<<"ERROR : return code from XMLDocument::LoadFile() is "<<errorID<<"."<<endl;
+        abort();
+    }
 
-	ifstream configFile;
-	configFile.open( inputFileName.c_str() );
-	if(configFile.fail()) {
-		cerr << "Could not open file: '" << inputFileName << "'" << endl;
-		cerr << "Terminating simulation." << endl;
-		abort();
-	}
+	XMLElement* diseaseElement=NULL,*numOfRegions=NULL,*region=NULL,*location=NULL,*people=NULL;
 
-	configFile >> transmissibility;
+    diseaseElement =EpidemicConfig.FirstChildElement()->FirstChildElement("disease");
+    diseaseElement->FirstChildElement("transmissibility")->QueryFloatText(&transmissibility);
+    	
+	/* Refer to README for more details */
+    diseaseElement->FirstChildElement("latent_dwell_time")->QueryUnsignedText(&latentDwellTime);
+    diseaseElement->FirstChildElement("latent_infectivity")->QueryFloatText(&latentInfectivity);
+    diseaseElement->FirstChildElement("incubating_dwell_time")->QueryUnsignedText(&incubatingDwellTime );
+    diseaseElement->FirstChildElement("incubating_infectivity")->QueryFloatText(&incubatingInfectivity);
+    diseaseElement->FirstChildElement("infectious_dwell_time")->QueryUnsignedText(&infectiousDwellTime);
+    diseaseElement->FirstChildElement("infectious_infectivity")->QueryFloatText(&infectiousInfectivity);
+    diseaseElement->FirstChildElement("asympt_dwell_time")->QueryUnsignedText(&asymptDwellTime);
+    diseaseElement->FirstChildElement("asympt_infectivity")->QueryFloatText(&asymptInfectivity);
+    diseaseElement->FirstChildElement("prob_ul_u")->QueryFloatText(&probULU);
+    diseaseElement->FirstChildElement("prob_ul_v")->QueryFloatText(&probULV);
+    diseaseElement->FirstChildElement("prob_ur_v")->QueryFloatText(&probURV);
+    diseaseElement->FirstChildElement("prob_ui_v")->QueryFloatText(&probUIV);
+    diseaseElement->FirstChildElement("prob_ui_u")->QueryFloatText(&probUIU);
+    diseaseElement->FirstChildElement("location_state_refresh_interval")->QueryUnsignedText(&locStateRefreshInterval);
+	
 
 	/* Refer to README for more details */
-	configFile >> latentDwellTime >> latentInfectivity;
-	configFile >> incubatingDwellTime >> incubatingInfectivity;
-	configFile >> infectiousDwellTime >> infectiousInfectivity;
-	configFile >> asymptDwellTime >> asymptInfectivity;
-	configFile >> probULU >> probULV >> probURV >> probUIV >> probUIU;
-
-	configFile >> locStateRefreshInterval;
-	configFile >> numRegions;
+	numOfRegions=EpidemicConfig.FirstChildElement()->FirstChildElement("number_of_regions");
+    numOfRegions->QueryIntText(&numRegions);
+	region=numOfRegions;
 
 	/* For each region in the simulation, initialize the locations */
 	for( int regIndex = 0; regIndex < numRegions; regIndex++ ) {
+		region =region->NextSiblingElement();
+		const char*rName = region->FirstChildElement("region_name")->GetText();
+		string rname(rName);
+		regionName = rname;
 
-		locObjs = new vector<SimulationObject*>;  
 		numLocations = 0;
-		configFile >> regionName >> numLocations;
-
+		region->FirstChildElement("number_of_locations")->QueryIntText(&numLocations);
+		location = region->FirstChildElement("number_of_locations");
+		locObjs = new vector<SimulationObject*>;  
 		for( int locIndex = 0; locIndex < numLocations; locIndex++ ) {
-
 			personVec = new vector <Person *>;
 
-			configFile >> locationName >> numPersons >> travelTimeToHub >> locDiffusionTrigInterval;
+			location = location->NextSiblingElement();
+			const char*lName = location->FirstChildElement("location_name")->GetText();			 
+			string lname(lName);
+			locationName = lname;
+			location->FirstChildElement("number_of_persons")->QueryIntText(&numPersons);			
+			location->FirstChildElement("travel_time_to_central_hub")->QueryUnsignedText(&travelTimeToHub);			
+			location->FirstChildElement("diffusion_trigger_interval")->QueryUnsignedText(&locDiffusionTrigInterval);			
+			people = location->FirstChildElement("diffusion_trigger_interval");
+
 			locationName += ",";
 			locationName += regionName;
 
@@ -110,8 +138,16 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 
 			/* Read each person's details */
 			for(int perIndex = 0; perIndex < numPersons; perIndex++) {
-
-				configFile >> pid >> susceptibility >> vaccinationStatus >> infectionState;
+				people= people->NextSiblingElement();
+				people->FirstChildElement("pid")->QueryUnsignedText(&pid);
+				people->FirstChildElement("susceptibility")->QueryDoubleText(&susceptibility);
+				const char *vaccFlag=people->FirstChildElement("is_vaccinated")->GetText();
+				string vaccflag(vaccFlag);
+				vaccinationStatus=vaccflag;
+				const char *infectState=people->FirstChildElement("infection_state")->GetText();
+				string infectstate(infectState);
+				infectionState = infectstate;	
+			 
 				person = new Person( pid, susceptibility, vaccinationStatus, infectionState, INIT_VTIME, INIT_VTIME );
 				personVec->push_back( person );
 			}
@@ -143,7 +179,7 @@ const PartitionInfo *EpidemicApplication::getPartitionInfo(
 	/* Perform the actual partitioning of groups */
 	const PartitionInfo *retval = myPartitioner->partition( NULL, numberOfProcessorsAvailable );
 
-	configFile.close();
+	EpidemicConfig.SaveFile(inputFileName.c_str());
 	return retval;
 }
 
