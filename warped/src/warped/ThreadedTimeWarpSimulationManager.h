@@ -28,9 +28,11 @@ public:
 	ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
 			const string syncMechanism, const string loadBalancing, 
 			const string loadBalancingMetric, const string loadBalancingTrigger, 
-			unsigned int intervalCount, 
-			const string scheduleQScheme, const string causalityType, 
-			unsigned int scheduleQCount, Application *initApplication);
+			double loadBalancingVarianceThresh, unsigned int loadBalancingNormalInterval, 
+			unsigned int loadBalancingNormalThresh, unsigned int loadBalancingRelaxedInterval, 
+			unsigned int loadBalancingRelaxedThresh, const string scheduleQScheme, 
+			const string causalityType, unsigned int scheduleQCount, Application *initApplication);
+
 	virtual ~ThreadedTimeWarpSimulationManager();
 	/** Return a handle to the state manager.
 
@@ -84,8 +86,24 @@ public:
 		return loadBalancingTrigger;
 	}
 
-	int getLoadBalancingInterval() {
-		return intervalCount;
+	double getLoadBalancingVarianceThresh() {
+		return loadBalancingVarianceThresh;
+	}
+
+	unsigned int getLoadBalancingNormalInterval() {
+		return loadBalancingNormalInterval;
+	}
+
+	unsigned int getLoadBalancingNormalThresh() {
+		return loadBalancingNormalThresh;
+	}
+
+	unsigned int getLoadBalancingRelaxedInterval() {
+		return loadBalancingRelaxedInterval;
+	}
+
+	unsigned int getLoadBalancingRelaxedThresh() {
+		return loadBalancingRelaxedThresh;
 	}
 
 	const string getScheduleQScheme() {
@@ -375,7 +393,19 @@ private:
 	const string loadBalancingTrigger;
 
 	//Specified in the ThreadControl scope of the configuration file
-	unsigned int intervalCount;
+	double loadBalancingVarianceThresh;
+
+	//Specified in the ThreadControl scope of the configuration file
+	unsigned int loadBalancingNormalInterval;
+
+	//Specified in the ThreadControl scope of the configuration file
+	unsigned int loadBalancingNormalThresh;
+
+	//Specified in the ThreadControl scope of the configuration file
+	unsigned int loadBalancingRelaxedInterval;
+
+	//Specified in the ThreadControl scope of the configuration file
+	unsigned int loadBalancingRelaxedThresh;
 
 	//Specfiy the Scheduler scope of the configuraion file
 	const string scheduleQScheme;

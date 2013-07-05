@@ -134,7 +134,15 @@ public:
 
 	const string getLoadBalancingTrigger() const;
 
-	bool getLoadBalancingInterval(unsigned int &intervalCount) const;
+	bool getLoadBalancingVarianceThresh(double &varianceThreshold) const;
+
+	bool getLoadBalancingNormalInterval(unsigned int &intervalCount) const;
+
+	bool getLoadBalancingNormalThresh(unsigned int &thresholdCount) const;
+
+	bool getLoadBalancingRelaxedInterval(unsigned int &intervalCount) const;
+
+	bool getLoadBalancingRelaxedThresh(unsigned int &thresholdCount) const;
 
 	bool getOptFossilCollPeriod(unsigned int &period);
 

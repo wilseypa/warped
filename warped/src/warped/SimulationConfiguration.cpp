@@ -84,7 +84,11 @@ public:
 	const string getLoadBalancing() const;
 	const string getLoadBalancingMetric() const;
 	const string getLoadBalancingTrigger() const;
-	bool getLoadBalancingInterval(unsigned int &intervalCount) const;
+	bool getLoadBalancingVarianceThresh(double &varianceThreshold) const;
+	bool getLoadBalancingNormalInterval(unsigned int &intervalCount) const;
+	bool getLoadBalancingNormalThresh(unsigned int &thresholdCount) const;
+	bool getLoadBalancingRelaxedInterval(unsigned int &intervalCount) const;
+	bool getLoadBalancingRelaxedThresh(unsigned int &thresholdCount) const;
 
 	Implementation() :
 		myOuterScope(0) {
@@ -446,9 +450,29 @@ const string SimulationConfiguration::getLoadBalancingTrigger() const {
 	return _impl->getLoadBalancingTrigger();
 }
 
-bool SimulationConfiguration::getLoadBalancingInterval(
+bool SimulationConfiguration::getLoadBalancingVarianceThresh(
+		double &varianceThresh) const {
+	return _impl->getLoadBalancingVarianceThresh(varianceThresh);
+}
+
+bool SimulationConfiguration::getLoadBalancingNormalInterval(
 		unsigned int &intervalCount) const {
-	return _impl->getLoadBalancingInterval(intervalCount);
+	return _impl->getLoadBalancingNormalInterval(intervalCount);
+}
+
+bool SimulationConfiguration::getLoadBalancingNormalThresh(
+		unsigned int &thresholdCount) const {
+	return _impl->getLoadBalancingNormalThresh(thresholdCount);
+}
+
+bool SimulationConfiguration::getLoadBalancingRelaxedInterval(
+		unsigned int &intervalCount) const {
+	return _impl->getLoadBalancingRelaxedInterval(intervalCount);
+}
+
+bool SimulationConfiguration::getLoadBalancingRelaxedThresh(
+		unsigned int &thresholdCount) const {
+	return _impl->getLoadBalancingRelaxedThresh(thresholdCount);
 }
 
 const ConfigurationChoice *
@@ -1082,13 +1106,65 @@ const string SimulationConfiguration::Implementation::getLoadBalancingTrigger() 
 	return retval;
 }
 
-bool SimulationConfiguration::Implementation::getLoadBalancingInterval(
+bool SimulationConfiguration::Implementation::getLoadBalancingVarianceThresh(
+		double &varianceThreshold) const {
+	bool retval = false;
+	const ConfigurationScope *scope = getThreadControlScope();
+	if (scope != 0) {
+		if (scope->findChoice("LoadBalancingVarianceThresh") != 0) {
+			varianceThreshold = scope->getDoubleValue("LoadBalancingVarianceThresh");
+			retval = true;
+		}
+	}
+	return retval;
+}
+
+bool SimulationConfiguration::Implementation::getLoadBalancingNormalInterval(
 		unsigned int &intervalCount) const {
 	bool retval = false;
 	const ConfigurationScope *scope = getThreadControlScope();
 	if (scope != 0) {
-		if (scope->getIntValue("LoadBalancingInterval") != -1) {
-			intervalCount = scope->getIntValue("LoadBalancingInterval");
+		if (scope->getIntValue("LoadBalancingNormalInterval") != -1) {
+			intervalCount = scope->getIntValue("LoadBalancingNormalInterval");
+			retval = true;
+		}
+	}
+	return retval;
+}
+
+bool SimulationConfiguration::Implementation::getLoadBalancingNormalThresh(
+		unsigned int &thresholdCount) const {
+	bool retval = false;
+	const ConfigurationScope *scope = getThreadControlScope();
+	if (scope != 0) {
+		if (scope->getIntValue("LoadBalancingNormalThresh") != -1) {
+			thresholdCount = scope->getIntValue("LoadBalancingNormalThresh");
+			retval = true;
+		}
+	}
+	return retval;
+}
+
+bool SimulationConfiguration::Implementation::getLoadBalancingRelaxedInterval(
+		unsigned int &intervalCount) const {
+	bool retval = false;
+	const ConfigurationScope *scope = getThreadControlScope();
+	if (scope != 0) {
+		if (scope->getIntValue("LoadBalancingRelaxedInterval") != -1) {
+			intervalCount = scope->getIntValue("LoadBalancingRelaxedInterval");
+			retval = true;
+		}
+	}
+	return retval;
+}
+
+bool SimulationConfiguration::Implementation::getLoadBalancingRelaxedThresh(
+		unsigned int &thresholdCount) const {
+	bool retval = false;
+	const ConfigurationScope *scope = getThreadControlScope();
+	if (scope != 0) {
+		if (scope->getIntValue("LoadBalancingRelaxedThresh") != -1) {
+			thresholdCount = scope->getIntValue("LoadBalancingRelaxedThresh");
 			retval = true;
 		}
 	}
