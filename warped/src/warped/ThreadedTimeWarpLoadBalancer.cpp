@@ -7,10 +7,23 @@
 ThreadedTimeWarpLoadBalancer::ThreadedTimeWarpLoadBalancer(
 		ThreadedTimeWarpSimulationManager* initSimulationManager,
 		ThreadedTimeWarpMultiSet* eventSet,
-		int measurementPeriod,
-		int quietPeriod) {
-	myMeasurementPeriod = measurementPeriod;
-	myQuietPeriod = quietPeriod;
+		double iVarianceThresh,
+		unsigned int iNormalInterval,
+		unsigned int iNormalThresh,
+		unsigned int iRelaxedInterval,
+		unsigned int iRelaxedThresh) {
+	varianceThresh = iVarianceThresh;
+	normalInterval = iNormalInterval;
+	normalThresh = iNormalThresh;
+	relaxedInterval = iRelaxedInterval;
+	relaxedThresh = iRelaxedThresh;
+
+	// Setup initial state
+	//  Indicates if in normal or relaxed mode
+	normalMode = true;
+	//  Indicates number of consecutive measurements within current state
+	stateCounter = 0;
+
 	objectCount = initSimulationManager->getNumberOfSimulationObjects();
 	LTSFCount = initSimulationManager->getScheduleQCount();
 	myEventSet = eventSet;
@@ -92,20 +105,36 @@ void ThreadedTimeWarpLoadBalancer::balanceCheck() {
 		double variance = getVariance();
 		cout << "variance = " << variance << endl;
 		//if (workMetric <= prevAvgMetric) {
-		if (variance >= 0.2) {
-			//lastRebalance.reset();
-			//lastRebalance.start();
+		if (variance >= varianceThresh) {
 			rebalance();
+			stateCounter = normalMode ? 0 : stateCounter+1;
 		} else {
 			updateOffsets();
+			stateCounter = normalMode ? stateCounter+1 : 0;
+		}
+		cout << (normalMode?"Normal : ":"Relaxed : ") << stateCounter << endl;
+		// Set new state
+		if (normalMode) {
+			if (stateCounter >= normalThresh) {
+				normalMode = false;
+				stateCounter = 0;
+				cout << "Entering relaxed mode" << endl;
+			}
+		} else {
+			if (stateCounter >= relaxedThresh) {
+				normalMode = true;
+				stateCounter = 0;
+				cout << "Entering normal mode" << endl;
+			}
 		}
 	}
 }
 
 // Check if a rebalance was performed within the given period
 bool ThreadedTimeWarpLoadBalancer::outsideQuietPeriod() {
-	//return (lastRebalance.elapsed() > myQuietPeriod);
-	if (lastRebalance.elapsed() > myQuietPeriod) {
+	//return (lastRebalance.elapsed() > normalInterval);
+	unsigned int interval = normalMode ? normalInterval : relaxedInterval;
+	if (lastRebalance.elapsed() > interval) {
 		lastRebalance.reset();
 		lastRebalance.start();
 		return true;
@@ -166,13 +195,4 @@ void ThreadedTimeWarpLoadBalancer::rebalance() {
 	myEventSet->moveLP(maxObjId, minLTSF);
 
 	updateOffsets();
-}
-
-bool ThreadedTimeWarpLoadBalancer::checkMeasurementPeriod() {
-	if (myStopwatch.elapsed() > myMeasurementPeriod) {
-		myStopwatch.reset();
-		myStopwatch.start();
-		return true;
-	}
-	return false;
 }

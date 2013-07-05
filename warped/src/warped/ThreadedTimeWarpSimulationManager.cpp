@@ -1057,7 +1057,13 @@ void ThreadedTimeWarpSimulationManager::configure(
 	//Configurable *loadBalancer = myLoadBalancerFactory->allocate(configuration, this);
 	//myLoadBalancer = dynamic_cast<ThreadedTimeWarpLoadBalancer *>(loadBalancer);
 	if (loadBalancing == "ON") {
-		loadBalancer = new ThreadedTimeWarpLoadBalancer(this, dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet), 100, intervalCount);
+		loadBalancer = new ThreadedTimeWarpLoadBalancer(this,
+				dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet),
+				getLoadBalancingVarianceThresh(),
+				getLoadBalancingNormalInterval(),
+				getLoadBalancingNormalThresh(),
+				getLoadBalancingRelaxedInterval(),
+				getLoadBalancingRelaxedThresh());
 		if (loadBalancingTrigger == "ROLLBACK") {
 			dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet)->enLoadBalancer(loadBalancer);
 		}

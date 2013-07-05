@@ -16,8 +16,11 @@ public:
 	ThreadedTimeWarpLoadBalancer(
 			ThreadedTimeWarpSimulationManager* initSimulationManager,
 			ThreadedTimeWarpMultiSet* eventSet,
-			int measurementPeriod,
-			int quietPeriod);
+			double iVarianceThresh,
+			unsigned int iNormalInterval,
+	        unsigned int iNormalThresh,
+	        unsigned int iRelaxedInterval,
+	        unsigned int iRelaxedThresh);
 	~ThreadedTimeWarpLoadBalancer();
 	void balanceCheck();
 
@@ -30,8 +33,17 @@ private:
 	double getMetricByObj(int objId);
 	double getVariance();
 
-	int myMeasurementPeriod;
-	int myQuietPeriod;
+	// Parameters
+	double varianceThresh;
+	unsigned int normalInterval;
+	unsigned int normalThresh;
+	unsigned int relaxedInterval;
+	unsigned int relaxedThresh;
+
+	// States
+	bool normalMode;
+	unsigned int stateCounter;
+	
 	StopWatch myStopwatch;
 	StopWatch lastRebalance;
 	int objectCount;
