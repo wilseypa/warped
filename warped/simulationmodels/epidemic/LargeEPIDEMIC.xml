@@ -15,17 +15,17 @@
         <prob_ur_v>0.5</prob_ur_v>
         <prob_ui_v>0.1</prob_ui_v>
         <prob_ui_u>0.3</prob_ui_u>
-        <location_state_refresh_interval>1</location_state_refresh_interval>
+        <location_state_refresh_interval>10</location_state_refresh_interval>
     </disease>
     <number_of_regions>2</number_of_regions>
     <region>
-        <region_name>ohio</region_name>
+        <region_name>Ohio</region_name>
         <number_of_locations>3</number_of_locations>
         <location>
             <location_name>Hamilton</location_name>
             <number_of_persons>2</number_of_persons>
             <travel_time_to_central_hub>100</travel_time_to_central_hub>
-            <diffusion_trigger_interval>100</diffusion_trigger_interval>
+            <diffusion_trigger_interval>1000</diffusion_trigger_interval>
             <person>
                 <pid>01</pid>
                 <susceptibility>0.80</susceptibility>
@@ -43,7 +43,7 @@
             <location_name>Butler</location_name>
             <number_of_persons>3</number_of_persons>
             <travel_time_to_central_hub>50</travel_time_to_central_hub>
-            <diffusion_trigger_interval>1000</diffusion_trigger_interval>
+            <diffusion_trigger_interval>2000</diffusion_trigger_interval>
             <person>
                 <pid>03</pid>
                 <susceptibility>0.20</susceptibility>
@@ -67,7 +67,7 @@
             <location_name>Clermont</location_name>
             <number_of_persons>2</number_of_persons>
             <travel_time_to_central_hub>150</travel_time_to_central_hub>
-            <diffusion_trigger_interval>1000</diffusion_trigger_interval>
+            <diffusion_trigger_interval>1500</diffusion_trigger_interval>
             <person>
                 <pid>06</pid>
                 <susceptibility>0.00</susceptibility>
@@ -89,7 +89,7 @@
             <location_name>Boone</location_name>
             <number_of_persons>2</number_of_persons>
             <travel_time_to_central_hub>40</travel_time_to_central_hub>
-            <diffusion_trigger_interval>1000</diffusion_trigger_interval>
+            <diffusion_trigger_interval>2500</diffusion_trigger_interval>
             <person>
                 <pid>08</pid>
                 <susceptibility>0.90</susceptibility>
@@ -104,7 +104,7 @@
             </person>
         </location>
         <location>
-            <location_name>kenton</location_name>
+            <location_name>Kenton</location_name>
             <number_of_persons>3</number_of_persons>
             <travel_time_to_central_hub>60</travel_time_to_central_hub>
             <diffusion_trigger_interval>1000</diffusion_trigger_interval>
