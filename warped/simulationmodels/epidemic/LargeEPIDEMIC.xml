@@ -15,7 +15,7 @@
         <prob_ur_v>0.5</prob_ur_v>
         <prob_ui_v>0.1</prob_ui_v>
         <prob_ui_u>0.3</prob_ui_u>
-        <location_state_refresh_interval>10</location_state_refresh_interval>
+        <location_state_refresh_interval>1</location_state_refresh_interval>
     </disease>
     <number_of_regions>2</number_of_regions>
     <region>
