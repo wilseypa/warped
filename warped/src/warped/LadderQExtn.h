@@ -27,7 +27,7 @@ class LadderQueue {
 public:
 
 	/* Constructor */
-	inline LadderQueue(const string causalityType) {
+	inline LadderQueue(const string causalityType, const string syncMechanism) {
 		maxTS = minTS = topStart = nRung = 0;
 		numRung0Buckets = 0;
 		std::fill_n( bucketWidth, MAX_RUNG_NUM, 0 );
@@ -48,6 +48,7 @@ public:
 			}
 		}
 		eventCausality = causalityType;
+		syncMech = syncMechanism;
 	}
 
 	/* Destructor */
@@ -56,7 +57,7 @@ public:
 	}
 
 	/* Peek at the event with lowest timestamp */
-	inline const Event *begin() {
+	inline const Event *begin( int threadID ) {
 
 		unsigned int bucketIndex = 0;
 		list<const Event *>::iterator lIterate;
@@ -207,10 +208,10 @@ public:
 	}
 
 	/* Dequeue the event with lowest timestamp */
-	inline const Event *dequeue() {
+	inline const Event *dequeue( int threadID ) {
 
 		const Event *retVal = NULL;
-		if( NULL != (retVal = begin()) ) {
+		if( NULL != (retVal = begin(threadID)) ) {
 			if(eventCausality == "RELAXED") {
 				bottom_relaxed.erase(bottom_relaxed.begin());
 			} else {
@@ -502,6 +503,9 @@ public:
 	}
 
 private:
+
+	/* Lock type */
+	string syncMech;
 
 	/* Top variables */
 	list<const Event *> top;
