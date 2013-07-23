@@ -7,8 +7,7 @@
 #include <iostream>
 #include <set>
 #include <list>
-
-using std::multiset;
+#include "LockState.h"
 
 using namespace std;
 
@@ -27,7 +26,7 @@ class LadderQueue {
 
 public:
 
-	/* Default constructor */
+	/* Constructor */
 	inline LadderQueue(const string causalityType) {
 		maxTS = minTS = topStart = nRung = 0;
 		numRung0Buckets = 0;
@@ -257,7 +256,6 @@ public:
 					lIterate++;
 				}
 			}
-			//cout << "Part 1" << endl;
 			return;
 		}
 
@@ -312,14 +310,12 @@ public:
 					}
 				}
 			}
-			//cout << "Part 2" << endl;
 			return;
 		}
 
 		/* Check and erase from bottom, if present */
 		if(false == bottomEmpty()) {
 			bottomErase(delEvent);
-			//cout << "Part 3" << endl;
 		}
 	}
 
@@ -512,6 +508,7 @@ private:
 	unsigned int        maxTS;
 	unsigned int        minTS;
 	unsigned int        topStart;
+	LockState           topLock;
 
 	/* Rungs */
 	vector<list<const Event *> *> rung0; //first rung. ref. sec 2.4 of ladderq paper
@@ -523,11 +520,13 @@ private:
 	unsigned int        numBucket[MAX_RUNG_NUM];
 	unsigned int        rStart[MAX_RUNG_NUM];
 	unsigned int        rCur[MAX_RUNG_NUM];
+	LockState           rungLock[MAX_RUNG_NUM];
 
 	/* Bottom */
 	string              eventCausality;
 	list<const Event *> bottom_relaxed;
 	multiset<const Event *, receiveTimeLessThanEventIdLessThan> bottom_strict;
+	LockState           bottomLock;
 
 	/** BOTTOM Functionalities */
 	/* Bottom erase */
