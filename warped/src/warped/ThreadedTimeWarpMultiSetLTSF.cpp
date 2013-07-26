@@ -8,6 +8,9 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, in
 	//scheduleQ scheme
 	scheduleQScheme = scheQScheme;
 
+	//synchronization mechanism
+	syncMechanism = syncMech;
+
 	// Set up scheduleQueue (LTSF queue)
 	if( scheduleQScheme == "MULTISET" ) {
 		scheduleQueue = new multiset<const Event*,receiveTimeLessThanEventIdLessThan> ;
@@ -21,9 +24,6 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, in
 
 	//objectStatusLock = new LockState *[objectCount];
 	scheduleQueueLock = new LockState();
-
-	//synchronization mechanism
-	syncMechanism = syncMech;
 
 	LTSFCount = LTSFCountVal;
 
