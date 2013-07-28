@@ -39,3 +39,8 @@ Makefile.in
 /depcomp
 /install-sh
 /missing
+
+# Other autotools output
+.deps/
+m4/
+*.cache/
