@@ -524,7 +524,7 @@ private:
 	unsigned int        numBucket[MAX_RUNG_NUM];
 	unsigned int        rStart[MAX_RUNG_NUM];
 	unsigned int        rCur[MAX_RUNG_NUM];
-	LockState           rungLock[MAX_RUNG_NUM];
+	LockState           rungLock;
 
 	/* Bottom */
 	string              eventCausality;
