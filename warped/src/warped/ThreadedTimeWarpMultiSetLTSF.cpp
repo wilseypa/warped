@@ -8,14 +8,11 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, in
 	//scheduleQ scheme
 	scheduleQScheme = scheQScheme;
 
-	//synchronization mechanism
-	syncMechanism = syncMech;
-
 	// Set up scheduleQueue (LTSF queue)
 	if( scheduleQScheme == "MULTISET" ) {
 		scheduleQueue = new multiset<const Event*,receiveTimeLessThanEventIdLessThan> ;
 	} else if( scheduleQScheme == "LADDERQ" ) {
-		ladderQ = new LadderQueue(causalityType, syncMechanism);
+		ladderQ = new LadderQueue(causalityType);
 	} else if( scheduleQScheme == "SPLAYTREE" ) {
 		splayTree = new SplayTree;
 	} else {
@@ -24,6 +21,9 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, in
 
 	//objectStatusLock = new LockState *[objectCount];
 	scheduleQueueLock = new LockState();
+
+	//synchronization mechanism
+	syncMechanism = syncMech;
 
 	LTSFCount = LTSFCountVal;
 
@@ -65,65 +65,52 @@ void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
 	while (!scheduleQueueLock->setLock(threadId, syncMechanism));
 	ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
 }
-
 void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
 	ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
 	scheduleQueueLock->releaseLock(threadId, syncMechanism);
 	utils::debug << "( "<<threadId<<" T ) Releasing the Sche Lock." << endl;
 }
-
 const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int threadID) {
-
 	const VTime* ret = NULL;
+	this->getScheduleQueueLock(threadID);
 	if( scheduleQScheme == "MULTISET" ) {
-		this->getScheduleQueueLock(threadID);
 		if (scheduleQueue->size() > 0) {
 			ret = &((*scheduleQueue->begin())->getReceiveTime());
 		}
-		this->releaseScheduleQueueLock(threadID);
-
+	} else if( scheduleQScheme == "LADDERQ" ) {
+		if(!ladderQ->empty())
+			//cout << "nextEvent" << endl;
+			ret = &(ladderQ->begin()->getReceiveTime());
 	} else if( scheduleQScheme == "SPLAYTREE" ) {
-		this->getScheduleQueueLock(threadID);
 		if(splayTree->peekEvent()) {
 			ret = &(splayTree->peekEvent()->getReceiveTime());
 		}
-		this->releaseScheduleQueueLock(threadID);
-
-	} else if( scheduleQScheme == "LADDERQ" ) {
-		if(!ladderQ->empty())
-			ret = &(ladderQ->begin(threadID)->getReceiveTime());
-
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
+	this->releaseScheduleQueueLock(threadID);
 	return (ret);
 }
 
 // Lock based Counting -- Don't call this function in a loop
 // No one uses this - possibly remove
 int ThreadedTimeWarpMultiSetLTSF::getMessageCount(int threadId) {
-
 	int count = 0;
+	getScheduleQueueLock(threadId);
+
 	if( scheduleQScheme == "MULTISET" ) {
-		getScheduleQueueLock(threadId);
 		count = scheduleQueue->size();
-		releaseScheduleQueueLock(threadId);
-
-	} else if( scheduleQScheme == "SPLAYTREE" ) {
-		getScheduleQueueLock(threadId);
-		count = splayTree->size();
-		releaseScheduleQueueLock(threadId);
-
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		cout << "LadderQ message count not handled for now" << endl;
-
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		count = splayTree->size();
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
 
+	releaseScheduleQueueLock(threadId);
 	return count;
 }
-
 bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty() {
 	if( scheduleQScheme == "MULTISET" ) {
 		return scheduleQueue->empty();
@@ -138,23 +125,20 @@ bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty() {
 
 void ThreadedTimeWarpMultiSetLTSF::releaseAllScheduleQueueLocks()
 {
-	if( (scheduleQScheme == "MULTISET") || (scheduleQScheme == "SPLAYTREE") ) {
-		if (scheduleQueueLock->isLocked()) {
-			scheduleQueueLock->releaseLock(scheduleQueueLock->whoHasLock(), syncMechanism);
-			utils::debug << "Releasing Schedule Queue during recovery." << endl;
-		}
+	if (scheduleQueueLock->isLocked()) {
+		scheduleQueueLock->releaseLock(scheduleQueueLock->whoHasLock(), syncMechanism);
+		utils::debug << "Releasing Schedule Queue during recovery." << endl;
 	}
 }
-
 void ThreadedTimeWarpMultiSetLTSF::clearScheduleQueue(int threadId)
 {
 	this->getScheduleQueueLock(threadId);
 	if( scheduleQScheme == "MULTISET" ) {
 		scheduleQueue->clear();
-	} else if( scheduleQScheme == "SPLAYTREE" ) {
-		splayTree->clear();
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		ladderQ->clear();
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		splayTree->clear();
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
@@ -165,19 +149,15 @@ void ThreadedTimeWarpMultiSetLTSF::setLowestObjectPosition(int threadId, int ind
 	this->getScheduleQueueLock(threadId);
 	if( scheduleQScheme == "MULTISET" ) {
 		lowestObjectPosition[index] = scheduleQueue->end();
-
-	} else if( scheduleQScheme == "SPLAYTREE" ) {
-		lowestLadderObjectPosition[index] = splayTree->end();
-
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		lowestLadderObjectPosition[index] = ladderQ->end();
-
+	} else if( scheduleQScheme == "SPLAYTREE" ) {
+		lowestLadderObjectPosition[index] = splayTree->end();
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
 	this->releaseScheduleQueueLock(threadId);
 }
-
 // Removes the Event for the given Obj from the schedule queue,
 //  and returns the event - used for reassigning LPs
 const Event* ThreadedTimeWarpMultiSetLTSF::removeLP(int objId)
@@ -303,8 +283,9 @@ int ThreadedTimeWarpMultiSetLTSF::getScheduleQueueSize()
 const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 {
 	const Event* ret = NULL;
+	this->getScheduleQueueLock(threadId);
+
 	if( scheduleQScheme == "MULTISET" ) {
-		this->getScheduleQueueLock(threadId);
 		if (scheduleQueue->size() > 0) {
 			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 
@@ -324,10 +305,30 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 		 	<< " is removed out for schedule by the thread - "
 		 	<< threadId << "\n";*/
 		}
-		this->releaseScheduleQueueLock(threadId);
+	} else if ( scheduleQScheme == "LADDERQ" ) {
+		if( !ladderQ->empty() ) {
+			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
+			ret = ladderQ->dequeue();
+			if(ret == NULL) {
+				cout << "dequeue() func returned NULL" << endl;
+				this->releaseScheduleQueueLock(threadId);
+				return ret;
+			}
+			unsigned int newMinTime = ret->getReceiveTime().getApproximateIntTime();
+			if ( newMinTime < minReceiveTime )
+				cout << "Event received out of order" << endl;
+			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
 
+			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
+
+			this->getObjectLock(threadId, objId);
+
+			//set the indexer/pointer to NULL
+			lowestLadderObjectPosition[objId] = ladderQ->end();
+
+
+		}
 	} else if( scheduleQScheme == "SPLAYTREE" ) {
-		this->getScheduleQueueLock(threadId);
 		if( splayTree->peekEvent() ) {
 			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 			if(NULL == (ret = splayTree->getEvent()) ) {
@@ -344,33 +345,11 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 			//set the indexer/pointer to NULL
 			lowestLadderObjectPosition[objId] = splayTree->end();
 		}
-		this->releaseScheduleQueueLock(threadId);
-
-	} else if ( scheduleQScheme == "LADDERQ" ) {
-		if( !ladderQ->empty() ) {
-			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
-			ret = ladderQ->dequeue(threadId);
-			if(ret == NULL) {
-				cout << "dequeue() func returned NULL" << endl;
-				return ret;
-			}
-			unsigned int newMinTime = ret->getReceiveTime().getApproximateIntTime();
-			if ( newMinTime < minReceiveTime )
-				cout << "Event received out of order" << endl;
-			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
-
-			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
-
-			this->getObjectLock(threadId, objId);
-
-			//set the indexer/pointer to NULL
-			lowestLadderObjectPosition[objId] = ladderQ->end();
-		}
-
 	} else {
 		cout << "Invalid schedule queue scheme" << endl;
 	}
 
+	this->releaseScheduleQueueLock(threadId);
 	return ret;
 }
 

@@ -7,7 +7,8 @@
 #include <iostream>
 #include <set>
 #include <list>
-#include "LockState.h"
+
+using std::multiset;
 
 using namespace std;
 
@@ -26,8 +27,8 @@ class LadderQueue {
 
 public:
 
-	/* Constructor */
-	inline LadderQueue(const string causalityType, const string syncMechanism) {
+	/* Default constructor */
+	inline LadderQueue(const string causalityType) {
 		maxTS = minTS = topStart = nRung = 0;
 		numRung0Buckets = 0;
 		std::fill_n( bucketWidth, MAX_RUNG_NUM, 0 );
@@ -48,7 +49,6 @@ public:
 			}
 		}
 		eventCausality = causalityType;
-		syncMech = syncMechanism;
 	}
 
 	/* Destructor */
@@ -57,7 +57,7 @@ public:
 	}
 
 	/* Peek at the event with lowest timestamp */
-	inline const Event *begin( int threadID ) {
+	inline const Event *begin() {
 
 		unsigned int bucketIndex = 0;
 		list<const Event *>::iterator lIterate;
@@ -208,10 +208,10 @@ public:
 	}
 
 	/* Dequeue the event with lowest timestamp */
-	inline const Event *dequeue( int threadID ) {
+	inline const Event *dequeue() {
 
 		const Event *retVal = NULL;
-		if( NULL != (retVal = begin(threadID)) ) {
+		if( NULL != (retVal = begin()) ) {
 			if(eventCausality == "RELAXED") {
 				bottom_relaxed.erase(bottom_relaxed.begin());
 			} else {
@@ -257,6 +257,7 @@ public:
 					lIterate++;
 				}
 			}
+			//cout << "Part 1" << endl;
 			return;
 		}
 
@@ -311,12 +312,14 @@ public:
 					}
 				}
 			}
+			//cout << "Part 2" << endl;
 			return;
 		}
 
 		/* Check and erase from bottom, if present */
 		if(false == bottomEmpty()) {
 			bottomErase(delEvent);
+			//cout << "Part 3" << endl;
 		}
 	}
 
@@ -504,15 +507,11 @@ public:
 
 private:
 
-	/* Lock type */
-	string syncMech;
-
 	/* Top variables */
 	list<const Event *> top;
 	unsigned int        maxTS;
 	unsigned int        minTS;
 	unsigned int        topStart;
-	LockState           topLock;
 
 	/* Rungs */
 	vector<list<const Event *> *> rung0; //first rung. ref. sec 2.4 of ladderq paper
@@ -524,13 +523,11 @@ private:
 	unsigned int        numBucket[MAX_RUNG_NUM];
 	unsigned int        rStart[MAX_RUNG_NUM];
 	unsigned int        rCur[MAX_RUNG_NUM];
-	LockState           rungLock;
 
 	/* Bottom */
 	string              eventCausality;
 	list<const Event *> bottom_relaxed;
 	multiset<const Event *, receiveTimeLessThanEventIdLessThan> bottom_strict;
-	LockState           bottomLock;
 
 	/** BOTTOM Functionalities */
 	/* Bottom erase */
