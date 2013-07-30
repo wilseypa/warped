@@ -7,8 +7,7 @@
 #include <iostream>
 #include <set>
 #include <list>
-
-using std::multiset;
+#include <pthread.h>
 
 using namespace std;
 
@@ -49,11 +48,21 @@ public:
 			}
 		}
 		eventCausality = causalityType;
+
+		/* Initialize the mutexes */
+		pthread_mutex_init(&topMutex, NULL);
+		pthread_mutex_init(&rungMutex, NULL);
+		pthread_mutex_init(&bottomMutex, NULL);
 	}
 
 	/* Destructor */
 	inline ~LadderQueue() {
 		clear();
+
+		/* Destroy the mutexes */
+		pthread_mutex_destroy(&topMutex);
+		pthread_mutex_destroy(&rungMutex);
+		pthread_mutex_destroy(&bottomMutex);
 	}
 
 	/* Peek at the event with lowest timestamp */
@@ -257,7 +266,6 @@ public:
 					lIterate++;
 				}
 			}
-			//cout << "Part 1" << endl;
 			return;
 		}
 
@@ -312,14 +320,12 @@ public:
 					}
 				}
 			}
-			//cout << "Part 2" << endl;
 			return;
 		}
 
 		/* Check and erase from bottom, if present */
 		if(false == bottomEmpty()) {
 			bottomErase(delEvent);
-			//cout << "Part 3" << endl;
 		}
 	}
 
@@ -512,6 +518,7 @@ private:
 	unsigned int        maxTS;
 	unsigned int        minTS;
 	unsigned int        topStart;
+	pthread_mutex_t     topMutex;
 
 	/* Rungs */
 	vector<list<const Event *> *> rung0; //first rung. ref. sec 2.4 of ladderq paper
@@ -523,11 +530,13 @@ private:
 	unsigned int        numBucket[MAX_RUNG_NUM];
 	unsigned int        rStart[MAX_RUNG_NUM];
 	unsigned int        rCur[MAX_RUNG_NUM];
+	pthread_mutex_t     rungMutex;
 
 	/* Bottom */
 	string              eventCausality;
 	list<const Event *> bottom_relaxed;
 	multiset<const Event *, receiveTimeLessThanEventIdLessThan> bottom_strict;
+	pthread_mutex_t     bottomMutex;
 
 	/** BOTTOM Functionalities */
 	/* Bottom erase */
