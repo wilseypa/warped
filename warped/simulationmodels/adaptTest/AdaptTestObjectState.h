@@ -4,6 +4,7 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include <warped/State.h>
+#include <string>
 
 class AdaptTestObjectState : public State {
 public :
@@ -47,8 +48,8 @@ public :
   int getNumStragglersSent(){ return numStragglers; }
 
   const string getSummaryString(){
-    return "Received " + intToString(numEventsReceived) + ", Sent " +
-      intToString(numEventsSent ) + ", and Started " + intToString(numEventsStarted);
+    return "Received " + std::to_string(numEventsReceived) + ", Sent " +
+      std::to_string(numEventsSent ) + ", and Started " + std::to_string(numEventsStarted);
   }
 
 private:

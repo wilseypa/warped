@@ -28,7 +28,6 @@
 
 #include "PingEvent.h"
 #include <cstdlib>
-#include <utils/AllocatorStack.h>
 #include <warped/SerializedInstance.h>
 #include <warped/ObjectID.h>
 

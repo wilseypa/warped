@@ -4,7 +4,6 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include <warped/DefaultEvent.h>
-#include <new>
 
 class AdaptTestEvent : public DefaultEvent {
 public:
@@ -27,9 +26,6 @@ public:
   
   bool eventCompare(const Event* event);
 
-  void *operator new( size_t size );
-  void operator delete( void *toDelete );
-  
   static const string &getAdaptTestEventDataType(){
     static string AdaptTestEventDataType = "AdaptTestEvent";
     return AdaptTestEventDataType;

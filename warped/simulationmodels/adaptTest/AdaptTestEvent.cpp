@@ -2,7 +2,6 @@
 
 #include "AdaptTestEvent.h"
 #include <cstdlib>
-#include <utils/AllocatorStack.h>
 #include <warped/SerializedInstance.h>
 
 void 
@@ -38,14 +37,3 @@ bool
 AdaptTestEvent::eventCompare( const Event* event ){
   return compareEvents( this, event );
 }
-
-void *
-AdaptTestEvent::operator new( size_t size ){
-  return AllocatorStack<sizeof(AdaptTestEvent)>::pop();
-}
-
-void
-AdaptTestEvent::operator delete( void *toDelete ){
-  return AllocatorStack<sizeof(AdaptTestEvent)>::push( toDelete );
-}
-

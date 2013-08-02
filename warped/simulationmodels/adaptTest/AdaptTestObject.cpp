@@ -1,7 +1,6 @@
 // See copyright notice in file Copyright in the root directory of this archive.
 
 #include <string>
-#include <utils/StringUtilities.h>
 #include "AdaptTestEvent.h"
 #include "AdaptTestObject.h"
 #include "AdaptTestObjectState.h"
@@ -231,5 +230,5 @@ AdaptTestObject::reclaimEvent(const Event *event){
 
 string 
 AdaptTestObject::getName( int forId ){
-  return "Object" + intToString(forId);
+  return "Object" + to_string(forId);
 }

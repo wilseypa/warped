@@ -24,7 +24,6 @@
 //          Philip A. Wilsey            phil.wilsey@uc.edu
 
 #include <warped/DefaultEvent.h>
-#include <new>
 
 class PingEvent : public DefaultEvent {
 public:
