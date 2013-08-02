@@ -34,7 +34,7 @@ SimulationManagerImplementationBase::initializeObjects(){
   //Obtains all the objects from localArrayOfSimObjPtrs
   vector<SimulationObject *> *objects = getElementVector(localArrayOfSimObjPtrs);
   InitObject initObject;
-  for_each< vector<SimulationObject *>::iterator, InitObject &>( objects->begin(), 
+  for_each< vector<SimulationObject *>::iterator, InitObject >( objects->begin(), 
 								 objects->end(),
 								 initObject );
   delete objects;
