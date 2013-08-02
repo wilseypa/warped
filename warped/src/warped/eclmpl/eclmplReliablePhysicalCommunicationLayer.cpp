@@ -1,6 +1,5 @@
 #include "eclmplReliablePhysicalCommunicationLayer.h"
 #include "warped/SerializedInstance.h"
-#include <utils/StringUtilities.h>
 #include <iostream>
 using std::cout;
 using std::endl;

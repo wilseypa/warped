@@ -114,15 +114,13 @@ allocatePhysicalCommunicationLayer( const string &physicalLayer ){
   PhysicalCommunicationLayer *retval = 0;
 
 #ifdef USE_TIMEWARP
-  if( stringCaseCompare( physicalLayer, "MPI" ) ) {
-    retval = new MPIPhysicalCommunicationLayer();
-  }
-  else if( stringCaseCompare( physicalLayer, "UDPSELECT" ) ) {
-    retval = new UDPSelectPhysicalCommunicationLayer();
-  }
-  else if( stringCaseCompare( physicalLayer, "TCPSELECT" ) ) {
-    retval = new TCPSelectPhysicalCommunicationLayer();
-  }
+    if (strcasecmp(physicalLayer.c_str(), "MPI") == 0) {
+        retval = new MPIPhysicalCommunicationLayer();
+    } else if (strcasecmp(physicalLayer.c_str(), "UDPSELECT") == 0) {
+        retval = new UDPSelectPhysicalCommunicationLayer();
+    } else if (strcasecmp(physicalLayer.c_str(), "TCPSELECT") == 0) {
+        retval = new TCPSelectPhysicalCommunicationLayer();
+    }
 #endif
   return retval;
 }

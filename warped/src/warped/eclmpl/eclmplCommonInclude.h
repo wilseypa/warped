@@ -68,6 +68,32 @@ struct lessPriority : public binary_function<_Tp,_Tp,bool> {
    }                                              
 };
 
+/**
+   This function does a strdup like the tradition library function, except
+   it uses "new" to allocate the memory.  Memory returned needs to be
+   deleted with "delete []".
+
+   @param toDup String to duplicate.  Does not have to be null terminated
+   if the second parameter is supplied.
+   @param len (optional) The length of the string to duplicate.  If this
+   parameter is not supplied, strlen will be called on "toDup".  (In that 
+   case "toDup" should be NULL terminated!
+*/
+inline char* cppStrDup(const char* toDup, int len = -1) {
+    char* retval = 0;
+    if (len == -1) {
+        len = strlen(toDup) + 1;
+        retval = new char[len];
+        memcpy(retval, toDup, len);
+        retval[ len - 1 ] = '\0';
+    } else {
+        retval = new char[len];
+        memcpy(retval, toDup, len);
+    }
+    return retval;
+}
+
+
 #define __local__stringize(y) #y
 #define __local__add_quotes(x) __local__stringize (x)
 

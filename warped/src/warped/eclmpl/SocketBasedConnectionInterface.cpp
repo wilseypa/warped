@@ -1,5 +1,4 @@
 #include "SocketBasedConnectionInterface.h"
-#include <utils/StringUtilities.h>
 
 using std::cerr;
 using std::endl;
@@ -177,7 +176,7 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
   // Create master socket and find an unused portnumber for it, bind and listen to it.
   createNewSocket(connectionId, SOCK_STREAM); // SOCK_STREAM --> TCP
   setDefaultSocketOptions(connectionId);
-  string myPort = intToString(obtainAndBindUnusedPort(connectionId));
+  string myPort = std::to_string(obtainAndBindUnusedPort(connectionId));
 
   eclmplConfigFileTable localConnTable = connTable;
   // Add portnumber info to localConnTable.
@@ -220,7 +219,7 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
     while (SocketBasedConnectionInterface::recv(msgSize, msg, i) == false) {
       msgSize = mtu; // Max allowed recv size.
     }
-    string slavePortNr = intToString(atoi(msg));
+    string slavePortNr = std::to_string(atoi(msg));
 #ifdef DEBUG_SOCKET_CONN_START
     cerr << "0: Received portnumber " << slavePortNr << "from slave " << i << "." << endl;
 #endif
@@ -266,15 +265,14 @@ SocketBasedConnectionInterface::establishConnections(const slaveStartupInfo &inf
   // Create master socket and find an unused portnumber for it, bind and listen to it.
   createNewSocket(connectionId, SOCK_STREAM); // SOCK_STREAM --> TCP
   setDefaultSocketOptions(connectionId);
-  string myPort = intToString(obtainAndBindUnusedPort(connectionId));
+  string myPort = std::to_string(obtainAndBindUnusedPort(connectionId));
 
   // Establish connection with master.
   ASSERT(info.masterContactInfo.nrOfContactArguments() == 2);
   vector<string> args = info.masterContactInfo.contactArguments();
   // args[0]==hostname, args[1]==portNumber
   string masterHost = args[0];
-  int ignored;
-  int masterPort = (int)stringToLong(args[1], ignored);
+  int masterPort = std::stoi(args[1]);
   unsigned int masterId = 0;
   createNewSocket(masterId, SOCK_STREAM); // SOCK_STREAM --> TCP
   setDefaultSocketOptions(masterId);
@@ -586,8 +584,7 @@ SocketBasedConnectionInterface::establishConnectionsWithPeerSlaves(const eclmplC
       ASSERT(args.size() == 3);
       // args[0]==hostname, args[1]==executable, args[2]==portNumber
       string slaveHost = args[0];
-      int ignored;
-      int slavePort = (int)stringToLong(args[2], ignored);
+      int slavePort = std::stoi(args[2]);
 #ifdef DEBUG_SOCKET_CONN_START
       cerr << connectionId << ": Trying to connect to slave " << slaveHost << slavePort << endl;
 #endif

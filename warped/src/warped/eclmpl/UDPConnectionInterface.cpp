@@ -1,5 +1,4 @@
 #include "UDPConnectionInterface.h"
-#include <utils/StringUtilities.h>
 
 const string configFile = "procgroup";
 const int maxBuf = 65535;
@@ -63,10 +62,10 @@ UDPConnectionInterface::createAndDistributeRecvSocketVector(eclmplConfigFileTabl
     portInfoStr.push_back(hostName);
     for (unsigned int id = 0; id < numberOfConnections; id++) {
       if (id == connectionId) {
-	tmpStr = intToString(0);
+	tmpStr = std::to_string(0);
       }
       else {
-	tmpStr = intToString(recvSocket[id]->getPortNumber());
+	tmpStr = std::to_string(recvSocket[id]->getPortNumber());
       }
       portInfoStr.push_back(tmpStr);
     }
@@ -93,10 +92,10 @@ UDPConnectionInterface::createAndDistributeRecvSocketVector(eclmplConfigFileTabl
     portInfoStr.push_back(hostName);
     for (unsigned int id = 0; id < numberOfConnections; id++) {
       if (id == connectionId) {
-	tmpStr = intToString(0);
+	tmpStr = std::to_string(0);
       }
       else {
-	tmpStr = intToString(recvSocket[id]->getPortNumber());
+	tmpStr = std::to_string(recvSocket[id]->getPortNumber());
       }
       portInfoStr.push_back(tmpStr);
     }
@@ -145,8 +144,7 @@ UDPConnectionInterface::createAndReceiveSendSocketVector(eclmplConfigFileTable &
       string host = entry[0];
       // each entry looks like: hostname listenPort0 ... listenPortN, 
       // so Port_i is accessed through entry[i+1]
-      int ignore;
-      int portNr = (int)stringToLong(entry[connectionId+1], ignore);
+      int portNr = std::stoi(entry[connectionId+1]);
       ASSERT(sendSocket[id]->wConnect(host.c_str(), portNr) != -1);
     }
   }
