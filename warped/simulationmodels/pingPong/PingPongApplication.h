@@ -45,8 +45,6 @@ public:
   const VTime &getTime(string &){ return IntVTime::getIntVTimeZero(); }
 
 private:
-  ArgumentParser &getArgumentParser();
-
   vector<SimulationObject *> *getSimulationObjects();
 
   unsigned int numObjects;

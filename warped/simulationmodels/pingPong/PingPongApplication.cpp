@@ -33,6 +33,7 @@
 #include <warped/DeserializerManager.h>
 #include <utils/ArgumentParser.h>
 
+#include <tclap/CmdLine.h>
 #include <vector>
 using std::string;
 
@@ -47,7 +48,29 @@ PingPongApplication::PingPongApplication( unsigned int initNumObjects,
 
 int 
 PingPongApplication::initialize( vector<string> &arguments ){ 
-  getArgumentParser().checkArgs( arguments );
+  try {
+    TCLAP::CmdLine cmd("Ping Pong Simulation");
+
+    TCLAP::ValueArg<int> numBallsArg("", "numBalls", "number of balls", 
+                                     false, numEventsPerObject, "int", cmd);
+    TCLAP::ValueArg<int> numPlayersArg("", "numPlayers", "number of simulation objects to pass the balls", 
+                                       false, numObjects, "int", cmd);
+    TCLAP::ValueArg<int> numAtOnceArg("", "numAtOnce", "number of balls circulating at once", 
+                                      false, numBallsAtOnce, "int", cmd);
+    TCLAP::SwitchArg randomDelaysArg("", "randomDelays", "should the simulation objects wait random amounts of time", 
+                                          cmd, false);
+
+    cmd.parse(arguments);
+
+    numEventsPerObject = numBallsArg.getValue();
+    numObjects = numPlayersArg.getValue();
+    numBallsAtOnce = numAtOnceArg.getValue();
+    randomDelays = randomDelaysArg.getValue();
+
+  } catch (TCLAP::ArgException &e) {
+    std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+    exit(-1);
+  }
   return 0;
 }
 
@@ -119,16 +142,3 @@ PingPongApplication::registerDeserializers(){
 
 }
 
-ArgumentParser &
-PingPongApplication::getArgumentParser(){
-  static ArgumentParser::ArgRecord args[] = {
-    { "-numBalls", "number of balls", &numEventsPerObject, ArgumentParser::INTEGER, false }, 
-    { "-numPlayers", "number of simulation objects to pass the balls", &numObjects, ArgumentParser::INTEGER, false }, 
-    { "-numAtOnce", "number of balls circulating at once", &numBallsAtOnce, ArgumentParser::INTEGER, false }, 
-    { "-randomDelays", "should the simulation objects wait random amounts of time", &randomDelays, ArgumentParser::BOOLEAN, false }, 
-
-    { "", "", 0 }
-  };
-  static ArgumentParser *myArgParser = new ArgumentParser( args );
-  return *myArgParser;
-}

@@ -20,18 +20,18 @@
 //          Philip A. Wilsey            phil.wilsey@uc.edu
 
 //---------------------------------------------------------------------------
-// 
+//
 // $Id: main.cpp,v 1.4 2003-03-28 22:34:34 dmartin Exp $
-// 
+//
 //---------------------------------------------------------------------------
 
 #include "PingPongApplication.h"
 #include <warped/WarpedMain.h>
 
 int
-main( int argc, char **argv ){
-  WarpedMain wm( new PingPongApplication( 5, 10000, 1, false ) );
-  
-  // Defaults - 5 objects, 100 events apiece
-  return wm.main( argc, argv );
+main(int argc, char** argv) {
+    WarpedMain wm(new PingPongApplication(5, 10000, 1, false));
+
+    // Defaults - 5 objects, 100 events apiece
+    return wm.main(argc, argv);
 }
