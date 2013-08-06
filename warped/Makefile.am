@@ -6,7 +6,7 @@ CXXFLAGS=$(GLOBALCXXFLAGS) @CXXFLAGS@
 LDFLAGS=$(GLOBALLDFLAGS) @LDFLAGS@
 # ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS= src simulationmodels
+SUBDIRS= include src simulationmodels 
 
 EXTRA_DIST = Makefile.am.common \
 	src/warped/Makefile.am.stub \
