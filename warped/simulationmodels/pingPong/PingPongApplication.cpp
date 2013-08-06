@@ -31,7 +31,6 @@
 #include <warped/PartitionInfo.h>
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
-#include <utils/ArgumentParser.h>
 
 #include <tclap/CmdLine.h>
 #include <vector>

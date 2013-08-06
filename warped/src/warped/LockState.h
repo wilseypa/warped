@@ -15,6 +15,7 @@ public:
 		pthread_mutex_init(&mutexLock, NULL);
 	}
 	~LockState() {
+		pthread_mutex_destroy(&mutexLock);
 	}
 	bool releaseLock(const unsigned int &threadNumber, const string syncMechanism) {
 		if(syncMechanism == "ATOMICLOCK") {
