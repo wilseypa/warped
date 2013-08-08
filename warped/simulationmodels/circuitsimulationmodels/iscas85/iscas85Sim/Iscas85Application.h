@@ -29,8 +29,6 @@ public:
 
 private:
 
-  ArgumentParser &getArgumentParser();
-
   unsigned int numObjects;
 
   string inputFileName;
