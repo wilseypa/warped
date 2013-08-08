@@ -37,8 +37,6 @@ public:
 	}
 
 private:
-	ArgumentParser &getArgumentParser();
-
 	int numObjects;
 
 	string inputFileName;

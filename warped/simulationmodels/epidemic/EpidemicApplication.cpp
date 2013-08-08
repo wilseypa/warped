@@ -19,8 +19,8 @@
 #include "tinyxml2.h"
 #include <warped/PartitionInfo.h>
 #include <warped/DeserializerManager.h>
-#include <utils/ArgumentParser.h>
 
+#include <tclap/CmdLine.h>
 #include <vector>
 #include <map>
 #include <iostream>
@@ -35,11 +35,22 @@ using namespace tinyxml2;
 EpidemicApplication::EpidemicApplication(): inputFileName( "" ), numObjects( 0 ) { }
 
 int EpidemicApplication::initialize( vector<string> &arguments ){
+	try {
+		TCLAP::CmdLine cmd("Epidemic Simulation");
 
-	getArgumentParser().checkArgs( arguments );
+		TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "epidemicSim configuration file name",
+												 true, inputFileName, "string", cmd);
+
+		cmd.parse(arguments);
+
+		inputFileName = inputFileNameArg.getValue();
+	} catch (TCLAP::ArgException &e) {
+		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+		exit(-1);
+	}
 
 	if( inputFileName.empty() ) {
-		cerr << "A epidemicSim configuration file must be specified using -simulate" << endl;
+		cerr << "A epidemicSim configuration file must be specified using --simulate" << endl;
 		abort();
 	}
 	return 0;
@@ -191,15 +202,3 @@ void EpidemicApplication::registerDeserializers() {
 	DeserializerManager::instance()->registerDeserializer(  EpidemicEvent::getEpidemicEventDataType(), 
 															&EpidemicEvent::deserialize );
 }
-
-ArgumentParser & EpidemicApplication::getArgumentParser() {
-
-	static ArgumentParser::ArgRecord args[] = {
-		{ "-simulate", "input file name", &inputFileName, ArgumentParser::STRING, false },
-		{ "", "", 0 }
-	};
-
-	static ArgumentParser *myArgParser = new ArgumentParser( args );
-	return *myArgParser;
-}
-
