@@ -25,7 +25,8 @@
 #include <warped/PartitionInfo.h>
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
-#include <utils/ArgumentParser.h>
+
+#include <tclap/CmdLine.h>
 #include "vector"
 #include "iostream"
 #include "fstream"
@@ -39,10 +40,21 @@ DFFApplication::DFFApplication()
 
 int
 DFFApplication::initialize( vector<string> &arguments ){
+  try {
+    TCLAP::CmdLine cmd("RAID Simulation");
 
-  getArgumentParser().checkArgs( arguments );
+    TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "DFF configuration file name",
+                                              true, inputFileName, "string", cmd);
+
+    cmd.parse(arguments);
+
+    inputFileName = inputFileNameArg.getValue();
+  } catch (TCLAP::ArgException &e) {
+      std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+      exit(-1);
+  }
+
   return 0;
-
 }
 
 int 
@@ -71,19 +83,7 @@ DFFApplication::getPartitionInfo(unsigned int numberOfProcessorsAvailable){
 
 }
 
-
 void
 DFFApplication::registerDeserializers(){
 	DeserializerManager::instance()->registerDeserializer(LogicEvent::getLogicEventDataType(),&LogicEvent::deserialize);
 }
-
-ArgumentParser &
-DFFApplication::getArgumentParser(){
- static ArgumentParser::ArgRecord args[] = {
-  {"-simulate", "input file name", &inputFileName, ArgumentParser::STRING,false},
-  {"","",0 }
-  };
-  static ArgumentParser *myArgParser = new ArgumentParser(args);
-  return *myArgParser;
-}
-
