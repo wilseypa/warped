@@ -5,7 +5,6 @@
 #include <warped/PartitionInfo.h>
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
-#include <utils/ArgumentParser.h>
 
 #include <vector>
 #include <iostream>
@@ -21,7 +20,6 @@ LogicGatesApplication::LogicGatesApplication()
 int 
 LogicGatesApplication::initialize(vector<string> &arguments)
 {
-  getArgumentParser().checkArgs( arguments ); 
   return 0; 
 }
 
