@@ -26,8 +26,8 @@
 #include <warped/PartitionInfo.h>
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
-#include <utils/ArgumentParser.h>
 
+#include <tclap/CmdLine.h>
 #include "vector"
 #include "iostream"
 #include "fstream"
@@ -41,12 +41,23 @@ FullAdderApplication::FullAdderApplication()
 
 int
 FullAdderApplication::initialize( vector<string> &arguments ){
+  try {
+    TCLAP::CmdLine cmd("FullAdder Simulation");
 
-  getArgumentParser().checkArgs( arguments );
+    TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "configuration file name",
+                                              true, inputFileName, "string", cmd);
 
-  if( inputFileName.empty() ){
-    std::cerr << "A smmpSim configuration file must be specified using -simulate" << std::endl;
-    abort();
+    cmd.parse(arguments);
+
+    inputFileName = inputFileNameArg.getValue();
+  } catch (TCLAP::ArgException &e) {
+      std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+      exit(-1);
+  }
+
+  if (inputFileName.empty()) {
+      std::cerr << "A configuration file must be specified using -simulate" << std::endl;
+      abort();
   }
 
   return 0;
@@ -202,17 +213,4 @@ FullAdderApplication::getPartitionInfo(unsigned int numberOfProcessorsAvailable)
 void 
 FullAdderApplication::registerDeserializers(){
   DeserializerManager::instance()->registerDeserializer(LogicEvent::getLogicEventDataType(),&LogicEvent::deserialize);
-}
-
-ArgumentParser & 
-FullAdderApplication::getArgumentParser(){
-  static ArgumentParser::ArgRecord args[] = {
-  {"-simulate", "input file name", &inputFileName, ArgumentParser::STRING,false},
-    
-  {"","",0 }
-   
-};
-
-  static ArgumentParser *myArgParser = new ArgumentParser(args);
-  return *myArgParser;
 }
