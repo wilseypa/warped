@@ -23,8 +23,8 @@
 #include "SMMPPartitioner.h"
 #include <warped/PartitionInfo.h>
 #include <warped/DeserializerManager.h>
-#include <utils/ArgumentParser.h>
 
+#include <tclap/CmdLine.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -39,11 +39,23 @@ SMMPApplication::SMMPApplication()
 
 int
 SMMPApplication::initialize( vector<string> &arguments ){
-  getArgumentParser().checkArgs( arguments );
+  try {
+    TCLAP::CmdLine cmd("SMMP Simulation");
+
+    TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "SMMPSim configuration file name",
+                                              true, inputFileName, "string", cmd);
+
+    cmd.parse(arguments);
+
+    inputFileName = inputFileNameArg.getValue();
+  } catch (TCLAP::ArgException &e) {
+      std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+      exit(-1);
+  }
 
   if( inputFileName.empty() ){
-    std::cerr << "A smmpSim configuration file must be specified using -simulate" << std::endl;
-    abort();
+    std::cerr << "An SMMPSim configuration file must be specified using --simulate" << std::endl;
+    exit(-1);
   }
 
   return 0;
@@ -166,15 +178,3 @@ SMMPApplication::registerDeserializers(){
   DeserializerManager::instance()->registerDeserializer( MemRequest::getMemRequestDataType(),
 							 &MemRequest::deserialize );
 }
-
-ArgumentParser &
-SMMPApplication::getArgumentParser(){
-  static ArgumentParser::ArgRecord args[] = {
-    { "-simulate", "input file name", &inputFileName, ArgumentParser::STRING, false },
-
-    { "", "", 0 }
-  };
-
-  static ArgumentParser *myArgParser = new ArgumentParser( args );
-  return *myArgParser;
-}  

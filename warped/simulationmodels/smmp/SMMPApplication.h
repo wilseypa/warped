@@ -39,8 +39,6 @@ public:
   const VTime &getTime(string &){ return IntVTime::getIntVTimeZero(); }
 
 private:
-  ArgumentParser &getArgumentParser();
-
   unsigned int numObjects;
   string inputFileName;
 };
