@@ -35,7 +35,8 @@
 #include <warped/PartitionInfo.h>
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
-#include <utils/ArgumentParser.h>
+
+#include <tclap/CmdLine.h>
 #include "vector"
 #include "iostream"
 #include "fstream"
@@ -51,16 +52,31 @@ Iscas89Application::Iscas89Application()
    numObjects( 0 ){}
 
 int
-Iscas89Application::initialize( vector<string> &arguments ){
-  string path= PATH;  //"circuitsimulationmodels/iscas89/iscas89Sim/";
-  arguments[2] = path+arguments[2]+"/"+arguments[2]+"config"; 
-  cout<<"configuration file is : "<<arguments[2]<<endl;  
-  getArgumentParser().checkArgs( arguments );
+Iscas89Application::initialize(vector<string> &arguments) {
+  try {
+    TCLAP::CmdLine cmd("Iscas89 Simulation");
+
+    TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "configuration file name",
+                                              true, inputFileName, "string", cmd);
+
+    cmd.parse(arguments);
+
+    inputFileName = inputFileNameArg.getValue();
+  } catch (TCLAP::ArgException &e) {
+      std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+      exit(-1);
+  }
 
   if( inputFileName.empty() ){
-    std::cerr << "A smmpSim configuration file must be specified using -simulate"<<std::endl;
+    std::cerr << "A configuration file must be specified using --simulate"<<std::endl;
     abort();
   }
+
+  // Note that this simulation treats the --simulate argument differently than
+  // other simulations.
+  inputFileName = PATH + inputFileName + "/" + inputFileName + "config";
+  cout << "configuration file is : " << inputFileName << endl;
+
   return 0;
 }
 
@@ -254,14 +270,3 @@ void
 Iscas89Application::registerDeserializers(){
 	DeserializerManager::instance()->registerDeserializer(LogicEvent::getLogicEventDataType(),&LogicEvent::deserialize);
 }
-
-ArgumentParser &
-Iscas89Application::getArgumentParser(){
-  static ArgumentParser::ArgRecord args[] = {
-  {"-simulate", "input file name", &inputFileName, ArgumentParser::STRING,false},
-  {"","",0 }
-  };
-  static ArgumentParser *myArgParser = new ArgumentParser(args);
-  return *myArgParser;
-}
-
