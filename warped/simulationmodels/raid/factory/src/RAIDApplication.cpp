@@ -28,8 +28,8 @@
 #include <warped/PartitionInfo.h>
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
-#include <utils/ArgumentParser.h>
 
+#include <tclap/CmdLine.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -41,10 +41,22 @@ RAIDApplication::RAIDApplication()
 
 int 
 RAIDApplication::initialize( vector<string> &arguments ){ 
-  getArgumentParser().checkArgs( arguments );
+  try {
+    TCLAP::CmdLine cmd("RAID Simulation");
+
+    TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "raidSim configuration file name",
+                                              true, inputFileName, "string", cmd);
+
+    cmd.parse(arguments);
+
+    inputFileName = inputFileNameArg.getValue();
+  } catch (TCLAP::ArgException &e) {
+      std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+      exit(-1);
+  }
 
   if( inputFileName.empty() ){
-    std::cerr << "A raidSim configuration file must be specified using -simulate" << std::endl;
+    std::cerr << "A raidSim configuration file must be specified using --simulate" << std::endl;
     abort();
   }
 
@@ -170,16 +182,4 @@ void
 RAIDApplication::registerDeserializers(){
   DeserializerManager::instance()->registerDeserializer( RAIDRequest::getRAIDRequestDataType(),
 							 &RAIDRequest::deserialize );
-}
-
-ArgumentParser &
-RAIDApplication::getArgumentParser(){
-  static ArgumentParser::ArgRecord args[] = {
-    { "-simulate", "raidSim configuration file name", &inputFileName, ArgumentParser::STRING, false },
-
-    { "", "", 0 }
-  };
-  
-  static ArgumentParser *myArgParser = new ArgumentParser( args );
-  return *myArgParser;
 }

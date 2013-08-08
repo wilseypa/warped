@@ -46,8 +46,6 @@ public:
   }
 
 private:
-  ArgumentParser &getArgumentParser();
-
   vector<SimulationObject *> *getSimulationObjects();
 
   string inputFileName;
