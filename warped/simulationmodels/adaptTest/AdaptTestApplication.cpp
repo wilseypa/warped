@@ -6,8 +6,9 @@
 #include <warped/PartitionInfo.h>
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
-#include <utils/ArgumentParser.h>
 
+#include <tclap/CmdLine.h>
+#include <tclap/ValuesConstraint.h>
 #include <vector>
 using std::string;
 
@@ -22,11 +23,28 @@ AdaptTestApplication::AdaptTestApplication( unsigned int initNumObjects,
 
 int 
 AdaptTestApplication::initialize( vector<string> &arguments ){ 
-  getArgumentParser().checkArgs( arguments );
+  try {
+    TCLAP::CmdLine cmd("Adapt Test Simulation");
 
-  if( !(outputMode == "lazy" || outputMode == "aggr" || outputMode == "adapt" ) ){
-    std::cerr << "-outputMode must be lazy, aggr, or adapt." << std::endl;
-    abort();
+    TCLAP::ValueArg<int> numStragglersArg("", "numStragglers", "number of stragglers", 
+                                     false, numStragglers, "int", cmd);
+    TCLAP::SwitchArg adaptiveStateArg("", "adaptiveState", "should the object execution and state saving time vary", 
+                                      cmd, false);
+
+    std::vector<string> allowed {"lazy", "aggr", "adapt"};
+    TCLAP::ValuesConstraint<string> constraint(allowed);
+    TCLAP::ValueArg<string> outputModeArg("", "outputMode", "event output mode", 
+                                       false, outputMode, &constraint, cmd);
+
+    cmd.parse(arguments);
+
+    numStragglers = numStragglersArg.getValue();
+    adaptiveState = adaptiveStateArg.getValue();
+    outputMode = outputModeArg.getValue();
+
+  } catch (TCLAP::ArgException &e) {
+    std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+    exit(-1);
   }
 
   return 0;
@@ -96,20 +114,3 @@ AdaptTestApplication::registerDeserializers(){
 							 &AdaptTestEvent::deserialize );
 
 }
-
-ArgumentParser &
-AdaptTestApplication::getArgumentParser(){
-  static ArgumentParser::ArgRecord args[] = {
-    { "-numStragglers", "number of stragglers", &numStragglers, ArgumentParser::INTEGER, false }, 
-    { "-outputMode", "aggr - to generate different events, lazy - to regenerate same events, adapt - to generate both",
-      &outputMode, ArgumentParser::STRING, false }, 
-    { "-adaptiveState", "should the object execution and state saving time vary", &adaptiveState, 
-      ArgumentParser::BOOLEAN, false }, 
-
-    { "", "", 0 }
-  };
-  
-  static ArgumentParser *myArgParser = new ArgumentParser( args );
-  return *myArgParser;
-}
-
