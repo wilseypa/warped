@@ -21,10 +21,9 @@
 #include "SMMPServerObject.h"
 #include "SMMPQueueObject.h"
 #include "SMMPPartitioner.h"
-#include <warped/PartitionInfo.h>
-#include <warped/DeserializerManager.h>
+#include "warped/PartitionInfo.h"
+#include "warped/DeserializerManager.h"
 
-#include <tclap/CmdLine.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -33,31 +32,12 @@ using std::string;
 
 #define NUMPER 6
 
-SMMPApplication::SMMPApplication()
-  : inputFileName( "" ),
-    numObjects( 0 ){}
+SMMPApplication::SMMPApplication(string inputFileName, int numObjects)
+    : inputFileName(inputFileName),
+      numObjects(numObjects) {}
 
 int
 SMMPApplication::initialize( vector<string> &arguments ){
-  try {
-    TCLAP::CmdLine cmd("SMMP Simulation");
-
-    TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "SMMPSim configuration file name",
-                                              true, inputFileName, "string", cmd);
-
-    cmd.parse(arguments);
-
-    inputFileName = inputFileNameArg.getValue();
-  } catch (TCLAP::ArgException &e) {
-      std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
-      exit(-1);
-  }
-
-  if( inputFileName.empty() ){
-    std::cerr << "An SMMPSim configuration file must be specified using --simulate" << std::endl;
-    exit(-1);
-  }
-
   return 0;
 }
 

@@ -20,7 +20,7 @@
 
 class SMMPApplication : public Application {
 public:
-  SMMPApplication();
+  SMMPApplication( string inputFileName, int numObjects );
 
   int initialize( vector<string> &arguments );
 
