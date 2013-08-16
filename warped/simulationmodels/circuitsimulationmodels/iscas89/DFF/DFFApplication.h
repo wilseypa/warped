@@ -1,13 +1,13 @@
 #ifndef DFF_APPLICATION
 #define DFF_APPLICATION
 
-#include <warped/Application.h>
-#include <warped/IntVTime.h>
+#include "warped/Application.h"
+#include "warped/IntVTime.h"
 
 class DFFApplication : public Application{
 public:
 
-  DFFApplication();
+  DFFApplication(string inputFileName, int numObjects);
 
   int initialize( vector<string> &arguments);
 

@@ -22,38 +22,23 @@
 #include "FileReaderWriter.h"
 #include "NInputNandGate.h"
 #include "NotGate.h"
-#include <warped/PartitionInfo.h>
-#include <warped/RoundRobinPartitioner.h>
-#include <warped/DeserializerManager.h>
+#include "warped/PartitionInfo.h"
+#include "warped/RoundRobinPartitioner.h"
+#include "warped/DeserializerManager.h"
 
-#include <tclap/CmdLine.h>
-#include "vector"
-#include "iostream"
-#include "fstream"
+#include <vector>
+#include <iostream>
+#include <fstream>
 #include "stdlib.h"
 
 using namespace std;
 
-DFFApplication::DFFApplication()
-  :inputFileName(""),
-    numObjects(0){}
+DFFApplication::DFFApplication(string inputFileName, int numObjects)
+    : inputFileName(inputFileName),
+      numObjects(numObjects) {}
 
 int
 DFFApplication::initialize( vector<string> &arguments ){
-  try {
-    TCLAP::CmdLine cmd("RAID Simulation");
-
-    TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "DFF configuration file name",
-                                              true, inputFileName, "string", cmd);
-
-    cmd.parse(arguments);
-
-    inputFileName = inputFileNameArg.getValue();
-  } catch (TCLAP::ArgException &e) {
-      std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
-      exit(-1);
-  }
-
   return 0;
 }
 
