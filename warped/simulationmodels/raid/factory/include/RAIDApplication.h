@@ -19,12 +19,12 @@
 //          Dale E. Martin              dmartin@cliftonlabs.com
 //          Randall King                kingr8@mail.uc.edu
 
-#include <warped/Application.h>
-#include <warped/IntVTime.h>
+#include "warped/Application.h"
+#include "warped/IntVTime.h"
 
 class RAIDApplication : public Application {
 public:
-  RAIDApplication();
+  RAIDApplication( string inputFileName, int numObjects );
 
   int initialize( vector<string> &arguments );
 
