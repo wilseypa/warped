@@ -6,7 +6,7 @@
 
 class FullAdderApplication : public Application {
 public:
-  FullAdderApplication();
+  FullAdderApplication(int numObjects, string inputFileName);
 
   int initialize( vector<string> &arguments);
 
