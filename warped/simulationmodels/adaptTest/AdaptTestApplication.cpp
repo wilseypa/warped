@@ -12,41 +12,17 @@
 #include <vector>
 using std::string;
 
-AdaptTestApplication::AdaptTestApplication( unsigned int initNumObjects,
-                                            unsigned int initNumStragglers,
-                                            string initOutputMode,
-					    bool initAdaptiveState ) 
-  : numObjects( initNumObjects),
-    numStragglers( initNumStragglers ),
-    outputMode( initOutputMode ),
-    adaptiveState( initAdaptiveState ){}
+AdaptTestApplication::AdaptTestApplication(unsigned int initNumObjects,
+                                           unsigned int initNumStragglers,
+                                           string initOutputMode,
+                                           bool initAdaptiveState)
+  : numObjects(initNumObjects),
+    numStragglers(initNumStragglers),
+    outputMode(initOutputMode),
+    adaptiveState(initAdaptiveState) {}
 
 int 
 AdaptTestApplication::initialize( vector<string> &arguments ){ 
-  try {
-    TCLAP::CmdLine cmd("Adapt Test Simulation");
-
-    TCLAP::ValueArg<int> numStragglersArg("", "numStragglers", "number of stragglers", 
-                                     false, numStragglers, "int", cmd);
-    TCLAP::SwitchArg adaptiveStateArg("", "adaptiveState", "should the object execution and state saving time vary", 
-                                      cmd, false);
-
-    std::vector<string> allowed {"lazy", "aggr", "adapt"};
-    TCLAP::ValuesConstraint<string> constraint(allowed);
-    TCLAP::ValueArg<string> outputModeArg("", "outputMode", "event output mode", 
-                                       false, outputMode, &constraint, cmd);
-
-    cmd.parse(arguments);
-
-    numStragglers = numStragglersArg.getValue();
-    adaptiveState = adaptiveStateArg.getValue();
-    outputMode = outputModeArg.getValue();
-
-  } catch (TCLAP::ArgException &e) {
-    std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
-    exit(-1);
-  }
-
   return 0;
 }
 
