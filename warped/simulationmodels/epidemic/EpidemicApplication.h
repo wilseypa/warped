@@ -13,7 +13,7 @@ class EpidemicApplication : public Application {
 public:
 
 	/* Constructor */
-	EpidemicApplication();
+	EpidemicApplication(string inputFileName, int numObjects);
 
 	int initialize( vector<string> &arguments );
 
