@@ -7,9 +7,9 @@
 class Iscas89Application : public Application{
 public:
 
-  Iscas89Application();
+  Iscas89Application(string inputFileName, string testCaseFileName, int numObjects);
 
-  int initialize( vector<string> &arguments);
+  int initialize(vector<string> &arguments);
 
   int getNumberOfSimulationObjects(int mgrId) const;
 
@@ -23,7 +23,7 @@ public:
 
   const VTime &getPositiveInfinity(){return IntVTime::getIntVTimePositiveInfinity();}
 
-  const VTime &getZero(){ return IntVTime::getIntVTimeZero();}
+  const VTime &getZero(){return IntVTime::getIntVTimeZero();}
 
   const VTime &getTime(string &){return IntVTime::getIntVTimeZero();}
 
