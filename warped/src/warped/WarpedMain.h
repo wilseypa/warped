@@ -33,7 +33,7 @@ public:
   /**
      Constructor to be called by user's main.
   */
-    WarpedMain(Application* application, string configurationFileName = "", 
+    WarpedMain(Application* application, string configurationFileName, 
                string simulateUntil = "",  bool debug = false);
   /**
      Default Deconstructor
