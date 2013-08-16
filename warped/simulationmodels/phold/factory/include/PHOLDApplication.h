@@ -8,7 +8,7 @@
 
 class PHOLDApplication : public Application {
 public:
-  PHOLDApplication();
+  PHOLDApplication(string inputFileName, int numObjects);
 
   int initialize( vector<string> &arguments );
 

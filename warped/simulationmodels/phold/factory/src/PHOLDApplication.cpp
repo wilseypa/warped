@@ -7,38 +7,18 @@
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
 
-#include <tclap/CmdLine.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
 using namespace std;
 using std::string;
 
-PHOLDApplication::PHOLDApplication( ) 
-  : inputFileName( "" ),
-    numObjects( 0 ){}
+PHOLDApplication::PHOLDApplication(string inputFileName, int numObjects)
+    : inputFileName(inputFileName),
+      numObjects(numObjects) {}
 
 int 
 PHOLDApplication::initialize( vector<string> &arguments ){ 
-  try {
-    TCLAP::CmdLine cmd("PHOLD Simulation");
-
-    TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "pholdSim configuration file name",
-                                              true, inputFileName, "string", cmd);
-
-    cmd.parse(arguments);
-
-    inputFileName = inputFileNameArg.getValue();
-  } catch (TCLAP::ArgException &e) {
-      std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
-      exit(-1);
-  }
-
-  if( inputFileName.empty() ){
-    std::cerr << "A pholdSim configuration file must be specified using --simulate" << std::endl;
-    exit(-1);
-  }
-
   return 0;
 }
 
@@ -146,7 +126,8 @@ PHOLDApplication::getSimulationObjects(){
     dist = FIXED;
   }
   else{
-    cerr << "ERROR: Improper distribution type entered. Possibilities are: \nUNIFORM"
+    cerr << "ERROR: Improper distribution type \"" << distributionString 
+         << "\" entered. Possibilities are: \nUNIFORM"
          << "\nPOISSON\nEXPONENTIAL\nNORMAL\nBINOMIAL\nFIXED\n"
          << "Aborting simulation.\n";
     abort();
