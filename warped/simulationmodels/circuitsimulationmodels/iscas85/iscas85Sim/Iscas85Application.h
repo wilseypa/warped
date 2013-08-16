@@ -9,8 +9,6 @@ public:
 
   Iscas85Application(string inputFileName, string testCaseFileName, int numObjects);
 
-  int initialize( vector<string> &arguments);
-
   int getNumberOfSimulationObjects(int mgrId) const;
 
   const PartitionInfo *getPartitionInfo( unsigned int numberOfProcessorsAvailable);

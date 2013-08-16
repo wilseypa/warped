@@ -8,8 +8,6 @@ class LogicGatesApplication : public Application {
 public:
   LogicGatesApplication();
   
-  int initialize( vector<string> &arguments);
- 
   int getNumberOfSimulationObjects(int mgrId) const;
   
   vector<SimulationObject *>* getSimulationObjects();

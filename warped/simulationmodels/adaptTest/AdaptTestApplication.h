@@ -13,8 +13,6 @@ public:
 		        string initOutputMode,
 		        bool initAdaptiveState );
 
-  int initialize( vector<string> &arguments );
-
   int getNumberOfSimulationObjects(int mgrId) const;
 
   const PartitionInfo *getPartitionInfo( unsigned int numberOfProcessorsAvailable );

@@ -17,12 +17,6 @@ LogicGatesApplication::LogicGatesApplication()
   :inputFileName(""),
    numObjects(0){}
 
-int 
-LogicGatesApplication::initialize(vector<string> &arguments)
-{
-  return 0; 
-}
-
 int
 LogicGatesApplication::getNumberOfSimulationObjects(int mgId) const {
   return numObjects;

@@ -37,11 +37,6 @@ DFFApplication::DFFApplication(string inputFileName, int numObjects)
     : inputFileName(inputFileName),
       numObjects(numObjects) {}
 
-int
-DFFApplication::initialize( vector<string> &arguments ){
-  return 0;
-}
-
 int 
 DFFApplication::finalize(){
   return 0;

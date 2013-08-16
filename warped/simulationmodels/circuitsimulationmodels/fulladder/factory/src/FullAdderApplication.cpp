@@ -38,11 +38,6 @@ FullAdderApplication::FullAdderApplication(int numObjects, string inputFileName)
     : inputFileName(inputFileName),
       numObjects(numObjects) {}
 
-int
-FullAdderApplication::initialize( vector<string> &arguments ){
-  return 0;
-}
-
 int 
 FullAdderApplication::finalize(){
   return 0;

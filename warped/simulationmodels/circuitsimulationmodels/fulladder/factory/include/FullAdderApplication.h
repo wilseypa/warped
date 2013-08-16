@@ -8,8 +8,6 @@ class FullAdderApplication : public Application {
 public:
   FullAdderApplication(int numObjects, string inputFileName);
 
-  int initialize( vector<string> &arguments);
-
   int getNumberOfSimulationObjects(int mgrId) const;
 
   const PartitionInfo *getPartitionInfo( unsigned int numberOfProcessorsAvailable);

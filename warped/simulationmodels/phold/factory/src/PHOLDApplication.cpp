@@ -18,11 +18,6 @@ PHOLDApplication::PHOLDApplication(string inputFileName, int numObjects)
       numObjects(numObjects) {}
 
 int 
-PHOLDApplication::initialize( vector<string> &arguments ){ 
-  return 0;
-}
-
-int 
 PHOLDApplication::getNumberOfSimulationObjects(int mgrId) const { 
   return numObjects;
 }

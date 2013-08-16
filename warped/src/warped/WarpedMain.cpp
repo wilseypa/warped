@@ -103,24 +103,17 @@ WarpedMain::initializeSimulation( vector<string> &commandLineArgs ){
   registerKernelDeserializers();
   myApplication->registerDeserializers();
 
-  // need to save this this for TCPSelect before ArgumentParser cannibalizes it.
-  // TCPSelect uses it to build the argument list for ssh when launching 
-  // "slave" simulation managers
-  vector<string> argsCopy(commandLineArgs);
-
   if( debugFlag == true ){
     utils::enableDebug();
     utils::debug << "Debug output enabled." << endl;
   }
 
   SimulationConfiguration *configuration =
-          readConfiguration( configurationFileName, argsCopy );
+          readConfiguration( configurationFileName, commandLineArgs );
 
   if( configuration != 0 ){
     Spinner::spinIfRequested( "SpinBeforeConfiguration", *configuration );
   }
-  // We have to let the application initialize before we can do much else.
-  myApplication->initialize( commandLineArgs );
 
   // else, configuration is NULL, and we'll run with a default configuration
   mySimulation = Simulation::instance( configuration, myApplication );

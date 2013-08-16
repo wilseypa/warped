@@ -36,10 +36,6 @@ EpidemicApplication::EpidemicApplication(string inputFileName, int numObjects):
     inputFileName(inputFileName),
     numObjects(numObjects) { }
 
-int EpidemicApplication::initialize( vector<string> &arguments ){
-	return 0;
-}
-
 int EpidemicApplication::getNumberOfSimulationObjects(int mgrId) const {
 	return numObjects;
 }

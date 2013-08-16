@@ -15,8 +15,6 @@ public:
 	/* Constructor */
 	EpidemicApplication(string inputFileName, int numObjects);
 
-	int initialize( vector<string> &arguments );
-
 	int getNumberOfSimulationObjects(int mgrId) const;
 
 	const PartitionInfo *getPartitionInfo( unsigned int numberOfProcessorsAvailable );

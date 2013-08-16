@@ -22,11 +22,6 @@ AdaptTestApplication::AdaptTestApplication(unsigned int initNumObjects,
     adaptiveState(initAdaptiveState) {}
 
 int 
-AdaptTestApplication::initialize( vector<string> &arguments ){ 
-  return 0;
-}
-
-int 
 AdaptTestApplication::getNumberOfSimulationObjects(int mgrId) const { 
   return numObjects;
 }

@@ -49,11 +49,6 @@ Iscas89Application::Iscas89Application(string inputFileName, string testCaseFile
       testCaseFileName(testCaseFileName),
       numObjects(numObjects) {}
 
-int
-Iscas89Application::initialize(vector<string> &arguments) {
-  return 0;
-}
-
 int 
 Iscas89Application::finalize(){
   return 0;
