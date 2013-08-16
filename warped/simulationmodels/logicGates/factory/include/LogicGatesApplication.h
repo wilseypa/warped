@@ -18,8 +18,6 @@ public:
 
   void registerDeserializers();
 
-  string getCommandLineParameters() const {return "foo"; }
-
   const VTime &getPositiveInfinity(){return IntVTime::getIntVTimePositiveInfinity();}
   const VTime &getZero(){ return IntVTime::getIntVTimeZero();}
   const VTime &getTime(string &){return IntVTime::getIntVTimeZero();}

@@ -17,44 +17,11 @@ extern int errors, warnings;  // These variables are used by warped kernel
 /// This is the handle to the singleton factory manager.
 FactoryManager *myFactoryManager = NULL;
 
-int
-Application::initialize(int argc, vector<string> *parameters) {
-  if (argc < 4) {
-    return 1;
-  }
-  
-  vector<string>::iterator iter = parameters->begin();
-  vector<string>::iterator iter_end = parameters->end();
-  
-  string path((*parameters)[0]);
-  
-  while (iter != iter_end) {
-    if ((*iter) == "-simulate") {
-      if ( (++iter) == iter_end) {
-	// Oops! we are looking for more parameters
-	return 2;
-      }
-      if ( (++iter) == iter_end) {
-	return 3;
-      }
-      const char* tempString = (*iter).c_str();
-      simulate_label = new char[strlen(tempString) + 1];
-      strcpy(simulate_label, tempString);
-    }
-    else {
-      iter++;
-    }
-  }
-
-  myFactoryManager = FactoryManager::createUserFactory();
-  
-  return 0; // No errors!
-}
-
 // This function returns the total number of objects present in the simulation
 int
 Application::getNumberOfSimulationObjects(int) {
   //  return (elaboratedModule->getComponentInstantiations()->getNumberOfSymbols() - 1);
+  return 0;
 }
     
 int

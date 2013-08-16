@@ -37,11 +37,6 @@ SMMPApplication::SMMPApplication(string inputFileName, int numObjects)
       numObjects(numObjects) {}
 
 int
-SMMPApplication::initialize( vector<string> &arguments ){
-  return 0;
-}
-
-int
 SMMPApplication::getNumberOfSimulationObjects(int mgrId) const {
   return numObjects;
 }

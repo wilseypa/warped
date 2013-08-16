@@ -29,21 +29,6 @@ public:
    /**@name Public Class Methods of Application */
   //@{
 
-  /** This method is invoked by the kernel so that the application can make any
-      initializations or processing that is required by it.  In general it is
-      strongly suggested that the application must perform all the necessary
-      checks in this method so that the simulation can be aborted (as early as
-      possible) incase of errors. 
-
-      @param arguments The command line parameters
-      @return ErrorCode (non-zero return value implies an error)
-      
-      The command line parameters passed to this method are those command line
-      parameters that the warped kernel did not use/recognize.  The command
-      line parameters do not contain those parameters that are used by warped.
-  */
-  virtual int initialize( vector <string> &arguments ) = 0;
-
   /**
      The kernel can/will request partitioning information from the
      application.  The application must at least give back information for
@@ -72,13 +57,6 @@ public:
   
   virtual int finalize() = 0;
 
-  /** This method is invoked by the kernel inorder to display the list of
-      valid paramters for the application modules that a user can use/needs
-      to specify
-  */
-  
-  virtual string getCommandLineParameters() const = 0;
-  
   //@} // End of public class methods of Application
 
   /// Destructor.

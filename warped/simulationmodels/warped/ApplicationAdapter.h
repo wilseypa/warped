@@ -7,11 +7,9 @@ class ApplicationAdapter : public Application {
 public:
   ApplicationAdapter() {}
 
-  int initialize( vector <string> &arguments ){ return 0; }
   const PartitionInfo *getPartitionInfo( unsigned int numProcessorsAvailable ){ return 0; }
   int getNumberOfSimulationObjects(int mgrId) const { return 0; }
   virtual int finalize(){ return 0; }
-  string getCommandLineParameters() const { return ""; }
   ~ApplicationAdapter(){}
   void configure( SimulationConfiguration &configuration ){}
   void registerDeserializers(){}

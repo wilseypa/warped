@@ -28,8 +28,6 @@ public:
 		       unsigned int initNumBallsAtOnce,
 		       bool initRandomDelays );
 
-  int initialize( vector<string> &arguments );
-
   int getNumberOfSimulationObjects(int mgrId) const;
 
   const PartitionInfo *getPartitionInfo( unsigned int numberOfProcessorsAvailable );
@@ -38,8 +36,6 @@ public:
 
   void registerDeserializers();
   
-  string getCommandLineParameters() const { return "foo"; }
-
   const VTime &getPositiveInfinity(){ return IntVTime::getIntVTimePositiveInfinity(); }
   const VTime &getZero(){ return IntVTime::getIntVTimeZero(); }
   const VTime &getTime(string &){ return IntVTime::getIntVTimeZero(); }

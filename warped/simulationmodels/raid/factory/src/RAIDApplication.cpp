@@ -40,11 +40,6 @@ RAIDApplication::RAIDApplication(string inputFileName, int numObjects)
       numObjects(numObjects) {}
 
 int 
-RAIDApplication::initialize( vector<string> &arguments ){ 
-  return 0;
-}
-
-int 
 RAIDApplication::getNumberOfSimulationObjects(int mgrId) const { 
   return numObjects;
 }

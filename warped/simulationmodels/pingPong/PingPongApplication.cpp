@@ -45,11 +45,6 @@ PingPongApplication::PingPongApplication( unsigned int initNumObjects,
     randomDelays( initRandomDelays ){}
 
 int 
-PingPongApplication::initialize( vector<string> &arguments ){ 
-  return 0;
-}
-
-int 
 PingPongApplication::getNumberOfSimulationObjects(int mgrId) const { 
   return numObjects;
 }
