@@ -32,7 +32,6 @@
 #include <warped/RoundRobinPartitioner.h>
 #include <warped/DeserializerManager.h>
 
-#include <tclap/CmdLine.h>
 #include <vector>
 using std::string;
 
@@ -47,29 +46,6 @@ PingPongApplication::PingPongApplication( unsigned int initNumObjects,
 
 int 
 PingPongApplication::initialize( vector<string> &arguments ){ 
-  try {
-    TCLAP::CmdLine cmd("Ping Pong Simulation");
-
-    TCLAP::ValueArg<int> numBallsArg("", "numBalls", "number of balls", 
-                                     false, numEventsPerObject, "int", cmd);
-    TCLAP::ValueArg<int> numPlayersArg("", "numPlayers", "number of simulation objects to pass the balls", 
-                                       false, numObjects, "int", cmd);
-    TCLAP::ValueArg<int> numAtOnceArg("", "numAtOnce", "number of balls circulating at once", 
-                                      false, numBallsAtOnce, "int", cmd);
-    TCLAP::SwitchArg randomDelaysArg("", "randomDelays", "should the simulation objects wait random amounts of time", 
-                                          cmd, false);
-
-    cmd.parse(arguments);
-
-    numEventsPerObject = numBallsArg.getValue();
-    numObjects = numPlayersArg.getValue();
-    numBallsAtOnce = numAtOnceArg.getValue();
-    randomDelays = randomDelaysArg.getValue();
-
-  } catch (TCLAP::ArgException &e) {
-    std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
-    exit(-1);
-  }
   return 0;
 }
 
