@@ -1,13 +1,13 @@
 #ifndef ISCAS85_APPLICATION
 #define ISCAS85_APPLICATION
 
-#include <warped/Application.h>
-#include <warped/IntVTime.h>
+#include "warped/Application.h"
+#include "warped/IntVTime.h"
 
 class Iscas85Application : public Application{
 public:
 
-  Iscas85Application();
+  Iscas85Application(string inputFileName, string testCaseFileName, int numObjects);
 
   int initialize( vector<string> &arguments);
 

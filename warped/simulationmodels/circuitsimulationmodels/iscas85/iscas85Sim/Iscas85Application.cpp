@@ -25,50 +25,26 @@
 #include "NInputNandGate.h"
 #include "NInputNorGate.h"
 #include "NotGate.h"
-#include <warped/PartitionInfo.h>
-#include <warped/RoundRobinPartitioner.h>
-#include <warped/DeserializerManager.h>
+#include "warped/PartitionInfo.h"
+#include "warped/RoundRobinPartitioner.h"
+#include "warped/DeserializerManager.h"
 
-#include <tclap/CmdLine.h>
-#include "vector"
-#include "iostream"
-#include "fstream"
+#include <vector>
+#include <iostream>
+#include <fstream>
 #include "stdlib.h"
 
 using namespace std;
 
 
-Iscas85Application::Iscas85Application()
-  :inputFileName( "" ),
-   testCaseFileName(""),
-   numObjects( 0 ){}
+Iscas85Application::Iscas85Application(string inputFileName, string testCaseFileName,
+                                       int numObjects)
+    : inputFileName(inputFileName),
+      testCaseFileName(testCaseFileName),
+      numObjects(numObjects) {}
 
 int
 Iscas85Application::initialize( vector<string> &arguments ){
-  try {
-    TCLAP::CmdLine cmd("Iscas85 Simulation");
-
-    TCLAP::ValueArg<string> inputFileNameArg("", "simulate", "configuration file name",
-                                              true, inputFileName, "string", cmd);
-
-    cmd.parse(arguments);
-
-    inputFileName = inputFileNameArg.getValue();
-  } catch (TCLAP::ArgException &e) {
-      std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
-      exit(-1);
-  }
-
-  if( inputFileName.empty() ){
-    std::cerr << "A configuration file must be specified using --simulate"<<std::endl;
-    abort();
-  }
-
-  // Note that this simulation treats the --simulate argument differently than
-  // other simulations.
-  string path = "circuitsimulationmodels/iscas85/iscas85Sim/";
-  inputFileName = path + inputFileName + "/" + inputFileName + "config";
-
   return 0;
 }
 
