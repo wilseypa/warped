@@ -40,64 +40,19 @@ using std::cerr;
 using std::cin;
 using std::endl;
 
-// maximum length of command line arguments
-#define MAX_COMMAND_LINE_LENGTH 256
+WarpedMain::WarpedMain(Application* application, string configurationFileName,
+                       string simulateUntil,  bool debug) :
+  errors(0),
+  warnings(0),
+  configurationFileName(configurationFileName),
+  debugFlag(debug),
+  simulateUntil(simulateUntil),
+  myApplication(application),
+  mySimulation(0) {}
 
-ArgumentParser::ArgRecord *
-WarpedMain::getArgumentList( WarpedMain &main ) {
-  static ArgumentParser::ArgRecord args[] = {
-    {"-configuration", "specify configuration file", &main.configurationFileName,
-     ArgumentParser::STRING, false},
-    {"-simulateUntil", "specify a simulation end time", &main.simulateUntil,
-     ArgumentParser::STRING, false},
-    {"-debug", "display debug messages", &main.debugFlag, 
-     ArgumentParser::BOOLEAN, false},
-    {"", ""}
-  };
-    
-  return args;
-};
-
-WarpedMain::WarpedMain( Application *initApplication ) :
-  errors( 0 ),
-  warnings( 0 ),
-  configurationFileName( "" ),
-  debugFlag( false ),
-  simulateUntil( "" ),
-  myApplication( initApplication ),
-  mySimulation( 0 ){}
-
-WarpedMain::~WarpedMain()
-{
+WarpedMain::~WarpedMain() {
 	delete mySimulation;
 	delete myApplication;
-}
-
-void
-WarpedMain::displayParameters( string executableName ){
-  ArgumentParser ap( getArgumentList( *this ) );
-  ap.printUsage( executableName, cerr );
-}
-
-bool
-WarpedMain::checkConfigFile( string configFileName ){
-  string choice;
-  if( configFileName == "" ){
-    cerr << "A Simulation Configuration File has not been specified" << endl;
-    cerr << "Shall I create a default configuration: [y/n]: ";
-    cin >> choice;
-    // we are going to uppercase whatever the choice is ...
-    string upChoice = choice;
-    std::transform(upChoice.begin(), upChoice.end(), upChoice.begin(),(int(*)(int)) std::toupper);
-            
-    if( upChoice == "Y" ){
-      cerr << "Creating default configuration file: simulation.conf"
-	   << endl;
-      cerr << "This has not been implemented yet ..." << endl;
-      exit(-1);
-    }
-  }
-  return true;
 }
 
 void
@@ -125,21 +80,17 @@ WarpedMain::buildArgumentVector( int argc, char **argv ){
   return retval;
 }
 
-SimulationConfiguration *
-WarpedMain::readConfiguration( const string &configurationFileName,
-			       const vector<string> &argumentVector ){
-  SimulationConfiguration *configuration = 0;
-  if( configurationFileName != "" ){
-    if( checkConfigFile( configurationFileName ) == false ){
-      cerr << "Can't read configuration file " << configurationFileName << endl;
-      exit( -1 );
-    }
-    configuration = SimulationConfiguration::parseConfiguration( configurationFileName,
-								 argumentVector );
-    if( configuration == 0 ){
+SimulationConfiguration*
+WarpedMain::readConfiguration(const string& configurationFileName,
+                              const vector<string>& argumentVector) {
+  SimulationConfiguration* configuration = 0;
+  if (!configurationFileName.empty()) {
+    configuration = SimulationConfiguration::parseConfiguration(configurationFileName,
+                    argumentVector);
+    if (configuration == 0) {
       cerr << "There was a problem parsing configuration " << configurationFileName
-	   << ", exiting." << endl;
-      exit( -1 );
+           << ", exiting." << endl;
+      exit(-1);
     } else {
       cerr << "Using configuration file: " << configurationFileName << endl;
     }
@@ -157,12 +108,9 @@ WarpedMain::initializeSimulation( vector<string> &commandLineArgs ){
   // "slave" simulation managers
   vector<string> argsCopy(commandLineArgs);
 
-  ArgumentParser ap( getArgumentList( *this ));
-  ap.checkArgs( commandLineArgs, false );
-
   if( debugFlag == true ){
     utils::enableDebug();
-    utils::debug << "Debug output enabled with -debug" << endl;
+    utils::debug << "Debug output enabled." << endl;
   }
 
   SimulationConfiguration *configuration =
@@ -209,7 +157,7 @@ WarpedMain::getNextEventTime(){
 
 
 int 
-WarpedMain::main( int argc, char **argv ){
+WarpedMain::main(int argc, char **argv) {
   vector<string> args = buildArgumentVector( argc, argv );
   initializeSimulation( args );
     

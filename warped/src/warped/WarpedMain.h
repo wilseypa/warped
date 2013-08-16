@@ -3,7 +3,6 @@
 
 // See copyright notice in file Copyright in the root directory of this archive.
 
-#include <utils/ArgumentParser.h>
 #include <vector>
 #include <string>
 
@@ -34,16 +33,18 @@ public:
   /**
      Constructor to be called by user's main.
   */
-  WarpedMain( Application *application );
+    WarpedMain(Application* application, string configurationFileName = "", 
+               string simulateUntil = "",  bool debug = false);
   /**
      Default Deconstructor
   */
   ~WarpedMain();
+  
   /**
      This is equivalent to "int main( int argc, char **argv )" for a warped
      app.
   */
-  int main( int argc, char **argv );
+  int main(int argc, char **argv);
 
   /**
      Our call to register serializable types with the system.  Anyone
@@ -91,12 +92,7 @@ private:
      Builds a vector of strings from a standard "C"-style argument list.
   */
   vector<string> buildArgumentVector( int, char ** );
-
-  static ArgumentParser::ArgRecord *getArgumentList( WarpedMain &setMyVariables );
-
-  void displayParameters( string executableName );
-  bool checkConfigFile( string configFileName );
-
+  
   // variables used to catching warnings or errors
   int errors;
   int warnings;
