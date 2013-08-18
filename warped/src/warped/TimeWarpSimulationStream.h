@@ -85,7 +85,7 @@ protected:
    ostringstream myOutputBuffer;
    
    /// A pointer to the original file buffer for performing the actual I/O
-   streambuf *originalBuffer;
+   std::streambuf *originalBuffer;
    
    //@} // End of Protected Class Methods of TimeWarpSimulationStream.
 

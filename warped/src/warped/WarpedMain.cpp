@@ -103,7 +103,7 @@ WarpedMain::initializeSimulation( vector<string> &commandLineArgs ){
   myApplication->registerDeserializers();
 
   if( debugFlag == true ){
-    utils::enableDebug();
+    debug::enableDebug();
     debug::debugout << "Debug output enabled." << endl;
   }
 
