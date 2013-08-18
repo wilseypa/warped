@@ -1,8 +1,6 @@
 #ifndef HALF_ADDER_STUB_H
 #define HALF_ADDER_STUB_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "ObjectStub.h"
 
 /** The HalfAdderStub class.

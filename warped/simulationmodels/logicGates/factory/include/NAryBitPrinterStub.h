@@ -1,8 +1,6 @@
 #ifndef NARY_BIT_PRINTER_STUB_H
 #define NARY_BIT_PRINTER_STUB_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "ObjectStub.h"
 
 /** The NAryBitPrinterStub class.

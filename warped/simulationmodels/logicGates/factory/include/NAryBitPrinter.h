@@ -1,8 +1,6 @@
 #ifndef NARY_BIT_PRINTER_H
 #define NARY_BIT_PRINTER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "warped.h"
 #include "LogicComponent.h"
 #include "SimulationStream.h"

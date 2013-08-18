@@ -1,8 +1,6 @@
 #ifndef NARY_BIT_PRINTER_STATE_H
 #define NARY_BIT_PRINTER_STATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "State.h"
 
 /** The NAryBitPrinterState class.

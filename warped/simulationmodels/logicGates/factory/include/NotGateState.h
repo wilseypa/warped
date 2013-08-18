@@ -1,8 +1,6 @@
 #ifndef NOT_GATE_STATE_H
 #define NOT_GATE_STATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "FlatState.h"
 
 /** The NotGateState class

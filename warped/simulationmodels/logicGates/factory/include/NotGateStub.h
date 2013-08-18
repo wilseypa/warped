@@ -1,8 +1,6 @@
 #ifndef NOT_GATE_STUB_H
 #define NOT_GATE_STUB_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "ObjectStub.h"
 
 /** The NotGateStub class.

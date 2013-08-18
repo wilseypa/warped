@@ -1,8 +1,6 @@
 #ifndef HALF_ADDER_H
 #define HALF_ADDER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "LogicComponent.h"
 
 /** The HalfAdder class.

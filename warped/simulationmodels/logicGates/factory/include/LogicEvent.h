@@ -1,8 +1,6 @@
 #ifndef LOGIC_EVENT_H
 #define LOGIC_EVENT_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "DefaultEvent.h"
 #include "Event.h"
 #include "IntVTime.h"

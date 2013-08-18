@@ -1,8 +1,6 @@
 #ifndef NARY_BIT_GENERATOR_STATE_H
 #define NARY_BIT_GENERATOR_STATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "FlatState.h"
 
 class NAryBitGeneratorState : public FlatState {

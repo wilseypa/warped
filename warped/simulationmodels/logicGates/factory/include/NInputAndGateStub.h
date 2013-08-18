@@ -1,8 +1,6 @@
 #ifndef N_INPUT_AND_GATE_STUB_H
 #define N_INPUT_AND_GATE_STUB_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "ObjectStub.h"
 
 /** The NInputAndGateStub class.

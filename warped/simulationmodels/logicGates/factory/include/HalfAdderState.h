@@ -1,8 +1,6 @@
 #ifndef HALF_ADDER_STATE_H
 #define HALF_ADDER_STATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "FlatState.h"
 
 /** The HalfAdderState class.
