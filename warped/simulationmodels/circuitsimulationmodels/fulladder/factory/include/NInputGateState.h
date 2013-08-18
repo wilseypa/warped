@@ -1,8 +1,6 @@
 #ifndef N_INPUT_GATE_STATE_H
 #define N_INPUT_GATE_STATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include <warped/FlatState.h>
 
 class NInputGateState : public FlatState {

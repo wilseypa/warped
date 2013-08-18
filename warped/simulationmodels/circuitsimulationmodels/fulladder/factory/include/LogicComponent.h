@@ -1,8 +1,6 @@
 #ifndef LOGIC_COMPONENT_H
 #define LOGIC_COMPONENT_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "LogicEvent.h"
 #include <warped/SimulationObject.h>
 using std::string;

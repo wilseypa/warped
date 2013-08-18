@@ -1,8 +1,6 @@
 #ifndef N_INPUT_GATE_H
 #define N_INPUT_GATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "LogicComponent.h"
 
 /** The NInputGate abstract base class

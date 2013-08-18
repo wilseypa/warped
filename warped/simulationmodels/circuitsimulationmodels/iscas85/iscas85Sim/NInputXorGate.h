@@ -1,8 +1,6 @@
 #ifndef N_INPUT_XOR_GATE_H
 #define N_INPUT_XOR_GATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "NInputGate.h"
 
 /** The NInputXorGate class.
