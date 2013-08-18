@@ -115,7 +115,7 @@ protected:
 
   @param out Out-stream.
   */
-  void displayObjectMap(ostream& out);
+  void displayObjectMap(std::ostream& out);
 
   //@} // End of Protected Class Methods of SimulationManagerImplementationbase.
 

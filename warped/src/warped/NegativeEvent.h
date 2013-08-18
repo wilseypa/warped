@@ -102,7 +102,7 @@ public:
   
   static void registerDeserializer();
 
-  friend ostream& operator<<(ostream& os, const NegativeEvent& event);
+  friend std::ostream& operator<<(std::ostream& os, const NegativeEvent& event);
 
   bool eventCompare(const Event *);
 

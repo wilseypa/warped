@@ -6,7 +6,7 @@
 #include "State.h"
 
 class ProcessState : public State {
-   friend ostream& operator<< (ostream&, const ProcessState&);
+   friend std::ostream& operator<< (std::ostream&, const ProcessState&);
 public:
    MLCG *gen;
    int sizeOfStateData;

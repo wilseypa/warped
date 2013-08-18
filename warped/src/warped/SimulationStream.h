@@ -41,6 +41,6 @@ protected:
    //@} // End of Public Class Methods of SimulationStream.
 };
 
-extern ostream& nl(ostream& os);
+extern std::ostream& nl(std::ostream& os);
 
 #endif

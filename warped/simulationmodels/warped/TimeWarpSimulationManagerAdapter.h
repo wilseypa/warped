@@ -101,7 +101,7 @@ protected:
 		     const VTime& rollbackToTime,
 		     SimulationObject *object ){}
    
-  void displayGlobalObjectMap( ostream &out ){}
+  void displayGlobalObjectMap( std::ostream &out ){}
 
   void calculateSimulationTime(){}
 

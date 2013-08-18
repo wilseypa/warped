@@ -81,8 +81,8 @@ LogicEvent::eventCompare(const Event* event) {
 }
 
 
-ostream&
-operator<< (ostream& os, const LogicEvent& pe) {
+std::ostream&
+operator<< (std::ostream& os, const LogicEvent& pe) {
   os << " bit Value " << pe.bitValue
      << " sourcePort " << pe.sourcePort
      << " destinationPort " << pe.destinationPort << "\n";

@@ -32,6 +32,6 @@ Application::finalize() {
 }
 
 void
-Application::displayCommandLineParameters(ostream &os) {
+Application::displayCommandLineParameters(std::ostream &os) {
   //  os << "  * -simulate        specify ssl_file_name and ssl_module to simulate\n";
 }

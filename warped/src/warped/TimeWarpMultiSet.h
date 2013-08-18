@@ -104,7 +104,7 @@ public:
   virtual bool inThePast(const Event *);
 
   /// Print the event set.
-  void print(ostream &out);
+  void print(std::ostream &out);
 
   /** Overriden from Configurable */
   void configure( SimulationConfiguration &configure ){}

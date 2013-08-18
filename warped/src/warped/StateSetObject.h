@@ -82,7 +82,7 @@ public:
    //}
   
    /// Overloaded operator <<
-   friend ostream& operator<<(ostream& os, const StateSetObject& a){
+   friend std::ostream& operator<<(std::ostream& os, const StateSetObject& a){
       return os << a.getTime();
    }
 

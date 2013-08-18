@@ -27,7 +27,7 @@ public:
   void setUserData(char *data) { userData = data; }
   char *getUserData() const { return userData; }
 
-  friend ostream& operator<< (ostream& os, const NetworkMessage& msg);
+  friend std::ostream& operator<< (std::ostream& os, const NetworkMessage& msg);
 protected:
   unsigned int userDataSize;
   char *userData;

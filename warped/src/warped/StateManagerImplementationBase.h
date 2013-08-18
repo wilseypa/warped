@@ -82,7 +82,7 @@ public:
        @param object Object whose statequeue is printed.
    */
    virtual void printStateQueue(const VTime &currentTime,
-                                SimulationObject *object, ostream &out);
+                                SimulationObject *object, std::ostream &out);
 
    /**
       Remove all states from the state queues. Used to restore state after

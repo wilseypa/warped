@@ -101,7 +101,7 @@ public:
   void serialize( SerializedInstance *addTo ) const;
    
   /// Overloaded operator <<
-  friend ostream& operator<<(ostream& os, const Event& event);
+  friend std::ostream& operator<<(std::ostream& os, const Event& event);
 
   /// Overloaded operator ==
   friend bool operator==( const Event &eve1, const Event &eve2 );

@@ -295,7 +295,7 @@ DVFSManagerImplementationBase::toString() {
   return ss.str();
 }
 
-ostream& operator<<(ostream& out, DVFSManager& dvfsm) {
+std::ostream& operator<<(std::ostream& out, DVFSManager& dvfsm) {
   out << dvfsm.toString();
   return out;
 }

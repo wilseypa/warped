@@ -77,7 +77,7 @@ class DefaultTimeWarpEventContainer {
     /**
        For debugging purposes.
     */
-    void debugDump( ostream & ) const;
+    void debugDump( std::ostream & ) const;
 
     /**
        Clears the processedEvents vector of events at or before

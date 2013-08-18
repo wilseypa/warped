@@ -414,7 +414,7 @@ TimeWarpMultiSet::ofcPurge(){
 }
 
 void
-TimeWarpMultiSet::print(ostream &out){
+TimeWarpMultiSet::print(std::ostream &out){
   // Print the processed queues.
   for(int i = 0; i < processedObjEvents.size(); i++){
     vector<const Event *>::iterator it = processedObjEvents[i]->begin(); 

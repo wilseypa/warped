@@ -75,8 +75,8 @@ NetworkMessage::deserialize(char *msg) {
   }
 } // End of deserialize(...).
 
-ostream&
-operator<< (ostream& os, const NetworkMessage& msg) {
+std::ostream&
+operator<< (std::ostream& os, const NetworkMessage& msg) {
   os << msg.userDataSize << ", \"";
   for (unsigned int i = 0; i < msg.userDataSize; i++) {
     if (msg.userData[i] == '\0')

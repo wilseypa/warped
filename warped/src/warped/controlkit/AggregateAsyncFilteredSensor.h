@@ -104,8 +104,8 @@ public:
       return sensorName;
    }
 
-   /// dump the values of this sensor to the ostream
-   void dump(ostream &out){
+   /// dump the values of this sensor to the std::ostream
+   void dump(std::ostream &out){
       out << sensorName << ": " << endl;
 
       typename vector<AsyncFilteredSensor<NormalType> *>::iterator iter_begin =
@@ -129,7 +129,7 @@ public:
       return *((*sensorElements)[elem]);
    }
    /// Overloaded operator <<
-   friend ostream& operator <<(ostream &out,
+   friend std::ostream& operator <<(std::ostream &out,
                                AggregateAsyncFilteredSensor<NormalType>
                                &sensor){
 

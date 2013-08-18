@@ -23,7 +23,7 @@ public:
   int getLastOutput() const {return lastOutput;}
   void setLastOutput(int out) {lastOutput = out;}
 
-  ostream& printState(ostream& os);
+  std::ostream& printState(std::ostream& os);
 
 private:
   int lastOutput;

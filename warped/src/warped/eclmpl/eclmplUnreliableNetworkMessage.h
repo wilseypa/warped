@@ -67,7 +67,7 @@ public:
   inline bool operator<(const eclmplUnreliableNetworkMessage &a) { return hdr.sequenceNr < a.getSequenceNr(); }
   inline bool operator>(const eclmplUnreliableNetworkMessage &a) { return hdr.sequenceNr > a.getSequenceNr(); }
 
-  friend ostream& operator<< (ostream& os, const eclmplUnreliableNetworkMessage& msg);
+  friend std::ostream& operator<< (std::ostream& os, const eclmplUnreliableNetworkMessage& msg);
 protected:
   eclmplUnreliableNetworkMessageHeader hdr;
   struct timeval sendTime;

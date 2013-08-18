@@ -419,7 +419,7 @@ protected:
 
 	 @param out The output stream.
 	 */
-	void displayGlobalObjectMap(ostream &out);
+	void displayGlobalObjectMap(std::ostream &out);
 
 	//void calculateSimulationTime();
 

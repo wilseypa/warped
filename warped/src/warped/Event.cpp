@@ -10,8 +10,8 @@
 
 Event::~Event(){}
 
-ostream&
-operator<<(ostream& os, const Event& event) {
+std::ostream&
+operator<<(std::ostream& os, const Event& event) {
    os << "sender: " << event.getSender() 
       << " receiver: " << event.getReceiver()
       << " sendTime: " << event.getSendTime()

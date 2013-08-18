@@ -48,8 +48,8 @@ NegativeEvent::registerDeserializer(){
                                                          &NegativeEvent::deserialize );
 }
 
-ostream&
-operator<<(ostream& os, const NegativeEvent& event) {
+std::ostream&
+operator<<(std::ostream& os, const NegativeEvent& event) {
    os << "sender: " << event.getSender() 
       << " receiver: " << event.getReceiver()
       << " sendTime: " << event.getSendTime()

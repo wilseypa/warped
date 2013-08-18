@@ -18,7 +18,7 @@ public:
   inline void setContactArguments(const vector<string> &contArgs) { contactArgs = contArgs; }
   inline unsigned int nrOfContactArguments() const { return contactArgs.size(); }
 
-  friend ostream& operator<< (ostream& os, const eclmplContactInfo& info) {
+  friend std::ostream& operator<< (std::ostream& os, const eclmplContactInfo& info) {
     os << "ContactInfo--Provided by: " << info.providedById
        << ", Intended for: " << info.intendedForId
        << ", Contact args:";

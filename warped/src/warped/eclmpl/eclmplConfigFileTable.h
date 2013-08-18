@@ -26,9 +26,9 @@ public:
   void serialize(char *buf, unsigned int &bufSize) const;
   void deserialize(const char * const buf);
 
-  friend ostream& operator<< (ostream& os, const eclmplConfigFileTable &in) {
+  friend std::ostream& operator<< (std::ostream& os, const eclmplConfigFileTable &in) {
     for (unsigned int i = 0; i < in.configTable.size(); i++) {
-      copy(in.configTable[i].begin(), in.configTable[i].end(), ostream_iterator<string>(os, " "));
+      copy(in.configTable[i].begin(), in.configTable[i].end(), std::ostream_iterator<string>(os, " "));
       os << std::endl;
     }
     return os;

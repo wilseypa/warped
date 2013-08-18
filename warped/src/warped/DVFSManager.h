@@ -79,7 +79,7 @@ protected:
   //@} // End of Protected Class Methods of GVTManager.
 };
 
-ostream& operator<<(ostream& out, DVFSManager& cfm);
+std::ostream& operator<<(std::ostream& out, DVFSManager& cfm);
 
 #endif //CLOCK_FREQUENCY_MANAGER_H
 

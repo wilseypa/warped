@@ -79,7 +79,7 @@ private:
   TimeWarpSimulationManager *mySimulationManager;
 
   /// the file stream to which sensor information is dumped
-  ostream *infoStream;
+  std::ostream *infoStream;
    
   //@} // End of Private Class Attributes of ControlManager
 

@@ -272,7 +272,7 @@ ThreadedStateManagerImplementationBase::fossilCollect(SimulationObject *object,
 }
 // not thread safe as of now.
 void ThreadedStateManagerImplementationBase::printStateQueue(
-		const VTime &currentTime, SimulationObject *object, ostream &out,
+		const VTime &currentTime, SimulationObject *object, std::ostream &out,
 		int threadID) {
 	// store this object's id temporarily
 	OBJECT_ID *currentObjectID = object->getObjectID();

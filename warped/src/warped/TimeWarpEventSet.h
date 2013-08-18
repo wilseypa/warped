@@ -153,7 +153,7 @@ public:
   */
   virtual void ofcPurge() = 0;
 
-  virtual void debugDump( const string &, ostream & ){}
+  virtual void debugDump( const string &, std::ostream & ){}
 
   virtual double getEfficiency() { return 0; }
 

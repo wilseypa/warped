@@ -45,8 +45,8 @@ PHOLDEvent::eventCompare(const Event* event) {
            eventNumber == pev->eventNumber );
 }
 
-ostream&
-operator<< (ostream& os, const PHOLDEvent& pe) {
+std::ostream&
+operator<< (std::ostream& os, const PHOLDEvent& pe) {
   os << (const Event&)pe;
   os << " Event Number " << pe.eventNumber
      << " Number of Hops " << pe.numberOfHops << "\n";

@@ -39,8 +39,8 @@ ProcessState::copyState(const State* toCopy){
   numReceived = thisState->numReceived;
 }
 
-ostream&
-operator<< (ostream& os, const ProcessState& rps) {
+std::ostream&
+operator<< (std::ostream& os, const ProcessState& rps) {
   
   os << " sizeOfStateData: " << rps.sizeOfStateData << "\n"
      << rps.gen->seed1() << ' ' << rps.gen->seed2() << "\n";

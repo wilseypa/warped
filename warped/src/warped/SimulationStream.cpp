@@ -1,7 +1,7 @@
 
 #include "SimulationStream.h"
 
-ostream& nl(ostream& os){
+std::ostream& nl(std::ostream& os){
    ((SimulationStream &)os).flush();
    return os;
 }

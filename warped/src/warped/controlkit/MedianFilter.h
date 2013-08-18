@@ -100,7 +100,7 @@ inline void MedianFilter<Type>::update(Type new_sample) {
    // and return the result.
    buffer->push_front(new_sample);
    count++;
-   copy(buffer->begin(), buffer->end(), ostream_iterator<Type>(cout, " "));
+   copy(buffer->begin(), buffer->end(), std::ostream_iterator<Type>(cout, " "));
 
    // first sort the entries in the vector
    stable_sort(buffer->begin(), buffer->end());

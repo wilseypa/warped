@@ -245,7 +245,7 @@ private:
 
 };
 
-extern ostream& operator<<(ostream &os, const AggregationSendCriteria& asc);
+extern std::ostream& operator<<(std::ostream &os, const AggregationSendCriteria& asc);
 
 #endif 
 

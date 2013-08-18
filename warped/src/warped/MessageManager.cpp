@@ -405,8 +405,8 @@ MessageManager::receiveMessage() {
   return msg;
 }
 
-ostream&
-operator<<(ostream &os, const AggregationSendCriteria& asc) {
+std::ostream&
+operator<<(std::ostream &os, const AggregationSendCriteria& asc) {
   os << " ";
   switch (asc) {
   case SEND:

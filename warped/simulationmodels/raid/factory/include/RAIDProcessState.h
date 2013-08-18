@@ -51,8 +51,8 @@ public:
   void setNumDisks(int num) {numDisks = num;}
   void setFirstDiskId(int id) {firstDiskId = id;}
 
-  friend ostream& operator<< (ostream& os, const RAIDProcessState& rps);
-  ostream& printState(ostream& os);
+  friend std::ostream& operator<< (std::ostream& os, const RAIDProcessState& rps);
+  std::ostream& printState(std::ostream& os);
 
   int  *diskRequests;
 private:

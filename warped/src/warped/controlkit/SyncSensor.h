@@ -49,8 +49,8 @@ public:
       return sensorName;
    }
    
-   /// dump the values of this sensor to the ostream
-   void dump(ostream &out){
+   /// dump the values of this sensor to the std::ostream
+   void dump(std::ostream &out){
       out << sensorName << ": value: " << controlledElement << endl;
    };
    
@@ -141,7 +141,7 @@ public:
    }
 
    /// Overloaded operator <<
-   friend ostream& operator <<(ostream &out, SyncSensor<NormalType> &sensor){
+   friend std::ostream& operator <<(std::ostream &out, SyncSensor<NormalType> &sensor){
       out << "sensorName: " << sensor.sensorName << " value: "
           << sensor.controlledElement;
       return out;

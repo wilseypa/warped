@@ -74,8 +74,8 @@ public:
       return sensorName;
    }
    
-   /// dump the values of this sensor to the ostream
-   void dump(ostream &out){
+   /// dump the values of this sensor to the std::ostream
+   void dump(std::ostream &out){
 
       out << sensorName << ": " << endl;
 
@@ -100,7 +100,7 @@ public:
    }
    
    /// Overloaded operator <<
-   friend ostream& operator <<(ostream &out,
+   friend std::ostream& operator <<(std::ostream &out,
                                AggregateSyncSensor<NormalType> &sensor){
 
       out << "sensorName: " << sensor.sensorName << endl;

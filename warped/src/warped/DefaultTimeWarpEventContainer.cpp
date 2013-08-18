@@ -133,7 +133,7 @@ void DefaultTimeWarpEventContainer::rollback(const VTime &rollbackTime) {
   sortStatus = UNSORTED;
 }
 
-void DefaultTimeWarpEventContainer::debugDump(ostream &os) const {
+void DefaultTimeWarpEventContainer::debugDump(std::ostream &os) const {
   os << "-------------------------\n";
   os << "EventContainer::debugDump\n";
   os << "Processed Events: ";

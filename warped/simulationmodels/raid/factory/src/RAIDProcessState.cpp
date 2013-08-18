@@ -105,8 +105,8 @@ RAIDProcessState::deserialize(const SerializedInstance instance) {
   return NULL;
 } // End of deserialize()
 
-ostream& 
-operator<< (ostream& os, const RAIDProcessState& rps) {
+std::ostream& 
+operator<< (std::ostream& os, const RAIDProcessState& rps) {
   os << "NrReqs:" << rps.numRequests << " " 
      << "DiskOpPending:" << rps.diskOperationPending << " "
      << "IsRead:" << rps.read << " " 
@@ -122,7 +122,7 @@ operator<< (ostream& os, const RAIDProcessState& rps) {
   return os;
 }
 
-ostream& RAIDProcessState::printState(ostream& os) {
+std::ostream& RAIDProcessState::printState(std::ostream& os) {
   os << "NrReqs:" << this->numRequests << " " 
      << "DiskOpPending:" << this->diskOperationPending << " "
      << "IsRead:" << this->read << " " 

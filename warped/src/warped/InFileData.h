@@ -48,7 +48,7 @@ public:
    }
   
    /// Overloaded operator <<
-   friend ostream& operator<<(ostream& os, const InFileData& a){
+   friend std::ostream& operator<<(std::ostream& os, const InFileData& a){
       return os << a.time;
    }
 

@@ -9,8 +9,8 @@ using std::for_each;
 using std::cerr;
 using std::endl;
 
-ostream *wout;
-ostream *werr;
+std::ostream *wout;
+std::ostream *werr;
 
 SimulationManagerImplementationBase::SimulationManagerImplementationBase()
   : numberOfSimulationManagers(0),
@@ -80,7 +80,7 @@ SimulationManagerImplementationBase::unregisterSimulationObjects (vector <Simula
 
 // print out the name to simulation object ptr map
 void
-SimulationManagerImplementationBase::displayObjectMap(ostream& out){
+SimulationManagerImplementationBase::displayObjectMap(std::ostream& out){
 
   if(!localArrayOfSimObjPtrs->empty()){
     //Obtains all the keys from localArrayOfSimObjPtrs

@@ -96,7 +96,7 @@ private:
    string outFileName;
 
    /// the output file stream
-   ostream *outFile;
+   std::ostream *outFile;
    
    /// to determine if it is a normal output file or pipe to stdout
    int statusBit;

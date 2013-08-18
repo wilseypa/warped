@@ -132,7 +132,7 @@ DefaultTimeWarpEventSet::ofcPurge(){
 }
 
 void
-DefaultTimeWarpEventSet::debugDump( const string &objectName, ostream &os ){
+DefaultTimeWarpEventSet::debugDump( const string &objectName, std::ostream &os ){
   os << "\n---------------\n" << objectName << "\n";
   getEventContainer( &mySimulationManager->getObjectId(objectName) ).debugDump( os );
 }

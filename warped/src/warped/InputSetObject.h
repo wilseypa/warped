@@ -70,7 +70,7 @@ public:
    }
   
    /// Overloaded operator <<
-   friend ostream& operator<<(ostream& os, const InputSetObject& a){
+   friend std::ostream& operator<<(std::ostream& os, const InputSetObject& a){
       return os << a.time;
    }
 

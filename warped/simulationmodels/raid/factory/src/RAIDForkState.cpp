@@ -28,7 +28,7 @@ RAIDForkState::deserialize(const SerializedInstance instance) {
   return NULL;
 } // End of deserialize()
 
-ostream& RAIDForkState::printState(ostream& os) {
+std::ostream& RAIDForkState::printState(std::ostream& os) {
   os << "Fork::lastOutput: " << this->lastOutput; 
   return os;
 }

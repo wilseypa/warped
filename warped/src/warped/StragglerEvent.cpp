@@ -11,8 +11,8 @@
 			getStragglerEventDataType(), &StragglerEvent::deserialize);
 }*/
 
-ostream&
-operator<<(ostream& os, const StragglerEvent& event) {
+std::ostream&
+operator<<(std::ostream& os, const StragglerEvent& event) {
 	os << "sender: " << event.getSender() << " receiver: "
 			<< event.getReceiver() << " sendTime: " << event.getSendTime()
 			<< " receiveTime: " << event.getReceiveTime() << " eventId: "

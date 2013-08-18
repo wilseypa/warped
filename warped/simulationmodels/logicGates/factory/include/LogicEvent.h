@@ -58,7 +58,7 @@ public:
   }
 
  
-   friend ostream& operator<< (ostream& os, const LogicEvent& pe);
+   friend std::ostream& operator<< (std::ostream& os, const LogicEvent& pe);
 
    //@} // End of Public Class Methods of LogicEvent.
 

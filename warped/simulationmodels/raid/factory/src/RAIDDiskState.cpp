@@ -52,7 +52,7 @@ RAIDDiskState::setCurrentCylinder(int cylinder) {
   currentCylinder = cylinder;
 } // End of setCurrentCylinder()
 
-ostream& RAIDDiskState::printState(ostream& os) {
+std::ostream& RAIDDiskState::printState(std::ostream& os) {
   os << "Disk::currentCylinder: " << this->currentCylinder; 
   return os;
 }

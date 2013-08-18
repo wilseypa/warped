@@ -207,7 +207,7 @@ StateManagerImplementationBase::fossilCollect( SimulationObject *object,
 void
 StateManagerImplementationBase::printStateQueue(const VTime &currentTime,
                                                 SimulationObject *object,
-                                                ostream &out){
+                                                std::ostream &out){
   // store this object's id temporarily
   OBJECT_ID *currentObjectID = object->getObjectID();
    

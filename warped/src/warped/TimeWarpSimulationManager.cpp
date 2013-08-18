@@ -1181,7 +1181,7 @@ TimeWarpSimulationManager::getIOFStream(const string &fileName,
 }
 
 // print out the name to simulation object ptr map
-void TimeWarpSimulationManager::displayGlobalObjectMap(ostream& out) {
+void TimeWarpSimulationManager::displayGlobalObjectMap(std::ostream& out) {
 	if (!globalArrayOfSimObjPtrs.empty()) {
 		vector < string > *keys = getKeyVector(localArrayOfSimObjPtrs);
 		vector<SimulationObject *> *objects = getElementVector(

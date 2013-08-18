@@ -58,7 +58,7 @@ public:
 
   void ofcPurge();
 
-  void debugDump( const string &objectName, ostream &os );
+  void debugDump( const string &objectName, std::ostream &os );
 
 private:
   DefaultTimeWarpEventContainer &getEventContainer( const OBJECT_ID *objectID );

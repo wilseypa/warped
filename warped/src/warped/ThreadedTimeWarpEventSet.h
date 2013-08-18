@@ -159,7 +159,7 @@ public:
 	virtual void ofcPurge(int threadID) = 0;
 
 	//Commented, as its not called by anyone
-	/*	virtual void debugDump(const string &, ostream &, int threadID) {
+	/*	virtual void debugDump(const string &, std::ostream &, int threadID) {
 	 }*/
 
 	//@} // End of Public Class Methods of ThreadedTimeWarpEventSet.

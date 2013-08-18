@@ -56,7 +56,7 @@ public:
 		return stragglerEventDataType;
 	}
 
-	friend ostream & operator <<(ostream & os, const StragglerEvent & event);
+	friend std::ostream & operator <<(std::ostream & os, const StragglerEvent & event);
 	bool eventCompare(const Event*);
 	const Event *getPositiveEvent() const;
 	bool getStragglerType() const;

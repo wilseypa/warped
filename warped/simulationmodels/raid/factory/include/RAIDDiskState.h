@@ -24,7 +24,7 @@ public:
   int getCurrentCylinder() const;
   void setCurrentCylinder(int cylinder);
 
-  ostream& printState(ostream& os);
+  std::ostream& printState(std::ostream& os);
 
 private:
   int currentCylinder;

@@ -36,7 +36,7 @@ public:
     return getPHOLDEventDataType();
   }
 
-  friend ostream& operator<< (ostream& os, const PHOLDEvent& pe);
+  friend std::ostream& operator<< (std::ostream& os, const PHOLDEvent& pe);
 
 private:
 

@@ -44,8 +44,8 @@ public:
    /// get the name of this sensor
    virtual string& getSensorName() = 0;
 
-   /// dump the current value of the sensor to the ostream
-   virtual void dump(ostream &out) = 0;
+   /// dump the current value of the sensor to the std::ostream
+   virtual void dump(std::ostream &out) = 0;
 
    //@} // End of Public Class Methods of Sensor
 
