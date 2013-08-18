@@ -67,10 +67,6 @@ if test $cl_cv_lib_utils != /usr ; then
 LDFLAGS="$LDFLAGS -L$cl_cv_lib_utils/lib"
 CPPFLAGS="$CPPFLAGS -I$cl_cv_lib_utils/include"
 fi
-AC_CHECK_HEADER(utils/Debug.h, ,
-  AC_MSG_ERROR(Couldn't find utils/Debug.h which is required and 
-    part of the utils distribution.  You probably need to install it
-    and/or specify the location of it with the --with-utils option.))
 AC_SEARCH_LIBS(dlopen, [dl])
 AC_CHECK_LIB(utils, isUtils, ,
   AC_MSG_ERROR(Could not find a workable libutils.so or libutils.a.

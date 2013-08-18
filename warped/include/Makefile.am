@@ -1,1 +1,1 @@
-SUBDIRS = tclap
+SUBDIRS = tclap Debug
