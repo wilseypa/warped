@@ -1,8 +1,6 @@
 #ifndef ADAPT_TEST_APPLICATION
 #define ADAPT_TEST_APPLICATION
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include <warped/Application.h>
 #include <warped/IntVTime.h>
 

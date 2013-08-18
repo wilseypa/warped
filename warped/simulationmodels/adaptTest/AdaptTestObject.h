@@ -1,8 +1,6 @@
 #ifndef ADAPTTESTOBJECT_HH
 #define ADAPTTESTOBJECT_HH
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include <warped/warped.h>
 #include <warped/SimulationObject.h>
 #include <vector>

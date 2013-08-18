@@ -1,5 +1,3 @@
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "AdaptTestApplication.h"
 #include "AdaptTestObject.h"
 #include "AdaptTestEvent.h"

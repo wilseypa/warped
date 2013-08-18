@@ -1,8 +1,6 @@
 #ifndef ADAPTTESTOBJECTSTATE_H
 #define ADAPTTESTOBJECTSTATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include <warped/State.h>
 #include <string>
 
