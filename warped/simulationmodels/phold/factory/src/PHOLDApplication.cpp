@@ -1,5 +1,3 @@
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "../include/PHOLDApplication.h"
 #include "../include/Process.h"
 #include "../include/PHOLDEvent.h"

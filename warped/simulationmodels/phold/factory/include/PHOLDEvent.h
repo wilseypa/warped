@@ -1,8 +1,6 @@
 #ifndef PHOLD_EVENT_H
 #define PHOLD_EVENT_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "warped.h"
 #include <warped/DefaultEvent.h>
 

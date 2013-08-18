@@ -1,8 +1,6 @@
 #ifndef PHOLD_OBJECT_STUB_H
 #define PHOLD_OBJECT_STUB_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "warped.h"
 #include "ObjectStub.h"
 

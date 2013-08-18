@@ -1,8 +1,6 @@
 #ifndef PHOLD_FACTORY_MANAGER_H
 #define PHOLD_FACTORY_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "warped.h"
 #include "FactoryManager.h"
 

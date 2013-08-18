@@ -1,8 +1,6 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
-
 #include "warped.h"
 #include "../rnd/MLCG.h"
 #include "../rnd/Normal.h"
