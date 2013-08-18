@@ -1,4 +1,3 @@
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #ifndef THREADEDADAPTIVEOUTPUTMANAGER_H_
 #define THREADEDADAPTIVEOUTPUTMANAGER_H_

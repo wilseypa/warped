@@ -1,7 +1,6 @@
 #ifndef FILE_QUEUE_H
 #define FILE_QUEUE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include <fstream>

@@ -1,4 +1,3 @@
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #ifndef LockState_H_
 #define LockState_H_

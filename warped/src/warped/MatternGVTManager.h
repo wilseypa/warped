@@ -1,7 +1,6 @@
 #ifndef MATTERN_GVT_MANAGER_H
 #define MATTERN_GVT_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "GVTManagerImplementationBase.h"
 #include "MatternObjectRecord.h"

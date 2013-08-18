@@ -1,7 +1,6 @@
 #ifndef WARPED_MAIN_H
 #define WARPED_MAIN_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <vector>
 #include <string>

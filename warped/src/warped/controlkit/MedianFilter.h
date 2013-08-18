@@ -1,7 +1,6 @@
 #ifndef MEDIAN_FILTER_H
 #define MEDIAN_FILTER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <iostream>
 #include <deque>

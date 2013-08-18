@@ -1,7 +1,6 @@
 #ifndef DEFAULT_VTIME_H
 #define DEFAULT_VTIME_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #ifndef USE_USER_VTIME
 

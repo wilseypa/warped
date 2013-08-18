@@ -1,7 +1,6 @@
 #ifndef AGGREGATE_SYNC_SENSOR_H
 #define AGGREGATE_SYNC_SENSOR_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "SensorImplementationBase.h"
 

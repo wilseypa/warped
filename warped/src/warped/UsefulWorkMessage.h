@@ -1,6 +1,5 @@
 #ifndef CF_ROLLBACK_VECTOR_MESSAGE_H
 #define CF_ROLLBACK_VECTOR_MESSAGE_H
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "KernelMessage.h"
 

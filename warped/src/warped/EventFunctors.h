@@ -1,7 +1,6 @@
 #ifndef EVENT_FUNCTORS_H
 #define EVENT_FUNCTORS_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <functional>
 #include "Event.h"

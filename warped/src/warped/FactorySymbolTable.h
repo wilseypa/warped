@@ -1,7 +1,6 @@
 #ifndef FACTORY_SYMBOL_TABLE_H
 #define FACTORY_SYMBOL_TABLE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "Factory.h"

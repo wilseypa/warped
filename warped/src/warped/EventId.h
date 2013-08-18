@@ -1,7 +1,6 @@
 #ifndef EVENT_ID_H
 #define EVENT_ID_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <iostream>
 

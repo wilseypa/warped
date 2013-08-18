@@ -1,7 +1,6 @@
 #ifndef STATE_MANAGER_IMPLEMENTATION_BASE_H
 #define STATE_MANAGER_IMPLEMENTATION_BASE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "SetObject.h"

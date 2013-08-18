@@ -1,7 +1,6 @@
 #ifndef TIME_WARP_DECENTRALIZED_EVENT_SET_FACTORY_H
 #define TIME_WARP_DECENTRALIZED_EVENT_SET_FACTORY_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "TimeWarpEventSetFactory.h"
 #include "TimeWarpDecentralizedEventSet.h"

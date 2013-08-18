@@ -1,7 +1,6 @@
 #ifndef ADAPTIVESTATEMANAGERBASE_HH
 #define ADAPTIVESTATEMANAGERBASE_HH
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "StateManagerImplementationBase.h"
 #include "controlkit/FIRFilter.h"

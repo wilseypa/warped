@@ -1,7 +1,6 @@
 #ifndef NEGATIVE_EVENT_MESSAGE_H
 #define NEGATIVE_EVENT_MESSAGE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 /**
    This is the class defining the termination token that gets passed

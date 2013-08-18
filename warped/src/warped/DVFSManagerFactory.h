@@ -1,7 +1,6 @@
 #ifndef DVFS_MANAGER_FACTORY_H
 #define DVFS_MANAGER_FACTORY_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "Configurer.h"

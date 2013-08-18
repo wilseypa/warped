@@ -1,7 +1,6 @@
 #ifndef DEFAULT_TIME_WARP_EVENT_SET_H
 #define DEFAULT_TIME_WARP_EVENT_SET_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "TimeWarpEventSet.h"

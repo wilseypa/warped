@@ -1,7 +1,6 @@
 #ifndef THREADEDPERIODICSTATEMANAGER_H_
 #define THREADEDPERIODICSTATEMANAGER_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "ThreadedStateManagerImplementationBase.h"
 class ThreadedPeriodicStateManager: public ThreadedStateManagerImplementationBase {

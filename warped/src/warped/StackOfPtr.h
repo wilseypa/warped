@@ -1,7 +1,6 @@
 #ifndef __STACKOFPTR_HH__
 #define __STACKOFPTR_HH__
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include <string.h>

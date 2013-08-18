@@ -1,7 +1,6 @@
 #ifndef DEFAULT_VISUALIZATION_MANAGER_H
 #define DEFAULT_VISUALIZATION_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <iostream>
 #include <string>

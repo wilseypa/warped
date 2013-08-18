@@ -1,7 +1,6 @@
 #ifndef TIME_WARP_MULTI_SET_ONE_ANTI_MSG_H
 #define TIME_WARP_MULTI_SET_ONE_ANTI_MSG_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "TimeWarpMultiSet.h"
 

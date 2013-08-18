@@ -1,7 +1,6 @@
 #ifndef LOCALNEGATIVEEVENTMESSAGE_H_
 #define LOCALNEGATIVEEVENTMESSAGE_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "LocalKernelMessage.h"
 #include "NegativeEventMessage.h"

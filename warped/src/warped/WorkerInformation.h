@@ -1,7 +1,6 @@
 #ifndef WORKERINFORMATION_H_
 #define WORKERINFORMATION_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <pthread.h>
 #include "VTime.h"

@@ -1,7 +1,6 @@
 #ifndef AGGREGATE_ASYNC_FILTERED_SENSOR_H
 #define AGGREGATE_ASYNC_FILTERED_SENSOR_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <warped/warped.h>
 #include "AsyncFilteredSensor.h"

@@ -1,7 +1,6 @@
 #ifndef CLOCK_FREQUENCY_MANAGER_H
 #define CLOCK_FREQUENCY_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "CommunicatingEntity.h"

@@ -1,7 +1,6 @@
 #ifndef CONSOLE_IO_H
 #define CONSOLE_IO_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 

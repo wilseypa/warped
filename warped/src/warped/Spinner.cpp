@@ -2,7 +2,6 @@
 #include <utils/ConfigurationScope.h>
 #include "Spinner.h"
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

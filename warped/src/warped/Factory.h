@@ -1,7 +1,6 @@
 #ifndef FACTORY_H
 #define FACTORY_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <string>
 #include "Types.h"

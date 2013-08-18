@@ -1,7 +1,6 @@
 #ifndef STATE_SET_OBJECT_H
 #define STATE_SET_OBJECT_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "State.h"

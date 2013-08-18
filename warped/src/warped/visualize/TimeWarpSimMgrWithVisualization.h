@@ -1,7 +1,6 @@
 #ifndef TIMEWARP_SIM_MGR_WITH_VISUALIZATION_H
 #define TIMEWARP_SIM_MGR_WITH_VISUALIZATION_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <warped/TimeWarpSimulationManager.h>
 

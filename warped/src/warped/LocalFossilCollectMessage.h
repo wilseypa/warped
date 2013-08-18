@@ -1,7 +1,6 @@
 #ifndef LOCAL_FOSSIL_COLLECT_MESSAGE_H_
 #define LOCAL_FOSSIL_COLLECT_MESSAGE_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "LocalKernelMessage.h"
 #include "VTime.h"

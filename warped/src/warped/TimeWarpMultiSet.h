@@ -1,7 +1,6 @@
 #ifndef TIME_WARP_MULTI_SET_H
 #define TIME_WARP_MULTI_SET_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <set>
 #include <list>

@@ -1,7 +1,6 @@
 #ifndef SINK_OBJECT_H
 #define SINK_OBJECT_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "SimulationObject.h"

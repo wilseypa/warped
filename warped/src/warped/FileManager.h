@@ -1,7 +1,6 @@
 #ifndef WARPED_FILE_MANAGER_H
 #define WARPED_FILE_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <fstream>
 using std::fstream;

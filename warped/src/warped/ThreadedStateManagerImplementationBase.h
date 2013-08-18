@@ -1,7 +1,6 @@
 #ifndef THREADEDSTATEMANAGERIMPLEMENTATIONBASE_H_
 #define THREADEDSTATEMANAGERIMPLEMENTATIONBASE_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "SetObject.h"

@@ -1,4 +1,3 @@
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "TimeWarpMultiSetSchedulingManager.h"
 #include "warped/TimeWarpSimulationManager.h"

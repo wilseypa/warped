@@ -1,4 +1,3 @@
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #ifndef AtomicState_H_
 #define AtomicState_H_

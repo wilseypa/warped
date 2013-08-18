@@ -1,7 +1,6 @@
 #ifndef SINGLE_LINKED_LIST_H
 #define SINGLE_LINKED_LIST_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <queue>
 #include "Event.h"

@@ -1,7 +1,6 @@
 #ifndef NULL_VISUALIZATION_MANAGER_H
 #define NULL_VISUALIZATION_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "VisualizationManager.h"
 

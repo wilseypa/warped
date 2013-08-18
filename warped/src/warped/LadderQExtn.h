@@ -1,4 +1,3 @@
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #ifndef LadderQueue_H_
 #define LadderQueue_H_

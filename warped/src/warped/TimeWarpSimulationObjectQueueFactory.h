@@ -1,7 +1,6 @@
 #ifndef TIME_WARP_OBJECT_QUEUE_FACTORY_H_
 #define TIME_WARP_OBJECT_QUEUE_FACTORY_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "TimeWarpSimulationObjectQueue.h"

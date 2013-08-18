@@ -1,7 +1,6 @@
 #ifndef AVERAGE_FILTER_H
 #define AVERAGE_FILTER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "Filter.h"
 #include <vector>

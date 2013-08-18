@@ -1,7 +1,6 @@
 #ifndef CHEBYFOSSILCOLLMANAGER_H_
 #define CHEBYFOSSILCOLLMANAGER_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "OptFossilCollManager.h"
 

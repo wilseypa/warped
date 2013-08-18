@@ -1,7 +1,6 @@
 #ifndef TYPES_HH
 #define TYPES_HH
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 /** This file holds the common stuff that is needed all round the system
     like enumerations, error codes etc... */

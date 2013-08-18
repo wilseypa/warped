@@ -1,7 +1,6 @@
 #ifndef THREADEThreadedIMEWARPMULTISET_H_
 #define THREADEThreadedIMEWARPMULTISET_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <set>
 #include <list>

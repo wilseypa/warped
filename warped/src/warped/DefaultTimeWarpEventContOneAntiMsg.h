@@ -1,7 +1,6 @@
 #ifndef DEFAULTTIMEWARPEVENTCONTONEANTIMSG_H_
 #define DEFAULTTIMEWARPEVENTCONTONEANTIMSG_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "DefaultTimeWarpEventContainer.h"
 

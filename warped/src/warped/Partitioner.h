@@ -1,7 +1,6 @@
 #ifndef PARTITIONER_H
 #define PARTITIONER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <vector>
 using std::vector;

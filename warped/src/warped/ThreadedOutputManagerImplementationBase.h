@@ -1,7 +1,6 @@
 #ifndef THREADEDOUTPUTMANAGERIMPLEMENTATIONBASE_H_
 #define THREADEDOUTPUTMANAGERIMPLEMENTATIONBASE_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <fstream>
 #include <set>

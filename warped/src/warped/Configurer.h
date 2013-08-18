@@ -1,7 +1,6 @@
 #ifndef CONFIGURER_H
 #define CONFIGURER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 #include "warped.h"
 #include <string>
 using std::string;

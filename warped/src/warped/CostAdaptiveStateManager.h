@@ -1,7 +1,6 @@
 #ifndef COSTADAPTIVESTATEMANAGER_HH
 #define COSTADAPTIVESTATEMANAGER_HH
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "AdaptiveStateManagerBase.h"
 

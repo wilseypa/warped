@@ -1,7 +1,6 @@
 #ifndef STRAGGLEREVENT_H_
 #define STRAGGLEREVENT_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "Event.h"

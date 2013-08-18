@@ -1,7 +1,6 @@
 #ifndef FIR_FILTER_H
 #define FIR_FILTER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <iostream>
 #include "Filter.h"

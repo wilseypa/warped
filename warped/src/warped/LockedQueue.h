@@ -1,7 +1,6 @@
 #ifndef LOCKEDQUEUE_H_
 #define LOCKEDQUEUE_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include<pthread.h>
 #include<deque>

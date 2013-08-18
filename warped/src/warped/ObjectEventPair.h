@@ -1,7 +1,6 @@
 #ifndef OBJECT_EVENT_PAIR_H_
 #define OBJECT_EVENT_PAIR_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "Event.h"
 #include "EventId.h"

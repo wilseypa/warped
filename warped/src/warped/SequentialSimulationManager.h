@@ -1,7 +1,6 @@
 #ifndef SEQUENTIAL_SIMULATION_MANAGER_H
 #define SEQUENTIAL_SIMULATION_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "SimulationManagerImplementationBase.h"

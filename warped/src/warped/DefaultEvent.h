@@ -1,7 +1,6 @@
 #ifndef DEFAULT_EVENT_H
 #define DEFAULT_EVENT_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped/Event.h"
 #include "warped/EventId.h"

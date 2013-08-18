@@ -1,7 +1,6 @@
 #ifndef SOCKET_CC
 #define SOCKET_CC
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <WarpedConfig.h>
 #include "Socket.h"

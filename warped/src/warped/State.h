@@ -1,7 +1,6 @@
 #ifndef STATE_H
 #define STATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 /** The abstract base class State.
 

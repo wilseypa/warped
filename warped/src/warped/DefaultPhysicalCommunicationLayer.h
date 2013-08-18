@@ -1,7 +1,6 @@
 #ifndef DEFAULT_PHYSICAL_COMMUNICATION_LAYER_H
 #define DEFAULT_PHYSICAL_COMMUNICATION_LAYER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "eclmpl/PhysicalCommunicationLayer.h"

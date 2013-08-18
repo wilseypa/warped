@@ -1,7 +1,6 @@
 #ifndef FLAT_STATE_H
 #define FLAT_STATE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "State.h"

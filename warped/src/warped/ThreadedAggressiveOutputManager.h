@@ -1,7 +1,6 @@
 #ifndef THREADEDAGGRESSIVEOUTPUTMANAGER_H_
 #define THREADEDAGGRESSIVEOUTPUTMANAGER_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <fstream>
 #include "warped.h"

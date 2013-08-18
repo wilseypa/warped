@@ -1,7 +1,6 @@
 #ifndef THREADEThreadedIMEWARPSIMULATIONMANAGER_H_
 #define THREADEThreadedIMEWARPSIMULATIONMANAGER_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "TimeWarpSimulationManager.h"
 #include "LockedQueue.h"

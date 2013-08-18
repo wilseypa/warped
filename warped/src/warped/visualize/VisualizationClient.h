@@ -1,7 +1,6 @@
 #ifndef VISUALIZATION_CLIENT_H
 #define VISUALIZATION_CLIENT_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <iostream>
 #include <cstdlib>

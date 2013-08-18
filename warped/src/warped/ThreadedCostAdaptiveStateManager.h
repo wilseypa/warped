@@ -1,7 +1,6 @@
 #ifndef THREADEDCOSTADAPTIVESTATEMANAGER_HH
 #define THREADEDCOSTADAPTIVESTATEMANAGER_HH
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "ThreadedStateManagerImplementationBase.h"
 #include "StopWatch.h"

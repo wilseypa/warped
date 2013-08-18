@@ -1,7 +1,6 @@
 #ifndef GVT_MANAGER_H
 #define GVT_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "CommunicatingEntity.h"

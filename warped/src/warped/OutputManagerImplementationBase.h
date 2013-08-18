@@ -1,7 +1,6 @@
 #ifndef OUTPUT_MANAGER_IMPLEMENTATION_BASE_H
 #define OUTPUT_MANAGER_IMPLEMENTATION_BASE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <fstream>
 #include <set>

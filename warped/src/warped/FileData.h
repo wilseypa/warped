@@ -1,7 +1,6 @@
 #ifndef FILE_DATA_H
 #define FILE_DATA_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <string>
 

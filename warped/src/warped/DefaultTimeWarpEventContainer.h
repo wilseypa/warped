@@ -1,7 +1,6 @@
 #ifndef DEFAULTTIMEWARPEVENTCONTAINER_H_
 #define DEFAULTTIMEWARPEVENTCONTAINER_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "EventFunctors.h"
 #include <deque>

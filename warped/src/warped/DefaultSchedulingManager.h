@@ -1,7 +1,6 @@
 #ifndef DEFAULT_SCHEDULING_MANAGER_H
 #define DEFAULT_SCHEDULING_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "SchedulingManager.h"

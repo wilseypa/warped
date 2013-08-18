@@ -1,7 +1,6 @@
 #ifndef THREADEDOUTPUTMANAGER_H
 #define THREADEDOUTPUTMANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "Configurable.h"

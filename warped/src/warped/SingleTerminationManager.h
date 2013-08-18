@@ -1,7 +1,6 @@
 #ifndef SINGLE_TERMINATION_MANAGER_H_
 #define SINGLE_TERMINATION_MANAGER_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <warped/TerminationManager.h>
 

@@ -1,7 +1,6 @@
 #ifndef FILTER_H
 #define FILTER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 /** The Filter abstract base class.
 

@@ -1,7 +1,6 @@
 #ifndef TIME_WARP_SENDER_QUEUE_H
 #define TIME_WARP_SENDER_QUEUE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "TimeWarpCentralizedEventSet.h"

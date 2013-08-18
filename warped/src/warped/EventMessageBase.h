@@ -1,7 +1,6 @@
 #ifndef EVENT_MESSAGE_BASE_H
 #define EVENT_MESSAGE_BASE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 /**
    This is the class defining the termination token that gets passed

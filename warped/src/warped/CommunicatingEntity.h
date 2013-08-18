@@ -1,7 +1,6 @@
 #ifndef COMMUNICATING_ENTITY_H
 #define COMMUNICATING_ENTITY_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "KernelMessage.h"

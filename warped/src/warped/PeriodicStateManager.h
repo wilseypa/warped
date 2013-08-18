@@ -1,7 +1,6 @@
 #ifndef PERIODIC_STATE_MANAGER_H
 #define PERIODIC_STATE_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "StateManagerImplementationBase.h"
 

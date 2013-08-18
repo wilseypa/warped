@@ -1,7 +1,6 @@
 #ifndef ADAPTIVE_OUTPUT_MANAGER_H
 #define ADAPTIVE_OUTPUT_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <fstream>
 #include "warped.h"

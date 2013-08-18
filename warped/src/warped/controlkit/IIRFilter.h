@@ -1,7 +1,6 @@
 #ifndef IIR_FILTER_H
 #define IIR_FILTER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <iostream>
 #include "Filter.h"

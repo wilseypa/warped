@@ -1,7 +1,6 @@
 #ifndef EVENT_SET_FACTORY_H
 #define EVENT_SET_FACTORY_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "EventSet.h"

@@ -1,7 +1,6 @@
 #ifndef OBJECT_ID_H
 #define OBJECT_ID_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <iostream>
 

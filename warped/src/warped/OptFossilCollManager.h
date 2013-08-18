@@ -1,7 +1,6 @@
 #ifndef OPTFOSSILCOLLMANAGER_H_
 #define OPTFOSSILCOLLMANAGER_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "CommunicatingEntity.h"

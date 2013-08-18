@@ -1,4 +1,3 @@
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #ifndef THREADEDOUTPUTEVENTS_H_
 #define THREADEDOUTPUTEVENTS_H_

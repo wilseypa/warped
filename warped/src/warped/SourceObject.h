@@ -1,7 +1,6 @@
 #ifndef SOURCE_OBJECT_H
 #define SOURCE_OBJECT_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "SimulationObject.h"

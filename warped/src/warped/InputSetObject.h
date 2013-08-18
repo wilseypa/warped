@@ -1,7 +1,6 @@
 #ifndef INPUT_SET_OBJECT_H
 #define INPUT_SET_OBJECT_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "State.h"

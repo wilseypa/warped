@@ -1,7 +1,6 @@
 #ifndef CENTRALIZED_EVENTSET_SCHEDULING_IMPLEMENTATION_BASE_H
 #define CENTRALIZED_EVENTSET_SCHEDULING_IMPLEMENTATION_BASE_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "CentralizedEventSetSchedulingManager.h"

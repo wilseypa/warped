@@ -1,7 +1,6 @@
 #ifndef SOCKET_HH
 #define SOCKET_HH
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 /** The Socket class.
 

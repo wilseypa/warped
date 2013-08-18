@@ -1,7 +1,6 @@
 #ifndef LOCAL_EVENT_MESSAGE_H_
 #define LOCAL_EVENT_MESSAGE_H_
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "LocalKernelMessage.h"
 //#include "EventMessage.h"

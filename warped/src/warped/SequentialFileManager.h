@@ -1,7 +1,6 @@
 #ifndef SEQUENTIAL_FILE_MANAGER_H
 #define SEQUENTIAL_FILE_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #ifdef HAVE_TR1_UNORDERED_MAP

@@ -1,7 +1,6 @@
 #ifndef DECENTRALIZED_EVENTSET_SCHEDULING_MANAGER_H
 #define DECENTRALIZED_EVENTSET_SCHEDULING_MANAGER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "SchedulingManager.h"
 

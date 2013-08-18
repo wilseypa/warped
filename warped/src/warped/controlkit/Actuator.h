@@ -1,7 +1,6 @@
 #ifndef ACTUATOR_H
 #define ACTUATOR_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 /** The Actuator base class.
 

@@ -1,7 +1,6 @@
 #ifndef SIMULATION_CONFIGURATION_H
 #define SIMULATION_CONFIGURATION_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include <string>
 #include <vector>

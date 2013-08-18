@@ -1,4 +1,3 @@
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "ControlManager.h"
 #include "TimeWarpSimulationManager.h"

@@ -1,7 +1,6 @@
 #ifndef SENDER_QUEUE_CONTAINER_H
 #define SENDER_QUEUE_CONTAINER_H
 
-// See copyright notice in file Copyright in the root directory of this archive.
 
 #include "warped.h"
 #include "Event.h"
