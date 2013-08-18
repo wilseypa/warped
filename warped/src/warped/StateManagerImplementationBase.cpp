@@ -81,9 +81,9 @@ StateManagerImplementationBase::restoreState(const VTime &rollbackTime,
     // result in a fatal error.
     if(mySimulationManager->getOptFossilColl()){
       if(!mySimulationManager->getRecoveringFromCheckpoint()){
-        utils::debug << mySimulationManager->getSimulationManagerID()
+        debug::debugout << mySimulationManager->getSimulationManagerID()
           << " - No states saved for this object. Rollback time: " << rollbackTime << endl;
-        utils::debug << "object" << *currentObjectID << ": Current Simulation Time is "
+        debug::debugout << "object" << *currentObjectID << ": Current Simulation Time is "
           << object->getSimulationTime() << endl;
 
         mySimulationManager->getFossilCollManager()->startRecovery(objId, rollbackTime.getApproximateIntTime());

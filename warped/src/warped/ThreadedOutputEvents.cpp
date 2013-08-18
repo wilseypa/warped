@@ -39,7 +39,7 @@ ThreadedOutputEvents::getEventsSentAtOrAfter(const VTime &searchTime, int thread
 				int recvTime =
 						(*out)->getSecondaryTime().getApproximateIntTime();
 				if (recvTime <= lastTime) {
-					utils::debug
+					debug::debugout
 							<< mySimulationManager->getSimulationManagerID()
 							<< " - Cata Rollback in outputevents: " << recvTime
 							<< ", " << lastTime << std::endl;
@@ -104,7 +104,7 @@ ThreadedOutputEvents::getEventsSentAtOrAfterAndRemove(const VTime &searchTime,
 				int recvTime =
 						(*out)->getSecondaryTime().getApproximateIntTime();
 				if (recvTime <= lastTime) {
-					utils::debug
+					debug::debugout
 							<< mySimulationManager->getSimulationManagerID()
 							<< " - Cata Rollback in outputevents: " << recvTime
 							<< ", " << lastTime << std::endl;
@@ -393,7 +393,7 @@ void ThreadedOutputEvents::saveOutputCheckpoint(ofstream* outFile,
 			int recvTime =
 					(*outLoc)->getSecondaryTime().getApproximateIntTime();
 			if (recvTime <= lastTime) {
-				utils::debug << mySimulationManager->getSimulationManagerID()
+				debug::debugout << mySimulationManager->getSimulationManagerID()
 						<< " - Cata Rollback in ThreadedOutputEvents::checkpoint: "
 						<< recvTime << ", " << lastTime << std::endl;
 				mySimulationManager->getOptFossilCollManagerNew()->setRecovery(

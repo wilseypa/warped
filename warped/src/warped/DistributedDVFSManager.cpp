@@ -1,5 +1,5 @@
 
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 #include "warped.h"
 #include "DistributedDVFSManager.h"
 #include "TimeWarpSimulationManager.h"

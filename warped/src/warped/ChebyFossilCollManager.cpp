@@ -78,12 +78,12 @@ ChebyFossilCollManager::sampleRollback(SimulationObject *object, const VTime &ro
       }
 
       activeHistoryLength[objId] = sampleMean + errorTerm * sqrt(sampleVariance/(1.0-riskFactor));
-      utils::debug << objId << " - NEW LENGTH: " << activeHistoryLength[objId] << endl;
+      debug::debugout << objId << " - NEW LENGTH: " << activeHistoryLength[objId] << endl;
     }
   }
 
   if(lastCollectTimes[objId] >= 0 && !recovering && rollbackTime <= lastCollectTimes[objId]){
-    utils::debug << mySimManager->getSimulationManagerID() 
+    debug::debugout << mySimManager->getSimulationManagerID() 
       << " - Catastrophic Rollback: Last collection time: " << lastCollectTimes[objId]
       << ", Rollback Time: " << rollbackTime << ", Starting Recovery." << endl;
 

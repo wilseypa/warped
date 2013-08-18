@@ -116,7 +116,7 @@ void ThreadedOptFossilCollManager::checkpoint(const VTime &checkTime,
 	updateCheckpointTime(id, time);
 
 	while (time >= nextCheckpointTime[id]) {
-		utils::debug << mySimManager->getSimulationManagerID()
+		debug::debugout << mySimManager->getSimulationManagerID()
 				<< " - Checkpointing object " << id << " at " << time << endl;
 		int highestNextCheckpointTime = nextCheckpointTime[0];
 		for (int iter = 1; iter < mySimManager->getNumberOfSimulationObjects(); iter++) {
@@ -128,7 +128,7 @@ void ThreadedOptFossilCollManager::checkpoint(const VTime &checkTime,
 		if (nextCheckpointTime[id] == highestNextCheckpointTime) {
 			// No states have been check pointed for this time yet.
 			// Thus we create a state vector for all the objects
-			utils::debug << "Creating new states to be saved at time "
+			debug::debugout << "Creating new states to be saved at time "
 					<< nextCheckpointTime[id] << endl;
 			states = new vector<State*> (
 					mySimManager->getNumberOfSimulationObjects(), NULL);
@@ -137,7 +137,7 @@ void ThreadedOptFossilCollManager::checkpoint(const VTime &checkTime,
 		} else {
 			// States have been saved for other objects but not this object at this time
 			// or a roll back in this object is causing this to happen.
-			utils::debug
+			debug::debugout
 					<< "Adding the current state of the object to checkpointedStates "
 					<< nextCheckpointTime[id] << endl;
 
@@ -180,7 +180,7 @@ void ThreadedOptFossilCollManager::restoreCheckpoint(unsigned int restoredTime) 
 		lastCheckpointTime[i] = restoredTime;
 		nextCheckpointTime[i] = restoredTime + checkpointPeriod;
 	}
-	utils::debug << mySimManager->getSimulationManagerID()
+	debug::debugout << mySimManager->getSimulationManagerID()
 			<< " - Restoring to checkpoint: " << restoredTime << endl;
 
 	// Restore the states to the objects. The actual state queue will be filled
@@ -231,7 +231,7 @@ void ThreadedOptFossilCollManager::restoreCheckpoint(unsigned int restoredTime) 
 			delete serEvent;
 
 			restoredEvents.push_back(restoredEvent);
-			utils::debug << "restoring to objID "
+			debug::debugout << "restoring to objID "
 					<< restoredEvent->getSender().getSimulationObjectID()
 					<< endl;
 		}
@@ -253,7 +253,7 @@ void ThreadedOptFossilCollManager::restoreCheckpoint(unsigned int restoredTime) 
 	mySimManager->setRecoveringFromCheckpoint(false);
 	//myCommManager->setRecoveringFromCheckpoint(false);
 
-	utils::debug << mySimManager->getSimulationManagerID()
+	debug::debugout << mySimManager->getSimulationManagerID()
 			<< " - Done with restore process, " << restoredTime << endl;
 }
 
@@ -307,11 +307,11 @@ void ThreadedOptFossilCollManager::updateCheckpointTime(unsigned int objId,
 void ThreadedOptFossilCollManager::purgeQueuesAndRecover() {
 
 	// Wait for all the worker threads to stop execution
-	utils::debug << "Waiting for all the worker threads" << endl;
+	debug::debugout << "Waiting for all the worker threads" << endl;
 	while (mySimManager->workerStatus[0]->getStillBusyCount() > 0)
-		utils::debug << mySimManager->workerStatus[0]->getStillBusyCount()
+		debug::debugout << mySimManager->workerStatus[0]->getStillBusyCount()
 				<< endl;
-	utils::debug << "Stopped all the threads." << endl;
+	debug::debugout << "Stopped all the threads." << endl;
 
 	// Release all the Object and State Queue locks
 	mySimManager->releaseObjectLocksRecovery();
@@ -332,7 +332,7 @@ void ThreadedOptFossilCollManager::purgeQueuesAndRecover() {
 	if (checkpt < firstCheckpointTime) {
 		checkpt = firstCheckpointTime;
 	}
-	utils::debug << "The check point to be restored is " << checkpt << "."
+	debug::debugout << "The check point to be restored is " << checkpt << "."
 			<< endl;
 
 	// Purge all the Queues
@@ -340,22 +340,22 @@ void ThreadedOptFossilCollManager::purgeQueuesAndRecover() {
 	mySimManager->getOutputManagerNew()->ofcPurge(threadID);
 	mySimManager->getEventSetManagerNew()->ofcPurge(threadID);
 	mySimManager->getStateManagerNew()->ofcPurge(threadID);
-	utils::debug << "Purged all queues." << endl;
+	debug::debugout << "Purged all queues." << endl;
 
 	// Reset the last collect times.
 	for (int i = 0; i < mySimManager->getNumberOfSimulationObjects(); i++) {
 		lastCollectTimes[i] = -1;
 	}
-	utils::debug << "Reseted the last collect times." << endl;
+	debug::debugout << "Reseted the last collect times." << endl;
 
 	//mySimManager->getGVTManager()->ofcReset();
 	mySimManager->getTerminationManager()->ofcReset();
-	utils::debug << "Set recovery to false and about to continue execution"
+	debug::debugout << "Set recovery to false and about to continue execution"
 			<< endl;
 
 	// Restore all the queues
 	restoreCheckpoint(checkpt);
-	utils::debug << "Restored to the last checkpoint!!" << endl;
+	debug::debugout << "Restored to the last checkpoint!!" << endl;
 }
 
 void ThreadedOptFossilCollManager::setRecovery(unsigned int objId,
@@ -394,7 +394,7 @@ void ThreadedOptFossilCollManager::startRecovery() {
 	unsigned int dest = 0;
 	int checkpt;
 
-	utils::debug << mySimManager->getSimulationManagerID()
+	debug::debugout << mySimManager->getSimulationManagerID()
 			<< " - Started Recovery to rollback time " << restoreRollbackTime
 			<< "; checkpoint at " << lastCheckpointTime[0] << endl;
 
@@ -420,7 +420,7 @@ void ThreadedOptFossilCollManager::startRecovery() {
 		restoreMsg = new RestoreCkptMessage(
 				mySimManager->getSimulationManagerID(), dest, checkpt,
 				RestoreCkptMessage::SEND_TO_MASTER, false);
-		utils::debug << mySimManager->getSimulationManagerID()
+		debug::debugout << mySimManager->getSimulationManagerID()
 				<< " - Sent message to master" << endl;
 	} else {
 		dest = myPeer;
@@ -429,7 +429,7 @@ void ThreadedOptFossilCollManager::startRecovery() {
 		restoreMsg = new RestoreCkptMessage(
 				mySimManager->getSimulationManagerID(), dest, checkpt,
 				RestoreCkptMessage::FIRST_CYCLE, false);
-		utils::debug << mySimManager->getSimulationManagerID()
+		debug::debugout << mySimManager->getSimulationManagerID()
 				<< " - Sent the FIRST_CYCLE message " << endl;
 	}
 	myCommManager->sendMessage(restoreMsg, dest);
@@ -446,7 +446,7 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 			switch (restoreMsg->getTokenState()) {
 			case RestoreCkptMessage::SEND_TO_MASTER:
 				if (!recovering) {
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - SEND_TO_MASTER received." << endl;
 
 					// Master receiving a message from another manager.
@@ -457,11 +457,11 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					recovering = true;
 
 					// Wait for all the worker threads to stop execution
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< "Waiting for all the worker threads" << endl;
 					while (mySimManager->workerStatus[0]->getStillBusyCount()
 							> 0)
-						utils::debug
+						debug::debugout
 								<< mySimManager->workerStatus[0]->getStillBusyCount()
 								<< endl;
 
@@ -471,13 +471,13 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							RestoreCkptMessage::FIRST_CYCLE, false);
 
 					myCommManager->sendMessage(sendMsg, myPeer);
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - Sent the FIRST_CYCLE message " << endl;
 				}
 				break;
 			case RestoreCkptMessage::FIRST_CYCLE:
 				if (recovering) {
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - FIRST_CYCLE received." << endl;
 
 					// Release all the Object and State Queue locks
@@ -523,7 +523,7 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							mySimManager->getSimulationManagerID(), myPeer,
 							checkpt, RestoreCkptMessage::SECOND_CYCLE, false);
 
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - Sent the SECOND_CYCLE message " << endl;
 
 					myCommManager->sendMessage(sendMsg, myPeer);
@@ -531,7 +531,7 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 				break;
 			case RestoreCkptMessage::SECOND_CYCLE:
 				if (recovering) {
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - SECOND_CYCLE received." << endl;
 
 					// Now send around the message informing the other managers of the
@@ -543,7 +543,7 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 								restoreMsg->getCheckpointTime(),
 								RestoreCkptMessage::THIRD_CYCLE, true);
 
-						utils::debug << mySimManager->getSimulationManagerID()
+						debug::debugout << mySimManager->getSimulationManagerID()
 								<< " - Sent the THIRD_CYCLE message " << endl;
 
 						myCommManager->sendMessage(sendMsg, dest);
@@ -571,7 +571,7 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 				break;
 			case RestoreCkptMessage::FIRST_CYCLE:
 				if (!recovering) {
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - FIRST_CYCLE received." << endl;
 
 					// Go into recovery mode.
@@ -581,11 +581,11 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 					recovering = true;
 
 					// Wait for all the worker threads to stop execution
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< "Waiting for all the worker threads" << endl;
 					while (mySimManager->workerStatus[0]->getStillBusyCount()
 							> 0)
-						utils::debug
+						debug::debugout
 								<< mySimManager->workerStatus[0]->getStillBusyCount()
 								<< endl;
 
@@ -624,13 +624,13 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							restoreMsg->getCheckpointConsensus());
 
 					myCommManager->sendMessage(sendMsg, myPeer);
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - Sent the FIRST_CYCLE" << endl;
 				}
 				break;
 			case RestoreCkptMessage::SECOND_CYCLE:
 				if (recovering) {
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - SECOND_CYCLE received." << endl;
 
 					// Clean any received messages
@@ -655,7 +655,7 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 							checkpt, restoreMsg->getTokenState(),
 							restoreMsg->getCheckpointConsensus());
 
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - Sent the SECOND_CYCLE message " << endl;
 
 					myCommManager->sendMessage(sendMsg, myPeer);
@@ -663,7 +663,7 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage *msg) {
 				break;
 			case RestoreCkptMessage::THIRD_CYCLE:
 				if (recovering) {
-					utils::debug << mySimManager->getSimulationManagerID()
+					debug::debugout << mySimManager->getSimulationManagerID()
 							<< " - THIRD_CYCLE received." << endl;
 
 					// Exit checkpoint recovery mode.
@@ -711,7 +711,7 @@ void ThreadedOptFossilCollManager::fossilCollect(SimulationObject *object,
 				mySimManager->getEventSetManagerNew()->fossilCollect(object,
 						collectTime, threadId);
 				/*
-				 utils::debug << "Fossil Collecting Obj " << objId
+				 debug::debugout << "Fossil Collecting Obj " << objId
 				 << " at time " << collectTime << " now at " << intCurTime << endl;
 				 */
 			}

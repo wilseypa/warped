@@ -20,7 +20,7 @@ MPIPhysicalCommunicationLayer::getCStyleArguments( int &argc,
   if (argc > 0) {
     for( int i = 0; i < argc; i++ ){
         argv[i] = const_cast<char *>(arguments[i].c_str());
-  //      utils::debug << "actual MPIArgs[" << i << "] = " << argv[i] << std::endl;
+  //      debug::debugout << "actual MPIArgs[" << i << "] = " << argv[i] << std::endl;
     }
   }else {
       argc = 1;
@@ -34,9 +34,9 @@ MPIPhysicalCommunicationLayer::startMPI( const vector<string> &arguments ){
   char **argv = 0;
   getCStyleArguments( argc, argv, arguments );
 
-  utils::debug << "About to call MPI_Init" << endl;
+  debug::debugout << "About to call MPI_Init" << endl;
   MPI_Init( &argc, &argv );
-  utils::debug << "Done with MPI_Init" << endl;
+  debug::debugout << "Done with MPI_Init" << endl;
 
   // MPICH Rewrites these arguments out from under us - we can't delete the
   // values inside the array.  We'll delete the array at list.

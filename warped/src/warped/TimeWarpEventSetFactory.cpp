@@ -35,7 +35,7 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 			ThreadedTimeWarpEventSet *retvalue = 0;
 			retvalue = new ThreadedTimeWarpMultiSet(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
-			utils::debug << "("
+			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured an Dynamic Threaded MultiSet as the event set"
 					<< endl;
@@ -50,19 +50,19 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 	if (configuration.eventListTypeIs("DEFAULT")) {
 		retval = new DefaultTimeWarpEventSet(mySimulationManager,
 				usingOneAntiMessageOpt);
-		utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 				<< ") configured a DefaultTimeWarpEventSet as the event set"
 				<< endl;
 	} else if (configuration.eventListTypeIs("MULTISET")) {
 		if (usingOneAntiMessageOpt) {
 			retval = new TimeWarpMultiSetOneAntiMsg(mySimulationManager);
-			utils::debug << "("
+			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a TimeWarpMultiSetOneAntiMsg as the event set"
 					<< endl;
 		} else {
 			retval = new TimeWarpMultiSet(mySimulationManager);
-			utils::debug << "("
+			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a TimeWarpMultiSet as the event set"
 					<< endl;

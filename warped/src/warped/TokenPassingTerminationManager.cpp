@@ -3,8 +3,8 @@
 #include "TerminateToken.h"
 #include "TimeWarpSimulationManager.h"
 #include "CommunicationManager.h"
-#include <utils/Debug.h>
-using utils::debug;
+#include <Debug/Debug.h>
+using debug::debugout;
 
 #include "TerminateToken.h"
 #include "CommunicationManager.h"
@@ -26,8 +26,8 @@ int
 TokenPassingTerminationManager::figureOutPeer( const TimeWarpSimulationManager *simManager ){
   int myPeer = -1;
   int myId = simManager->getSimulationManagerID();
-  utils::debug << "myId = " << myId << std::endl;
-  utils::debug << "getNumberOfSimulationManagers() = " << 
+  debug::debugout << "myId = " << myId << std::endl;
+  debug::debugout << "getNumberOfSimulationManagers() = " << 
     (int)simManager->getNumberOfSimulationManagers() << std::endl;
   if( myId == (int)simManager->getNumberOfSimulationManagers() - 1 ){
     myPeer = 0;

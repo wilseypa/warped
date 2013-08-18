@@ -35,7 +35,7 @@ void ThreadedOutputManagerImplementationBase::insert(const Event *event, int thr
 void ThreadedOutputManagerImplementationBase::fossilCollect(SimulationObject *object,
 		const VTime &fossilCollectTime, int threadID) {
 	ASSERT(object != NULL);
-/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
+/*	debug::debugout << "( " << mySimulationManager->getSimulationManagerID()
 			<< " )" << "OutputManager fossil collecting for object "
 			<< object->getObjectID()->getSimulationObjectID() << " for events "
 			<< "prior to time " << fossilCollectTime << endl;*/
@@ -46,7 +46,7 @@ void ThreadedOutputManagerImplementationBase::fossilCollect(SimulationObject *ob
 void ThreadedOutputManagerImplementationBase::fossilCollect(SimulationObject *object,
 		int fossilCollectTime, int threadID) {
 	ASSERT(object != NULL);
-	/*	utils::debug << "OutputManager fossil collecting " << object->getName()
+	/*	debug::debugout << "OutputManager fossil collecting " << object->getName()
 	 << " for events " << "prior to time " << fossilCollectTime << endl;*/
 	getOutputEventsFor(*(object->getObjectID())).fossilCollect(
 			fossilCollectTime, threadID);

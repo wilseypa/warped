@@ -60,7 +60,7 @@ bool LazyOutputManager::checkLazyCancelEvent(const Event *event){
         
          if( lazyCancelEvents->size() <= 0 ){
            //End lazy cancellation phase.
-           utils::debug << "Lazy Cancellation Phase Complete For Object: " << event->getSender() 
+           debug::debugout << "Lazy Cancellation Phase Complete For Object: " << event->getSender() 
                           << " Lazy Hits: " << lazyHitCount[id] << " Lazy Misses: " << lazyMissCount[id] << "\n";
            lazyHitCount[id] = 0;
            lazyMissCount[id] = 0;
@@ -68,7 +68,7 @@ bool LazyOutputManager::checkLazyCancelEvent(const Event *event){
       }
       else{
         //End lazy cancellation phase.
-        utils::debug << "Lazy Cancellation Phase Complete For Object: " << event->getSender() 
+        debug::debugout << "Lazy Cancellation Phase Complete For Object: " << event->getSender() 
                        << " Lazy Hits: " << lazyHitCount[id] << " Lazy Misses: " << lazyMissCount[id] << "\n";
         lazyHitCount[id] = 0;
         lazyMissCount[id] = 0;

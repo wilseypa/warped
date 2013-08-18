@@ -6,7 +6,7 @@
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "ThreadedChebyFossilCollManager.h"
 #include <utils/ConfigurationScope.h>
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 
 OptFossilCollManagerFactory::OptFossilCollManagerFactory(){}
 
@@ -53,7 +53,7 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 					checkpointPeriod, minSamples, maxSamples, defaultLength,
 					riskFactor);
 			mySimulationManager->setOptFossilColl(true);
-			utils::debug << "("
+			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a Cheby Optimistic Fossil Collection Manager "
 					<< "with checkpoint interval: " << checkpointPeriod

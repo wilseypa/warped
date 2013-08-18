@@ -314,13 +314,13 @@ private:
 
   void checkType( DATA_TYPE typeFound, DATA_TYPE expected ) const;
 
-  friend ostream &operator<<( ostream &, const SerializedInstance::DATA_TYPE );
+  friend std::ostream &operator<<( std::ostream &, const SerializedInstance::DATA_TYPE );
 
   //@} // End of Private Class Methods of SerializedInstance.
 };
 
-inline ostream &
-operator<<( ostream &os, const SerializedInstance::DATA_TYPE dt ){
+inline std::ostream &
+operator<<( std::ostream &os, const SerializedInstance::DATA_TYPE dt ){
   switch( dt ){
   case SerializedInstance::CHAR_BLOB:
     os << "CHAR_BLOB";

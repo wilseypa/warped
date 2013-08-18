@@ -137,7 +137,7 @@ PHOLDApplication::getSimulationObjects(){
     abort();
   }
 
-  utils::debug << "\nNumber of Objects: " << numObjects << " Message Density: " 
+  debug::debugout << "\nNumber of Objects: " << numObjects << " Message Density: " 
                  << msgDen << " Distribution: " << distributionString << " Seed: " << seed << endl;
 
   // When generating all the objects, all information about the objects will be the same.

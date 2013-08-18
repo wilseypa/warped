@@ -84,7 +84,7 @@ void RAIDProcess::executeProcess() {
 			 myState->diskRequests[senderSimObjID-firstDiskId]++;
 			 }
 			 else if (senderSimObjID != getObjectID()->getSimulationObjectID()) {
-			 //clutils::debug << objectName << " ignoring event from " << senderSimObjID
+			 //cldebug::debugout << objectName << " ignoring event from " << senderSimObjID
 			 //  << " in diskRequests count\n";
 			 }*/
 	//		cout << "State Size before::" << myState->get_size()

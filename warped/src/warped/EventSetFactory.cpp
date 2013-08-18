@@ -5,7 +5,7 @@
 #include "SingleLinkedList.h"
 #include "SimulationConfiguration.h"
 #include "TimeWarpSimulationManager.h"
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 
 using std::cerr;
 using std::endl;
@@ -33,11 +33,11 @@ EventSetFactory::allocate( SimulationConfiguration &configuration,
 
   if( configuration.eventListTypeIs( SplayTree::getType() ) ){
     retval = new SplayTree();
-    utils::debug << "Configured a SplayTree as the event set" << endl;
+    debug::debugout << "Configured a SplayTree as the event set" << endl;
   }
   else if( configuration.eventListTypeIs( SingleLinkedList::getType() ) ){
     retval = new SingleLinkedList();
-    utils::debug << "Configured a SingleLinkedList as the event set" << endl;
+    debug::debugout << "Configured a SingleLinkedList as the event set" << endl;
   }
   else {
     mySimulationManager->shutdown( "Invalid EventList configuration value - \"" + 

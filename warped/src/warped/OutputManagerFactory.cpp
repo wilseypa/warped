@@ -13,7 +13,7 @@
 #include "ThreadedLazyOutputManager.h"
 #include "ThreadedDynamicOutputManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 
 using std::cerr;
 using std::endl;
@@ -46,15 +46,15 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 	if (configuration.outputManagerIs("AGGRESSIVE")) {
 		retval = new AggressiveOutputManager(mySimulationManager);
 		mySimulationManager->setOutputMgrType(AGGRMGR);
-		utils::debug << "an Aggressive Output Manager" << endl;
+		debug::debugout << "an Aggressive Output Manager" << endl;
 	} else if (configuration.outputManagerIs("LAZY")) {
 		retval = new LazyOutputManager(mySimulationManager);
 		mySimulationManager->setOutputMgrType(LAZYMGR);
-		utils::debug << "a Lazy Output Manager" << endl;
+		debug::debugout << "a Lazy Output Manager" << endl;
 	} else if (configuration.outputManagerIs("DYNAMIC")) {
 		retval = new DynamicOutputManager(mySimulationManager);
 		mySimulationManager->setOutputMgrType(ADAPTIVEMGR);
-		utils::debug << "an Dynamic Output Manager" << endl;
+		debug::debugout << "an Dynamic Output Manager" << endl;
 	} else {
 		const string error = "Unknown OutputManager choice \""
 				+ configuration.getOutputManagerType() + "\" encountered.";
@@ -67,13 +67,13 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 			retval = new ThreadedAggressiveOutputManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setOutputMgrType(AGGRMGR);
-			utils::debug << "a Dynamic Threaded Aggressive Output Manager"
+			debug::debugout << "a Dynamic Threaded Aggressive Output Manager"
 					<< endl;
 		} else if (configuration.outputManagerIs("LAZY")) {
 			retval = new ThreadedLazyOutputManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setOutputMgrType(LAZYMGR);
-			utils::debug << "a Lazy Output Manager" << endl;
+			debug::debugout << "a Lazy Output Manager" << endl;
 		} else if (configuration.outputManagerIs("DYNAMIC")) {
 			unsigned int filterDepth = 16;
 			double aggr2lazy = 0.5;
@@ -87,7 +87,7 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent),
 					filterDepth, aggr2lazy, lazy2aggr, thirdThreshold);
 			mySimulationManager->setOutputMgrType(ADAPTIVEMGR);
-			utils::debug << "an Dynamic Output Manager" << endl;
+			debug::debugout << "an Dynamic Output Manager" << endl;
 		} else {
 			const string error = "Unknown OutputManager choice \""
 					+ configuration.getOutputManagerType() + "\" encountered.";

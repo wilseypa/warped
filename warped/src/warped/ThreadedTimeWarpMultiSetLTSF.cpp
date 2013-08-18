@@ -61,14 +61,14 @@ ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
 }
 
 void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
-	utils::debug << "( "<<threadId<<" T ) Getting the Sche Lock." << endl;
+	debug::debugout << "( "<<threadId<<" T ) Getting the Sche Lock." << endl;
 	while (!scheduleQueueLock->setLock(threadId, syncMechanism));
 	ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
 	ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
 	scheduleQueueLock->releaseLock(threadId, syncMechanism);
-	utils::debug << "( "<<threadId<<" T ) Releasing the Sche Lock." << endl;
+	debug::debugout << "( "<<threadId<<" T ) Releasing the Sche Lock." << endl;
 }
 const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int threadID) {
 	const VTime* ret = NULL;
@@ -136,7 +136,7 @@ void ThreadedTimeWarpMultiSetLTSF::releaseAllScheduleQueueLocks()
 {
 	if (scheduleQueueLock->isLocked()) {
 		scheduleQueueLock->releaseLock(scheduleQueueLock->whoHasLock(), syncMechanism);
-		utils::debug << "Releasing Schedule Queue during recovery." << endl;
+		debug::debugout << "Releasing Schedule Queue during recovery." << endl;
 	}
 }
 void ThreadedTimeWarpMultiSetLTSF::clearScheduleQueue(int threadId)
@@ -269,7 +269,7 @@ void ThreadedTimeWarpMultiSetLTSF::eraseSkipFirst(int objId)
 		if (lowestObjectPosition[objId] != scheduleQueue->end()) {
 			scheduleQueue->erase(lowestObjectPosition[objId]);
 		} else {
-			/*utils::debug << "( "
+			/*debug::debugout << "( "
 			 << mySimulationManager->getSimulationManagerID()
 			 << " ) Object - " << objId
 			 << " is returned for schedule thro' insert by the thread - "
@@ -306,18 +306,18 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 	if( scheduleQScheme == "MULTISET" ) {
 		this->getScheduleQueueLock(threadId);
 		if (scheduleQueue->size() > 0) {
-			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
+			debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 
 			ret = *(scheduleQueue->begin());
 			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
-			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
+			debug::debugout <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 	
 			getObjectLock(threadId, objId);
 			//remove the object out of schedule
 			scheduleQueue->erase(scheduleQueue->begin());
 			//set the indexer/pointer to NULL
 			lowestObjectPosition[objId] = scheduleQueue->end();
-			/*		utils::debug << "( "
+			/*		debug::debugout << "( "
 		 	<< mySimulationManager->getSimulationManagerID()
 		 	<< " ) Object - " << objId
 		 	<< " is removed out for schedule by the thread - "
@@ -328,7 +328,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 	} else if ( scheduleQScheme == "LADDERQ" ) {
 		this->getScheduleQueueLock(threadId);
 		if( !ladderQ->empty() ) {
-			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
+			debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 			ret = ladderQ->dequeue();
 			if(ret == NULL) {
 				cout << "dequeue() func returned NULL" << endl;
@@ -339,7 +339,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 				cout << "Event received out of order" << endl;
 			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
 
-			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
+			debug::debugout <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 
 			this->getObjectLock(threadId, objId);
 
@@ -351,7 +351,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 	} else if( scheduleQScheme == "SPLAYTREE" ) {
 		this->getScheduleQueueLock(threadId);
 		if( splayTree->peekEvent() ) {
-			utils::debug<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
+			debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 			if(NULL == (ret = splayTree->getEvent()) ) {
 				cout << "getEvent() func returned NULL" << endl;
 				this->releaseScheduleQueueLock(threadId);
@@ -359,7 +359,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 			}
 			unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
 
-			utils::debug <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
+			debug::debugout <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 
 			this->getObjectLock(threadId, objId);
 
@@ -377,7 +377,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 
 void ThreadedTimeWarpMultiSetLTSF::getObjectLock(int threadId, int objId) {
 	while (!objectStatusLock[objId]->setLock(threadId, syncMechanism));
-	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
+	/*	debug::debugout << "( " << mySimulationManager->getSimulationManagerID()
 	 << " ) Object - " << objId << " is Locked by the thread - "
 	 << threadId << "\n";*/
 	ASSERT(objectStatusLock[objId]->hasLock(threadId, syncMechanism));
@@ -385,7 +385,7 @@ void ThreadedTimeWarpMultiSetLTSF::getObjectLock(int threadId, int objId) {
 void ThreadedTimeWarpMultiSetLTSF::releaseObjectLock(int threadId, int objId) {
 	ASSERT(objectStatusLock[objId]->hasLock(threadId, syncMechanism));
 	objectStatusLock[objId]->releaseLock(threadId, syncMechanism);
-	/*	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
+	/*	debug::debugout << "( " << mySimulationManager->getSimulationManagerID()
 	 << " ) Object - " << objId << " is Released by the thread - "
 	 << threadId << "\n";*/
 }
@@ -405,7 +405,7 @@ void ThreadedTimeWarpMultiSetLTSF::releaseObjectLocksRecovery(int objNum) {
 		objectStatusLock[objNum]->releaseLock(
 				objectStatusLock[objNum]->whoHasLock(),
 				syncMechanism);
-		utils::debug << "Releasing Object " << objNum
+		debug::debugout << "Releasing Object " << objNum
 				<< " during recovery." << endl;
 	}
 }

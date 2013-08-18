@@ -28,17 +28,17 @@ TimeWarpSimulationObjectQueueFactory::allocate( SimulationConfiguration &configu
 		//std::cout << "Buckets: " << numberOfBuckets << std::endl;
 		//std::cout << "Width: " << bucketWidth << std::endl;
 		retval = new TimeWarpSimulationObjectCalendarQueue( mySimulationManager, numberOfBuckets, bucketWidth);
-		utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 		<< ") configured a Calendar Queue as the object queue" << endl;
 	}
 	else if( configuration.objectQueueTypeIs( "LockedQueue" ) ){
 		retval = new TimeWarpSimulationObjectLockedQueue( mySimulationManager );
-		utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 				<< ") configured a locked object queue" << endl;
 	}
 	else{
 		retval = new TimeWarpSimulationObjectLockedQueue( mySimulationManager );
-		utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 				<< ") configured a default locked object queue" << endl;
 	}
 

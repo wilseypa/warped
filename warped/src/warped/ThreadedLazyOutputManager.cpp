@@ -53,9 +53,9 @@ ThreadedLazyOutputManager::~ThreadedLazyOutputManager() {
  else
  lowestObjectPosition[objectID] = lazyMinQueue->end();
  multiset<const Event*, sendTimeLessThanEventIdLessThan>::iterator iv1;
- utils::debug << "LazyMin Queue";
+ debug::debugout << "LazyMin Queue";
  for (iv1 = lazyMinQueue->begin(); iv1 != lazyMinQueue->end(); iv1++) {
- utils::debug << "-" << (*iv1)->getSendTime();
+ debug::debugout << "-" << (*iv1)->getSendTime();
  }
  this->releaseLazyMinQueueLock(threadId);
  }*/
@@ -111,7 +111,7 @@ bool ThreadedLazyOutputManager::checkLazyCancelEvent(const Event *event,
 
 			if (lazyCancelEvents->size() <= 0) {
 				//End lazy cancellation phase.
-				utils::debug << "Lazy Cancellation Phase Complete For Object: "
+				debug::debugout << "Lazy Cancellation Phase Complete For Object: "
 						<< event->getSender() << " Lazy Hits: "
 						<< *lazyHitCount[objectID] << " Lazy Misses: "
 						<< *lazyMissCount[objectID] << "\n";
@@ -120,7 +120,7 @@ bool ThreadedLazyOutputManager::checkLazyCancelEvent(const Event *event,
 			}
 		} else {
 			//End lazy cancellation phase.
-			utils::debug << "Lazy Cancellation Phase Complete For Object: "
+			debug::debugout << "Lazy Cancellation Phase Complete For Object: "
 					<< event->getSender() << " Lazy Hits: "
 					<< *lazyHitCount[objectID] << " Lazy Misses: "
 					<< *lazyMissCount[objectID] << "\n";
@@ -185,7 +185,7 @@ void ThreadedLazyOutputManager::emptyLazyQueue(SimulationObject *object,
 		}
 		if (lazyQueues[objectID]->size() <= 0) {
 			//End lazy cancellation phase.
-			utils::debug << "Lazy Cancellation Phase Complete For Object: "
+			debug::debugout << "Lazy Cancellation Phase Complete For Object: "
 					<< objectID << " Lazy Hits: " << *lazyHitCount[objectID]
 					<< " Lazy Misses: " << *lazyMissCount[objectID] << "\n";
 			*lazyHitCount[objectID] = 0;
@@ -254,7 +254,7 @@ void ThreadedLazyOutputManager::rollback(SimulationObject *object,
 	vector<const Event*>
 			*tempOutEvents = outputEvents.getEventsSentAtOrAfterAndRemove(
 					rollbackTime, threadId);
-	utils::debug << tempOutEvents->size() << " events added to object "
+	debug::debugout << tempOutEvents->size() << " events added to object "
 			<< objectID << " Lazy Queue" << endl;
 	vector<const Event*> *lazyCancelEvents = lazyQueues[objectID];
 
@@ -267,7 +267,7 @@ void ThreadedLazyOutputManager::rollback(SimulationObject *object,
 
 	/*	vector<const Event*>::iterator it;
 	 for (it = lazyQueues[objectID]->begin(); it != lazyQueues[objectID]->end(); it++) {
-	 utils::debug << "-" << (*it)->getSendTime();
+	 debug::debugout << "-" << (*it)->getSendTime();
 	 }*/
 	// Update gvt Queue with the new minimum time stamp of the object
 	//lazyMinQueueUpdate(objectID, threadId);

@@ -370,9 +370,9 @@ SocketBasedConnectionInterface::tearDownConnections(){
     }
 
     for (unsigned int i = 0; i < socket.size(); i++) {
-      utils::debug << "ShuttingDown: " << i << " ... ";
+      debug::debugout << "ShuttingDown: " << i << " ... ";
       int ret = shutdown(socket[i]->getSocketFd(),2);
-      utils::debug << ret << std::endl;
+      debug::debugout << ret << std::endl;
     }
   }
   else{
@@ -385,17 +385,17 @@ SocketBasedConnectionInterface::tearDownConnections(){
         SocketBasedConnectionInterface::send(msgSize, msg, 0);
       }
    
-      utils::debug << "ShuttingDown: " << i << " ... ";
+      debug::debugout << "ShuttingDown: " << i << " ... ";
       int ret = shutdown(socket[i]->getSocketFd(),2);
-      utils::debug << ret << std::endl;
+      debug::debugout << ret << std::endl;
     }
   }*/
-  utils::debug << "Begin tearing down connections for: " << connectionId;
+  debug::debugout << "Begin tearing down connections for: " << connectionId;
   for (unsigned int i = 0; i < socket.size(); i++) {
-    utils::debug << " ... " << i;
+    debug::debugout << " ... " << i;
     int ret = shutdown(socket[i]->getSocketFd(),2);
   }
-  utils::debug << endl << "Finished tearing down connections for: " << connectionId << endl;
+  debug::debugout << endl << "Finished tearing down connections for: " << connectionId << endl;
 }
 
 void

@@ -61,10 +61,10 @@ public:
 			//decrement the global counter (when it hits 0, everyone is suspended)
 			__sync_fetch_and_sub(&globalStillBusyCount, 1);
 			//*******************************************************
-			utils::debug << "Worker is sleeping!!!" << endl;
+			debug::debugout << "Worker is sleeping!!!" << endl;
 			//Suspend here until the suspendCondition is met, (also auto-releases the mutex lock we just got)
 			pthread_cond_wait(&suspendCondition, &suspendMutex);
-			utils::debug << "Worker is back!!!" << endl;
+			debug::debugout << "Worker is back!!!" << endl;
 			//*******************************************************
 			//Upon the condition being met, the suspendMutex lock is also reset for us to undo
 			pthread_mutex_unlock(&suspendMutex);

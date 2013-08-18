@@ -1,5 +1,5 @@
 
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 #include "EventSetFactory.h"
 #include "ObjectStub.h"
 #include "SequentialSimulationManager.h"
@@ -105,7 +105,7 @@ SequentialSimulationManager::finalize(){
 
 void
 SequentialSimulationManager::simulate( const VTime& simulateUntil ){
-  utils::debug << "Simulating from " << getSimulationTime() << " to " << simulateUntil << endl;
+  debug::debugout << "Simulating from " << getSimulationTime() << " to " << simulateUntil << endl;
 
   StopWatch simulateWatch;
   simulateWatch.start();  

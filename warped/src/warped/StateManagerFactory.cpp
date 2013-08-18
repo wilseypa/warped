@@ -9,7 +9,7 @@
 #include "ThreadedPeriodicStateManager.h"
 #include "ThreadedCostAdaptiveStateManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 
 StateManagerFactory::StateManagerFactory() {
 }
@@ -50,7 +50,7 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent),
 					statePeriod);
 			mySimulationManager->setStateMgrType(STATICSTATE);
-			utils::debug << "("
+			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a Threaded Periodic State Manager with period = "
 					<< statePeriod << endl;
@@ -60,7 +60,7 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 			retvalue = new ThreadedCostAdaptiveStateManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setStateMgrType(ADAPTIVESTATE);
-			utils::debug << "("
+			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured an Adaptive State Manager with period = "
 					<< statePeriod << endl;
@@ -76,14 +76,14 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 		configuration.getStatePeriod(statePeriod);
 		retval = new PeriodicStateManager(mySimulationManager, statePeriod);
 		mySimulationManager->setStateMgrType(STATICSTATE);
-		utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 				<< ") configured a Periodic State Manager with period = "
 				<< statePeriod << endl;
 	} else if (configuration.stateManagerTypeIs("ADAPTIVE")) {
 		configuration.getStatePeriod(statePeriod);
 		retval = new CostAdaptiveStateManager(mySimulationManager);
 		mySimulationManager->setStateMgrType(ADAPTIVESTATE);
-		utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 				<< ") configured an Adaptive State Manager with period = "
 				<< statePeriod << endl;
 	} else {

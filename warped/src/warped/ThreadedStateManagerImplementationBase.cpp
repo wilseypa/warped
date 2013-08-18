@@ -134,10 +134,10 @@ ThreadedStateManagerImplementationBase::restoreState(const VTime &rollbackTime,
 		// result in a fatal error.
 		if (mySimulationManager->getOptFossilColl()) {
 			if (!mySimulationManager->getRecoveringFromCheckpoint()) {
-				utils::debug << mySimulationManager->getSimulationManagerID()
+				debug::debugout << mySimulationManager->getSimulationManagerID()
 						<< " - No states saved for this object. Rollback time: "
 						<< rollbackTime << endl;
-				utils::debug << "object" << *currentObjectID
+				debug::debugout << "object" << *currentObjectID
 						<< ": Current Simulation Time is "
 						<< object->getSimulationTime() << endl;
 
@@ -309,7 +309,7 @@ void ThreadedStateManagerImplementationBase::ofcPurge(int threadID) {
 		}
 		this->releaseStateQueueLock(threadID, i);
 		periodCounter[i] = -1;
-		utils::debug << "Cleared Object " << i << endl;
+		debug::debugout << "Cleared Object " << i << endl;
 	}
 }
 
@@ -368,7 +368,7 @@ void ThreadedStateManagerImplementationBase::releaseStateLocksRecovery() {
 		if (stateQueueLock[objNum]->isLocked()) {
 			stateQueueLock[objNum]->releaseLock(
 					stateQueueLock[objNum]->whoHasLock(), syncMechanism);
-			utils::debug << "Releasing State Queue Object " << objNum
+			debug::debugout << "Releasing State Queue Object " << objNum
 					<< " during recovery." << endl;
 		}
 	}

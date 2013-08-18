@@ -7,7 +7,7 @@
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
 #include <utils/ConfigurationScope.h>
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 
 #ifdef USE_TIMEWARP
 #include "eclmpl/eclmpl.h"
@@ -42,20 +42,20 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
       configuration.physicalLayerIs( "UDPSelect" ) ||
       configuration.physicalLayerIs( "TCPSelect" ) ){
     myPhysicalCommunicationLayer = allocatePhysicalCommunicationLayer( configuration.getPhysicalLayerType() );
-    utils::debug << "(" << mySimulationManager->getSimulationManagerID() << ") ";
+    debug::debugout << "(" << mySimulationManager->getSimulationManagerID() << ") ";
     if( myPhysicalCommunicationLayer == 0 ){
       mySimulationManager->shutdown( "Could not allocate physical layer corresponding to " +
 				     configuration.getPhysicalLayerType() +
 				     ", perhaps not configured at compile time?" );
     }
     else{
-      utils::debug << "configured the " << configuration.getPhysicalLayerType()
+      debug::debugout << "configured the " << configuration.getPhysicalLayerType()
 		     << " Physical Communication Layer" << endl;
     }
   }
   else{
     myPhysicalCommunicationLayer = new DefaultPhysicalCommunicationLayer();
-    utils::debug << "configured the default physical communication layer" << endl;
+    debug::debugout << "configured the default physical communication layer" << endl;
   }
 #if USE_TIMEWARP
 	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
@@ -63,12 +63,12 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
 		if (configuration.communicationManagerIs("DEFAULT")) {
 			retval = new DefaultCommunicationManager(
 					myPhysicalCommunicationLayer, myThreadedSimulationManager);
-			utils::debug << "configured the default communication manager"
+			debug::debugout << "configured the default communication manager"
 					<< endl;
 		} else if (configuration.communicationManagerIs("MessageAggregating")) {
 			retval = new MsgAggregatingCommunicationManager(
 					myPhysicalCommunicationLayer, myThreadedSimulationManager);
-			utils::debug
+			debug::debugout
 					<< "configured a message aggregating communication manager"
 					<< endl;
 		} else {
@@ -84,12 +84,12 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
   if( configuration.communicationManagerIs( "DEFAULT" ) ){
     retval = new DefaultCommunicationManager( myPhysicalCommunicationLayer,
 					      mySimulationManager );
-    utils::debug << "configured the default communication manager" << endl;
+    debug::debugout << "configured the default communication manager" << endl;
   }
   else if ( configuration.communicationManagerIs( "MessageAggregating" ) ){
     retval = new MsgAggregatingCommunicationManager( myPhysicalCommunicationLayer,
 						     mySimulationManager );
-    utils::debug << "configured a message aggregating communication manager" << endl;
+    debug::debugout << "configured a message aggregating communication manager" << endl;
   }
   else {
     mySimulationManager->shutdown( "Unknown CommunicationManager type \"" +

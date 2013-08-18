@@ -27,7 +27,7 @@ OutputEvents::getEventsSentAtOrAfter( const VTime &searchTime ){
         int lastTime = mySimulationManager->getFossilCollManager()->getLastCollectTime((*out)->getReceiverID());
         int recvTime = (*out)->getSecondaryTime().getApproximateIntTime();
         if( recvTime <= lastTime ){
-          utils::debug << mySimulationManager->getSimulationManagerID() << " - Cata Rollback in outputevents: " << recvTime
+          debug::debugout << mySimulationManager->getSimulationManagerID() << " - Cata Rollback in outputevents: " << recvTime
                << ", " << lastTime << std::endl;
           mySimulationManager->getFossilCollManager()->startRecovery((*out)->getReceiverID(),
                                                                      (*out)->getMainTime().getApproximateIntTime());
@@ -78,7 +78,7 @@ OutputEvents::getEventsSentAtOrAfterAndRemove( const VTime &searchTime ){
         int lastTime = mySimulationManager->getFossilCollManager()->getLastCollectTime((*out)->getReceiverID());
         int recvTime = (*out)->getSecondaryTime().getApproximateIntTime();
         if( recvTime <= lastTime ){
-          utils::debug << mySimulationManager->getSimulationManagerID() << " - Cata Rollback in outputevents: " << recvTime
+          debug::debugout << mySimulationManager->getSimulationManagerID() << " - Cata Rollback in outputevents: " << recvTime
                << ", " << lastTime << std::endl;
           mySimulationManager->getFossilCollManager()->startRecovery((*out)->getReceiverID(),
                                                                      (*out)->getMainTime().getApproximateIntTime());
@@ -330,7 +330,7 @@ OutputEvents::saveOutputCheckpoint(ofstream* outFile, unsigned int saveTime){
       int lastTime = mySimulationManager->getFossilCollManager()->getLastCollectTime((*outLoc)->getReceiverID());
       int recvTime = (*outLoc)->getSecondaryTime().getApproximateIntTime();
       if( recvTime <= lastTime ){
-        utils::debug << mySimulationManager->getSimulationManagerID() << " - Cata Rollback in OutputEvents::checkpoint: " << recvTime
+        debug::debugout << mySimulationManager->getSimulationManagerID() << " - Cata Rollback in OutputEvents::checkpoint: " << recvTime
              << ", " << lastTime << std::endl;
         mySimulationManager->getFossilCollManager()->startRecovery((*outLoc)->getReceiverID(), 
                                                                    (*outLoc)->getMainTime().getApproximateIntTime());

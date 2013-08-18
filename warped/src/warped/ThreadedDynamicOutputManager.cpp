@@ -126,14 +126,14 @@ cancellationModes ThreadedDynamicOutputManager::determinecancellationModes(
 	}
 
 	*hitRatio[objID] = (float) (*hitCount[objID]) / filterDepth;
-	utils::debug << "Object " << objID << " Hit Ratio is " << *hitRatio[objID]
+	debug::debugout << "Object " << objID << " Hit Ratio is " << *hitRatio[objID]
 			<< endl;
 
 	// If the hit ratio is between the AGGRESSIVE_TO_LAZY and LAZY_TO_AGGRESSIVE
 	// values, then do not change the mode.
 	if (thirdThreshold && *hitRatio[objID] < third_threshold) {
 		if (*curCancelMode[objID] == Lazy) {
-			utils::debug << "Object " << objID
+			debug::debugout << "Object " << objID
 					<< " Switching from Lazy to Aggressive Output Manager PERMANENTLY.\n";
 			lazyToAggr = true;
 		}
@@ -142,14 +142,14 @@ cancellationModes ThreadedDynamicOutputManager::determinecancellationModes(
 		*permanentlyAggressive[objID] = true;
 	} else if ((*curCancelMode[objID]) == Lazy && (*hitRatio[objID])
 			< lazy_to_aggressive) {
-		utils::debug << "Object " << objID
+		debug::debugout << "Object " << objID
 				<< " Switching from Lazy to Aggressive Output Manager.\n";
 		*curCancelMode[objID] = Aggressive;
 		setCompareMode(object, false);
 		lazyToAggr = true;
 	} else if ((*curCancelMode[objID]) == Aggressive && (*hitRatio[objID])
 			> aggressive_to_lazy) {
-		utils::debug << "Object " << objID
+		debug::debugout << "Object " << objID
 				<< " Switching from Aggressive to Lazy Output Manager.\n";
 		*curCancelMode[objID] = Lazy;
 		setCompareMode(object, true);
@@ -224,7 +224,7 @@ void ThreadedDynamicOutputManager::emptyLazyQueue(SimulationObject *object,
 
 		if (lazyQueues[id]->size() <= 0) {
 			//End lazy cancellation phase.
-			utils::debug << "Dynamic Cancellation Phase Complete For Object: "
+			debug::debugout << "Dynamic Cancellation Phase Complete For Object: "
 					<< id << " Hits: " << *lazyHitCount[id] << " Misses: "
 					<< *lazyMissCount[id] << "\n";
 			*lazyHitCount[id] = 0;
@@ -251,7 +251,7 @@ void ThreadedDynamicOutputManager::rollback(SimulationObject *object,
 					rollbackTime, threadId);
 
 	if (!(*permanentlyAggressive[objID])) {
-		utils::debug << tempOutEvents->size() << " events added to object "
+		debug::debugout << tempOutEvents->size() << " events added to object "
 				<< objID << " Dynamic Lazy Queue" << endl;
 		//These output events need to be added to the lazy cancel queue. There may already be
 		//events in the queue, so the new ones need to be added.

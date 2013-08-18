@@ -111,7 +111,7 @@ cancellationMode DynamicOutputManager::determineCancellationMode(int objID){
    // values, then do not change the mode.
    if(thirdThreshold && hitRatio[objID] < THIRD_THRESHOLD){
       if(curCancelMode[objID] == LAZY){
-         utils::debug << "Switching from Lazy to Aggressive Output Manager PERMANENTLY.\n";
+         debug::debugout << "Switching from Lazy to Aggressive Output Manager PERMANENTLY.\n";
          lazyToAggr = true;
       }
       curCancelMode[objID] = AGGRESSIVE;
@@ -119,13 +119,13 @@ cancellationMode DynamicOutputManager::determineCancellationMode(int objID){
       permanentlyAggressive[objID] = true;
    }
    else if(curCancelMode[objID] == LAZY && hitRatio[objID] < LAZY_TO_AGGRESSIVE){
-      utils::debug << "Switching from Lazy to Aggressive Output Manager.\n";
+      debug::debugout << "Switching from Lazy to Aggressive Output Manager.\n";
       curCancelMode[objID] = AGGRESSIVE;
       setCompareMode(object, false);
       lazyToAggr = true;
    }
    else if(curCancelMode[objID] == AGGRESSIVE && hitRatio[objID] > AGGRESSIVE_TO_LAZY){
-      utils::debug << "Switching from Aggressive to Lazy Output Manager.\n";
+      debug::debugout << "Switching from Aggressive to Lazy Output Manager.\n";
       curCancelMode[objID] = LAZY;
       setCompareMode(object, true);
       aggrToLazy = true;

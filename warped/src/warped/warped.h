@@ -29,7 +29,7 @@ warped32_t getWarped32Max();
 warped32_t getWarped32Min();
 
 #include <iostream>
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 
 #include <sstream>
 using std::ostringstream;
@@ -38,7 +38,7 @@ using std::ostringstream;
 // the I/O produced by different processes and feed the I/O to the 
 // central console 
 
-extern ostream *wout, *werr;
+extern std::ostream *wout, *werr;
 
 // include the default definition of VTime
 #include "VTime.h"
@@ -151,7 +151,7 @@ public:
 };
 
 inline
-ostream &operator<<( ostream &os, SEVERITY severity ){
+std::ostream &operator<<( std::ostream &os, SEVERITY severity ){
   switch( severity ){
   case NOTE:
     os << "NOTE";

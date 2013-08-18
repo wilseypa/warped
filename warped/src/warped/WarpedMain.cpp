@@ -104,7 +104,7 @@ WarpedMain::initializeSimulation( vector<string> &commandLineArgs ){
 
   if( debugFlag == true ){
     utils::enableDebug();
-    utils::debug << "Debug output enabled." << endl;
+    debug::debugout << "Debug output enabled." << endl;
   }
 
   SimulationConfiguration *configuration =

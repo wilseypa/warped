@@ -146,7 +146,7 @@ OptFossilCollManager::checkpoint(const VTime &checkTime, const ObjectID &objId){
   updateCheckpointTime(id, time);
 
   while(time >= nextCheckpointTime[id]){
-    utils::debug << mySimManager->getSimulationManagerID() << " - Checkpoint: "
+    debug::debugout << mySimManager->getSimulationManagerID() << " - Checkpoint: "
       << nextCheckpointTime[id] << endl;
     
 
@@ -228,7 +228,7 @@ OptFossilCollManager::restoreCheckpoint(unsigned int restoredTime){
     lastCheckpointTime[i] = restoredTime;
     nextCheckpointTime[i] = restoredTime + checkpointPeriod;
   }
-  utils::debug << mySimManager->getSimulationManagerID() << " - Restoring to checkpoint: "
+  debug::debugout << mySimManager->getSimulationManagerID() << " - Restoring to checkpoint: "
     << restoredTime << endl;
   
   // Reset the GVT.
@@ -297,7 +297,7 @@ OptFossilCollManager::restoreCheckpoint(unsigned int restoredTime){
 
   lastRestoreTime = restoredTime;
   
-  utils::debug << mySimManager->getSimulationManagerID() << " - Done with restore process, "
+  debug::debugout << mySimManager->getSimulationManagerID() << " - Done with restore process, "
     << restoredTime << endl;
 }
 
@@ -412,7 +412,7 @@ OptFossilCollManager::receiveKernelMessage(KernelMessage *msg){
       switch(restoreMsg->getTokenState()){
         case RestoreCkptMessage::SEND_TO_MASTER:
           if(!recovering){
-            utils::debug << "Master: SEND_TO_MASTER received." << endl;
+            debug::debugout << "Master: SEND_TO_MASTER received." << endl;
 
             // Master receiving a message from another manager.
             // Start round one of the process.
@@ -432,7 +432,7 @@ OptFossilCollManager::receiveKernelMessage(KernelMessage *msg){
           break;
         case RestoreCkptMessage::FIRST_CYCLE:
           if(recovering){
-            utils::debug << "Master: FIRST_CYCLE received." << endl;
+            debug::debugout << "Master: FIRST_CYCLE received." << endl;
 
             // Clean any received messages
             while(myCommManager->checkPhysicalLayerForMessages(1000) == 1000); 
@@ -471,7 +471,7 @@ OptFossilCollManager::receiveKernelMessage(KernelMessage *msg){
           break;
         case RestoreCkptMessage::SECOND_CYCLE:
           if(recovering){
-            utils::debug << "Master: SECOND_CYCLE received." << endl;
+            debug::debugout << "Master: SECOND_CYCLE received." << endl;
 
             // Now send around the message informing the other managers of the 
             // checkpoint to use. This is the third round.
@@ -505,7 +505,7 @@ OptFossilCollManager::receiveKernelMessage(KernelMessage *msg){
           break;
         case RestoreCkptMessage::FIRST_CYCLE:
           if(!recovering){
-            utils::debug << mySimManager->getSimulationManagerID()
+            debug::debugout << mySimManager->getSimulationManagerID()
               << " - FIRST_CYCLE received." << endl;
 
             // Go into recovery mode.
@@ -540,7 +540,7 @@ OptFossilCollManager::receiveKernelMessage(KernelMessage *msg){
           break;
         case RestoreCkptMessage::SECOND_CYCLE:
           if(recovering){
-            utils::debug << mySimManager->getSimulationManagerID()
+            debug::debugout << mySimManager->getSimulationManagerID()
               << " - SECOND_CYCLE received." << endl;
 
             // Clean any received messages
@@ -569,7 +569,7 @@ OptFossilCollManager::receiveKernelMessage(KernelMessage *msg){
           break;
         case RestoreCkptMessage::THIRD_CYCLE:
           if(recovering){
-            utils::debug << mySimManager->getSimulationManagerID()
+            debug::debugout << mySimManager->getSimulationManagerID()
               << " - THIRD_CYCLE received." << endl;
 
             // Exit checkpoint recovery mode.

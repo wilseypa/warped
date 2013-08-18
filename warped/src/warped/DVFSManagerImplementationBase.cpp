@@ -5,7 +5,7 @@
 #include <set>
 #include <sched.h>
 #include <cstdio>
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 
 using namespace std;
 

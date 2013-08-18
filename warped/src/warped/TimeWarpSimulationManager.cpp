@@ -28,7 +28,7 @@
 #include "DistributedDVFSManager.h"
 #include "DVFSManagerFactory.h"
 #include "SimulationConfiguration.h"
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 #include <algorithm>
 #include <sstream>
 #include <time.h>
@@ -329,11 +329,11 @@ unsigned int TimeWarpSimulationManager::getNumEventsRolledBack() {
 bool TimeWarpSimulationManager::simulationComplete(const VTime &simulateUntil) {
 	bool retval = false;
 	if (myGVTManager->getGVT() >= simulateUntil) {
-		utils::debug << "(" << getSimulationManagerID() << ") GVT = "
+		debug::debugout << "(" << getSimulationManagerID() << ") GVT = "
 				<< myGVTManager->getGVT() << ", >= " << simulateUntil << endl;
 		retval = true;
 	} else if (myTerminationManager->terminateSimulation()) {
-		utils::debug << "(" << getSimulationManagerID()
+		debug::debugout << "(" << getSimulationManagerID()
 				<< ") Termination manager says we're complete." << endl;
 		simulationCompleteFlag = true;
 		retval = true;
@@ -617,7 +617,7 @@ void TimeWarpSimulationManager::cancelLocalEvents(const vector<
 	if (!inRecovery) {
 		for (vector<const NegativeEvent *>::const_iterator i =
 				eventsToCancel.begin(); i < eventsToCancel.end(); i++) {
-			utils::debug << mySimulationManagerID << " - Cancelling: " << *(*i)
+			debug::debugout << mySimulationManagerID << " - Cancelling: " << *(*i)
 					<< "\n";
 			ASSERT( (*i)->getReceiveTime() >= receiver->getSimulationTime() );
 			myEventSet->handleAntiMessage(receiver, *i);
@@ -632,7 +632,7 @@ void TimeWarpSimulationManager::cancelRemoteEvents(const vector<
 	const SimulationObject *forObject = getObjectHandle(receiverId);
 	unsigned int destId = forObject->getObjectID()->getSimulationManagerID();
 
-	utils::debug << mySimulationManagerID << " - Sending "
+	debug::debugout << mySimulationManagerID << " - Sending "
 			<< eventsToCancel.size() << " anti-messages for " << receiverId
 			<< endl;
 
@@ -802,7 +802,7 @@ void TimeWarpSimulationManager::rollback(SimulationObject *object,
 		const VTime &rollbackTime) {
 	ASSERT( object != 0 );
 	ASSERT( dynamic_cast<SimulationObjectProxy *>(object) == 0 );
-	utils::debug << "(" << mySimulationManagerID << ")" << object->getName()
+	debug::debugout << "(" << mySimulationManagerID << ")" << object->getName()
 			<< " rollback from " << object->getSimulationTime() << " to "
 			<< rollbackTime << endl;
 
@@ -834,7 +834,7 @@ void TimeWarpSimulationManager::rollback(SimulationObject *object,
 
 				// Only start recovery if this is an actual fault, otherwise continue normal rollback.
 				if (myFossilCollManager->checkFault(object)) {
-					utils::debug << mySimulationManagerID
+					debug::debugout << mySimulationManagerID
 							<< " - Catastrophic Rollback: Restored State Time: "
 							<< restoredTime << ", Rollback Time: "
 							<< rollbackTime << ", Starting Recovery." << endl;
@@ -851,7 +851,7 @@ void TimeWarpSimulationManager::rollback(SimulationObject *object,
 	if (!inRecovery) {
 		object->setSimulationTime(*restoredTime);
 
-		utils::debug << object->getName() << " rolled state back to time: "
+		debug::debugout << object->getName() << " rolled state back to time: "
 				<< *restoredTime << endl;
 
 		ASSERT( *restoredTime <= rollbackTime );
@@ -893,7 +893,7 @@ void TimeWarpSimulationManager::rollback(SimulationObject *object,
 void TimeWarpSimulationManager::coastForward(const VTime &coastForwardFromTime,
 		const VTime &moveUpToTime, SimulationObject *object) {
 	ASSERT( moveUpToTime >= coastForwardFromTime );
-	utils::debug << "(" << mySimulationManagerID << ") " << object->getName()
+	debug::debugout << "(" << mySimulationManagerID << ") " << object->getName()
 			<< " coasting forward from " << coastForwardFromTime << " to "
 			<< moveUpToTime << endl;
 
@@ -909,7 +909,7 @@ void TimeWarpSimulationManager::coastForward(const VTime &coastForwardFromTime,
 	// execute process until the rollbackToTime is reached.
 	const Event *findEvent = myEventSet->peekEvent(object, moveUpToTime);
 	while (findEvent != 0 && findEvent->getReceiveTime() < moveUpToTime) {
-		utils::debug << "(" << mySimulationManagerID
+		debug::debugout << "(" << mySimulationManagerID
 				<< ") - coasting forward, skipping " << "event "
 				<< findEvent->getEventId() << " at time << "
 				<< findEvent->getReceiveTime() << endl;
@@ -928,7 +928,7 @@ void TimeWarpSimulationManager::coastForward(const VTime &coastForwardFromTime,
 		CAStateManager->coastForwardTiming(objId, stopWatch.elapsed());
 	}
 
-	utils::debug << "(" << mySimulationManagerID
+	debug::debugout << "(" << mySimulationManagerID
 			<< ") - Finished Coasting Forward for: " << object->getName()
 			<< endl;
 
@@ -964,7 +964,7 @@ void TimeWarpSimulationManager::receiveKernelMessage(KernelMessage *msg) {
 		registerSimulationObjectProxies(&initMsg->getObjectNames(),
 				initMsg->getReceiver(), initMsg->getSender());
 	} else if (dynamic_cast<StartMessage *> (msg) != 0) {
-		utils::debug << "SimulationManager(" << mySimulationManagerID
+		debug::debugout << "SimulationManager(" << mySimulationManagerID
 				<< "): Starting Simulation" << endl;
 	} else if (msg->getDataType() == "AbortSimulationMessage") {
 		cerr << "TimeWarpSimulationManager is going to abort simulation"
@@ -1115,7 +1115,7 @@ void TimeWarpSimulationManager::initialize() {
 }
 
 void TimeWarpSimulationManager::finalize() {
-	utils::debug << "Finalizing Simulation Manager: "
+	debug::debugout << "Finalizing Simulation Manager: "
 			<< this->getSimulationManagerID() << std::endl;
 	//Obtains all the objects from localArrayOfSimObjPtrs
 	vector<SimulationObject *> *objects = getElementVector(

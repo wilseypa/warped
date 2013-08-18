@@ -418,7 +418,7 @@ bool ThreadedTimeWarpMultiSet::insert(const Event *receivedEvent, int threadId) 
 	unsigned int objId = receivedEvent->getReceiver().getSimulationObjectID();
 	this->getunProcessedLock(threadId, objId);
 	unProcessedQueue[objId]->insert(receivedEvent);
-	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
+	debug::debugout << "( " << mySimulationManager->getSimulationManagerID()
 			<< " ) " << mySimulationManager->getObjectHandle(
 			receivedEvent->getReceiver())->getName() << " has received ::::"
 			<< *receivedEvent << " - " << threadId << "\n";
@@ -470,7 +470,7 @@ bool ThreadedTimeWarpMultiSet::handleAntiMessage(SimulationObject *simObj,
 						== negativeEvent->getEventId())) {
 			const Event *eventToRemove = *multisetIterator[threadId];
 			if (dynamic_cast<const StragglerEvent*> (*(multisetIterator[threadId]))) {
-				utils::debug
+				debug::debugout
 						<< "Negative Message Found in Handling Anti-Message .."
 						<< endl;
 				multisetIterator[threadId]++;
@@ -549,7 +549,7 @@ void ThreadedTimeWarpMultiSet::rollback(SimulationObject *simObj,
 		tempCount = processedQueue[objId]->size() - tempCount;
 	}
 
-	utils::debug << "( " << mySimulationManager->getSimulationManagerID()
+	debug::debugout << "( " << mySimulationManager->getSimulationManagerID()
 			<< " ) Object - " << objId << " Rollback returns : " << tempCount
 			<< " events back to Unprocessed Queue - " << threadId << endl;
 	unProcessedQueue[objId]->insert(vectorIterator[threadId],
@@ -704,7 +704,7 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int th
 		LTSFByObj[objId]->insertEmptyEvent(LTSFObjId[objId][OBJID]);
 	}
 
-	utils::debug <<" ( "<< threadId << ") Returning object " <<objId <<" back to SCheQ"<<endl;
+	debug::debugout <<" ( "<< threadId << ") Returning object " <<objId <<" back to SCheQ"<<endl;
 
 	LTSFByObj[objId]->releaseObjectLock(threadId, LTSFObjId[objId][OBJID]);
 	LTSFByObj[objId]->releaseScheduleQueueLock(threadId);
@@ -821,21 +821,21 @@ void ThreadedTimeWarpMultiSet::releaseObjectLocksRecovery() {
 			unprocessedQueueLockState[objNum]->releaseLock(
 									unprocessedQueueLockState[objNum]->whoHasLock(),
 									syncMechanism);
-			utils::debug << "Releasing Unprocessed Queue " << objNum
+			debug::debugout << "Releasing Unprocessed Queue " << objNum
 					<< " during recovery." << endl;
 		}
 		if (processedQueueLockState[objNum]->isLocked()) {
 			processedQueueLockState[objNum]->releaseLock(
 									processedQueueLockState[objNum]->whoHasLock(),
 									syncMechanism);
-			utils::debug << "Releasing Processed Queue " << objNum
+			debug::debugout << "Releasing Processed Queue " << objNum
 					<< " during recovery." << endl;
 		}
 		if (removedQueueLockState[objNum]->isLocked()) {
 			removedQueueLockState[objNum]->releaseLock(
 									removedQueueLockState[objNum]->whoHasLock(),
 									syncMechanism);
-			utils::debug << "Releasing Removed Queue " << objNum
+			debug::debugout << "Releasing Removed Queue " << objNum
 					<< " during recovery." << endl;
 		}
 	}

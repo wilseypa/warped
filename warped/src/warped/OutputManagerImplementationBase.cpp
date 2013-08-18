@@ -35,7 +35,7 @@ OutputManagerImplementationBase::insert( const Event *event ){
 void
 OutputManagerImplementationBase::fossilCollect(SimulationObject *object, const VTime &fossilCollectTime){
   ASSERT(object != NULL);
-  utils::debug << "OutputManager fossil collecting " << object->getName() << " for events "
+  debug::debugout << "OutputManager fossil collecting " << object->getName() << " for events "
 		 << "prior to time " << fossilCollectTime << endl;
   getOutputEventsFor( *(object->getObjectID()) ).fossilCollect( fossilCollectTime );
 }
@@ -43,7 +43,7 @@ OutputManagerImplementationBase::fossilCollect(SimulationObject *object, const V
 void
 OutputManagerImplementationBase::fossilCollect(SimulationObject *object, int fossilCollectTime){
   ASSERT(object != NULL);
-  utils::debug << "OutputManager fossil collecting " << object->getName() << " for events "
+  debug::debugout << "OutputManager fossil collecting " << object->getName() << " for events "
                  << "prior to time " << fossilCollectTime << endl;
   getOutputEventsFor( *(object->getObjectID()) ).fossilCollect( fossilCollectTime );
 }

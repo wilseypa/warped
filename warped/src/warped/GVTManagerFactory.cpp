@@ -6,7 +6,7 @@
 #include "TimeWarpConfigurationManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 #include <utils/ConfigurationScope.h>
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 
 GVTManagerFactory::GVTManagerFactory() {
 }
@@ -38,7 +38,7 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 			retval = new ThreadedMatternGVTManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent),
 					gvtPeriod);
-			utils::debug << "("
+			debug::debugout << "("
 			<< mySimulationManager->getSimulationManagerID()
 			<< ") configured a Mattern GVT Manager with period = "
 			<< gvtPeriod << endl;
@@ -55,7 +55,7 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 			unsigned int gvtPeriod = 1;
 			configuration.getGVTPeriod(gvtPeriod);
 			retval = new MatternGVTManager(mySimulationManager, gvtPeriod);
-			utils::debug << "("
+			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a Mattern GVT Manager with period = "
 					<< gvtPeriod << endl;

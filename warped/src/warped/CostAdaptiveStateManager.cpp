@@ -68,7 +68,7 @@ void CostAdaptiveStateManager::calculatePeriod( SimulationObject *object ) {
       period = maxDefaultInterval;
    }
 
-   utils::debug << object->getName() << " period: " << period << "\n";
+   debug::debugout << object->getName() << " period: " << period << "\n";
 
    // Reset values.
    forwardExecutionLength[objId] = 1;

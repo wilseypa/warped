@@ -102,11 +102,11 @@ inline void ThreadedTimeWarpSimulationManager::sendMessage(KernelMessage *msg,
 inline void ThreadedTimeWarpSimulationManager::sendPendingMessages() {
 	KernelMessage *messageToBeSent = NULL;
 	if ((messageToBeSent = messageBuffer->peekNext(syncMechanism)) != NULL) {
-		utils::debug << "(" << mySimulationManagerID
+		debug::debugout << "(" << mySimulationManagerID
 				<< " ) In Sending Module: " << endl;
 	}
 	while ((messageToBeSent = messageBuffer->dequeue(syncMechanism)) != NULL) {
-		utils::debug << "(" << mySimulationManagerID << " ) Sending Message: "
+		debug::debugout << "(" << mySimulationManagerID << " ) Sending Message: "
 				<< endl;
 		myCommunicationManager->sendMessage(messageToBeSent,
 				messageToBeSent->getReceiver());
@@ -186,7 +186,7 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(
 			if (straggler != NULL && !inRecovery) {
 				updateLVTArray(threadId, straggler->getReceiveTime().clone());
 				if (!dynamic_cast<const StragglerEvent*> (straggler)) {
-					utils::debug << "(" << mySimulationManagerID << " T "
+					debug::debugout << "(" << mySimulationManagerID << " T "
 							<< threadId << " )"
 							<< "Processing  StragglerEvent for Object "
 							<< nextObject->getName() << endl;
@@ -195,7 +195,7 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(
 				} else if (dynamic_cast<const StragglerEvent*> (straggler)) {
 					if (straggler->getReceiveTime()
 							< nextObject->getSimulationTime()) {
-						utils::debug << "(" << mySimulationManagerID << " T "
+						debug::debugout << "(" << mySimulationManagerID << " T "
 								<< threadId << " )"
 								<< "Processing  Negative StragglerEvent for Object "
 								<< nextObject->getObjectID()->getSimulationObjectID()
@@ -204,7 +204,7 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(
 								threadId);
 					}
 					if (!inRecovery) {
-						utils::debug << "(" << mySimulationManagerID << " T "
+						debug::debugout << "(" << mySimulationManagerID << " T "
 								<< threadId << " )"
 								<< "Handling Negative Message for the Object "
 								<< nextObject->getName() << " is at : "
@@ -239,7 +239,7 @@ bool ThreadedTimeWarpSimulationManager::executeObjects(
 				}
 				if (nextEvent != NULL) {
 					nextObject->setSimulationTime(nextEvent->getReceiveTime());
-					utils::debug << nextObject->getName()
+					debug::debugout << nextObject->getName()
 							<< " Executing Event of Time :: "
 							<< nextEvent->getReceiveTime() << " - " << threadId
 							<< endl;
@@ -308,7 +308,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 			numCatastrophicRollbacks++;
 			if (numberOfSimulationManagers > 1) {
 				while (workerStatus[0]->getStillBusyCount() > 0)
-					utils::debug << workerStatus[0]->getStillBusyCount()
+					debug::debugout << workerStatus[0]->getStillBusyCount()
 							<< endl;
 				if (initiatedRecovery) {
 					myrealFossilCollManager->startRecovery();
@@ -541,7 +541,7 @@ void ThreadedTimeWarpSimulationManager::handleRemoteEvent(const Event *event,
 		unsigned int destSimMgrId = proxyObj->getDestId();
 		const string gVTInfo = myGVTManager->getGVTInfo(
 				getSimulationManagerID(), destSimMgrId, event->getSendTime());
-		utils::debug << "(" << mySimulationManagerID << " T " << threadID
+		debug::debugout << "(" << mySimulationManagerID << " T " << threadID
 				<< " )" << "Creating a Kernel Message for " << destSimMgrId
 				<< endl;
 		KernelMessage *msg = new EventMessage(getSimulationManagerID(),
@@ -577,7 +577,7 @@ void ThreadedTimeWarpSimulationManager::cancelLocalEvents(
 			*lowTime->clone(), senderZero, receiverZero, eventIdZero);
 	const StragglerEvent* stragEvent = new StragglerEvent(copiedEvent, 0,
 			eventsToCancel);
-	utils::debug << "(" << mySimulationManagerID << " T " << threadID << " )"
+	debug::debugout << "(" << mySimulationManagerID << " T " << threadID << " )"
 			<< "Inserting only a Negative Event of Time : " << *lowTime
 			<< " for object " << objId << " at Time : " << endl;
 	updateSendMinTime(threadID, &(stragEvent->getReceiveTime()));
@@ -590,7 +590,7 @@ void ThreadedTimeWarpSimulationManager::cancelRemoteEvents(
 	const SimulationObject *forObject = getObjectHandle(receiverId);
 	unsigned int destId = forObject->getObjectID()->getSimulationManagerID();
 
-	utils::debug << "(" << mySimulationManagerID << " T " << threadID
+	debug::debugout << "(" << mySimulationManagerID << " T " << threadID
 			<< " ) - Sending " << eventsToCancel.size()
 			<< " anti-messages for " << receiverId << endl;
 
@@ -716,7 +716,7 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject *object,
 		const VTime &rollbackTime, int threadID) {
 	ASSERT( object != 0);
 	ASSERT( dynamic_cast<SimulationObjectProxy *>(object) == 0);
-	utils::debug << "(" << mySimulationManagerID << " T " << threadID << " )"
+	debug::debugout << "(" << mySimulationManagerID << " T " << threadID << " )"
 			<< object->getName() << " rollback from "
 			<< object->getSimulationTime() << " to " << rollbackTime << endl;
 
@@ -743,7 +743,7 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject *object,
 
 				// Only start recovery if this is an actual fault, otherwise continue normal rollback.
 				if (myrealFossilCollManager->checkFault(object)) {
-					utils::debug << mySimulationManagerID
+					debug::debugout << mySimulationManagerID
 							<< " - Catastrophic Rollback: Restored State Time: "
 							<< *restoredTime << ", Rollback Time: "
 							<< rollbackTime << ", Starting Recovery." << endl;
@@ -760,7 +760,7 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject *object,
 	if (!inRecovery) {
 		object->setSimulationTime(*restoredTime);
 
-		utils::debug << "(" << mySimulationManagerID << " T " << threadID
+		debug::debugout << "(" << mySimulationManagerID << " T " << threadID
 				<< " )" << "object "
 				<< object->getObjectID()->getSimulationObjectID()
 				<< " rolled state back to time: " << *restoredTime << endl;
@@ -793,7 +793,7 @@ void ThreadedTimeWarpSimulationManager::coastForward(
 		const VTime &coastForwardFromTime, const VTime &moveUpToTime,
 		SimulationObject *object, int threadID) {
 	ASSERT( moveUpToTime >= coastForwardFromTime);
-	utils::debug << "(" << mySimulationManagerID << " T " << threadID << " ) "
+	debug::debugout << "(" << mySimulationManagerID << " T " << threadID << " ) "
 			<< "object " << object->getObjectID()->getSimulationObjectID()
 			<< " coasting forward from " << coastForwardFromTime << " to "
 			<< moveUpToTime << endl;
@@ -810,7 +810,7 @@ void ThreadedTimeWarpSimulationManager::coastForward(
 			dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->peekEvent(
 					object, moveUpToTime, threadID);
 	while (findEvent != 0 && findEvent->getReceiveTime() < moveUpToTime) {
-		utils::debug << "(" << mySimulationManagerID << " T " << threadID
+		debug::debugout << "(" << mySimulationManagerID << " T " << threadID
 				<< " ) - coasting forward, skipping " << "event "
 				<< findEvent->getEventId() << " at time << "
 				<< findEvent->getReceiveTime() << endl;
@@ -836,7 +836,7 @@ void ThreadedTimeWarpSimulationManager::coastForward(
 		CAStateManager->coastForwardTiming(objId, stopWatch.elapsed());
 	}
 
-	utils::debug << "(" << mySimulationManagerID << " T " << threadID
+	debug::debugout << "(" << mySimulationManagerID << " T " << threadID
 			<< " ) - Finished Coasting Forward for: " << "object "
 			<< object->getObjectID()->getSimulationObjectID() << endl;
 
@@ -850,7 +850,7 @@ void ThreadedTimeWarpSimulationManager::receiveKernelMessage(KernelMessage *msg)
 	if (dynamic_cast<EventMessage *> (msg) != 0) {
 		EventMessage *eventMsg = dynamic_cast<EventMessage *> (msg);
 		const Event *event = eventMsg->getEvent();
-		utils::debug << "(" << mySimulationManagerID << " T " << threadID
+		debug::debugout << "(" << mySimulationManagerID << " T " << threadID
 				<< " ) Received a Normal Event :: " << event->getReceiveTime()
 				<< endl;
 		// have to take care of some gvt specific actions here
@@ -862,7 +862,7 @@ void ThreadedTimeWarpSimulationManager::receiveKernelMessage(KernelMessage *msg)
 	} else if (dynamic_cast<NegativeEventMessage *> (msg)) {
 		NegativeEventMessage *negEventMsg =
 				dynamic_cast<NegativeEventMessage *> (msg);
-		utils::debug << "(" << mySimulationManagerID << " T " << threadID
+		debug::debugout << "(" << mySimulationManagerID << " T " << threadID
 				<< " ) Received a Negative Event: " << endl;
 		vector<const NegativeEvent*> eventsToCancel = negEventMsg->getEvents();
 		if (!usingOptFossilCollection)
@@ -883,12 +883,12 @@ void ThreadedTimeWarpSimulationManager::receiveKernelMessage(KernelMessage *msg)
 	} else if (dynamic_cast<InitializationMessage *> (msg) != 0) {
 		InitializationMessage *initMsg =
 				dynamic_cast<InitializationMessage *> (msg);
-		utils::debug << "(" << mySimulationManagerID << " T " << threadID
+		debug::debugout << "(" << mySimulationManagerID << " T " << threadID
 				<< " ) Received a Initi Event: " << endl;
 		registerSimulationObjectProxies(&initMsg->getObjectNames(),
 				initMsg->getReceiver(), initMsg->getSender());
 	} else if (dynamic_cast<StartMessage *> (msg) != 0) {
-		utils::debug << "(" << mySimulationManagerID << " T " << threadID
+		debug::debugout << "(" << mySimulationManagerID << " T " << threadID
 				<< " ): Starting Simulation" << endl;
 	} else if (msg->getDataType() == "AbortSimulationMessage") {
 		cerr
@@ -1218,24 +1218,24 @@ bool ThreadedTimeWarpSimulationManager::simulationComplete(
 	bool retval = false;
 	if (!usingOptFossilCollection) {
 		if (myGVTManager->getGVT() >= simulateUntil) {
-			utils::debug << "(" << mySimulationManagerID << " ) GVT = "
+			debug::debugout << "(" << mySimulationManagerID << " ) GVT = "
 					<< myGVTManager->getGVT() << ", >= " << simulateUntil
 					<< endl;
 			retval = true;
 		} else if (myTerminationManager->terminateSimulation()) {
-			utils::debug << "(" << mySimulationManagerID
+			debug::debugout << "(" << mySimulationManagerID
 					<< " ) Termination manager says we're complete." << endl;
 			simulationCompleteFlag = true;
 			retval = true;
 		}
 	} else {
 		if (myTerminationManager->terminateSimulation()) {
-			utils::debug << "(" << mySimulationManagerID
+			debug::debugout << "(" << mySimulationManagerID
 					<< " ) Termination Manager says we're complete." << endl;
 			retval = true;
 		} else if (myrealFossilCollManager->getLeastCollectTime()
 				> simulateUntil.getApproximateIntTime()) {
-			utils::debug << "(" << mySimulationManagerID
+			debug::debugout << "(" << mySimulationManagerID
 					<< " ) Minimum Fossil Collected Time = "
 					<< myrealFossilCollManager->getLeastCollectTime()
 					<< ", >= " << simulateUntil << endl;
@@ -1329,7 +1329,7 @@ void ThreadedTimeWarpSimulationManager::handleAntiMessageFromStraggler(
 		}
 		delete (*i);
 	}
-	utils::debug << "(" << mySimulationManagerID << " T " << threadId
+	debug::debugout << "(" << mySimulationManagerID << " T " << threadId
 			<< " ) - Finished Handling Negative Events " << "\n";
 	delete dynamic_cast<const StragglerEvent*> (stragglerEvent)->getPositiveEvent();
 	delete stragglerEvent;
@@ -1340,7 +1340,7 @@ void ThreadedTimeWarpSimulationManager::printObjectMaaping() {
 
 	for (unsigned int i = 0; i < objects->size(); i++) {
 		SimulationObject *object = (*objects)[i];
-		utils::debug << object->getName() << " -- "
+		debug::debugout << object->getName() << " -- "
 				<< object->getObjectID()->getSimulationObjectID() << endl;
 	}
 }
@@ -1356,9 +1356,9 @@ void ThreadedTimeWarpSimulationManager::updateLVTArray(unsigned int threadId,
 						dynamic_cast<ThreadedTimeWarpMultiSet*> (myEventSet)->getMinEventTime(
 								threadId, objId);
 		if (sendMinTimeArray[threadId] != NULL && nextEventTime != NULL) {
-			utils::debug << "(" << mySimulationManagerID << "," << threadId
+			debug::debugout << "(" << mySimulationManagerID << "," << threadId
 					<< " ) UP Min Time ::" << *nextEventTime << endl;
-			utils::debug << "(" << mySimulationManagerID << "," << threadId
+			debug::debugout << "(" << mySimulationManagerID << "," << threadId
 					<< " ) send Min Time ::" << *(sendMinTimeArray[threadId])
 					<< endl;
 			LVTArray[threadId]
@@ -1376,9 +1376,9 @@ void ThreadedTimeWarpSimulationManager::updateLVTArray(unsigned int threadId,
 		VTime* nextEventTime) {
 	if (*(computeLVTStatus[threadId]) == 0) {
 		if (sendMinTimeArray[threadId] != NULL && nextEventTime != NULL) {
-			utils::debug << "(" << mySimulationManagerID << "," << threadId
+			debug::debugout << "(" << mySimulationManagerID << "," << threadId
 					<< " ) UP Min Time ::" << *nextEventTime << endl;
-			utils::debug << "(" << mySimulationManagerID << "," << threadId
+			debug::debugout << "(" << mySimulationManagerID << "," << threadId
 					<< " ) send Min Time ::" << *(sendMinTimeArray[threadId])
 					<< endl;
 			LVTArray[threadId]
@@ -1408,7 +1408,7 @@ inline void ThreadedTimeWarpSimulationManager::updateSendMinTime(
 void ThreadedTimeWarpSimulationManager::decrementLVTFlag(unsigned int threadId) {
 	getLVTFlagLock(threadId);
 	LVTFlag--;
-	utils::debug << "(" << mySimulationManagerID << " T " << threadId << " )"
+	debug::debugout << "(" << mySimulationManagerID << " T " << threadId << " )"
 			<< "Decrementing LVTFlag .. Current value :: " << LVTFlag << endl;
 	ASSERT(LVTFlag >= 0);
 	releaseLVTFlagLock(threadId);
@@ -1436,7 +1436,7 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
 			if (LVTArray[i] != 0 && *LVTArray[i] < *minimum)
 				minimum = LVTArray[i];
 		}
-		utils::debug << "(" << mySimulationManagerID << " ) Computed LVT ="
+		debug::debugout << "(" << mySimulationManagerID << " ) Computed LVT ="
 				<< *minimum << ":::::" << myGVTManager->getGVT() << "::::::"
 				<< endl;
 		switch (lvtCount) {
@@ -1576,7 +1576,7 @@ void ThreadedTimeWarpSimulationManager::releaseObjectLocksRecovery() {
 void ThreadedTimeWarpSimulationManager::clearMessageBuffer() {
 	KernelMessage *tobedeleted = NULL;
 	while ((tobedeleted = messageBuffer->dequeue(syncMechanism)) != NULL) {
-		utils::debug << "Deleted message from buffer." << endl;
+		debug::debugout << "Deleted message from buffer." << endl;
 	}
 }
 

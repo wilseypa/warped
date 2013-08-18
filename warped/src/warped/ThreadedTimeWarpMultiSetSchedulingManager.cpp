@@ -28,7 +28,7 @@ const VTime & ThreadedTimeWarpMultiSetSchedulingManager::getLastEventScheduledTi
 	ASSERT( eventSet != 0 );
 	const VTime *nextEventTime = (eventSet->nextEventToBeScheduledTime(0));
 	if (nextEventTime == NULL)
-		utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 				<< ")" << "NextEvent Time from Schedule Queue is NULL" << endl;
 	/*	const VTime *minTime =
 	 &(dynamic_cast<ThreadedTimeWarpMultiSet*> (eventSet)->getMinimumOfAll(1));*/
@@ -38,7 +38,7 @@ const VTime & ThreadedTimeWarpMultiSetSchedulingManager::getLastEventScheduledTi
 
 	/*const VTime *executeTime =
 	 (mySimulationManager->getPositiveInfinity().clone());
-	 utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+	 debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 	 << ")" << "Unprocessed Min Time : " << *minTime << endl;
 	 this->getExecuteLock(0); // Its hard coded as 0 as only the master thread would be accessing it.
 	 executeQueueIterator = executeQueue.begin();
@@ -57,7 +57,7 @@ const VTime & ThreadedTimeWarpMultiSetSchedulingManager::getLastEventScheduledTi
 
 	 lastScheduledTime = (*minTime) > (*executeTime) ? (*executeTime).clone()
 	 : (*minTime).clone();
-	 utils::debug << "(" << mySimulationManager->getSimulationManagerID()
+	 debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 	 << ")" << "Execute & Schedule Min Time : " << *executeTime << endl;
 	 */
 	lastScheduledTime = minTime->clone();

@@ -8,7 +8,7 @@
 #include "SerializedInstance.h"
 #include "CommunicationManager.h"
 #include "TimeWarpSimulationManager.h"
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 
 using std::cerr;
 using std::endl;
@@ -32,7 +32,7 @@ SimulationObjectProxy::SimulationObjectProxy( const string &initObjectName,
 
 SimulationObjectProxy::~SimulationObjectProxy(){
 /*
-  utils::debug << "processed (+)(" << numberOfPositiveNetworkEvents 
+  debug::debugout << "processed (+)(" << numberOfPositiveNetworkEvents 
 	<< ")(-)(" << numberOfNegativeNetworkEvents
 	<< ") MPI messages" << endl;
 */

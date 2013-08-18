@@ -4,9 +4,9 @@
 #include "TimeWarpConfigurationManager.h"
 #include "Application.h"
 #include "SimulationConfiguration.h"
-#include <utils/Debug.h>
+#include <Debug/Debug.h>
 using std::cerr;
-using utils::debug;
+using debug::debugout;
 using std::endl;
 
 const ConfigurationManagerFactory *
@@ -24,17 +24,17 @@ ConfigurationManagerFactory::allocate(SimulationConfiguration &configuration,
 
 	if (configuration.simulationTypeIs("Sequential")) {
 		retval = new SequentialConfigurationManager((Application *) parent);
-		utils::debug << "Configured a SequentialSimulationManager" << endl;
+		debug::debugout << "Configured a SequentialSimulationManager" << endl;
 	} else if (configuration.simulationTypeIs("TimeWarp")
 			|| configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		retval = new TimeWarpConfigurationManager(configuration.getArguments(),
 				(Application *) parent);
-		utils::debug << "Configured a TimeWarpSimulationManager" << endl;
+		debug::debugout << "Configured a TimeWarpSimulationManager" << endl;
 	} /*else if (configuration.simulationTypeIs("ThreadedWarp")) {
 #ifdef USE_TIMEWARP
 		retval = new ThreadedTimeWarpConfigurationManager( configuration.getArguments(),
 				(Application *)parent );
-		utils::debug << "Configured a ThreadedTimeWarpSimulationManager" << endl;
+		debug::debugout << "Configured a ThreadedTimeWarpSimulationManager" << endl;
 #else
 		cerr
 				<< "You selected a ThreadedTimeWarpSimulationManager but did not configure with enable-timewarp"
