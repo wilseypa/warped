@@ -10,7 +10,6 @@
 using std::vector;
 using std::string;
 
-class ArgumentParser;  // see <utils/ArgumentParser.h>
 class SimulationObject;
 class PartitionInfo;
 
