@@ -1,5 +1,5 @@
 
-#include <Debug/Debug.h>
+#include <WarpedDebug/WarpedDebug.h>
 #include "EventSetFactory.h"
 #include "ObjectStub.h"
 #include "SequentialSimulationManager.h"

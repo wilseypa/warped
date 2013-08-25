@@ -9,7 +9,7 @@
 #include "ThreadedPeriodicStateManager.h"
 #include "ThreadedCostAdaptiveStateManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include <Debug/Debug.h>
+#include <WarpedDebug/WarpedDebug.h>
 
 StateManagerFactory::StateManagerFactory() {
 }

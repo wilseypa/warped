@@ -4,7 +4,7 @@
 #include "TimeWarpConfigurationManager.h"
 #include "Application.h"
 #include "SimulationConfiguration.h"
-#include <Debug/Debug.h>
+#include <WarpedDebug/WarpedDebug.h>
 using std::cerr;
 using debug::debugout;
 using std::endl;

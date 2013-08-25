@@ -6,7 +6,7 @@
 #include "SchedulingManager.h"
 #include "DefaultSchedulingManager.h"
 #include "TimeWarpMultiSetSchedulingManager.h"
-#include <Debug/Debug.h>
+#include <WarpedDebug/WarpedDebug.h>
 /*
 #if USE_TIMEWARP
 #include "threadedtimewarp/ThreadedTimeWarpSimulationManager.h"

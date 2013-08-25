@@ -3,7 +3,7 @@
 #include "TimeWarpSimulationManager.h"
 #include "UsefulWorkMessage.h"
 #include "CommunicationManager.h"
-#include <Debug/Debug.h>
+#include <WarpedDebug/WarpedDebug.h>
 
 using namespace std;
 

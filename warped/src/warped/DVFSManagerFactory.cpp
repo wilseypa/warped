@@ -1,5 +1,5 @@
 
-#include <Debug/Debug.h>
+#include <WarpedDebug/WarpedDebug.h>
 #include "DVFSManagerFactory.h"
 #include "SharedDVFSManager.h"
 #include "DistributedDVFSManager.h"

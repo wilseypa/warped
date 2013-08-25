@@ -3,7 +3,7 @@
 #include "TerminateToken.h"
 #include "TimeWarpSimulationManager.h"
 #include "CommunicationManager.h"
-#include <Debug/Debug.h>
+#include <WarpedDebug/WarpedDebug.h>
 using debug::debugout;
 
 #include "TerminateToken.h"

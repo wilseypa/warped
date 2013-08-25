@@ -28,7 +28,7 @@
 #include "DistributedDVFSManager.h"
 #include "DVFSManagerFactory.h"
 #include "SimulationConfiguration.h"
-#include <Debug/Debug.h>
+#include <WarpedDebug/WarpedDebug.h>
 #include <algorithm>
 #include <sstream>
 #include <time.h>

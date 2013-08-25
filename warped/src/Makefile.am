@@ -12,17 +12,16 @@ lib_LTLIBRARIES = libwarped.la
 if USE_TIMEWARP
 
 if HAVE_MPICH
-libwarped_la_LIBADD = -lutils -lmpich -lmpl -lpthread
+libwarped_la_LIBADD = -lutils -lmpich -lmpl -lpthread $(top_builddir)/include/WarpedDebug/libwarpeddebug.la 
 else 
 if HAVE_MPI
-libwarped_la_LIBADD = -lutils -lmpi -lpthread
+libwarped_la_LIBADD = -lutils -lmpi -lpthread $(top_builddir)/include/WarpedDebug/libwarpeddebug.la 
 else
-libwarped_la_LIBADD = -lutils -lpthread
+libwarped_la_LIBADD = -lutils -lpthread $(top_builddir)/include/WarpedDebug/libwarpeddebug.la 
 endif
 endif
-
 else
-libwarped_la_LIBADD = -lutils -lpthread
+libwarped_la_LIBADD = -lutils -lpthread $(top_builddir)/include/WarpedDebug/libwarpeddebug.la 
 endif
 
 WARPED_H_FILES = \

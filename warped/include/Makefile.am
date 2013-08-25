@@ -1,1 +1,1 @@
-SUBDIRS = tclap Debug
+SUBDIRS = tclap WarpedDebug
