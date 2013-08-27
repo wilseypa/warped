@@ -22,28 +22,28 @@ class RandomNumGen {
 
 public:
 
-	/* Default constructor */
-	RandomNumGen() {}
+    /* Default constructor */
+    RandomNumGen() {}
 
-	/* Destructor */
-	~RandomNumGen() {}
+    /* Destructor */
+    ~RandomNumGen() {}
 
-	/* Seed the random number generator */
-	void seedRandNumGen() {
-		srand( time(NULL) );
-	}
+    /* Seed the random number generator */
+    void seedRandNumGen() {
+        srand( time(NULL) );
+    }
 
-	/* Generate the random number */
-	unsigned int genRandNum( unsigned int upperLimit ) {
+    /* Generate the random number */
+    unsigned int genRandNum( unsigned int upperLimit ) {
 
-		unsigned int randNum = 0;
-		if(upperLimit > 0) {
-			randNum = (unsigned int) rand()%upperLimit;
-		} else {
-			randNum = (unsigned int) rand();
-		}
-		return randNum;
-	}
+        unsigned int randNum = 0;
+        if(upperLimit > 0) {
+            randNum = (unsigned int) rand()%upperLimit;
+        } else {
+            randNum = (unsigned int) rand();
+        }
+        return randNum;
+    }
 };
 
 #endif

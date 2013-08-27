@@ -25,15 +25,15 @@ class EpidemicPartitioner : public Partitioner {
 
 public:
 
-	EpidemicPartitioner();
+    EpidemicPartitioner();
 
-	const PartitionInfo *partition( const vector<SimulationObject *> *objects, 
-										const unsigned int numProcessors ) const;
+    const PartitionInfo *partition( const vector<SimulationObject *> *objects, 
+                                        const unsigned int numProcessors ) const;
 
-	void addObjectGroup( const vector<SimulationObject *> *group );
+    void addObjectGroup( const vector<SimulationObject *> *group );
 
 private:
-	vector< const vector<SimulationObject *>* > groups;
+    vector< const vector<SimulationObject *>* > groups;
 };
 
 #endif

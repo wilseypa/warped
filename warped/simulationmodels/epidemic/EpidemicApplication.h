@@ -12,36 +12,36 @@ class EpidemicApplication : public Application {
 
 public:
 
-	/* Constructor */
-	EpidemicApplication();
+    /* Constructor */
+    EpidemicApplication();
 
-	int initialize( vector<string> &arguments );
+    int initialize( vector<string> &arguments );
 
-	int getNumberOfSimulationObjects(int mgrId) const;
+    int getNumberOfSimulationObjects(int mgrId) const;
 
-	const PartitionInfo *getPartitionInfo( unsigned int numberOfProcessorsAvailable );
+    const PartitionInfo *getPartitionInfo( unsigned int numberOfProcessorsAvailable );
   
-	int finalize();
+    int finalize();
 
-	void registerDeserializers();
+    void registerDeserializers();
   
-	string getCommandLineParameters() const { return "foo"; }
+    string getCommandLineParameters() const { return "foo"; }
 
-	const VTime &getPositiveInfinity(){ return IntVTime::getIntVTimePositiveInfinity(); }
+    const VTime &getPositiveInfinity(){ return IntVTime::getIntVTimePositiveInfinity(); }
 
-	const VTime &getZero(){ return IntVTime::getIntVTimeZero(); }
+    const VTime &getZero(){ return IntVTime::getIntVTimeZero(); }
 
-	const VTime &getTime(string &time ){ 
-		IntVTime *vtime = new IntVTime (atoi(time.c_str())); 
-		return *vtime;
-	}
+    const VTime &getTime(string &time ){ 
+        IntVTime *vtime = new IntVTime (atoi(time.c_str())); 
+        return *vtime;
+    }
 
 private:
-	ArgumentParser &getArgumentParser();
+    ArgumentParser &getArgumentParser();
 
-	int numObjects;
+    int numObjects;
 
-	string inputFileName;
+    string inputFileName;
 };
 
 #endif
