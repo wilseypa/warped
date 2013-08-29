@@ -1,7 +1,3 @@
-# Process this file with automake to produce Makefile.in
-
-# See copyright notice in file Copyright in the root directory of this archive.
-
 include $(top_srcdir)/Makefile.am.common
 # Ping pong stuff
 include pingPong/Makefile.am.stub
