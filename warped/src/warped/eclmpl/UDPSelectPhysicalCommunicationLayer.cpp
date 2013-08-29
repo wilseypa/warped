@@ -1,6 +1,3 @@
-// Copyright (c) The University of Cincinnati.  
-// All rights reserved.
-
 #include "UDPSelectPhysicalCommunicationLayer.h"
 using std::cerr;
 using std::endl;

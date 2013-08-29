@@ -4,25 +4,6 @@ Computer Architecture Design Laboratory
 Dept of ECECS, PO Box 210030
 Cincinnati, OH  45221--0030
 
-Copyright 1995--1999 The University of Cincinnati. All ights reserved.  
-
-Published by the University of Cincinnati
-Dept of ECECS, PO Box 210030
-Cincinnati, OH  45221--0030 USA 
-
-Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.
-
-Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual
-into another language, under the above conditions for modified versions.
-
-
 Introduction
 
 This document describes the RAID-5 Disk Array application model that is

@@ -3,8 +3,6 @@
 #include "../include/FileState.h"
 #include <iostream> 
 
-//See copyright notice in file Copyright in the root directory of this archive.
-
 using namespace std;
 
 FileReaderWriter::FileReaderWriter(string &filename,int numofgates, string io, vector<int> *desportid,

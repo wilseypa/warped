@@ -3,6 +3,6 @@
 
 
 #define WARPED_VERSION  \
-"The WARPED Tool Set 3.0 (Summer, 2011) \nCopyright (c), The University of Cincinnati.\nAll rights reserved."
+"The WARPED Tool Set 3.0 \nCopyright (c), The University of Cincinnati."
 
 #endif

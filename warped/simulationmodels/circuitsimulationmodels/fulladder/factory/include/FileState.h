@@ -1,8 +1,6 @@
 #ifndef N_FILE_STATE_H
 #define N_FILE_STATE_H
 
-//See copyright notice in file Copyright in the root directory of this archive.
-
 #include <warped/FlatState.h>
 
 class FileState : public FlatState {

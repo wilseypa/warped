@@ -1,8 +1,6 @@
 #ifndef FILE_READERWRITER_H
 #define FILE_READERWRITER_H
 
-//See copyright notice in file Copyright in the root directory of this archive.
-
 #include <warped/SimulationObject.h>
 #include <warped/SimulationStream.h>
 #include <vector>
