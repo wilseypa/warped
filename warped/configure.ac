@@ -20,7 +20,7 @@ AC_PROG_INSTALL
 LT_INIT
 
 m4_include([m4/ax_cxx_compile_stdcxx_11.m4])
-AX_CXX_COMPILE_STDCXX_11
+AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])
 
 AC_CHECK_LIB(nsl, gethostent)
 AC_CHECK_LIB(socket,socket)
