@@ -1,11 +1,3 @@
-
-# See copyright notice in file Copyright in the root directory of this archive.
-
-CPPFLAGS=$(GLOBALCPPFLAGS) @CPPFLAGS@
-CXXFLAGS=$(GLOBALCXXFLAGS) @CXXFLAGS@
-LDFLAGS=$(GLOBALLDFLAGS) @LDFLAGS@
-# ACLOCAL_AMFLAGS = -I m4
-
 SUBDIRS= include src simulationmodels 
 
 EXTRA_DIST = Makefile.am.common \

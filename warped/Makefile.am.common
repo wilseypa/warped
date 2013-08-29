@@ -1,14 +1,3 @@
-
-# See copyright notice in file Copyright in the root directory of this archive.
-
-# NOTE: automake is supposed to support nested conditionals, but it 
-#       does not! We have to use separate if-statements until it does.
-
 INSTALL_HEADER = $(INSTALL) -p -m 644
-
-GLOBALCPPFLAGS = -DDEVELOPER_ASSERTIONS
-GLOBALCXXFLAGS = 
-GLOBALLDFLAGS =
-GLOBALLDADD = 
 
 INCLUDES=-I$(top_srcdir)/src -I$(top_builddir)/src -I$(top_srcdir)/include -I$(top_builddir)/include

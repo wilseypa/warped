@@ -1,4 +1,3 @@
-dnl Process this file with autoconf to produce a configure script.
 AC_INIT([warped],[3.0])
 AC_CONFIG_HEADERS([src/warped/WarpedConfig.h])
 
@@ -7,17 +6,21 @@ AC_CONFIG_SRCDIR([src/warped/Event.cpp])
 AM_INIT_AUTOMAKE([foreign])
 AC_PREREQ(2.61)
 
-AC_SUBST(WARPED_VERSION, [2.0-pre031216])
+AC_SUBST(WARPED_VERSION, [3.0])
 
 AC_CANONICAL_HOST
-AC_LANG(C++)
+AC_LANG([C++])
 
 dnl Checks for programs.
 AC_PROG_LIBTOOL
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_INSTALL
+
 LT_INIT
+
+m4_include([m4/ax_cxx_compile_stdcxx_11.m4])
+AX_CXX_COMPILE_STDCXX_11
 
 AC_CHECK_LIB(nsl, gethostent)
 AC_CHECK_LIB(socket,socket)
