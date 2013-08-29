@@ -33,9 +33,9 @@ public:
 	}
 
 private:
-	int numObjects;
+    int numObjects;
 
-	string inputFileName;
+    string inputFileName;
 };
 
 #endif

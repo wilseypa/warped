@@ -20,87 +20,87 @@ class LocationObject : public SimulationObject {
 
 public:
 
-	/* Default Constructor */
-	LocationObject( string locationName,
-					float transmissibility,
-					unsigned int latentDwellTime,
-					unsigned int incubatingDwellTime,
-					unsigned int infectiousDwellTime,
-					unsigned int asymptDwellTime,
-					float latentInfectivity,
-					float incubatingInfectivity,
-					float infectiousInfectivity,
-					float asymptInfectivity,
-					float probULU,
-					float probULV,
-					float probURV,
-					float probUIV,
-					float probUIU,
-					unsigned int locStateRefreshInterval,
-					unsigned int locDiffusionTrigInterval,
-					vector <Person *> *personVec,
-					unsigned int travelTimeToHub );
+    /* Default Constructor */
+    LocationObject( string locationName,
+                    float transmissibility,
+                    unsigned int latentDwellTime,
+                    unsigned int incubatingDwellTime,
+                    unsigned int infectiousDwellTime,
+                    unsigned int asymptDwellTime,
+                    float latentInfectivity,
+                    float incubatingInfectivity,
+                    float infectiousInfectivity,
+                    float asymptInfectivity,
+                    float probULU,
+                    float probULV,
+                    float probURV,
+                    float probUIV,
+                    float probUIU,
+                    unsigned int locStateRefreshInterval,
+                    unsigned int locDiffusionTrigInterval,
+                    vector <Person *> *personVec,
+                    unsigned int travelTimeToHub );
 
-	/* Destructor */
-	~LocationObject();
+    /* Destructor */
+    ~LocationObject();
 
-	/* Initialize the simulation object */
-	void initialize();
+    /* Initialize the simulation object */
+    void initialize();
 
-	/* Finalize the simulation object before termination */
-	void finalize();
+    /* Finalize the simulation object before termination */
+    void finalize();
 
-	/* Execute the scheduled event */
-	void executeProcess();
+    /* Execute the scheduled event */
+    void executeProcess();
 
-	/* Allocate a new state */
-	State* allocateState();
+    /* Allocate a new state */
+    State* allocateState();
 
-	/* Deallocate a state */
-	void deallocateState(const State *state);
+    /* Deallocate a state */
+    void deallocateState(const State *state);
 
-	/* Reclaim an event */
-	void reclaimEvent(const Event *event);
+    /* Reclaim an event */
+    void reclaimEvent(const Event *event);
 
-	/* Accessor for objectName */
-	const string &getName() const {return locationName;}
+    /* Accessor for objectName */
+    const string &getName() const {return locationName;}
 
-	void populateTravelMap( map <string, unsigned int> *travelMap ) {
-		diffusionNetwork->populateTravelCost(travelMap, locationName);
-	}
+    void populateTravelMap( map <string, unsigned int> *travelMap ) {
+        diffusionNetwork->populateTravelCost(travelMap, locationName);
+    }
 
 private:
 
-	/* Create and send the refresh location state event */
-	void refreshLocStateEvent( IntVTime currentTime );
+    /* Create and send the refresh location state event */
+    void refreshLocStateEvent( IntVTime currentTime );
 
-	/* Create and send the diffusion trigger event */
-	void triggerDiffusionEvent( IntVTime currentTime );
+    /* Create and send the diffusion trigger event */
+    void triggerDiffusionEvent( IntVTime currentTime );
 
-	/* Migrate person(s) to different location event */
-	void migrateLocationEvent(	IntVTime currentTime, 
-								LocationState *locationState  );
+    /* Migrate person(s) to different location event */
+    void migrateLocationEvent(  IntVTime currentTime, 
+                                LocationState *locationState  );
 
-	/* Location name */
-	string locationName;
+    /* Location name */
+    string locationName;
 
-	/* Random Number Generator */
-	RandomNumGen *randNumGen;
+    /* Random Number Generator */
+    RandomNumGen *randNumGen;
 
-	/* Disease model */
-	DiseaseModel *diseaseModel;
+    /* Disease model */
+    DiseaseModel *diseaseModel;
 
-	/* Diffusion Network */
-	DiffusionNetwork *diffusionNetwork;
+    /* Diffusion Network */
+    DiffusionNetwork *diffusionNetwork;
 
-	/* Initial population */
-	vector <Person *> *personVec;
+    /* Initial population */
+    vector <Person *> *personVec;
 
-	/* Location state refresh interval */
-	unsigned int locStateRefreshInterval;
+    /* Location state refresh interval */
+    unsigned int locStateRefreshInterval;
 
-	/* Location diffusion trigger interval */
-	unsigned int locDiffusionTrigInterval;
+    /* Location diffusion trigger interval */
+    unsigned int locDiffusionTrigInterval;
 };
 
 #endif

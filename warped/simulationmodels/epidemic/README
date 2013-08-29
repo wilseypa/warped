@@ -5,45 +5,36 @@ Experimental Computing Laboratory
 Dept of ECECS, PO Box 210030
 Cincinnati, OH  45221--0030
 
-Copyright The University of Cincinnati.  All rights reserved.  
-
-Published by the University of Cincinnati
-Dept of ECECS, PO Box 210030
-Cincinnati, OH  45221--0030 USA
-
-Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.
-
-Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual
-into another language, under the above conditions for modified versions.
-
-
 Introduction
 ------------
 
-This simulation model simulates the epidemic outbreak phenomena. A new parallel
-discrete event formulation of the reaction-diffusion model was developed. It is 
-motivated by the one reported in [2]. The epidemic is modeled using a combination 
-of reaction and diffusion processes. The reaction is defined as a result of inter-
-entity interactions, (e.g.,influenza or physical proximity). The mobility of the 
-entities leads to the dynamic chances for interactions (e.g., watching movie in a 
-cinema and other co-located activities). Geographical diffusion of entities provides
-chances for interactions among different sample sets of entities. This model contains
-four parts[1]. (1) a set of interacting entities. (2) a network graph that shows the 
-interaction structure of entities. (3) a reaction process, called within-host progression
-which models the the progress of the disease in an individual entity. (4) a diffusion 
-process, called between-host transmission, which models the transmission of the disease 
-among individual entities.
+This simulation model simulates the epidemic outbreak phenomena. A new 
+parallel discrete event formulation of the reaction-diffusion model was 
+developed.  It is motivated by the one reported in [2]. The epidemic is 
+modeled using a combination of reaction  and diffusion  processes.  The 
+reaction  is defined as  a result of  inter-entity  interactions, (e.g. 
+influenza or physical proximity). The mobility of the entities leads to 
+the  dynamic chances for interactions (e.g., watching movie in a cinema 
+and  other co-located  activities). Geographical diffusion  of entities 
+provides  chances for  interactions  among  different  sample  sets  of 
+entities.
 
-NOTE: In the network graph design, it has been assumed that all locations are connected 
-to each other in a star topology configuration via a central hub. This has been done to 
-reduce complexity in design of diffusion network.
+This model contains four parts[1]:
+
+(1) a set of interacting entities.
+
+(2) a network graph that shows the interaction structure of entities.
+
+(3) a reaction process, called  within-host  progression  which  models 
+    the progress of the disease in an individual entity.
+
+(4) a  diffusion  process,  called   between-host  transmission,  which 
+    models the transmission of the disease among individual entities.
+
+NOTE:  In  the  network graph  design, it has  been  assumed  that  all 
+locations are connected to each  other in  star topology  configuration 
+via  a  central  hub.  This has  been  done  to  reduce  complexity  in  
+design of diffusion network.
 
 Travel time from location 1 to location 2 = 
                      Travel time from location 1 to central hub +
