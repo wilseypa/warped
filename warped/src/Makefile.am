@@ -26,21 +26,33 @@ WARPED_H_FILES = \
 	warped/AdaptiveStateManagerBase.h \
 	warped/AggressiveOutputManager.h \
 	warped/Application.h \
-	warped/SharedDVFSManager.h \
 	warped/CentralizedEventSetSchedulingManager.h \
 	warped/ChebyFossilCollManager.h \
 	warped/CirculateInitializationMessage.h \
-	warped/DVFSManager.h \
-	warped/DVFSManagerFactory.h \
-	warped/DVFSManagerImplementationBase.h \
 	warped/CommunicatingEntity.h \
 	warped/CommunicationManager.h \
 	warped/CommunicationManagerFactory.h \
 	warped/CommunicationManagerImplementationBase.h \
-	warped/Configurer.h \
-	warped/Configurable.h\
+	warped/Configurable.h \
 	warped/ConfigurationManager.h \
 	warped/ConfigurationManagerFactory.h \
+	warped/Configurer.h \
+	warped/ConsoleIO.cpp \
+	warped/ConsoleIO.h \
+	warped/controlkit/Actuator.h \
+	warped/controlkit/ActuatorImplementationBase.h \
+	warped/controlkit/AggregateAsyncFilteredSensor.h \
+	warped/controlkit/AggregateSyncSensor.h \
+	warped/controlkit/AsyncFilteredSensor.h \
+	warped/controlkit/AsyncSensor.h \
+	warped/controlkit/AverageFilter.h \
+	warped/controlkit/Filter.h \
+	warped/controlkit/FIRFilter.h \
+	warped/controlkit/IIRFilter.h \
+	warped/controlkit/MedianFilter.h \
+	warped/controlkit/Sensor.h \
+	warped/controlkit/SensorImplementationBase.h \
+	warped/controlkit/SyncSensor.h \
 	warped/ControlManager.h \
 	warped/CostAdaptiveStateManager.h \
 	warped/DecentralizedEventSetSchedulingManager.h \
@@ -50,12 +62,14 @@ WARPED_H_FILES = \
 	warped/DefaultPartitioner.h \
 	warped/DefaultPhysicalCommunicationLayer.h \
 	warped/DefaultSchedulingManager.h \
-	warped/DefaultTimeWarpEventSet.h \
 	warped/DefaultTimeWarpEventContainer.h \
 	warped/DefaultTimeWarpEventContOneAntiMsg.h \
-	warped/IntVTime.h \
+	warped/DefaultTimeWarpEventSet.h \
 	warped/DeserializerManager.h \
 	warped/DistributedDVFSManager.h \
+	warped/DVFSManager.h \
+	warped/DVFSManagerFactory.h \
+	warped/DVFSManagerImplementationBase.h \
 	warped/Event.h \
 	warped/EventFunctors.h \
 	warped/EventId.h \
@@ -63,6 +77,13 @@ WARPED_H_FILES = \
 	warped/EventMessageBase.h \
 	warped/EventSet.h \
 	warped/EventSetFactory.h \
+	warped/Factory.h \
+	warped/FactoryImplementationBase.cpp \
+	warped/FactoryImplementationBase.h \
+	warped/FactoryManager.cpp \
+	warped/FactoryManager.h \
+	warped/FactorySymbolTable.cpp \
+	warped/FactorySymbolTable.h \
 	warped/FileData.h \
 	warped/FileManager.h \
 	warped/FileQueue.h \
@@ -75,12 +96,14 @@ WARPED_H_FILES = \
 	warped/InFileQueue.h \
 	warped/InitializationMessage.h \
 	warped/InputSetObject.h \
+	warped/IntVTime.h \
 	warped/KernelMessage.h \
 	warped/LazyOutputManager.h \
 	warped/LocalEventMessage.h \
 	warped/LocalFossilCollectMessage.h \
 	warped/LocalKernelMessage.h \
 	warped/LocalNegativeEventMessage.h \
+	warped/LockedQueue.h \
 	warped/MatternGVTManager.h \
 	warped/MatternGVTMessage.h \
 	warped/MatternObjectRecord.h \
@@ -88,8 +111,10 @@ WARPED_H_FILES = \
 	warped/MsgAggregatingCommunicationManager.h \
 	warped/NegativeEvent.h \
 	warped/NegativeEventMessage.h \
-	warped/ObjectID.h \
 	warped/ObjectEventPair.h \
+	warped/ObjectID.h \
+	warped/ObjectStub.cpp \
+	warped/ObjectStub.h \
 	warped/OptFossilCollManager.h \
 	warped/OptFossilCollManagerFactory.h \
 	warped/OutputEvents.h \
@@ -109,10 +134,11 @@ WARPED_H_FILES = \
 	warped/SequentialConfigurationManager.h \
 	warped/SequentialSimulationManager.h \
 	warped/SequentialSimulationStream.h \
-	warped/Serializable.h \
 	warped/Serializable.cpp \
+	warped/Serializable.h \
 	warped/SerializedInstance.h \
 	warped/SetObject.h \
+	warped/SharedDVFSManager.h \
 	warped/Simulation.h \
 	warped/SimulationConfiguration.h \
 	warped/SimulationManager.h \
@@ -123,6 +149,8 @@ WARPED_H_FILES = \
 	warped/SingleLinkedList.h \
 	warped/SingleTerminationManager.h \
 	warped/SinkObject.h \
+	warped/Socket.cpp \
+	warped/Socket.h \
 	warped/SourceObject.h \
 	warped/Spinner.h \
 	warped/SplayTree.h \
@@ -133,9 +161,30 @@ WARPED_H_FILES = \
 	warped/StateManagerFactory.h \
 	warped/StateManagerImplementationBase.h \
 	warped/StateSetObject.h \
-	warped/TerminationManager.h \
+	warped/StopWatch.cpp \
+	warped/StopWatch.h \
+	warped/StragglerEvent.h \
 	warped/TerminateToken.h \
-	warped/TokenPassingTerminationManager.h \
+	warped/TerminationManager.h \
+	warped/ThreadedAggressiveOutputManager.h \
+	warped/ThreadedChebyFossilCollManager.h \
+	warped/ThreadedCostAdaptiveStateManager.h \
+	warped/ThreadedDynamicOutputManager.h \
+	warped/ThreadedLazyOutputManager.h \
+	warped/ThreadedMatternGVTManager.h \
+	warped/ThreadedOptFossilCollManager.h \
+	warped/ThreadedOutputEvents.h \
+	warped/ThreadedOutputManager.h \
+	warped/ThreadedOutputManagerImplementationBase.h \
+	warped/ThreadedPeriodicStateManager.h \
+	warped/ThreadedStateManager.h \
+	warped/ThreadedStateManagerImplementationBase.h \
+	warped/ThreadedTimeWarpEventSet.h \
+	warped/ThreadedTimeWarpLoadBalancer.h \
+	warped/ThreadedTimeWarpMultiSet.h \
+	warped/ThreadedTimeWarpMultiSetLTSF.h \
+	warped/ThreadedTimeWarpMultiSetSchedulingManager.h \
+	warped/ThreadedTimeWarpSimulationManager.h \
 	warped/TimeWarpCentralizedEventSet.h \
 	warped/TimeWarpCentralizedEventSetFactory.h \
 	warped/TimeWarpConfigurationManager.h \
@@ -152,66 +201,17 @@ WARPED_H_FILES = \
 	warped/TimeWarpSimulationObjectQueue.h \
 	warped/TimeWarpSimulationObjectQueueFactory.h \
 	warped/TimeWarpSimulationStream.h \
+	warped/TokenPassingTerminationManager.h \
 	warped/Transceiver.h \
 	warped/TreeElement.h \
-	warped/UsefulWorkMessage.h \
-	warped/VTime.h \
-	warped/version.h \
-	warped/warped.h \
-	warped/FactoryImplementationBase.cpp \
-	warped/FactoryManager.cpp \
-	warped/FactorySymbolTable.cpp \
-	warped/ObjectStub.cpp \
-	warped/Factory.h \
-	warped/FactoryImplementationBase.h \
-	warped/FactoryManager.h \
-	warped/FactorySymbolTable.h \
-	warped/ObjectStub.h \
 	warped/Types.h \
-	warped/ConsoleIO.cpp \
-	warped/Socket.cpp \
-	warped/StopWatch.cpp \
-	warped/ConsoleIO.h \
-	warped/Socket.h \
-	warped/StopWatch.h \
+	warped/UsefulWorkMessage.h \
+	warped/version.h \
+	warped/VTime.h \
+	warped/warped.h \
+	warped/WarpedDebug.h \
 	warped/WarpedMain.h \
-	warped/controlkit/Actuator.h \
-	warped/controlkit/AsyncSensor.h \
-	warped/controlkit/IIRFilter.h \
-	warped/controlkit/ActuatorImplementationBase.h \
-	warped/controlkit/AverageFilter.h \
-	warped/controlkit/MedianFilter.h \
-	warped/controlkit/AggregateAsyncFilteredSensor.h \
-	warped/controlkit/Sensor.h \
-	warped/controlkit/AggregateSyncSensor.h \
-	warped/controlkit/FIRFilter.h \
-	warped/controlkit/SensorImplementationBase.h \
-	warped/controlkit/AsyncFilteredSensor.h \
-	warped/controlkit/Filter.h \
-	warped/controlkit/SyncSensor.h\
-	warped/ThreadedOutputEvents.h \
-	warped/ThreadedOutputManagerImplementationBase.h \
-	warped/ThreadedAggressiveOutputManager.h \
-	warped/ThreadedTimeWarpMultiSet.h \
-	warped/ThreadedTimeWarpMultiSetLTSF.h \
-	warped/ThreadedTimeWarpLoadBalancer.h \
-	warped/ThreadedStateManagerImplementationBase.h \
-	warped/ThreadedPeriodicStateManager.h \
-	warped/ThreadedOutputManager.h \
-	warped/ThreadedStateManager.h \
-	warped/ThreadedTimeWarpEventSet.h \
-	warped/ThreadedTimeWarpMultiSetSchedulingManager.h \
-	warped/ThreadedTimeWarpSimulationManager.h\
-	warped/StragglerEvent.h\
-	warped/ThreadedOptFossilCollManager.h\
-	warped/ThreadedChebyFossilCollManager.h\
-	warped/ThreadedLazyOutputManager.h\
-	warped/ThreadedMatternGVTManager.h\
-	warped/ThreadedDynamicOutputManager.h\
-	warped/ThreadedCostAdaptiveStateManager.h\
-	warped/LockedQueue.h\
-	warped/WorkerInformation.h\
-	warped/WarpedDebug.h
+	warped/WorkerInformation.h
 
 library_includedir=$(includedir)/warped
 library_include_HEADERS = $(WARPED_H_FILES) \
@@ -223,15 +223,12 @@ libwarped_la_SOURCES = \
 	warped/AdaptiveOutputManager.cpp \
 	warped/AdaptiveStateManagerBase.cpp \
 	warped/AggressiveOutputManager.cpp \
-	warped/SharedDVFSManager.cpp \
 	warped/CentralizedEventSetSchedulingManager.cpp \
 	warped/ChebyFossilCollManager.cpp \
 	warped/CirculateInitializationMessage.cpp \
-	warped/DVFSManagerFactory.cpp \
-	warped/DVFSManagerImplementationBase.cpp \
 	warped/CommunicationManager.cpp \
-	warped/CommunicationManagerImplementationBase.cpp \
 	warped/CommunicationManagerFactory.cpp \
+	warped/CommunicationManagerImplementationBase.cpp \
 	warped/Configurable.cpp \
 	warped/ConfigurationManagerFactory.cpp \
 	warped/Configurer.cpp \
@@ -243,11 +240,13 @@ libwarped_la_SOURCES = \
 	warped/DefaultPartitioner.cpp \
 	warped/DefaultPhysicalCommunicationLayer.cpp \
 	warped/DefaultSchedulingManager.cpp \
-	warped/DefaultTimeWarpEventSet.cpp \
 	warped/DefaultTimeWarpEventContainer.cpp \
 	warped/DefaultTimeWarpEventContOneAntiMsg.cpp \
+	warped/DefaultTimeWarpEventSet.cpp \
 	warped/DeserializerManager.cpp \
 	warped/DistributedDVFSManager.cpp \
+	warped/DVFSManagerFactory.cpp \
+	warped/DVFSManagerImplementationBase.cpp \
 	warped/Event.cpp \
 	warped/EventMessage.cpp \
 	warped/EventMessageBase.cpp \
@@ -285,6 +284,7 @@ libwarped_la_SOURCES = \
 	warped/SequentialSimulationManager.cpp \
 	warped/SequentialSimulationStream.cpp \
 	warped/SerializedInstance.cpp \
+	warped/SharedDVFSManager.cpp \
 	warped/Simulation.cpp \
 	warped/SimulationConfiguration.cpp \
 	warped/SimulationManager.cpp \
@@ -297,16 +297,21 @@ libwarped_la_SOURCES = \
 	warped/SourceObject.cpp \
 	warped/Spinner.cpp \
 	warped/SplayTree.cpp \
-	warped/State.cpp \
 	warped/StartMessage.cpp \
+	warped/State.cpp \
 	warped/StateManagerFactory.cpp \
 	warped/StateManagerImplementationBase.cpp \
 	warped/TerminateToken.cpp \
+	warped/ThreadedCostAdaptiveStateManager.cpp \
+	warped/ThreadedDynamicOutputManager.cpp \
+	warped/ThreadedLazyOutputManager.cpp \
+	warped/ThreadedMatternGVTManager.cpp \
+	warped/ThreadedOutputEvents.cpp \
 	warped/TimeWarpCentralizedEventSetFactory.cpp \
+	warped/TimeWarpConfigurationManager.cpp \
 	warped/TimeWarpDecentralizedEventSetFactory.cpp \
 	warped/TimeWarpEventSet.cpp \
 	warped/TimeWarpEventSetFactory.cpp \
-	warped/TimeWarpConfigurationManager.cpp \
 	warped/TimeWarpMultiSet.cpp \
 	warped/TimeWarpMultiSetOneAntiMsg.cpp \
 	warped/TimeWarpMultiSetSchedulingManager.cpp \
@@ -320,27 +325,22 @@ libwarped_la_SOURCES = \
 	warped/Transceiver.cpp \
 	warped/UsefulWorkMessage.cpp \
 	warped/VTime.cpp \
+	warped/warped.cpp \
+	warped/WarpedDebug.cpp \
 	warped/WarpedMain.cpp \
-	warped/warped.cpp\
-	warped/ThreadedOutputEvents.cpp \
-    warped/ThreadedOutputManagerImplementationBase.cpp \
+    warped/StragglerEvent.cpp \
     warped/ThreadedAggressiveOutputManager.cpp \
+    warped/ThreadedChebyFossilCollManager.cpp \
+    warped/ThreadedOptFossilCollManager.cpp \
+    warped/ThreadedOutputManagerImplementationBase.cpp \
+    warped/ThreadedPeriodicStateManager.cpp \
+    warped/ThreadedStateManagerImplementationBase.cpp \
+    warped/ThreadedTimeWarpEventSet.cpp \
+    warped/ThreadedTimeWarpLoadBalancer.cpp \
     warped/ThreadedTimeWarpMultiSet.cpp \
     warped/ThreadedTimeWarpMultiSetLTSF.cpp \
-    warped/ThreadedTimeWarpLoadBalancer.cpp \
-    warped/ThreadedStateManagerImplementationBase.cpp \
-    warped/ThreadedPeriodicStateManager.cpp \
-    warped/ThreadedTimeWarpEventSet.cpp \
     warped/ThreadedTimeWarpMultiSetSchedulingManager.cpp \
-    warped/ThreadedTimeWarpSimulationManager.cpp\
-    warped/StragglerEvent.cpp\
-    warped/ThreadedOptFossilCollManager.cpp\
-    warped/ThreadedChebyFossilCollManager.cpp\
-	warped/ThreadedLazyOutputManager.cpp\
-	warped/ThreadedDynamicOutputManager.cpp\
-	warped/ThreadedMatternGVTManager.cpp\
-	warped/ThreadedCostAdaptiveStateManager.cpp\
-	warped/WarpedDebug.cpp
+    warped/ThreadedTimeWarpSimulationManager.cpp
 
 CLEANFILES=$(BUILT_SOURCES)
 
