@@ -5,7 +5,7 @@
 #include <set>
 #include <sched.h>
 #include <cstdio>
-#include <WarpedDebug/WarpedDebug.h>
+#include <WarpedDebug.h>
 
 using namespace std;
 

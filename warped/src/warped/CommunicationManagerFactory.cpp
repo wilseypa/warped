@@ -7,7 +7,7 @@
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
 #include <utils/ConfigurationScope.h>
-#include <WarpedDebug/WarpedDebug.h>
+#include <WarpedDebug.h>
 
 #ifdef USE_TIMEWARP
 #include "eclmpl/eclmpl.h"

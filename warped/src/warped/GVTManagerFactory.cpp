@@ -6,7 +6,7 @@
 #include "TimeWarpConfigurationManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 #include <utils/ConfigurationScope.h>
-#include <WarpedDebug/WarpedDebug.h>
+#include <WarpedDebug.h>
 
 GVTManagerFactory::GVTManagerFactory() {
 }

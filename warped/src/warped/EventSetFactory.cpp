@@ -5,7 +5,7 @@
 #include "SingleLinkedList.h"
 #include "SimulationConfiguration.h"
 #include "TimeWarpSimulationManager.h"
-#include <WarpedDebug/WarpedDebug.h>
+#include <WarpedDebug.h>
 
 using std::cerr;
 using std::endl;

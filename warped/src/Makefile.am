@@ -8,16 +8,16 @@ lib_LTLIBRARIES = libwarped.la
 if USE_TIMEWARP
 
 if HAVE_MPICH
-libwarped_la_LIBADD = -lutils -lmpich -lmpl -lpthread $(top_builddir)/include/WarpedDebug/libwarpeddebug.la 
+libwarped_la_LIBADD = -lutils -lmpich -lmpl -lpthread 
 else 
 if HAVE_MPI
-libwarped_la_LIBADD = -lutils -lmpi -lpthread $(top_builddir)/include/WarpedDebug/libwarpeddebug.la 
+libwarped_la_LIBADD = -lutils -lmpi -lpthread 
 else
-libwarped_la_LIBADD = -lutils -lpthread $(top_builddir)/include/WarpedDebug/libwarpeddebug.la 
+libwarped_la_LIBADD = -lutils -lpthread
 endif
 endif
 else
-libwarped_la_LIBADD = -lutils -lpthread $(top_builddir)/include/WarpedDebug/libwarpeddebug.la 
+libwarped_la_LIBADD = -lutils -lpthread
 endif
 
 WARPED_H_FILES = \
@@ -210,7 +210,8 @@ WARPED_H_FILES = \
 	warped/ThreadedDynamicOutputManager.h\
 	warped/ThreadedCostAdaptiveStateManager.h\
 	warped/LockedQueue.h\
-	warped/WorkerInformation.h
+	warped/WorkerInformation.h\
+	warped/WarpedDebug.h
 
 library_includedir=$(includedir)/warped
 library_include_HEADERS = $(WARPED_H_FILES) \
@@ -338,7 +339,8 @@ libwarped_la_SOURCES = \
 	warped/ThreadedLazyOutputManager.cpp\
 	warped/ThreadedDynamicOutputManager.cpp\
 	warped/ThreadedMatternGVTManager.cpp\
-	warped/ThreadedCostAdaptiveStateManager.cpp
+	warped/ThreadedCostAdaptiveStateManager.cpp\
+	warped/WarpedDebug.cpp
 
 CLEANFILES=$(BUILT_SOURCES)
 

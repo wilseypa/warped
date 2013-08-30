@@ -29,7 +29,7 @@ warped32_t getWarped32Max();
 warped32_t getWarped32Min();
 
 #include <iostream>
-#include <Debug/WarpedDebug.h>
+#include <WarpedDebug.h>
 
 #include <sstream>
 using std::ostringstream;
