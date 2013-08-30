@@ -7,7 +7,6 @@
 #include "TimeWarpMultiSet.h"
 #include "TimeWarpAppendQueue.h"
 #include "TimeWarpSimulationManager.h"
-#include <utils/ConfigurationChoice.h>
 #include "SimulationConfiguration.h"
 #include <iostream>
 using std::cerr;
@@ -230,8 +229,7 @@ TimeWarpReceiverQueue::handleAntiMessage( Event *event,
 
 void
 TimeWarpReceiverQueue::configure( SimulationConfiguration &configuration) {
-   const ConfigurationChoice *eventListChoice = configuration.findChoice("EVENTLIST");
-   string eventListValue = eventListChoice->getStringValue();
+   string eventListValue =  configuration.findChoice("EVENTLIST")->getStringValue();
 
    for(unsigned int count = 0; count < numberOfSimulationObjects; count++) {
      ReceiverQueueContainer* receiverQContainer = new ReceiverQueueContainer();

@@ -6,7 +6,6 @@
 #include "MsgAggregatingCommunicationManager.h"
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
-#include <utils/ConfigurationScope.h>
 #include <WarpedDebug.h>
 
 #ifdef USE_TIMEWARP

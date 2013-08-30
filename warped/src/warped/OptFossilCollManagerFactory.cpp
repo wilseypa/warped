@@ -5,7 +5,6 @@
 #include "TimeWarpConfigurationManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "ThreadedChebyFossilCollManager.h"
-#include <utils/ConfigurationScope.h>
 #include <WarpedDebug.h>
 
 OptFossilCollManagerFactory::OptFossilCollManagerFactory(){}
