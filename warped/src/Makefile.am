@@ -35,7 +35,6 @@ WARPED_H_FILES = \
 	warped/CommunicationManagerImplementationBase.h \
 	warped/Configurable.h \
 	warped/ConfigurationManager.h \
-	warped/ConfigurationManagerFactory.h \
 	warped/Configurer.h \
 	warped/ConsoleIO.cpp \
 	warped/ConsoleIO.h \
@@ -230,7 +229,6 @@ libwarped_la_SOURCES = \
 	warped/CommunicationManagerFactory.cpp \
 	warped/CommunicationManagerImplementationBase.cpp \
 	warped/Configurable.cpp \
-	warped/ConfigurationManagerFactory.cpp \
 	warped/Configurer.cpp \
 	warped/ControlManager.cpp \
 	warped/CostAdaptiveStateManager.cpp \

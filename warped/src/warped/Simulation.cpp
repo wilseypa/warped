@@ -1,12 +1,15 @@
 
 #include "Simulation.h"
+#include "SequentialConfigurationManager.h"
+#include "TimeWarpConfigurationManager.h"
 #include "SimulationConfiguration.h"
-#include "ConfigurationManagerFactory.h"
 #include "Application.h"
+#include "WarpedDebug.h"
 #include <utils/ConfigurationScope.h>
 #include <utils/ConfigurationChoice.h>
 #include <utils/ConfigurationValue.h>
-using std::cout;
+
+#include <iostream>
 
 Simulation::Simulation( Application *initApplication ) : myApplication( initApplication ){
 }
@@ -27,20 +30,29 @@ Simulation::instance( SimulationConfiguration *configuration,
 }
 
 void 
-Simulation::configure( SimulationConfiguration &configuration ){
-  const ConfigurationManagerFactory *cfgMgrFactory = ConfigurationManagerFactory::instance();
+Simulation::configure(SimulationConfiguration& configuration) {
+    // Decide which Simulation manager to use based on the configuraiton
 
-  myConfigurationManager = 
-    dynamic_cast<ConfigurationManager *>( cfgMgrFactory->allocate( configuration,
-								   myApplication));
-  ASSERT( myConfigurationManager != 0 );
-  myConfigurationManager->configure( configuration );
+    if (configuration.simulationTypeIs("Sequential")) {
+        myConfigurationManager = new SequentialConfigurationManager(myApplication);
+        debug::debugout << "Configured a SequentialSimulationManager" << std::endl;
+    } else if (configuration.simulationTypeIs("TimeWarp")
+               || configuration.simulationTypeIs("ThreadedTimeWarp")) {
+        myConfigurationManager = new TimeWarpConfigurationManager(configuration.getArguments(),
+                                                                  myApplication);
+        debug::debugout << "Configured a TimeWarpSimulationManager" << std::endl;
+    } else {
+        std::cerr << "Unknown Simulation type \"" << configuration.getSimulationType() << "\"" << std::endl;
+        exit(-1);
+    }
+
+    myConfigurationManager->configure(configuration);
 }
 
-SimulationManager *
-Simulation::getSimulationManager(){
-  ASSERT( myConfigurationManager != 0 );
-  return myConfigurationManager->getSimulationManager();
+SimulationManager*
+Simulation::getSimulationManager() {
+    ASSERT(myConfigurationManager != 0);
+    return myConfigurationManager->getSimulationManager();
 }
 
 
@@ -49,21 +61,21 @@ void
 Simulation::reportError(const string& msg, const SEVERITY level){
   switch(level){
   case NOTE:
-    cout << "Severity Level: NOTE" << endl;
-    cout << msg << endl;
+    std::cout << "Severity Level: NOTE" << std::endl;
+    std::cout << msg << std::endl;
     break;
   case WARNING:
-    cout << "Severity Level: WARNING" << endl;
-    cout << msg << endl;
+    std::cout << "Severity Level: WARNING" << std::endl;
+    std::cout << msg << std::endl;
     break;
   case ERROR:
-    cout << "Severity Level: ERROR" << endl;
-    cout << msg << endl;
+    std::cout << "Severity Level: ERROR" << std::endl;
+    std::cout << msg << std::endl;
     exit(-1);
     break;
   case ABORT:
-    cout << "Severity Level: ABORT" << endl;
-    cout << msg << endl;
+    std::cout << "Severity Level: ABORT" << std::endl;
+    std::cout << msg << std::endl;
     abort();
     break;
   default:
