@@ -1,5 +1,6 @@
 #include "InitializationMessageTest.h"
 #include <cppunit/extensions/HelperMacros.h>
+#include <string>
 
 const vector<string>
 InitializationMessageTest::getDefaultObjectNames(){
@@ -7,7 +8,7 @@ InitializationMessageTest::getDefaultObjectNames(){
   if( retval == 0 ){
     retval = new vector<string>;
     for( int i = 0; i < 27; i++ ){
-      retval->push_back(string("SimulationObject" + to_string(i)));
+      retval->push_back(string("SimulationObject" + std::to_string(i)));
     }
   }
   return *retval;
