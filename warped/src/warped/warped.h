@@ -51,8 +51,9 @@ extern std::ostream *wout, *werr;
 // used in the system are here.
 
 // Check if NULL is defined. If not define it here
-#ifndef NULL
-#define NULL   0
+#ifdef NULL
+#undef NULL
+#define NULL nullptr
 #endif
 
 // Define the ASSERT statement that will be turned on when the compiler
