@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-#define BINARY 2
+#define SAMPLING_FREQ 1000
 
 using namespace std;
 
@@ -154,7 +154,7 @@ void LocationObject::migrateLocationEvent(  IntVTime currentTime,
                                             LocationState *locationState  ) {
 
     /* Randomly decide whether to migrate any person */
-    if( randNumGen->genRandNum(BINARY) ) {
+    if( !randNumGen->genRandNum(SAMPLING_FREQ) ) {
 
         /* Decide a random location */
         string selectedLocation = diffusionNetwork->getLocationName();
