@@ -19,7 +19,11 @@ function set_config {
 	scheduleQCount=$3
 	loadBalancing=$4
 	loadBalancingMetric=$5
-	loadBalancingInterval=$6
+	loadBalancingTrigger=$6
+	loadBalancingNormalInterval=$7
+	loadBalancingNormalThresh=$8
+	loadBalancingRelaxedInterval=$9
+	loadBalancingRelaxedThresh=${10}
 
 	# Copy config file to tmp folder
 	cp parallel.config /tmp/$hostname.parallel.config
@@ -31,7 +35,8 @@ function set_config {
 	sed -i "s/ScheduleQCount : [0-9]*$/ScheduleQCount : "$scheduleQCount"/g" $configFile
 	sed -i "s/LoadBalancing : [A-Z]*$/LoadBalancing : "$loadBalancing"/g" $configFile
 	sed -i "s/LoadBalancingMetric : [A-Za-z]*$/LoadBalancingMetric : "$loadBalancingMetric"/g" $configFile
-	sed -i "s/LoadBalancingInterval : [0-9]*$/LoadBalancingInterval : "$loadBalancingInterval"/g" $configFile
+	sed -i "s/LoadBalancingTrigger : [A-Za-z]*$/LoadBalancingTrigger : "$loadBalancingTrigger"/g" $configFile
+	sed -i "s/LoadBalancingNormalInterval : [0-9]*$/LoadBalancingInterval : "$loadBalancingInterval"/g" $configFile
 }
 
 function run {
@@ -42,12 +47,17 @@ function run {
 	scheduleQCount=$5
 	loadBalancing=$6
 	loadBalancingMetric=$7
-	loadBalancingInterval=$8
-	simulateUntil=$9
+	loadBalancingTrigger=$8
+	loadBalancingNormalInterval=$9
+	loadBalancingNormalThresh=${10}
+	loadBalancingRelaxedInterval=${11}
+	loadBalancingRelaxedThresh=${12}
+	simulateUntil=${13}
 
 	echo -e "\nStarting $binary $binaryConfig Simulation: $threads threads, $scheduleQCount scheduleQueues, $scheduleQScheme, and loadBalancing $loadBalancing\n"
 
-	set_config $threads $scheduleQScheme $scheduleQCount $loadBalancing $loadBalancingMetric $loadBalancingInterval
+	set_config $threads $scheduleQScheme $scheduleQCount $loadBalancing $loadBalancingMetric $loadBalancingInterval $loadBalancingTrigger
+
 	if [ $simulateUntil == "-" ]
 	then
 		runCommand="./$binary -configuration $configFile -simulate $binaryConfig"
@@ -62,7 +72,7 @@ function run {
 	echo $rollbacks
 
 	# Write to log file
-	echo "$binary,$binaryConfig,$threads,$scheduleQScheme,$scheduleQCount,$loadBalancing,$loadBalancingMetric,$loadBalancingInterval,$simulateUntil,$runTime,$rollbacks" >> $logFile
+	echo "$binary,$binaryConfig,$threads,$scheduleQScheme,$scheduleQCount,$loadBalancing,$loadBalancingMetric,$loadBalancingInterval,$loadBalancingTrigger,$simulateUntil,$runTime,$rollbacks" >> $logFile
 
 	sleep 10
 }
@@ -73,7 +83,7 @@ logFile="scripts/logs/$hostname---$date.csv"
 
 # Write csv header
 ## Simulation Threads Scheme ScheduleQCount SimulateUntil Runtime Rollbacks
-echo "Simulation,SimulationConfig,Threads,Scheme,ScheduleQCount,LoadBalancing,LoadBalancingMetric,LoadBalancingInterval,SimulateUntil,Runtime,Rollbacks" > $logFile
+echo "Simulation,SimulationConfig,Threads,Scheme,ScheduleQCount,LoadBalancing,LoadBalancingMetric,LoadBalancingInterval,LoadBalancingTrigger,SimulateUntil,Runtime,Rollbacks" > $logFile
 
 trap control_c SIGINT
 
