@@ -80,9 +80,13 @@ const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int thread
 		this->releaseScheduleQueueLock(threadID);
 
 	} else if( scheduleQScheme == "LADDERQ" ) {
+        /* lock might not be needed later on */
+        this->getScheduleQueueLock(threadID);
 		if(!ladderQ->empty()) {
 			ret = &(ladderQ->begin()->getReceiveTime());
 		}
+		this->releaseScheduleQueueLock(threadID);
+
 	} else if( scheduleQScheme == "SPLAYTREE" ) {
 		this->getScheduleQueueLock(threadID);
 		if(splayTree->peekEvent()) {
