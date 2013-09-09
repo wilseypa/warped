@@ -21,7 +21,7 @@ using namespace std;
 const char delimiter = '_';
 const string prefixCkptPath = "/tmp/warpedOFCFiles/";
 
-static pthread_key_t threadKey;
+pthread_key_t threadKey;
 unsigned int threadID;
 
 ThreadedOptFossilCollManager::ThreadedOptFossilCollManager(
