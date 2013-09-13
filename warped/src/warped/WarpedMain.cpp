@@ -8,10 +8,11 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <iostream>
-#include <string>
 #include <cstdlib>
 #include <exception>
+#include <iostream>
+#include <string>
+#include <vector>
 
 // We need these to register their deserializers
 #include "CirculateInitializationMessage.h"
@@ -29,8 +30,8 @@
 #include "TerminateToken.h"
 #include "WarpedMain.h"
 
-WarpedMain::WarpedMain(Application* application, std::string configurationFileName,
-                       std::string simulateUntil,  bool debug) :
+WarpedMain::WarpedMain(Application* application, std::std::string configurationFileName,
+                       std::std::string simulateUntil,  bool debug) :
     errors(0),
     warnings(0),
     configurationFileName(configurationFileName),
@@ -60,31 +61,13 @@ WarpedMain::registerKernelDeserializers() {
     TerminateToken::registerDeserializer();
 }
 
-vector<string>
+std::vector<std::string>
 WarpedMain::buildArgumentVector(int argc, char** argv) {
-    vector<string> retval;
+    std::vector<std::string> retval;
     for (int i = 0; i < argc; i++) {
-        retval.push_back(string(argv[i]));
+        retval.push_back(std::string(argv[i]));
     }
     return retval;
-}
-
-SimulationConfiguration*
-WarpedMain::readConfiguration(const std::string& configurationFileName,
-                              const vector<string>& argumentVector) {
-    SimulationConfiguration* configuration = 0;
-    if (!configurationFileName.empty()) {
-        configuration = SimulationConfiguration::parseConfiguration(configurationFileName,
-                                                                    argumentVector);
-        if (configuration == 0) {
-            std::cerr << "There was a problem parsing configuration " << configurationFileName
-                      << ", exiting." << std::endl;
-            exit(-1);
-        } else {
-            std::cerr << "Using configuration file: " << configurationFileName << std::endl;
-        }
-    }
-    return configuration;
 }
 
 void
@@ -138,10 +121,9 @@ WarpedMain::getNextEventTime() {
     return mySimulation->getNextEventTime();
 }
 
-
 int
 WarpedMain::main(int argc, char** argv) {
-    vector<string> args = buildArgumentVector(argc, argv);
+    std::vector<std::string> args = buildArgumentVector(argc, argv);
     initializeSimulation(args);
 
     if (simulateUntil == "") {

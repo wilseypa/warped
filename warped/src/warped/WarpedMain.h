@@ -52,9 +52,6 @@ public:
   */
   static void registerKernelDeserializers();
 
-  SimulationConfiguration *readConfiguration( const string &configurationFileName,
-					      const vector<string> &argumentVector );
-  
   /**
      This does everything up until the moment that the simulation is about
      to start.  The SimulationManager that is returned can be used
@@ -87,7 +84,6 @@ public:
   const VTime &getNextEventTime();
 
 private:
-
   int errors;
   int warnings;
   string configurationFileName;
