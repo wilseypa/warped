@@ -87,12 +87,7 @@ public:
   const VTime &getNextEventTime();
 
 private:
-  /**
-     Builds a vector of strings from a standard "C"-style argument list.
-  */
-  vector<string> buildArgumentVector( int, char ** );
-  
-  // variables used to catching warnings or errors
+
   int errors;
   int warnings;
   string configurationFileName;
