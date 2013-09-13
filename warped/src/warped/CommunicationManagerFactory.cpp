@@ -73,7 +73,7 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
 		} else {
 			myThreadedSimulationManager->shutdown(
 					"Unknown CommunicationManager type \""
-							+ configuration.getCommunicationManagerType());
+							+ configuration.get_string({"TimeWarp", "CommunicationManager", "Type"}, "unset"));
 		}
 
 		return retval;
@@ -92,7 +92,7 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
   }
   else {
     mySimulationManager->shutdown( "Unknown CommunicationManager type \"" +
-				   configuration.getCommunicationManagerType() );
+				   configuration.get_string({"TimeWarp", "CommunicationManager", "Type"}, "unset"));
   }
 
   return retval;
