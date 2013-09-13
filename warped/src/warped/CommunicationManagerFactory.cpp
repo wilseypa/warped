@@ -59,7 +59,7 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
 #if USE_TIMEWARP
 	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		myPhysicalCommunicationLayer->physicalInit(configuration);
-		if (configuration.communicationManagerIs("DEFAULT")) {
+		if (configuration.get_string({"TimeWarp", "CommunicationManager", "Type"}, "default") == "default") {
 			retval = new DefaultCommunicationManager(
 					myPhysicalCommunicationLayer, myThreadedSimulationManager);
 			debug::debugout << "configured the default communication manager"

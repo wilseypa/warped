@@ -73,11 +73,11 @@
     //     TCPSelect   requires (--enable-timewarp)
     //     UDPSelect   requires (--enable-timewarp), not implemented yet
     // Type Options:
-    //     Default
+    //     default
     //     MessageAggregating - Not fully implemented yet.
     "CommunicationManager": {
         "PhysicalLayer": "MPI",
-        "Type": "Default"
+        "Type": "default"
     },
       
     // StateManager:

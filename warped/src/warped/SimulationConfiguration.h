@@ -45,7 +45,6 @@
 
 class SimulationConfiguration {
 public:
-    // SimulationConfiguration();
     SimulationConfiguration(const std::string& config_file_name);
     ~SimulationConfiguration();
 
