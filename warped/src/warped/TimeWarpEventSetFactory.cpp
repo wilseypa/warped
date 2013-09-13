@@ -1,6 +1,8 @@
-
 #include "DefaultTimeWarpEventSet.h"
 #include "TimeWarpEventSetFactory.h"
+
+#include <iostream>
+
 #include "TimeWarpMultiSet.h"
 #include "TimeWarpMultiSetOneAntiMsg.h"
 #include "TimeWarpSimulationManager.h"
@@ -8,13 +10,9 @@
 #include "SimulationConfiguration.h"
 #include "SchedulingData.h"
 
-
 #include "ThreadedTimeWarpMultiSet.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 
-
-using std::cerr;
-using std::endl;
 
 Configurable *
 TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
@@ -29,43 +27,43 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 	if (configuration.antiMessagesIs("ONE")) {
 		usingOneAntiMessageOpt = true;
 	}
+	
+	std::string eventListType = configuration.get_string({"EventList", "Type"}, "Default");
 #if USE_TIMEWARP
 	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
-		if (configuration.eventListTypeIs("MULTISET")) {
+		if (eventListType == "MultiSet") {
 			ThreadedTimeWarpEventSet *retvalue = 0;
 			retvalue = new ThreadedTimeWarpMultiSet(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
-			debug::debugout << "("
-					<< mySimulationManager->getSimulationManagerID()
+			debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 					<< ") configured an Dynamic Threaded MultiSet as the event set"
-					<< endl;
+					<< std::endl;
 			return retvalue;
 		} else {
-			mySimulationManager->shutdown(
-					"Event list type \"" + configuration.getEventListType()
-							+ "\" is not a valid choice.");
+			mySimulationManager->shutdown("Event list type \"" + eventListType
+											+ "\" is not a valid choice.");
 		}
 	}
 #endif
-	if (configuration.eventListTypeIs("DEFAULT")) {
+	if (eventListType == "Default") {
 		retval = new DefaultTimeWarpEventSet(mySimulationManager,
 				usingOneAntiMessageOpt);
 		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 				<< ") configured a DefaultTimeWarpEventSet as the event set"
-				<< endl;
-	} else if (configuration.eventListTypeIs("MULTISET")) {
+				<< std::endl;
+	} else if (eventListType == "MultiSet") {
 		if (usingOneAntiMessageOpt) {
 			retval = new TimeWarpMultiSetOneAntiMsg(mySimulationManager);
 			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a TimeWarpMultiSetOneAntiMsg as the event set"
-					<< endl;
+					<< std::endl;
 		} else {
 			retval = new TimeWarpMultiSet(mySimulationManager);
 			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a TimeWarpMultiSet as the event set"
-					<< endl;
+					<< std::endl;
 		}
 	}
 	else {
@@ -73,8 +71,6 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 				"Event list type \"" + configuration.getEventListType()
 						+ "\" is not a valid choice.");
 	}
-
-
 
 	return retval;
 }

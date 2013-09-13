@@ -1,4 +1,3 @@
-
 #include <WarpedConfig.h>
 #include "DefaultPhysicalCommunicationLayer.h"
 #include "CommunicationManagerFactory.h"
@@ -56,43 +55,43 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
     myPhysicalCommunicationLayer = new DefaultPhysicalCommunicationLayer();
     debug::debugout << "configured the default physical communication layer" << endl;
   }
+
+  std::string managerType = configuration.get_string({"TimeWarp", "CommunicationManager", "Type"},
+                                                     "Default");
 #if USE_TIMEWARP
 	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 		myPhysicalCommunicationLayer->physicalInit(configuration);
-		if (configuration.get_string({"TimeWarp", "CommunicationManager", "Type"}, "default") == "default") {
+		if (managerType == "Default") {
 			retval = new DefaultCommunicationManager(
 					myPhysicalCommunicationLayer, myThreadedSimulationManager);
 			debug::debugout << "configured the default communication manager"
 					<< endl;
-		} else if (configuration.communicationManagerIs("MessageAggregating")) {
+		} else if (managerType == "MessageAggregating") {
 			retval = new MsgAggregatingCommunicationManager(
 					myPhysicalCommunicationLayer, myThreadedSimulationManager);
 			debug::debugout
 					<< "configured a message aggregating communication manager"
 					<< endl;
 		} else {
-			myThreadedSimulationManager->shutdown(
-					"Unknown CommunicationManager type \""
-							+ configuration.get_string({"TimeWarp", "CommunicationManager", "Type"}, "unset"));
+			myThreadedSimulationManager->shutdown("Unknown CommunicationManager type \"" + managerType + "\"");
 		}
 
 		return retval;
 	}
 #endif
   myPhysicalCommunicationLayer->physicalInit( configuration );
-  if( configuration.communicationManagerIs( "DEFAULT" ) ){
+  if(managerType == "Default"){
     retval = new DefaultCommunicationManager( myPhysicalCommunicationLayer,
 					      mySimulationManager );
     debug::debugout << "configured the default communication manager" << endl;
   }
-  else if ( configuration.communicationManagerIs( "MessageAggregating" ) ){
-    retval = new MsgAggregatingCommunicationManager( myPhysicalCommunicationLayer,
-						     mySimulationManager );
+  else if (managerType == "MessageAggregating") {
+    retval = new MsgAggregatingCommunicationManager(myPhysicalCommunicationLayer,
+						     mySimulationManager);
     debug::debugout << "configured a message aggregating communication manager" << endl;
   }
   else {
-    mySimulationManager->shutdown( "Unknown CommunicationManager type \"" +
-				   configuration.get_string({"TimeWarp", "CommunicationManager", "Type"}, "unset"));
+    mySimulationManager->shutdown("Unknown CommunicationManager type \"" + managerType + "\"");
   }
 
   return retval;

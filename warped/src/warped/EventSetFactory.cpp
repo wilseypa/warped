@@ -7,9 +7,6 @@
 #include "TimeWarpSimulationManager.h"
 #include <WarpedDebug.h>
 
-using std::cerr;
-using std::endl;
-
 EventSetFactory::EventSetFactory(){}
 
 EventSetFactory::~EventSetFactory(){}
@@ -31,15 +28,14 @@ EventSetFactory::allocate( SimulationConfiguration &configuration,
   // meaning that a separate event set is to be maintained for each
   // simulation object.
 
-  if( configuration.eventListTypeIs( SplayTree::getType() ) ){
+  std::string eventListType = configuration.get_string({"EventList", "Type"}, "unset");
+  if (eventListType == SplayTree::getType()) {
     retval = new SplayTree();
-    debug::debugout << "Configured a SplayTree as the event set" << endl;
-  }
-  else if( configuration.eventListTypeIs( SingleLinkedList::getType() ) ){
+    debug::debugout << "Configured a SplayTree as the event set" << std::endl;
+  } else if (eventListType == SingleLinkedList::getType()) {
     retval = new SingleLinkedList();
-    debug::debugout << "Configured a SingleLinkedList as the event set" << endl;
-  }
-  else {
+    debug::debugout << "Configured a SingleLinkedList as the event set" << std::endl;
+  } else {
     mySimulationManager->shutdown( "Invalid EventList configuration value - \"" + 
 				   configuration.getEventListType() + "\"" );
   }

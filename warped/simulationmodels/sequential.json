@@ -2,12 +2,11 @@
     // This is a configuration file for the WARPED kernel that configures it
     // to run sequentially.
 
-    // Note: by convention, values with a key of '#' are considerred comments.
-
-    // The simulation type can be 'Sequential', 'TimeWarp', or 'ThreadedTimeWarp'
+    // The simulation type can be "Sequential", "TimeWarp", or "ThreadedTimeWarp"
     "Simulation": "Sequential",
 
     "EventList": {
+        // Sequential EventList types can be "SplayTree" or "SingleLinkedList"
         "Type": "SplayTree",
         "Organization":"Decentralized"
     }
