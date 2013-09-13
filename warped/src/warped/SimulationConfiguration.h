@@ -1,181 +1,73 @@
 #ifndef SIMULATION_CONFIGURATION_H
 #define SIMULATION_CONFIGURATION_H
 
-
+#include <cstdint>
 #include <string>
-#include <vector>
+#include <initializer_list>
 
-using std::string;
-using std::vector;
+#include "json/json.h"
 
-class ConfigurationScope;
+// This class holds configuration settings read in from a configuration file
+//
+// The current implementation requires the settings to be held in a json
+// object (map, in c++ terms). Objects can be nested arbitrarily.
+//
+// To access a configuration setting, call the as_* or get_* function on the
+// appropriate type. The as_* functions throw a std::runtime_error if the
+// requested key isn't in the configuration, or if the value can't be
+// converted to the requested type. The get_* functions return the provided
+// default value instead of throwing an exception.
+//
+// Because objects can be nested, the as_* and get_* functions take an
+// initializer list of arbitrary length that specifies the path to the setting
+// in the configuration. For example, if the configuration file looks like the
+// following:
+//
+// {
+//     "root": true,
+//     "nest": {
+//         "nested": "value"
+//     }
+// }
+//
+// The "root" key would be accesed with:
+//
+//      configuration.as_bool({"root"});
+//
+// And the "nested" key would be accesed with:
+//
+//      configuration.as_string({"nest", "nested"});
+//
+// The previous two examples would throw an exception if the keys didn't exist
+// in the dictionary. To return a default value instead, do the following:
+//
+//      configuration.as_string({"nest", "nested"}, "default value");
 
-/** This class represents a simulation configuration. */
 class SimulationConfiguration {
-
-	/** Simulation needs to be able to allocate SimulationConfigurations in
-	 the default case. */
-	friend class Simulation;
-
 public:
-	/**
-	 Parse a configuration file and return it.
+    // SimulationConfiguration();
+    SimulationConfiguration(const std::string& config_file_name);
+    ~SimulationConfiguration();
 
-	 @param configFileName The name of the configuration file.  Must be a
-	 valid file name relative to where the program was run from.
+    // These functions raise a std::runtime_error if the given key isn't
+    // present or the value can't be converted into the required type.
+    std::string as_string(std::initializer_list<std::string> list);
+    int as_int(std::initializer_list<std::string> list);
+    std::int64_t as_int64(std::initializer_list<std::string> list);
+    bool as_bool(std::initializer_list<std::string> list);
+    double as_double(std::initializer_list<std::string> list);
 
-	 @param argc The number of arguments in the command line.
-
-	 @param argv The arguments from the command line.
-	 */
-	static SimulationConfiguration *parseConfiguration(
-			const string &configFileName, const vector<string> &argumentVector);
-
-	/** This method returns additional command line arguments that were
-	 provided at startup.  */
-	const vector<string> &getArguments();
-
-	bool communicationManagerIs(const string &testValue) const;
-	const string getCommunicationManagerType() const;
-
-	/**
-	 If the EventList value is what is passed in, return true, else, false;
-	 */
-	bool eventListTypeIs(const string &testValue) const;
-	bool eventListOrganizationIs(const string &testValue) const;
-	/**
-	 Return the string of the EventList section of the config file, or
-	 "(none)".
-	 */
-	const string getEventListType() const;
-	const string getEventListOrganization() const;
-
-	/**
-	 If the ObjectQueue is what is passed in, return true, else, false;
-	 */
-	bool objectQueueTypeIs(const string &testValue) const;
-	/**
-	 Return the string of the ObjectQueue section of the config file, or
-	 "(none)".
-	 */
-	const string getObjectQueueType() const;
-	/**
-	 Return bool if numberOfBuckets and bucketWidth is successfully specified
-	 */
-	bool getObjectQueueNumberOfBuckets(unsigned int &numberOfBuckets) const;
-	bool getObjectQueueBucketWidth(unsigned int &bucketWidth) const;
-
-	/**
-	 If the GVTManager value is what is passed in, return true, else, false;
-	 */
-	bool gvtManagerTypeIs(const string &testValue) const;
-	/**
-	 Return the string of the GVTManager of the config file, or
-	 "(none)".
-	 */
-	const string getGVTManagerType() const;
-
-	/**
-	 If the OptFossilCollManager value is what is passed in, return true, else, false;
-	 */
-	bool optFossilCollManagerTypeIs(const string &testValue) const;
-	/**
-	 Return the string of the OptFossilCollManager of the config file, or
-	 "(none)".
-	 */
-	const string getOptFossilCollManagerType() const;
-
-	bool simulationTypeIs(const string &testValue) const;
-	const string getSimulationType() const;
-
-	/**
-	 Return the gvt period that was specified.
-	 @return true if an int was found, false otherwise.
-	 @param period The integer to write the period into if a period is
-	 found, unchanged otherwise.
-	 */
-	bool getGVTPeriod(unsigned int &period);
-
-	bool physicalLayerIs(const string &testValue) const;
-	const string getPhysicalLayerType() const;
-
-	bool outputManagerIs(const string &testValue) const;
-	const string getOutputManagerType() const;
-
-	bool getDynamicFilterDepth(unsigned int &filterDepth) const;
-	bool getAggressive2Lazy(double &aggr2lazy) const;
-	bool getLazy2Aggressive(double &lazy2aggr) const;
-	bool getThirdThreshold(double &thirdThreshold) const;
-
-	bool antiMessagesIs(const string &testValue) const;
-	const string getAntiMessagesType() const;
-
-	bool spinKeySet(const string &testValue) const;
-
-	bool schedulerTypeIs(const string &testValue) const;
-	const string getSchedulerType() const;
-	const string getScheduleQScheme() const;
-	const string getCausalityType() const;
-	bool getScheduleQCount(unsigned int &scheduleQCount) const;
-
-	bool stateManagerTypeIs(const string &testValue) const;
-	const string getStateManagerType() const;
-
-	bool getStatePeriod(unsigned int &period) const;
-
-	bool getWorkerThreadCount(unsigned int &workerThreadCount) const;
-
-	const string getSyncMechanism() const;
-
-	const string getLoadBalancing() const;
-
-	const string getLoadBalancingMetric() const;
-
-	const string getLoadBalancingTrigger() const;
-
-	bool getLoadBalancingVarianceThresh(double &varianceThreshold) const;
-
-	bool getLoadBalancingNormalInterval(unsigned int &intervalCount) const;
-
-	bool getLoadBalancingNormalThresh(unsigned int &thresholdCount) const;
-
-	bool getLoadBalancingRelaxedInterval(unsigned int &intervalCount) const;
-
-	bool getLoadBalancingRelaxedThresh(unsigned int &thresholdCount) const;
-
-	bool getOptFossilCollPeriod(unsigned int &period);
-
-	bool getOptFossilCollMinSamples(unsigned int &minSamples);
-
-	bool getOptFossilCollMaxSamples(unsigned int &maxSamples);
-
-	bool getOptFossilCollDefaultLength(unsigned int &defaultLength);
-
-	bool getOptFossilCollRiskFactor(double &riskFactor);
-
-	bool getDVFSStringOption(string, string&) const;
-
-	bool getDVFSIntOption(string, int&) const;
-
-	bool getDVFSDoubleOption(string, double&) const;
-
-	/**
-	 Returns the binary name which started this execution.  Presumably we
-	 will use this binary on every node.
-	 */
-	const string getBinaryName() const;
-
-	~SimulationConfiguration();
+    // These versions return the given default instead of throwing an error
+    std::string get_string(std::initializer_list<std::string> list,
+                           const std::string& default_value) noexcept;
+    int get_int(std::initializer_list<std::string> list, int default_value) noexcept;
+    std::int64_t get_int64(std::initializer_list<std::string> list, int64_t default_value);
+    bool get_bool(std::initializer_list<std::string> list, bool default_value) noexcept;
+    double get_double(std::initializer_list<std::string> list, double default_value) noexcept;
 
 private:
-	SimulationConfiguration(const ConfigurationScope *outerScope,
-			const vector<string> &argumentVector);
-
-	class Implementation;
-	Implementation *_impl;
-
-	//converts strings to all uppercase, used in comparing strings
-	const string stringToUpper(string s) const;
+    Json::Value get_value(std::initializer_list<std::string> list);
+    Json::Value root_;
 };
 
 #endif
