@@ -20,6 +20,8 @@ else
 libwarped_la_LIBADD = -lutils -lpthread
 endif
 
+libwarped_la_LIBADD += $(top_builddir)/include/json/libjsoncpp.la
+
 WARPED_H_FILES = \
 	$(ECLMPL_H_FILES) \
 	warped/AdaptiveOutputManager.h \
