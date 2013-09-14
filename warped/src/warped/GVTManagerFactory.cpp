@@ -30,11 +30,11 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 	//     one is found).
 	std::string gvtManagerType = configuration.get_string({"TimeWarp", "GVTManager", "Type"}, "Mattern");
 	std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+	int gvtPeriod = configuration.get_int({"TimeWarp", "GVTManager", "Period"}, 1000);
+
 #if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
 		if (gvtManagerType == "Mattern") {
-			unsigned int gvtPeriod = 1;
-			configuration.getGVTPeriod(gvtPeriod);
 			retval = new ThreadedMatternGVTManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent),
 					gvtPeriod);
@@ -51,8 +51,6 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 #endif
 
 	if (gvtManagerType == "Mattern") {
-		unsigned int gvtPeriod = 1;
-		configuration.getGVTPeriod(gvtPeriod);
 		retval = new MatternGVTManager(mySimulationManager, gvtPeriod);
 		debug::debugout << "("
 				<< mySimulationManager->getSimulationManagerID()
