@@ -14,13 +14,10 @@ eclmplPhysicalCommunicationLayer::~eclmplPhysicalCommunicationLayer(){
 } // End of desctructor.
 
 void
-eclmplPhysicalCommunicationLayer::physicalInit( SimulationConfiguration &configuration ) {
-	int argc = configuration.getArguments().size();
+eclmplPhysicalCommunicationLayer::physicalInit() {
+	int argc = 1;
 	char **argv = new char*[argc];
-	int i;
-	for( i = 0; i < argc; i++ ){
-		argv[i] = strdup( configuration.getArguments()[i].c_str() );
-	}
+  argv[0] = NULL;
 
 	connInterface->establishConnections(&argc, &argv);
 	physicalId = connInterface->getConnectionId();
@@ -29,9 +26,6 @@ eclmplPhysicalCommunicationLayer::physicalInit( SimulationConfiguration &configu
 	  initializeCommunicationLayerAttributes();
 	}
 
-	for( i = 0; i < argc; i++ ){
-		free( argv[i] );
-	}
 	delete [] argv;
 } // End of physicalInit(...).
 

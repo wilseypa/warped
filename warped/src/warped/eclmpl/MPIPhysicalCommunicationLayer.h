@@ -28,7 +28,7 @@ public:
       
       @param configuration The simulation configuration being used.      
   */
-  virtual void physicalInit( SimulationConfiguration &configuration );
+  virtual void physicalInit();
 
   /** Get the Id of the simulation manager.
 
@@ -87,17 +87,9 @@ private:
   void checkPendingSends();
 
   /**
-     Takes an argument vector and turns it back into C-style arguments required
-     by MPI.
-  */
-  void getCStyleArguments( int &argc, 
-			   char ** &argv,
-			   const vector<string> &arguments );
-
-  /**
      Does the dirty work of actually starting MPI.
   */
-  void startMPI( const vector<string> &arguments );
+  void startMPI();
 
   
   vector<MPIMessage> pendingSends;

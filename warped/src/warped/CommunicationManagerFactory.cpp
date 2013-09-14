@@ -60,7 +60,7 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
                                                      "Default");
 #if USE_TIMEWARP
 	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
-		myPhysicalCommunicationLayer->physicalInit(configuration);
+		myPhysicalCommunicationLayer->physicalInit();
 		if (managerType == "Default") {
 			retval = new DefaultCommunicationManager(
 					myPhysicalCommunicationLayer, myThreadedSimulationManager);
@@ -79,7 +79,7 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
 		return retval;
 	}
 #endif
-  myPhysicalCommunicationLayer->physicalInit( configuration );
+  myPhysicalCommunicationLayer->physicalInit();
   if(managerType == "Default"){
     retval = new DefaultCommunicationManager( myPhysicalCommunicationLayer,
 					      mySimulationManager );

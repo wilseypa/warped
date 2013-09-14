@@ -12,40 +12,23 @@ MPIPhysicalCommunicationLayer::MPIPhysicalCommunicationLayer(){};
 MPIPhysicalCommunicationLayer::~MPIPhysicalCommunicationLayer(){};
 
 void
-MPIPhysicalCommunicationLayer::getCStyleArguments( int &argc, 
-						   char ** &argv,
-						   const vector<string> &arguments ){
-  argc = arguments.size();
-  argv = new char*[argc];
-  if (argc > 0) {
-    for( int i = 0; i < argc; i++ ){
-        argv[i] = const_cast<char *>(arguments[i].c_str());
-  //      debug::debugout << "actual MPIArgs[" << i << "] = " << argv[i] << std::endl;
-    }
-  }else {
-      argc = 1;
-      argv[0] = const_cast<char *>(" ");
-  }
-}
-
-void
-MPIPhysicalCommunicationLayer::startMPI( const vector<string> &arguments ){
+MPIPhysicalCommunicationLayer::startMPI(){
+  // MPI_Init requires command line arguments, but doesn't use them. Just give
+  // it an empty vector.
   int argc = 0;
-  char **argv = 0;
-  getCStyleArguments( argc, argv, arguments );
+  char **argv = new char*[1];
+  argv[0] = NULL;
 
   debug::debugout << "About to call MPI_Init" << endl;
   MPI_Init( &argc, &argv );
   debug::debugout << "Done with MPI_Init" << endl;
 
-  // MPICH Rewrites these arguments out from under us - we can't delete the
-  // values inside the array.  We'll delete the array at list.
   delete [] argv;
 }
 
 void
-MPIPhysicalCommunicationLayer::physicalInit( SimulationConfiguration &configuration ){
-  startMPI( configuration.getArguments() );
+MPIPhysicalCommunicationLayer::physicalInit(){
+  startMPI();
   mySimulationManagerID = physicalGetId();
 }
 

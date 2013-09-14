@@ -28,7 +28,7 @@ public:
 
       @param configuration The SimulationConfiguration to use for this run.
   */
-  void physicalInit( SimulationConfiguration &configuration );
+  void physicalInit();
 
   /** Get the Id of the simulation manager.
 

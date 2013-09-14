@@ -8,7 +8,7 @@ DefaultPhysicalCommunicationLayer::DefaultPhysicalCommunicationLayer(){};
 DefaultPhysicalCommunicationLayer::~DefaultPhysicalCommunicationLayer(){};
 
 void
-DefaultPhysicalCommunicationLayer::physicalInit( SimulationConfiguration &configuration ){
+DefaultPhysicalCommunicationLayer::physicalInit(){
    // there is nothing to be done for a
    // DefaultPhysicalCommunicationLayer since all objects are on one
    // simulation manager and so no network communication will take

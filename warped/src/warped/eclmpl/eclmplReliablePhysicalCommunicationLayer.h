@@ -26,11 +26,8 @@ public:
   virtual ~eclmplReliablePhysicalCommunicationLayer();
   
   /** Init physical layer.
-
-      @param argc Number of command line argument.
-      @parm argv Command line arguments.
   */
-  virtual void physicalInit( SimulationConfiguration &configuration );
+  virtual void physicalInit();
 
   /** Get the Id of the simulation manager.
 

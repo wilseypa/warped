@@ -43,11 +43,8 @@ public:
   /** Init physical layer.
 
       This is a pure virtual function that has to be overriden.
-
-      @param argc Number of command line argument.
-      @parm argv Command line arguments.
   */
-  virtual void physicalInit( SimulationConfiguration &configuration ) = 0;
+  virtual void physicalInit() = 0;
   
   /** Get the Id of the simulation manager.
 

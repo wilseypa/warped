@@ -35,13 +35,10 @@ eclmplReliablePhysicalCommunicationLayer::~eclmplReliablePhysicalCommunicationLa
 } // End of desctructor.
 
 void
-eclmplReliablePhysicalCommunicationLayer::physicalInit( SimulationConfiguration &configuration ) {
-	int argc = configuration.getArguments().size();
+eclmplReliablePhysicalCommunicationLayer::physicalInit() {
+	int argc = 0;
 	char **argv = new char*[argc];
-	int i;
-	for( i = 0; i < argc; i++ ){
-		argv[i] = strdup( configuration.getArguments()[i].c_str() );
-	}
+  argv[0] = NULL;
 
 	connInterface->establishConnections(&argc, &argv);
 	physicalId = connInterface->getConnectionId();
@@ -51,9 +48,6 @@ eclmplReliablePhysicalCommunicationLayer::physicalInit( SimulationConfiguration 
 		retransmissionTimer->start();
 	}
 
-	for( i = 0; i < argc; i++ ){
-		free( argv[i] );
-	}
 	delete [] argv;
 } // End of physicalInit(...).
 

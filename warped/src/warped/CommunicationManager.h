@@ -95,9 +95,8 @@ public:
 	 */
 	virtual unsigned int checkPhysicalLayerForMessages(int = 1) = 0;
 
-	void initializePhysicalCommunicationLayer(
-			SimulationConfiguration &configuration) {
-		myPhysicalCommunicationLayer->physicalInit(configuration);
+	void initializePhysicalCommunicationLayer() {
+		myPhysicalCommunicationLayer->physicalInit();
 	}
 
 	/** Get the id of this communication manager.

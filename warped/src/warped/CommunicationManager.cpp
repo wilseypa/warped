@@ -35,6 +35,6 @@ CommunicationManager::registerMessageType( const string &messageType,
 
 void   
 CommunicationManager::configure( SimulationConfiguration &configuration ){
-  initializePhysicalCommunicationLayer( configuration );
+  initializePhysicalCommunicationLayer();
   initializeCommunicationManager();
 }
