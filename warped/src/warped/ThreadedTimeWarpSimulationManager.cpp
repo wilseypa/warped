@@ -333,10 +333,6 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 				if (GVTTokenPending) {
 					if (updateLVTfromArray()) {
 						myGVTManager->calculateGVT();
-						//myEventSet->moveLP(2,(int)LTSFDestTemp);
-						//myEventSet->moveLP(4,(int)LTSFDestTemp);
-						//myEventSet->moveLP(6,(int)LTSFDestTemp);
-						//LTSFDestTemp = !LTSFDestTemp;
 						//Reset the GVT flag so the Worker thread can increase GVT Period
 						bool checkGVTOn = __sync_bool_compare_and_swap(
 								&checkGVT, true, false);
@@ -355,7 +351,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 			}
 		}
 		// Initiate load balancer measurement / movement
-		if (loadBalancing == "ON" && loadBalancingTrigger == "MASTERPOLL") {
+		if (loadBalancing == "ON" && loadBalancingTrigger == "MasterPoll") {
 			loadBalancer->balanceCheck();
 		}
 		//Clear message Buffer
@@ -1063,7 +1059,7 @@ void ThreadedTimeWarpSimulationManager::configure(
 				getLoadBalancingNormalThresh(),
 				getLoadBalancingRelaxedInterval(),
 				getLoadBalancingRelaxedThresh());
-		if (loadBalancingTrigger == "ROLLBACK") {
+		if (loadBalancingTrigger == "Rollback") {
 			dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet)->enLoadBalancer(loadBalancer);
 		}
 	}

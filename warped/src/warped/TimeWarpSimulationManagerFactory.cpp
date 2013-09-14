@@ -3,8 +3,8 @@
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-using std::cerr;
-using std::endl;
+
+#include <string>
 
 TimeWarpSimulationManagerFactory::TimeWarpSimulationManagerFactory(){}
 
@@ -20,75 +20,45 @@ TimeWarpSimulationManagerFactory::allocate(
 
     std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
 
-
 	if (simulationType == "ThreadedTimeWarp") {
 		//Count the number of threads, if none specified try reading the proc file
-		unsigned int numberOfWorkerThreads = 0;
+		int numberOfWorkerThreads = configuration.get_int({"TimeWarp", "ThreadControl", "WorkerThreadCount"}, 4);
 		//Specify the synchronization mechanism
-		string syncMechanism = "(none)";
+		std::string syncMechanism = configuration.get_string({"TimeWarp", "ThreadControl", "AntiMessages"},
+                                                     			"MUTEX");
 		//Specify the load balancing option
-		string loadBalancing = "(none)";
+		std::string loadBalancing = configuration.get_string({"TimeWarp", "ThreadControl", "LoadBalancing"},
+                                                     			"OFF");
 		//Specify the load balancing metric
-		string loadBalancingMetric = "(none)";
+		std::string loadBalancingMetric = configuration.get_string({"TimeWarp", "ThreadControl", "LoadBalancingMetric"},
+                                                     			"EventExecutionRatio");
 		//Specify the load balancing trigger 
-		string loadBalancingTrigger = "(none)";
+		std::string loadBalancingTrigger = configuration.get_string({"TimeWarp", "ThreadControl", "LoadBalancingTrigger"},
+                                                     			"Rollback");
 		//Read the load balancing variance threshold
-		double loadBalancingVarianceThresh = 0.0;
+		double loadBalancingVarianceThresh = configuration.get_double({"TimeWarp", "ThreadControl", "LoadBalancingVarianceThresh"}, 
+																		0.2);
 		//Read the specified interval for normal load balancing
-		unsigned int loadBalancingNormalInterval = 0;
+		int loadBalancingNormalInterval = configuration.get_int({"TimeWarp", "ThreadControl", "LoadBalancingNormalInterval"}, 
+																3);
 		//Read the specified threshold for normal load balancing
-		unsigned int loadBalancingNormalThresh = 0;
+		int loadBalancingNormalThresh = configuration.get_int({"TimeWarp", "ThreadControl", "LoadBalancingNormalThresh"}, 
+																5);
 		//Read the specified interval for relaxed load balancing
-		unsigned int loadBalancingRelaxedInterval = 0;
+		int loadBalancingRelaxedInterval = configuration.get_int({"TimeWarp", "ThreadControl", "LoadBalancingRelaxedInterval"}, 
+																15);
 		//Read the specified threshold for relaxed load balancing
-		unsigned int loadBalancingRelaxedThresh = 0;
+		int loadBalancingRelaxedThresh = configuration.get_int({"TimeWarp", "ThreadControl", "LoadBalancingRelaxedThresh"}, 
+																2);
 		//Specify the schedule queue scheme
-		string scheduleQScheme = "(none)";
+		std::string scheduleQScheme = configuration.get_string({"TimeWarp", "Scheduler", "ScheduleQScheme"},
+                                                     			"MULTISET");
 		//Specify the schedule queue causality type
-		string causalityType = "(none)";
+		std::string causalityType = configuration.get_string({"TimeWarp", "Scheduler", "CausalityType"},
+                                                     			"STRICT");
 		//Count the number of schedule queues, if none specified try reading the proc file
-		unsigned int scheduleQCount = 0;
+		int scheduleQCount = configuration.get_int({"TimeWarp", "Scheduler", "ScheduleQCount"}, 2);
 
-		if (!configuration.getWorkerThreadCount(numberOfWorkerThreads)) {
-			//numberOfWorkerThreads = GetProcCount(); // need to implement this GetProcCount for Threaded Simulator
-			cerr << "Number of Threads has not been mentioned in the file!" << endl;
-		}
-		if ( (syncMechanism = configuration.getSyncMechanism()) == "(none)" ) {
-			cerr << "Synchronization mechanism has not been mentioned in the file!" << endl;
-		}
-		if ( (loadBalancing = configuration.getLoadBalancing()) == "(none)" ) {
-			cerr << "Load Balancing option has not been mentioned in the file!" << endl;
-		}
-		if ( (loadBalancingMetric = configuration.getLoadBalancingMetric()) == "(none)" ) {
-			cerr << "Load balancing metric has not been mentioned in the file!" << endl;
-		}
-		if ( (loadBalancingTrigger = configuration.getLoadBalancingTrigger()) == "(none)" ) {
-			cerr << "Load balancing trigger has not been mentioned in the file!" << endl;
-		}
-		if (!configuration.getLoadBalancingVarianceThresh(loadBalancingVarianceThresh)) {
-			cerr << "Load balancing variance threshold has not been mentioned in the file!" << endl;
-		}
-		if (!configuration.getLoadBalancingNormalInterval(loadBalancingNormalInterval)) {
-			cerr << "Load balancing normal interval has not been mentioned in the file!" << endl;
-		}
-		if (!configuration.getLoadBalancingNormalThresh(loadBalancingNormalThresh)) {
-			cerr << "Load balancing normal thresh has not been mentioned in the file!" << endl;
-		}
-		if (!configuration.getLoadBalancingRelaxedInterval(loadBalancingRelaxedInterval)) {
-			cerr << "Load balancing relaxed interval has not been mentioned in the file!" << endl;
-		}
-		if (!configuration.getLoadBalancingRelaxedThresh(loadBalancingRelaxedThresh)) {
-			cerr << "Load balancing relaxed threshold has not been mentioned in the file!" << endl;
-		}
-		if ( (scheduleQScheme = configuration.getScheduleQScheme()) == "(none)" ) {
-			cerr << "Schedule Queue scheme has not been mentioned in the file!" << endl;
-		}
-		if ( (causalityType = configuration.getCausalityType()) == "(none)" ) {
-			cerr << "Schedule Queue causality type has not been mentioned in the file!" << endl;
-		}
-		if (!configuration.getScheduleQCount(scheduleQCount)) {
-			cerr << "Number of schedule queues has not been mentioned in the file!" << endl;
-		}
 		ThreadedTimeWarpSimulationManager *retvalue = 0;
         	retvalue = new ThreadedTimeWarpSimulationManager(numberOfWorkerThreads, syncMechanism, 
 					loadBalancing, loadBalancingMetric, loadBalancingTrigger, loadBalancingVarianceThresh, 
