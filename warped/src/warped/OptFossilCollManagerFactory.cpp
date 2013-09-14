@@ -35,11 +35,11 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 	if (optFossilCollManagerType == "Cheby") {
 		int checkpointPeriod = configuration.get_int({"TimeWarp", "OptFossilCollManager", "CheckpointTime"}, 
 													1000);
-		unsigned int minSamples = 64;
+		int minSamples = configuration.get_int({"TimeWarp", "OptFossilCollManager", "MinimumSamples"}, 
+												64);
 		unsigned int maxSamples = 100;
 		unsigned int defaultLength = 2000;
 		double riskFactor = 0.99;
-		configuration.getOptFossilCollMinSamples(minSamples);
 		configuration.getOptFossilCollMaxSamples(maxSamples);
 		configuration.getOptFossilCollDefaultLength(defaultLength);
 		configuration.getOptFossilCollRiskFactor(riskFactor);
