@@ -41,8 +41,8 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
     retval = new TimeWarpMultiSetSchedulingManager( mySimulationManager );
     debug::debugout << " a TimeWarpMultiSetSchedulingManager." << endl;
   } else {
-    dynamic_cast<TimeWarpSimulationManager *>(parent)->shutdown( "Unknown SCHEDULER choice \"" +
-                                                                  configuration.getSchedulerType() + "\"" );
+    dynamic_cast<TimeWarpSimulationManager *>(parent)->shutdown(
+       "Unknown SCHEDULER choice \"" + schedulerType + "\"" );
   }
   
 
@@ -56,8 +56,7 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
 			debug::debugout << " a Threaded TimeWarpMultiSetSchedulingManager." << endl;
 		} else {
 			dynamic_cast<TimeWarpSimulationManager *> (parent)->shutdown(
-					"Unknown SCHEDULER choice \""
-							+ configuration.getSchedulerType() + "\"");
+					"Unknown SCHEDULER choice \"" + schedulerType + "\"");
 		}
 	}
 #endif
