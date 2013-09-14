@@ -28,10 +28,11 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 	//     a GVT estimation period (if any; defaults to 1). Then
 	//     instantiate the MatternGVTStateManager with a state period (if
 	//     one is found).
+	std::string gvtManagerType = configuration.get_string({"TimeWarp", "GVTManager", "Type"}, "Mattern")
 #if USE_TIMEWARP
 	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
 
-		if (configuration.gvtManagerTypeIs("MATTERN")) {
+		if (gvtManagerType == "Mattern") {
 			unsigned int gvtPeriod = 1;
 			configuration.getGVTPeriod(gvtPeriod);
 			retval = new ThreadedMatternGVTManager(
@@ -50,7 +51,7 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 #endif
 
 	if (!(configuration.simulationTypeIs("DTTimeWarp"))) {
-		if (configuration.gvtManagerTypeIs("MATTERN")) {
+		if (gvtManagerType == "Mattern") {
 			unsigned int gvtPeriod = 1;
 			configuration.getGVTPeriod(gvtPeriod);
 			retval = new MatternGVTManager(mySimulationManager, gvtPeriod);
@@ -58,9 +59,7 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a Mattern GVT Manager with period = "
 					<< gvtPeriod << endl;
-		}
-
-		else {
+		} else {
 			mySimulationManager->shutdown(
 					"Unknown GVTManager choice \""
 							+ configuration.getGVTManagerType() + "\"");
