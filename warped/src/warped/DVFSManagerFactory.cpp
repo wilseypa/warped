@@ -6,6 +6,8 @@
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
 
+#include <string>
+
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -23,30 +25,30 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
     dynamic_cast<TimeWarpSimulationManager *>( parent );
   ASSERT(mySimulationManager);
 
-  string type = "NONE";
-  configuration.getDVFSStringOption("Type", type);
-  if(type == "NONE") {
+  std::string dvfsManagerType = configuration.get_string({"TimeWarp", "DVFSManager", "Type"},
+                                                        "None");
+  std::string metric = configuration.get_string({"TimeWarp", "DVFSManager", "UsefulWorkMetric"},
+                                                        "Rollbacks");
+  std::string al = configuration.get_string({"TimeWarp", "DVFSManager", "Algorithm"},
+                                                        "Fixed");
+  bool dvfsDebugPrint = configuration.get_bool({"TimeWarp", "DVFSManager", "DebugPrint"}, false);
+
+  if(dvfsManagerType == "None") {
     return NULL;
   }
 
-  string metric = "ROLLBACKS";
-  string al = "FIXED";
   int p = 0;
   int firsize = 16;
   double threshold = 0.1;
   configuration.getDVFSIntOption("Period", p);
   configuration.getDVFSIntOption("FIRSize", firsize);
   configuration.getDVFSDoubleOption("Threshold", threshold);
-  configuration.getDVFSStringOption("UsefulWorkMetric", metric);
-  configuration.getDVFSStringOption("Algorithm", al);
 
   DVFSManager::UsefulWorkMetric uwm;
-  if(metric == "ROLLBACKS")
+  if(metric == "Rollbacks")
     uwm = DVFSManager::ROLLBACKS;
-  else if(metric == "ROLLBACKFRACTION")
+  else if(metric == "RollbackFraction")
     uwm = DVFSManager::ROLLBACK_FRACTION;
-  //else if(metric == "EFFECTIVEUTILIZATION")
-  //  uwm = DVFSManager::EFFECTIVE_UTILIZATION;
   else {
     stringstream err;
     err << "DVFSManager: UsefulWorkMetric " << metric << " is invalid. "
@@ -56,13 +58,13 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   }
 
   DVFSManager::Algorithm alg;
-  if(al == "FIXED")
+  if(al == "Fixed")
     alg = DVFSManager::FIXED;
-  else if(al == "PERFORMANCE")
+  else if(al == "Performance")
     alg = DVFSManager::PERFORMANCE;
-  else if(al == "POWER")
+  else if(al == "Power")
     alg = DVFSManager::POWER;
-  else if(al == "HYBRID")
+  else if(al == "Hybrid")
     alg = DVFSManager::HYBRID;
   else {
     stringstream err;
@@ -72,40 +74,24 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
     mySimulationManager->shutdown(err.str());
   }
 
-  const char* trueFalseOptions[] = {"DebugPrint"};
-  int numTrueFalse = sizeof(trueFalseOptions) / sizeof(const char*);
-  bool trueFalseValues[numTrueFalse];
-  for(int i=0; i < numTrueFalse; i++) {
-    string val = "FALSE";
-    configuration.getDVFSStringOption(trueFalseOptions[i], val);
-    if(val != "TRUE" && val != "FALSE") {
-      stringstream err;
-      err << "DVFSManager: option " << trueFalseOptions[i]
-          << " is invalid. Expected True / False.  Aborting simulation."
-          << endl;
-      mySimulationManager->shutdown(err.str());
-    }
-    trueFalseValues[i] = val == "TRUE";
-  }
-
-  if(type == "SHARED" || type == "DISTRIBUTED") {
+  if(dvfsManagerType == "Shared" || dvfsManagerType == "Distributed") {
     cout << "("
          << mySimulationManager->getSimulationManagerID()
-         << ") configured a " << type << " DVFS Manager" << endl
+         << ") configured a " << dvfsManagerType << " DVFS Manager" << endl
          << "Algorithm: " << al << endl
          << "Period: " << p << endl
          << "FIR Size: " << firsize << endl
          << "Useful work metric: " << metric << endl
          << "Threshold: " << threshold << endl;
-         if(trueFalseValues[0])
+         if(dvfsDebugPrint)
            cout <<  "Writing trace to csv" << endl;
 
-    if(type == "SHARED")
+    if(dvfsManagerType == "Shared")
       return new SharedDVFSManager(mySimulationManager,
                                    p,
                                    firsize,
                                    alg,
-                                   trueFalseValues[0],
+                                   dvfsDebugPrint,
                                    uwm,
                                    threshold);
 
@@ -113,13 +99,13 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
                                       p,
                                       firsize,
                                       alg,
-                                      trueFalseValues[0],
+                                      dvfsDebugPrint,
                                       uwm,
                                       threshold);
   }
   else {
     stringstream err;
-    cerr << "DVFSManager: invalid type '" << type << "'." << endl
+    cerr << "DVFSManager: invalid type '" << dvfsManagerType << "'." << endl
          << "Valid types are None | Shared | Distributed. Aborting simulation.";
     mySimulationManager->shutdown(err.str());
   }

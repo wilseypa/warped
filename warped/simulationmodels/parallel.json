@@ -94,8 +94,7 @@
     // Type Options:
     //     Lazy, Dynamic, Aggressive 
     // AntiMessages Options: 
-    //     Default
-    // One
+    //     Default, One
     // FilterDepth, AggrToLazyRatio, LazyToAggrRatio & ThirdThreshold
     // are used for Dynamic Cancellation
     "OutputManager": {
@@ -143,7 +142,7 @@
     // Threshold: Float
     //   Minimum distance from average the Useful Work Index must be for possible 
     //   frequency adjustment
-    // DebugPrint: True | False
+    // DebugPrint: true | false
     //   Whether to print useful work / frequency information each cycle
     // Period: Integer
     //   Interval in seconds at which to measure useful work and change freqs
