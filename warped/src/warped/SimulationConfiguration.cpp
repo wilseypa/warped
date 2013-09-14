@@ -5,8 +5,10 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <stringstream>
 
 #include "json/json.h"
+#include "WarpedDebug.h"
 
 SimulationConfiguration::SimulationConfiguration(const std::string& config_file_name) {
     std::ifstream in(config_file_name);
@@ -39,7 +41,15 @@ Json::Value SimulationConfiguration::get_value(std::initializer_list<std::string
         // extended to support null values in the configuration file, this
         // check would need to change.
         if (!value) {
-            throw std::runtime_error(std::string("Key \"") + elem + "\" does not exist");
+            std::stringstream ss;
+            ss << "Key {";
+            for (auto elem2 : list) {
+                ss << '"' << elem2 << "\" ";
+            }
+            ss << "} does not exist";
+
+            debug::debugout << ss.str() << '\n';
+            throw std::runtime_error(ss.str());
         }
     }
 
