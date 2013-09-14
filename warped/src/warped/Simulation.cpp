@@ -44,7 +44,7 @@ Simulation::configure(SimulationConfiguration& configuration) {
                                                                   myApplication);
         debug::debugout << "Configured a TimeWarpSimulationManager" << std::endl;
     } else {
-        std::cerr << "Unknown Simulation type \"" << configuration.getSimulationType() << "\"" << std::endl;
+        std::cerr << "Unknown Simulation type \"" << simulationType << "\"" << std::endl;
         exit(-1);
     }
 
