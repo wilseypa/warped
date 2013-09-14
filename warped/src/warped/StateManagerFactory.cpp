@@ -71,9 +71,7 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 					<< statePeriod << endl;
 			return retvalue;
 		} else {
-			mySimulationManager->shutdown(
-					"Unknown StateManager choice \""
-							+ configuration.getStateManagerType() + "\"");
+			mySimulationManager->shutdown("Unknown StateManager choice \"" + stateManagerType + "\"");
 		}
 	}
 #endif
@@ -92,9 +90,7 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 				<< ") configured an Adaptive State Manager with period = "
 				<< statePeriod << endl;
 	} else {
-		mySimulationManager->shutdown(
-				"Unknown StateManager choice \""
-						+ configuration.getStateManagerType() + "\"");
+		mySimulationManager->shutdown("Unknown StateManager choice \"" + stateManagerType + "\"");
 	}
 	return retval;
 }
