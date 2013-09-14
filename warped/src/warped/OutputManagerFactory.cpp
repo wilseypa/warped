@@ -34,15 +34,17 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 			dynamic_cast<TimeWarpSimulationManager *> (parent);
 	ASSERT( mySimulationManager != 0 );
 
-	if (configuration.antiMessagesIs("ONE")) {
-		mySimulationManager->setOneAntiMsg(true);
-	}
-
+	std::string antiMessages = configuration.get_string({"TimeWarp", "OutputManager", "AntiMessages"},
+                                                     		"Default");
 	std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
 	std::string outputManagerType = configuration.get_string({"TimeWarp", "OutputManager", "Type"},
                                                      		"Aggressive");
-	// the following cases are possible:
 
+	if (antiMessages == "One") {
+		mySimulationManager->setOneAntiMsg(true);
+	}
+
+	// the following cases are possible:
 	// (1) AggressiveOutputManager
 	// (2) LazyOutputManager
 	// (3) DynamicOutputManager

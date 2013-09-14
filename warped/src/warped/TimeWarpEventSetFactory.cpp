@@ -23,13 +23,15 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 
 	ASSERT( mySimulationManager != 0 );
 
-	bool usingOneAntiMessageOpt = false;
-	if (configuration.antiMessagesIs("ONE")) {
-		usingOneAntiMessageOpt = true;
-	}
-	
+	std::string antiMessages = configuration.get_string({"TimeWarp", "OutputManager", "AntiMessages"},
+                                                     		"Default");
 	std::string eventListType = configuration.get_string({"EventList", "Type"}, "Default");
     std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+
+	bool usingOneAntiMessageOpt = false;
+	if (antiMessages == "One") {
+		usingOneAntiMessageOpt = true;
+	}
 
 #if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
