@@ -36,8 +36,7 @@ EventSetFactory::allocate( SimulationConfiguration &configuration,
     retval = new SingleLinkedList();
     debug::debugout << "Configured a SingleLinkedList as the event set" << std::endl;
   } else {
-    mySimulationManager->shutdown( "Invalid EventList configuration value - \"" + 
-				   configuration.getEventListType() + "\"" );
+    mySimulationManager->shutdown( "Invalid EventList configuration value - \"" + eventListType + "\"" );
   }
 
   return retval;

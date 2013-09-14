@@ -69,11 +69,9 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 					<< ") configured a TimeWarpMultiSet as the event set"
 					<< std::endl;
 		}
-	}
-	else {
-		mySimulationManager->shutdown(
-				"Event list type \"" + configuration.getEventListType()
-						+ "\" is not a valid choice.");
+	} else {
+		mySimulationManager->shutdown("Event list type \"" + eventListType
+											+ "\" is not a valid choice.");
 	}
 
 	return retval;
