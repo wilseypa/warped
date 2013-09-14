@@ -39,18 +39,15 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
   std::string physicalLayer = configuration.get_string({"TimeWarp", "CommunicationManager", "PhysicalLayer"},
                                                      "Default");
   if( physicalLayer == "MPI" || physicalLayer == "UDPSelect" || physicalLayer == "TCPSelect") {
-    myPhysicalCommunicationLayer = allocatePhysicalCommunicationLayer( configuration.getPhysicalLayerType() );
+    myPhysicalCommunicationLayer = allocatePhysicalCommunicationLayer(physicalLayer);
     debug::debugout << "(" << mySimulationManager->getSimulationManagerID() << ") ";
-    if( myPhysicalCommunicationLayer == 0 ){
-      mySimulationManager->shutdown( "Could not allocate physical layer corresponding to " +
-				     configuration.getPhysicalLayerType() +
-				     ", perhaps not configured at compile time?" );
+    if (myPhysicalCommunicationLayer == 0) {
+      mySimulationManager->shutdown("Could not allocate physical layer corresponding to " + physicalLayer
+                                    + ", perhaps not configured at compile time?");
     } else {
-      debug::debugout << "configured the " << configuration.getPhysicalLayerType()
-		     << " Physical Communication Layer" << endl;
+      debug::debugout << "configured the " << physicalLayer << " Physical Communication Layer" << endl;
     }
-  }
-  else{
+  } else {
     myPhysicalCommunicationLayer = new DefaultPhysicalCommunicationLayer();
     debug::debugout << "configured the default physical communication layer" << endl;
   }
