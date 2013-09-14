@@ -66,8 +66,7 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 		retval = NULL;
 	} else {
 		mySimulationManager->shutdown(
-				"Unknown FossilManager choice \""
-						+ configuration.getGVTManagerType() + "\"");
+				"Unknown FossilManager choice \"" + optFossilCollManagerType + "\"");
 	}
 
 	return retval;

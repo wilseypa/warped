@@ -44,8 +44,7 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 			<< gvtPeriod << endl;
 			return retval;
 		} else {
-			mySimulationManager->shutdown("Unknown GVTManager choice \""
-					+ configuration.getGVTManagerType() + "\"");
+			mySimulationManager->shutdown("Unknown GVTManager choice \"" + gvtManagerType + "\"");
 		}
 	}
 #endif
@@ -58,8 +57,7 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 				<< gvtPeriod << endl;
 	} else {
 		mySimulationManager->shutdown(
-				"Unknown GVTManager choice \""
-						+ configuration.getGVTManagerType() + "\"");
+				"Unknown GVTManager choice \"" + gvtManagerType + "\"");
 	}
 
 	return retval;
