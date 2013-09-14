@@ -29,8 +29,9 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 	// (1) Manager is Cheby.
 	// (2) None is used.
 
-
-	if (configuration.optFossilCollManagerTypeIs("CHEBY")) {
+    std::string optFossilCollManagerType = configuration.get_string(
+    	{"TimeWarp", "OptFossilCollManager", "Type"}, "None")
+	if (optFossilCollManagerType == "Cheby") {
 		unsigned int checkpointPeriod = 1000;
 		unsigned int minSamples = 64;
 		unsigned int maxSamples = 100;
@@ -58,7 +59,7 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 					<< "with checkpoint interval: " << checkpointPeriod
 					<< ", and risk factor: " << riskFactor << endl;
 		}
-	} else if (configuration.optFossilCollManagerTypeIs("NONE")) {
+	} else if (optFossilCollManagerType == "None") {
 		retval = NULL;
 	} else {
 		mySimulationManager->shutdown(
