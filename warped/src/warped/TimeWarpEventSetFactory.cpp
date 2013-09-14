@@ -29,8 +29,10 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 	}
 	
 	std::string eventListType = configuration.get_string({"EventList", "Type"}, "Default");
+    std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
+	if (simulationType == "ThreadedTimeWarp") {
 		if (eventListType == "MultiSet") {
 			ThreadedTimeWarpEventSet *retvalue = 0;
 			retvalue = new ThreadedTimeWarpMultiSet(

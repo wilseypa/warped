@@ -31,29 +31,9 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
 
   SchedulingManager *retval = 0;
 
-/*  if ( configuration.schedulerTypeIs( "DEFAULT" ) ){
-	if (configuration.getSimulationType()=="THREADEDWARP")
-	{
-#ifdef USE_TIMEWARP
-	    ThreadedTimeWarpSimulationManager *mySimulationManager = dynamic_cast<ThreadedTimeWarpSimulationManager *>( parent );
-	    ASSERT(mySimulationManager!=0);
-	    retval = new ThreadedSchedulingManager( mySimulationManager );
-	    debug::debugout << " a ThreadedSchedulingManager." << endl;
-#else
-	     cerr << "You selected a TimeWarp simulation type but did not configure with 'enable-timewarp'" << endl;
-	     cerr << "Aborting!!!" << endl;
-	     abort();
-#endif
-	}
-	else
-	{
-		TimeWarpSimulationManager *mySimulationManager = dynamic_cast<TimeWarpSimulationManager *>( parent );
-		ASSERT(mySimulationManager!=0);
-		retval = new DefaultSchedulingManager( mySimulationManager );
-		debug::debugout << " a DefaultSchedulingManager." << endl;
-	}
-  }
-  else */if(configuration.schedulerTypeIs( "MULTISET" )){
+  std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+
+  if(configuration.schedulerTypeIs( "MULTISET" )){
     TimeWarpSimulationManager *mySimulationManager = dynamic_cast<TimeWarpSimulationManager *>( parent );
     ASSERT(mySimulationManager!=0);
     retval = new TimeWarpMultiSetSchedulingManager( mySimulationManager );
@@ -66,7 +46,7 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
   
 
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
+	if (simulationType == "ThreadedTimeWarp") {
 		if (configuration.schedulerTypeIs("MULTISET")) {
 			ThreadedTimeWarpSimulationManager *mySimulationManager =
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent);

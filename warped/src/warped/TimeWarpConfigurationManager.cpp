@@ -40,10 +40,12 @@ void TimeWarpConfigurationManager::configure(
 
     const TimeWarpSimulationManagerFactory* twSimMgrFactory =
         TimeWarpSimulationManagerFactory::instance();
-    if (configuration.simulationTypeIs("TimeWarp")) {
+    std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+
+    if (simulationType == "TimeWarp") {
         mySimulationManager = dynamic_cast<TimeWarpSimulationManager*>
                               (twSimMgrFactory->allocate(configuration, myApplication));
-    } else if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
+    } else if (simulationType == "ThreadedTimeWarp") {
         mySimulationManager = dynamic_cast<ThreadedTimeWarpSimulationManager*>
                               (twSimMgrFactory->allocate(configuration, myApplication));
     } else {

@@ -30,7 +30,8 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 	// (2) None is used.
 
     std::string optFossilCollManagerType = configuration.get_string(
-    	{"TimeWarp", "OptFossilCollManager", "Type"}, "None")
+    	{"TimeWarp", "OptFossilCollManager", "Type"}, "None");
+    std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
 	if (optFossilCollManagerType == "Cheby") {
 		unsigned int checkpointPeriod = 1000;
 		unsigned int minSamples = 64;
@@ -42,7 +43,7 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 		configuration.getOptFossilCollMaxSamples(maxSamples);
 		configuration.getOptFossilCollDefaultLength(defaultLength);
 		configuration.getOptFossilCollRiskFactor(riskFactor);
-		if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
+		if (simulationType == "ThreadedTimeWarp") {
 			retval = new ThreadedChebyFossilCollManager(myThreadedSimulationManager,
 					checkpointPeriod, minSamples, maxSamples, defaultLength,
 					riskFactor);

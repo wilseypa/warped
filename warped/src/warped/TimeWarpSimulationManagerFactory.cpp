@@ -18,7 +18,10 @@ TimeWarpSimulationManagerFactory::allocate(
 		SimulationConfiguration &configuration, Configurable *parent) const {
 	TimeWarpSimulationManager *retval = 0;
 
-	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
+    std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+
+
+	if (simulationType == "ThreadedTimeWarp") {
 		//Count the number of threads, if none specified try reading the proc file
 		unsigned int numberOfWorkerThreads = 0;
 		//Specify the synchronization mechanism

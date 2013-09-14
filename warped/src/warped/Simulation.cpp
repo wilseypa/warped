@@ -33,11 +33,13 @@ void
 Simulation::configure(SimulationConfiguration& configuration) {
     // Decide which Simulation manager to use based on the configuraiton
 
-    if (configuration.simulationTypeIs("Sequential")) {
+    std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+
+    if (simulationType == "Sequential") {
         myConfigurationManager = new SequentialConfigurationManager(myApplication);
         debug::debugout << "Configured a SequentialSimulationManager" << std::endl;
-    } else if (configuration.simulationTypeIs("TimeWarp")
-               || configuration.simulationTypeIs("ThreadedTimeWarp")) {
+    } else if (simulationType == "TimeWarp"
+               || simulationType == "ThreadedTimeWarp") {
         myConfigurationManager = new TimeWarpConfigurationManager(configuration.getArguments(),
                                                                   myApplication);
         debug::debugout << "Configured a TimeWarpSimulationManager" << std::endl;

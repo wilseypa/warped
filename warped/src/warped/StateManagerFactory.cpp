@@ -42,8 +42,10 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 	//     instantiate the AdaptiveStateManager and go on.
 
 	unsigned int statePeriod = 0;
+	std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
+	if (simulationType == "ThreadedTimeWarp") {
 		if (configuration.stateManagerTypeIs("PERIODIC")) {
 			configuration.getStatePeriod(statePeriod);
 			retvalue = new ThreadedPeriodicStateManager(

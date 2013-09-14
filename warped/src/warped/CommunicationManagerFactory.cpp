@@ -58,8 +58,9 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
 
   std::string managerType = configuration.get_string({"TimeWarp", "CommunicationManager", "Type"},
                                                      "Default");
+  std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
+	if (simulationType == "ThreadedTimeWarp") {
 		myPhysicalCommunicationLayer->physicalInit();
 		if (managerType == "Default") {
 			retval = new DefaultCommunicationManager(

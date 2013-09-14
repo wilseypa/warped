@@ -38,6 +38,8 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 		mySimulationManager->setOneAntiMsg(true);
 	}
 
+	std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+
 	// the following cases are possible:
 
 	// (1) AggressiveOutputManager
@@ -62,7 +64,7 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 	}
 
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
+	if (simulationType == "ThreadedTimeWarp") {
 		if (configuration.outputManagerIs("AGGRESSIVE")) {
 			retval = new ThreadedAggressiveOutputManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));

@@ -28,10 +28,10 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 	//     a GVT estimation period (if any; defaults to 1). Then
 	//     instantiate the MatternGVTStateManager with a state period (if
 	//     one is found).
-	std::string gvtManagerType = configuration.get_string({"TimeWarp", "GVTManager", "Type"}, "Mattern")
+	std::string gvtManagerType = configuration.get_string({"TimeWarp", "GVTManager", "Type"}, "Mattern");
+	std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
 #if USE_TIMEWARP
-	if (configuration.simulationTypeIs("ThreadedTimeWarp")) {
-
+	if (simulationType == "ThreadedTimeWarp") {
 		if (gvtManagerType == "Mattern") {
 			unsigned int gvtPeriod = 1;
 			configuration.getGVTPeriod(gvtPeriod);
@@ -50,24 +50,23 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 	}
 #endif
 
-	if (!(configuration.simulationTypeIs("DTTimeWarp"))) {
-		if (gvtManagerType == "Mattern") {
-			unsigned int gvtPeriod = 1;
-			configuration.getGVTPeriod(gvtPeriod);
-			retval = new MatternGVTManager(mySimulationManager, gvtPeriod);
-			debug::debugout << "("
-					<< mySimulationManager->getSimulationManagerID()
-					<< ") configured a Mattern GVT Manager with period = "
-					<< gvtPeriod << endl;
-		} else {
-			mySimulationManager->shutdown(
-					"Unknown GVTManager choice \""
-							+ configuration.getGVTManagerType() + "\"");
-		}
-
-		return retval;
+	if (gvtManagerType == "Mattern") {
+		unsigned int gvtPeriod = 1;
+		configuration.getGVTPeriod(gvtPeriod);
+		retval = new MatternGVTManager(mySimulationManager, gvtPeriod);
+		debug::debugout << "("
+				<< mySimulationManager->getSimulationManagerID()
+				<< ") configured a Mattern GVT Manager with period = "
+				<< gvtPeriod << endl;
+	} else {
+		mySimulationManager->shutdown(
+				"Unknown GVTManager choice \""
+						+ configuration.getGVTManagerType() + "\"");
 	}
+
+	return retval;
 }
+
 const GVTManagerFactory *
 GVTManagerFactory::instance() {
 	static GVTManagerFactory *singleton = new GVTManagerFactory();
