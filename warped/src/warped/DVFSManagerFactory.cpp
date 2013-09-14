@@ -27,6 +27,10 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
 
   std::string dvfsManagerType = configuration.get_string({"TimeWarp", "DVFSManager", "Type"},
                                                         "None");
+  if(dvfsManagerType == "None") {
+    return NULL;
+  }
+
   std::string metric = configuration.get_string({"TimeWarp", "DVFSManager", "UsefulWorkMetric"},
                                                         "Rollbacks");
   std::string al = configuration.get_string({"TimeWarp", "DVFSManager", "Algorithm"},
@@ -34,13 +38,7 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   bool dvfsDebugPrint = configuration.get_bool({"TimeWarp", "DVFSManager", "DebugPrint"}, false);
   int p = configuration.get_int({"TimeWarp", "DVFSManager", "Period"}, 1);
   int firsize = configuration.get_int({"TimeWarp", "DVFSManager", "FIRSize"}, 16);
-
-  if(dvfsManagerType == "None") {
-    return NULL;
-  }
-
-  double threshold = 0.1;
-  configuration.getDVFSDoubleOption("Threshold", threshold);
+  double threshold = configuration.get_double({"TimeWarp", "DVFSManager", "Threshold"}, 0.1);
 
   DVFSManager::UsefulWorkMetric uwm;
   if(metric == "Rollbacks")
