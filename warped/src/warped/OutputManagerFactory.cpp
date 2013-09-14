@@ -39,21 +39,22 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 	}
 
 	std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
-
+	std::string outputManagerType = configuration.get_string({"TimeWarp", "OutputManager", "Type"},
+                                                     		"Aggressive");
 	// the following cases are possible:
 
 	// (1) AggressiveOutputManager
 	// (2) LazyOutputManager
 	// (3) DynamicOutputManager
-	if (configuration.outputManagerIs("AGGRESSIVE")) {
+	if (outputManagerType == "Aggressive") {
 		retval = new AggressiveOutputManager(mySimulationManager);
 		mySimulationManager->setOutputMgrType(AGGRMGR);
 		debug::debugout << "an Aggressive Output Manager" << endl;
-	} else if (configuration.outputManagerIs("LAZY")) {
+	} else if (outputManagerType == "Lazy") {
 		retval = new LazyOutputManager(mySimulationManager);
 		mySimulationManager->setOutputMgrType(LAZYMGR);
 		debug::debugout << "a Lazy Output Manager" << endl;
-	} else if (configuration.outputManagerIs("DYNAMIC")) {
+	} else if (outputManagerType == "Dynamic") {
 		retval = new DynamicOutputManager(mySimulationManager);
 		mySimulationManager->setOutputMgrType(ADAPTIVEMGR);
 		debug::debugout << "an Dynamic Output Manager" << endl;
@@ -65,18 +66,18 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 
 #if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
-		if (configuration.outputManagerIs("AGGRESSIVE")) {
+		if (outputManagerType == "Aggressive") {
 			retval = new ThreadedAggressiveOutputManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setOutputMgrType(AGGRMGR);
 			debug::debugout << "a Dynamic Threaded Aggressive Output Manager"
 					<< endl;
-		} else if (configuration.outputManagerIs("LAZY")) {
+		} else if (outputManagerType == "Lazy") {
 			retval = new ThreadedLazyOutputManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setOutputMgrType(LAZYMGR);
 			debug::debugout << "a Lazy Output Manager" << endl;
-		} else if (configuration.outputManagerIs("DYNAMIC")) {
+		} else if (outputManagerType == "Dynamic") {
 			unsigned int filterDepth = 16;
 			double aggr2lazy = 0.5;
 			double lazy2aggr = 0.2;
