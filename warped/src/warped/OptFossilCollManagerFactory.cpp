@@ -41,7 +41,9 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 												100);
 		int defaultLength = configuration.get_int({"TimeWarp", "OptFossilCollManager", "DefaultLength"}, 
 													2000);
-		double riskFactor = 0.99;
+		double riskFactor = configuration.get_double({"TimeWarp", "OptFossilCollManager", "AcceptableRisk"},
+		 											0.99);
+
 		configuration.getOptFossilCollRiskFactor(riskFactor);
 		if (simulationType == "ThreadedTimeWarp") {
 			retval = new ThreadedChebyFossilCollManager(myThreadedSimulationManager,
