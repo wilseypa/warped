@@ -60,7 +60,7 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 		debug::debugout << "an Dynamic Output Manager" << endl;
 	} else {
 		const string error = "Unknown OutputManager choice \""
-				+ configuration.getOutputManagerType() + "\" encountered.";
+				+ outputManagerType + "\" encountered.";
 		mySimulationManager->shutdown(error);
 	}
 
@@ -93,7 +93,7 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 			debug::debugout << "an Dynamic Output Manager" << endl;
 		} else {
 			const string error = "Unknown OutputManager choice \""
-					+ configuration.getOutputManagerType() + "\" encountered.";
+					+ outputManagerType + "\" encountered.";
 			mySimulationManager->shutdown(error);
 		}
 	}
