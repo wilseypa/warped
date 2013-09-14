@@ -42,33 +42,31 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 	// (2) StateManager is AdaptiveStateManager. In this case, we just
 	//     instantiate the AdaptiveStateManager and go on.
 
-	unsigned int statePeriod = 0;
 	std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
 	std::string stateManagerType = configuration.get_string({"TimeWarp", "StateManager", "Type"}, 
 														"Periodic");
+	int stateManagerPeriod = configuration.get_int({"TimeWarp", "StateManager", "Period"}, 10);
 
 #if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
 		if (stateManagerType == "Periodic") {
-			configuration.getStatePeriod(statePeriod);
 			retvalue = new ThreadedPeriodicStateManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent),
-					statePeriod);
+					stateManagerPeriod);
 			mySimulationManager->setStateMgrType(STATICSTATE);
 			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured a Threaded Periodic State Manager with period = "
-					<< statePeriod << endl;
+					<< stateManagerPeriod << endl;
 			return retvalue;
 		} else if (stateManagerType == "Adaptive") {
-			configuration.getStatePeriod(statePeriod);
 			retvalue = new ThreadedCostAdaptiveStateManager(
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent));
 			mySimulationManager->setStateMgrType(ADAPTIVESTATE);
 			debug::debugout << "("
 					<< mySimulationManager->getSimulationManagerID()
 					<< ") configured an Adaptive State Manager with period = "
-					<< statePeriod << endl;
+					<< stateManagerPeriod << endl;
 			return retvalue;
 		} else {
 			mySimulationManager->shutdown("Unknown StateManager choice \"" + stateManagerType + "\"");
@@ -76,19 +74,17 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 	}
 #endif
 	if (stateManagerType == "Periodic") {
-		configuration.getStatePeriod(statePeriod);
-		retval = new PeriodicStateManager(mySimulationManager, statePeriod);
+		retval = new PeriodicStateManager(mySimulationManager, stateManagerPeriod);
 		mySimulationManager->setStateMgrType(STATICSTATE);
 		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 				<< ") configured a Periodic State Manager with period = "
-				<< statePeriod << endl;
+				<< stateManagerPeriod << endl;
 	} else if (stateManagerType == "Adaptive") {
-		configuration.getStatePeriod(statePeriod);
 		retval = new CostAdaptiveStateManager(mySimulationManager);
 		mySimulationManager->setStateMgrType(ADAPTIVESTATE);
 		debug::debugout << "(" << mySimulationManager->getSimulationManagerID()
 				<< ") configured an Adaptive State Manager with period = "
-				<< statePeriod << endl;
+				<< stateManagerPeriod << endl;
 	} else {
 		mySimulationManager->shutdown("Unknown StateManager choice \"" + stateManagerType + "\"");
 	}
