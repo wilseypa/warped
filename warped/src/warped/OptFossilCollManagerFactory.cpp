@@ -37,10 +37,10 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 													1000);
 		int minSamples = configuration.get_int({"TimeWarp", "OptFossilCollManager", "MinimumSamples"}, 
 												64);
-		unsigned int maxSamples = 100;
+		int maxSamples = configuration.get_int({"TimeWarp", "OptFossilCollManager", "MaximumSamples"}, 
+												100);
 		unsigned int defaultLength = 2000;
 		double riskFactor = 0.99;
-		configuration.getOptFossilCollMaxSamples(maxSamples);
 		configuration.getOptFossilCollDefaultLength(defaultLength);
 		configuration.getOptFossilCollRiskFactor(riskFactor);
 		if (simulationType == "ThreadedTimeWarp") {
