@@ -31,19 +31,18 @@
     simulation object id by itself may not be unique across the
     simulation, the two tuple is guaranteed to be unique.
 
-    In previous versions of {\tt WARPED}, the job of ensuring that unique
-    ids were assigned to simulation objects was left to the application
-    writer/user.  In this version of {\tt WARPED}, we are changing this
-    rule.  Unique simulation object id generation will be handled by the
-    simulation kernel. The application writer/user assigns names to
-    simulation objects and uses these names to refer to objects.  The
-    mapping from object names to their unique object ids is handled by the
-    kernel.  In addition, depending upon the type of the Simulation
-    Manager that is instantiated at run-time ({\tt i.e.},
-    SequentialSimulationManager, DecentralizedSimulationManager, or
-    SharedMemorySimulationManager), either unsigned integers will be used
-    as simulation object ids or the two tuple version of simulation object
-    ids will be used.
+    In previous versions of {\tt WARPED}, the job of ensuring that unique ids
+    were assigned to simulation objects was left to the application
+    writer/user.  In this version of {\tt WARPED}, we are changing this rule.
+    Unique simulation object id generation will be handled by the simulation
+    kernel. The application writer/user assigns names to simulation objects
+    and uses these names to refer to objects.  The mapping from object names
+    to their unique object ids is handled by the kernel.  In addition,
+    depending upon the type of the Simulation Manager that is instantiated at
+    run-time ({\tt i.e.}, SequentialSimulationManager, or
+    SharedMemorySimulationManager), either unsigned integers will be used as
+    simulation object ids or the two tuple version of simulation object ids
+    will be used.
 
     This class provides the two tuple definition of ObjectID.  
 */

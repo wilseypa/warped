@@ -56,7 +56,6 @@ WARPED_H_FILES = \
 	warped/controlkit/SyncSensor.h \
 	warped/ControlManager.h \
 	warped/CostAdaptiveStateManager.h \
-	warped/DecentralizedEventSetSchedulingManager.h \
 	warped/DefaultCommunicationManager.h \
 	warped/DefaultEvent.h \
 	warped/DefaultObjectID.h \
@@ -189,8 +188,6 @@ WARPED_H_FILES = \
 	warped/TimeWarpCentralizedEventSet.h \
 	warped/TimeWarpCentralizedEventSetFactory.h \
 	warped/TimeWarpConfigurationManager.h \
-	warped/TimeWarpDecentralizedEventSet.h \
-	warped/TimeWarpDecentralizedEventSetFactory.h \
 	warped/TimeWarpEventSet.h \
 	warped/TimeWarpEventSetFactory.h \
 	warped/TimeWarpMultiSet.h \
@@ -234,7 +231,6 @@ libwarped_la_SOURCES = \
 	warped/Configurer.cpp \
 	warped/ControlManager.cpp \
 	warped/CostAdaptiveStateManager.cpp \
-	warped/DecentralizedEventSetSchedulingManager.cpp \
 	warped/DefaultCommunicationManager.cpp \
 	warped/DefaultEvent.cpp \
 	warped/DefaultPartitioner.cpp \
@@ -309,7 +305,6 @@ libwarped_la_SOURCES = \
 	warped/ThreadedOutputEvents.cpp \
 	warped/TimeWarpCentralizedEventSetFactory.cpp \
 	warped/TimeWarpConfigurationManager.cpp \
-	warped/TimeWarpDecentralizedEventSetFactory.cpp \
 	warped/TimeWarpEventSet.cpp \
 	warped/TimeWarpEventSetFactory.cpp \
 	warped/TimeWarpMultiSet.cpp \

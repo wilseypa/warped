@@ -9,7 +9,6 @@
         //@Include: ../kernel/include/CommunicationObjects.h
         //@Include: ../kernel/include/ConfigurationManager.h
         //@Include: ../kernel/include/ControlManager.h
-	//@Include: ../kernel/include/DecentralizedEventSetSchedulingManager.h
         //@Include: ../kernel/include/DefaultCommunicationManager.h
         //@Include: ../kernel/include/DefaultPhysicalCommunicationLayer.h 
         //@Include: ../kernel/include/Event.h
@@ -60,8 +59,6 @@
 	//@Include: ../kernel/include/TimeWarpCentralizedEventSet.h
 	//@Include: ../kernel/include/TimeWarpCentralizedEventSetFactory.h
         //@Include: ../kernel/include/TimeWarpConfigurationManager.h
-	//@Include: ../kernel/include/TimeWarpDecentralizedEventSet.h
-	//@Include: ../kernel/include/TimeWarpDecentralizedEventSetFactory.h
 	//@Include: ../kernel/include/TimeWarpEventSet.h
 	//@Include: ../kernel/include/TimeWarpEventSetFactory.h
 	//@Include: ../kernel/include/TimeWarpMultiSet.h

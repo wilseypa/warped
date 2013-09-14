@@ -200,7 +200,7 @@ public:
 
 	/** Return a handle to the Scheduling Data
 
-	 @return A handle to SchedulingData in Decentralized EventSet.
+	 @return A handle to SchedulingData.
 	 */
 	SchedulingData* getSchedulingData() {
 		return mySchedulingData;

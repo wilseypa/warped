@@ -20,7 +20,6 @@ function writeConfiguration {
 	echo "TimeWarp {" >> ~/configuration.config
 	echo "Scheduler { Type : Default  }" >> ~/configuration.config
 	echo "EventList {Type : $EVENT_LIST_TYPE" >> ~/configuration.config
-	echo "Organization : Decentralized }" >> ~/configuration.config
 	echo "ObjectQueue {Type : $OBJECT_QUEUE_TYPE" >> ~/configuration.config
 	echo "NumberOfBuckets : $NUMBER_OF_BUCKETS " >> ~/configuration.config
 	echo "BucketWidth : $BUCKET_WIDTH  }" >> ~/configuration.config

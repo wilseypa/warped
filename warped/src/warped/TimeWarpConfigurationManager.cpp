@@ -5,7 +5,6 @@
 #include <stdexcept>
 
 #include "TimeWarpCentralizedEventSetFactory.h"
-#include "TimeWarpDecentralizedEventSetFactory.h"
 #include "TimeWarpSimulationManagerFactory.h"
 #include "SchedulingData.h"
 #include "Application.h"

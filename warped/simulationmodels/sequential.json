@@ -8,6 +8,5 @@
     "EventList": {
         // Sequential EventList types can be "SplayTree" or "SingleLinkedList"
         "Type": "SplayTree",
-        "Organization":"Decentralized"
     }
 }
