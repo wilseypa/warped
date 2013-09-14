@@ -32,16 +32,14 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
   std::string al = configuration.get_string({"TimeWarp", "DVFSManager", "Algorithm"},
                                                         "Fixed");
   bool dvfsDebugPrint = configuration.get_bool({"TimeWarp", "DVFSManager", "DebugPrint"}, false);
+  int p = configuration.get_int({"TimeWarp", "DVFSManager", "Period"}, 1);
+  int firsize = configuration.get_int({"TimeWarp", "DVFSManager", "FIRSize"}, 16);
 
   if(dvfsManagerType == "None") {
     return NULL;
   }
 
-  int p = 0;
-  int firsize = 16;
   double threshold = 0.1;
-  configuration.getDVFSIntOption("Period", p);
-  configuration.getDVFSIntOption("FIRSize", firsize);
   configuration.getDVFSDoubleOption("Threshold", threshold);
 
   DVFSManager::UsefulWorkMetric uwm;
