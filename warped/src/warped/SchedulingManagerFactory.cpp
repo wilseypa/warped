@@ -32,14 +32,15 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
   SchedulingManager *retval = 0;
 
   std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
+  std::string schedulerType = configuration.get_string({"TimeWarp", "Scheduler", "Type"},
+                                                        "Default");
 
-  if(configuration.schedulerTypeIs( "MULTISET" )){
+  if(schedulerType == "MultiSet"){
     TimeWarpSimulationManager *mySimulationManager = dynamic_cast<TimeWarpSimulationManager *>( parent );
     ASSERT(mySimulationManager!=0);
     retval = new TimeWarpMultiSetSchedulingManager( mySimulationManager );
     debug::debugout << " a TimeWarpMultiSetSchedulingManager." << endl;
-  }
-  else {
+  } else {
     dynamic_cast<TimeWarpSimulationManager *>(parent)->shutdown( "Unknown SCHEDULER choice \"" +
                                                                   configuration.getSchedulerType() + "\"" );
   }
@@ -47,7 +48,7 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
 
 #if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
-		if (configuration.schedulerTypeIs("MULTISET")) {
+		if (schedulerType == "MultiSet") {
 			ThreadedTimeWarpSimulationManager *mySimulationManager =
 					dynamic_cast<ThreadedTimeWarpSimulationManager *> (parent);
 			ASSERT(mySimulationManager!=0);
