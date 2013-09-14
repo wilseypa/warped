@@ -1,6 +1,8 @@
 #ifndef SOCKET_BASED_CONNECTION_INTERFACE
 #define SOCKET_BASED_CONNECTION_INTERFACE
 
+#include <vector>
+
 #include "eclmplCommonInclude.h"
 #include "eclmplSocket.h"
 #include "eclmplConnectionInterfaceImplementationBase.h"
@@ -9,7 +11,7 @@ class SocketBasedConnectionInterface : public eclmplConnectionInterfaceImplement
 				       public eclmplSocket {
 public:
   /// Simulation manager file descriptors for sends and receives.
-  vector<eclmplSocket *> socket;
+  std::vector<eclmplSocket *> socket;
 
   SocketBasedConnectionInterface();
   SocketBasedConnectionInterface(const unsigned int &mtuSize);

@@ -1,10 +1,11 @@
 
 #include "eclmplConnectionInterfaceImplementationBase.h"
+
 #include <fstream>
+#include <vector>
+#include <string>
 
-using std::ifstream;
-
-const string configFile = "procgroup";
+const std::string configFile = "procgroup";
 const unsigned int maxBuf = 65535;
 
 eclmplConnectionInterfaceImplementationBase::~eclmplConnectionInterfaceImplementationBase() {
@@ -22,7 +23,7 @@ eclmplConnectionInterfaceImplementationBase::establishConnections(const int * co
   // We have to check the last argument on the command line to be able
   // to figure out if we are the first communicator started, i.e. the
   // master, or if we have been forked off, i.e. a slave.
-  string finalParameter((*argv)[*argc - 1]);
+  std::string finalParameter((*argv)[*argc - 1]);
   if (finalParameter == "amslave") {
     slaveStartupInfo startupInfo;
     startupInfo = parseCommandLineArguments(argc, argv);
@@ -77,10 +78,10 @@ eclmplConnectionInterfaceImplementationBase::parseCommandLineArguments(const int
   connectionId = atoi((*argv)[*argc-2]);
   numberOfConnections = atoi((*argv)[*argc-3]);
   tmp = atoi((*argv)[*argc-4]); // nrOfMasterContactArgs
-  vector<string> contactArgs;
+  std::vector<std::string> contactArgs;
   currArg = 5;
   for (unsigned int i = 0; i < tmp; i++) {
-    contactArgs.push_back(string((*argv)[*argc-currArg]));
+    contactArgs.push_back(std::string((*argv)[*argc-currArg]));
     currArg++;
   }
   info.masterContactInfo.setContactArguments(contactArgs);
@@ -97,7 +98,7 @@ eclmplConnectionInterfaceImplementationBase::parseCommandLineArguments(const int
   tmp = (unsigned int)atoi((*argv)[*argc-currArg]); // Number of optional arguments...
   currArg++;
   for (unsigned int i = 0; i < tmp; i++) {
-    info.configTableEntry.push_back(string((*argv)[*argc-currArg]));
+    info.configTableEntry.push_back(std::string((*argv)[*argc-currArg]));
     currArg++;
   }
   return info;
@@ -110,16 +111,16 @@ eclmplConnectionInterfaceImplementationBase::parseCommandLineArguments(const int
 // 1. nodename where process will execute
 // 2. full pathname of executable to execute
 eclmplConfigFileTable*
-eclmplConnectionInterfaceImplementationBase::scanConfigFile( const string &fileName, 
+eclmplConnectionInterfaceImplementationBase::scanConfigFile( const std::string &fileName, 
 							     int argsPerEntry ){
-  ifstream infile;
-  string arg;
+  std::ifstream infile;
+  std::string arg;
   eclmplConfigFileTable *connTable = new eclmplConfigFileTable;
-  vector<string> tableEntry;
+  std::vector<std::string> tableEntry;
 
   char *pwd = getcwd(NULL, 65535);
   ASSERT(pwd != NULL);
-  string fullFilePathName(pwd);
+  std::string fullFilePathName(pwd);
   // using free instead of delete cause pwd was allocated with malloc
   // and not new ...
   free(pwd);
@@ -160,7 +161,7 @@ void
 eclmplConnectionInterfaceImplementationBase::createSlaveCommandLineArguments(const int * const argc, 
 					     const char * const * const * const argv,
 					     int &newArgc, char **&newArgv,
-					     const vector<string> &configTableEntry,
+					     const std::vector<std::string> &configTableEntry,
 					     const eclmplContactInfo &masterContactInfo,
 					     const unsigned int &id) {
   ASSERT(configTableEntry.size() >= 2);
@@ -221,7 +222,7 @@ eclmplConnectionInterfaceImplementationBase::createSlaveCommandLineArguments(con
   memcpy(newArgv[currArg], tmp, strlen(tmp)+1);
   currArg++;
 
-  vector<string> contactArgs = masterContactInfo.contactArguments();
+  std::vector<std::string> contactArgs = masterContactInfo.contactArguments();
   for (int i = contactArgs.size()-1; i >= 0; i--) {
     // newArgv[currArg] =  \"masterContactInfo.contactArgs[i]\"
     sprintf(tmp, "%s%c", contactArgs[i].c_str(), '\0');
@@ -272,7 +273,7 @@ eclmplConnectionInterfaceImplementationBase::forkOffSlave(const int * const argc
 					  const unsigned int &id) {
   ASSERT(id >= 1 && id < numberOfConnections);
 
-  vector<string> slaveEntry = connTable.getEntry(id);
+  std::vector<std::string> slaveEntry = connTable.getEntry(id);
   eclmplContactInfo masterInfo = masterContactInfo;
   masterInfo.setIntendedFor(id);
   if (fork() == 0) {

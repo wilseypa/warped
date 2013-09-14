@@ -1,22 +1,22 @@
 #include "SocketBasedConnectionInterface.h"
 
-using std::cerr;
-using std::endl;
+#include <vector>
+#include <string>
 
 // Only here for debugging... remove when done.
 void __eclmpl__printCharStr(const char * const str, const unsigned int &strLen) {
-  cerr << "\"";
+  std::cerr << "\"";
   for (unsigned int i = 0; i < strLen; i++) {
     if (str[i] == '\0')
-      cerr << "'\\0'";
+      std::cerr << "'\\0'";
     else if (str[i] == '\n')
-      cerr << "'\\n'";
+      std::cerr << "'\\n'";
     else if (str[i] >= 32 && str[i] <= 126)
-      cerr << str[i];
+      std::cerr << str[i];
     else 
-      cerr << "'" << (int)str[i] << "'";
+      std::cerr << "'" << (int)str[i] << "'";
   }
-  cerr << "\"";
+  std::cerr << "\"";
 } 
 
 // Precondition: char msgHeader[msgHeaderSize] = "00000";
@@ -164,7 +164,7 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
   
   ASSERT(connectionId == 0); // Only master executes this method.
   ASSERT(connTable.getNumberOfEntries() == numberOfConnections);
-  vector<string> masterEntry = connTable.getEntry(0);
+  std::vector<std::string> masterEntry = connTable.getEntry(0);
   ASSERT(masterEntry.size() == 2);
 
   // Create a vector of numberOfConnections number of socket pointers.
@@ -176,7 +176,7 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
   // Create master socket and find an unused portnumber for it, bind and listen to it.
   createNewSocket(connectionId, SOCK_STREAM); // SOCK_STREAM --> TCP
   setDefaultSocketOptions(connectionId);
-  string myPort = std::to_string(obtainAndBindUnusedPort(connectionId));
+  std::string myPort = std::to_string(obtainAndBindUnusedPort(connectionId));
 
   eclmplConfigFileTable localConnTable = connTable;
   // Add portnumber info to localConnTable.
@@ -185,7 +185,7 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
   // Start slaves and distribute updated connTable.
   eclmplContactInfo myContactInfo;
   myContactInfo.setProvidedBy(connectionId);
-  vector<string> contactInfo;
+  std::vector<std::string> contactInfo;
   hostName = masterEntry[0];
   contactInfo.push_back(masterEntry[0]);
   contactInfo.push_back(myPort);
@@ -197,9 +197,9 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
 	  {
 		  std::cout << " " << connTable.getEntry(i)[j];
 	  }
-	  std::cout << std::endl;
+	  std::cout << std::std::endl;
   }
-  std::cout << "NumberCons: " << numberOfConnections << std::endl;
+  std::cout << "NumberCons: " << numberOfConnections << std::std::endl;
 #endif
   for (unsigned int i = 1; i < numberOfConnections; i++) {
     forkOffSlave(argc, argv, connTable, myContactInfo, i);
@@ -211,7 +211,7 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
     setDefaultSocketOptions(i);
   
 #ifdef DEBUG_SOCKET_CONN_START
-    cerr << "0: Forked off slave " << i << ". Now waiting for its portnumber." << endl;
+    std::cerr << "0: Forked off slave " << i << ". Now waiting for its portnumber." << std::endl;
 #endif
     // Receive portnumber where i is listening.
     unsigned int msgSize = mtu;
@@ -219,9 +219,9 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
     while (SocketBasedConnectionInterface::recv(msgSize, msg, i) == false) {
       msgSize = mtu; // Max allowed recv size.
     }
-    string slavePortNr = std::to_string(atoi(msg));
+    std::string slavePortNr = std::to_string(atoi(msg));
 #ifdef DEBUG_SOCKET_CONN_START
-    cerr << "0: Received portnumber " << slavePortNr << "from slave " << i << "." << endl;
+    std::cerr << "0: Received portnumber " << slavePortNr << "from slave " << i << "." << std::endl;
 #endif
 
     // Add portnumber info to localConnTable.
@@ -229,19 +229,19 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
   }
 
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << "0: Done forking off slaves. Now about to distributeConfigFileTable" << endl;
+  std::cerr << "0: Done forking off slaves. Now about to distributeConfigFileTable" << std::endl;
 #endif
   // Send serializedConnTable to slaves.
   distributeConfigFileTable(localConnTable);
   
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << "0: Done with distributeConfigFileTable. Now about to synchronize with slaves." << endl;
+  std::cerr << "0: Done with distributeConfigFileTable. Now about to synchronize with slaves." << std::endl;
 #endif
   // Synchronize with slaves.
   synchronizeWithSlaves();
 
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << "0: Done synchronizing with slaves. Now ready to start communicating." << endl;
+  std::cerr << "0: Done synchronizing with slaves. Now ready to start communicating." << std::endl;
 #endif
   // We're now ready to be used by some application...
 } // End of establishConnections(...).
@@ -251,7 +251,7 @@ void
 SocketBasedConnectionInterface::establishConnections(const slaveStartupInfo &info) {
   ASSERT(connectionId != 0); // Only slaves executes this method.
 #if 0
-  cerr << "info.configTableEntry.size()=" << info.configTableEntry.size() << endl;
+  std::cerr << "info.configTableEntry.size()=" << info.configTableEntry.size() << std::endl;
 #endif
   ASSERT(info.configTableEntry.size() == 2);
   hostName = info.configTableEntry[0];
@@ -265,25 +265,25 @@ SocketBasedConnectionInterface::establishConnections(const slaveStartupInfo &inf
   // Create master socket and find an unused portnumber for it, bind and listen to it.
   createNewSocket(connectionId, SOCK_STREAM); // SOCK_STREAM --> TCP
   setDefaultSocketOptions(connectionId);
-  string myPort = std::to_string(obtainAndBindUnusedPort(connectionId));
+  std::string myPort = std::to_string(obtainAndBindUnusedPort(connectionId));
 
   // Establish connection with master.
   ASSERT(info.masterContactInfo.nrOfContactArguments() == 2);
-  vector<string> args = info.masterContactInfo.contactArguments();
+  std::vector<std::string> args = info.masterContactInfo.contactArguments();
   // args[0]==hostname, args[1]==portNumber
-  string masterHost = args[0];
+  std::string masterHost = args[0];
   int masterPort = std::stoi(args[1]);
   unsigned int masterId = 0;
   createNewSocket(masterId, SOCK_STREAM); // SOCK_STREAM --> TCP
   setDefaultSocketOptions(masterId);
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": Connecting to master " << masterHost << " " << masterPort << endl;
+  std::cerr << connectionId << ": Connecting to master " << masterHost << " " << masterPort << std::endl;
 #endif
   ASSERT(socket[masterId]->wConnect(masterHost.c_str(), masterPort) != -1);
 
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": Done connecting to master. Now sending our portnumber (" << myPort << ") to master." << endl;
-  cerr << connectionId << ": _____________ mtu="<<mtu<<", myPortLen="<<(strlen(myPort.c_str())+1)<<"_____________" << endl;
+  std::cerr << connectionId << ": Done connecting to master. Now sending our portnumber (" << myPort << ") to master." << std::endl;
+  std::cerr << connectionId << ": _____________ mtu="<<mtu<<", myPortLen="<<(strlen(myPort.c_str())+1)<<"_____________" << std::endl;
 #endif
   // Send a message to master containing our portnumber.
   unsigned int msgSize = mtu;
@@ -294,7 +294,7 @@ SocketBasedConnectionInterface::establishConnections(const slaveStartupInfo &inf
   SocketBasedConnectionInterface::send(msgSize, msg, masterId);
 
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": Done sending portnumber to master. Now waiting to receive configFileTable." << endl;
+  std::cerr << connectionId << ": Done sending portnumber to master. Now waiting to receive configFileTable." << std::endl;
 #endif
   eclmplConfigFileTable connTable;
   // Receive serializedConnTable from master.
@@ -307,35 +307,35 @@ SocketBasedConnectionInterface::establishConnections(const slaveStartupInfo &inf
   localConnTable.deserialize(msg);
 
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": Done receiving configFileTable=";
+  std::cerr << connectionId << ": Done receiving configFileTable=";
   __eclmpl__printCharStr(msg, msgSize);
-  cerr << endl;
+  std::cerr << std::endl;
 #endif
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": Deserialized configFileTable=\n" << localConnTable << endl << endl;
+  std::cerr << connectionId << ": Deserialized configFileTable=\n" << localConnTable << std::endl << std::endl;
 #endif
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": Now going to establish connections with other slaves." << endl;
+  std::cerr << connectionId << ": Now going to establish connections with other slaves." << std::endl;
 #endif
   // Establish connections with other slaves.
   establishConnectionsWithPeerSlaves(localConnTable);
 
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": Done connecting to slaves. Now waiting to synchronize with master.." << endl;
+  std::cerr << connectionId << ": Done connecting to slaves. Now waiting to synchronize with master.." << std::endl;
 #endif
   // Let master know we're done with connection establishment and Wait
   // for synchronize message from master.
   synchronizeWithMaster();
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": Done synchronizing with master. Now ready to start communicating." << endl;
+  std::cerr << connectionId << ": Done synchronizing with master. Now ready to start communicating." << std::endl;
 #endif
 
 #if 0
-  cerr << connectionId << ": DOOOOOOOOOONNNNNNNNEEEEEEEE__ ";
+  std::cerr << connectionId << ": DOOOOOOOOOONNNNNNNNEEEEEEEE__ ";
   for (unsigned int i = 0; i < numberOfConnections; i++) {
-    cerr << socket[i]->getPortNumber() << " ";
+    std::cerr << socket[i]->getPortNumber() << " ";
   }
-  cerr << endl;
+  std::cerr << std::endl;
 #endif
 } // End of establishConnections(...).
 
@@ -363,7 +363,7 @@ SocketBasedConnectionInterface::tearDownConnections(){
       }
     
       // Only increment when a teardown message has been received.
-      string recvMsg(msg);
+      std::string recvMsg(msg);
       if(recvMsg == "teardown"){
         in++;
       }
@@ -372,7 +372,7 @@ SocketBasedConnectionInterface::tearDownConnections(){
     for (unsigned int i = 0; i < socket.size(); i++) {
       debug::debugout << "ShuttingDown: " << i << " ... ";
       int ret = shutdown(socket[i]->getSocketFd(),2);
-      debug::debugout << ret << std::endl;
+      debug::debugout << ret << std::std::endl;
     }
   }
   else{
@@ -387,7 +387,7 @@ SocketBasedConnectionInterface::tearDownConnections(){
    
       debug::debugout << "ShuttingDown: " << i << " ... ";
       int ret = shutdown(socket[i]->getSocketFd(),2);
-      debug::debugout << ret << std::endl;
+      debug::debugout << ret << std::std::endl;
     }
   }*/
   debug::debugout << "Begin tearing down connections for: " << connectionId;
@@ -395,7 +395,7 @@ SocketBasedConnectionInterface::tearDownConnections(){
     debug::debugout << " ... " << i;
     int ret = shutdown(socket[i]->getSocketFd(),2);
   }
-  debug::debugout << endl << "Finished tearing down connections for: " << connectionId << endl;
+  debug::debugout << std::endl << "Finished tearing down connections for: " << connectionId << std::endl;
 }
 
 void
@@ -456,7 +456,7 @@ SocketBasedConnectionInterface::synchronizeWithSlaves() {
   unsigned int msgSize = mtu;
   char msg[mtu];
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": ___________SYNCHRONIZING WITH SLAVES_____________" << endl;
+  std::cerr << connectionId << ": ___________SYNCHRONIZING WITH SLAVES_____________" << std::endl;
 #endif
   // Just wait and receive one message from each slave.
   // The arrival of a message means that the slave is done connecting with its peers.
@@ -467,9 +467,9 @@ SocketBasedConnectionInterface::synchronizeWithSlaves() {
       msgSize = mtu; // Max allowed recv size.
     }
 #ifdef DEBUG_SOCKET_CONN_START
-  cerr << connectionId << ": ___________RECEIVED:";
+  std::cerr << connectionId << ": ___________RECEIVED:";
   __eclmpl__printCharStr(msg, msgSize);
-  cerr << endl;
+  std::cerr << std::endl;
 #endif
   }
 
@@ -482,9 +482,9 @@ SocketBasedConnectionInterface::synchronizeWithSlaves() {
   for (unsigned int i = 1; i < numberOfConnections; i++) {
     SocketBasedConnectionInterface::send(msgSize, msg, i);
 #ifdef DEBUG_SOCKET_CONN_START
-    cerr << connectionId << ": ___________SENT:";
+    std::cerr << connectionId << ": ___________SENT:";
     __eclmpl__printCharStr(msg, msgSize);
-    cerr << " to " << i << endl;
+    std::cerr << " to " << i << std::endl;
 #endif
   }
 } // End of synchronizeWithSlaves().
@@ -535,7 +535,7 @@ bool
 SocketBasedConnectionInterface::recv(unsigned int &msgSize, char * const msg, 
 				     unsigned int &sourceId) {
 #if 0
-  cerr << connectionId << ": _____recv________ mtu="<<mtu<<", msgSize="<<msgSize<<", rcvFr=" <<sourceId<<"_____________" << endl;
+  std::cerr << connectionId << ": _____recv________ mtu="<<mtu<<", msgSize="<<msgSize<<", rcvFr=" <<sourceId<<"_____________" << std::endl;
 #endif
   ASSERT(msgSize >= mtu); // msg needs to be able to receive a whole message.
   //ASSERT( (msgSize = socket[sourceId]->readn(msg, msgHeaderSize)) == msgHeaderSize);
@@ -580,17 +580,17 @@ SocketBasedConnectionInterface::establishConnectionsWithPeerSlaves(const eclmplC
       setDefaultSocketOptions(i);
 
       // Establish connection with slave i.
-      vector<string> args = connTable.getEntry(i);
+      std::vector<std::string> args = connTable.getEntry(i);
       ASSERT(args.size() == 3);
       // args[0]==hostname, args[1]==executable, args[2]==portNumber
-      string slaveHost = args[0];
+      std::string slaveHost = args[0];
       int slavePort = std::stoi(args[2]);
 #ifdef DEBUG_SOCKET_CONN_START
-      cerr << connectionId << ": Trying to connect to slave " << slaveHost << slavePort << endl;
+      std::cerr << connectionId << ": Trying to connect to slave " << slaveHost << slavePort << std::endl;
 #endif
       ASSERT(socket[i]->wConnect(slaveHost.c_str(), slavePort) != -1);
 #ifdef DEBUG_SOCKET_CONN_START
-      cerr << connectionId << ": Connected to slave " << slaveHost << slavePort << endl;
+      std::cerr << connectionId << ": Connected to slave " << slaveHost << slavePort << std::endl;
 #endif
     }
   }

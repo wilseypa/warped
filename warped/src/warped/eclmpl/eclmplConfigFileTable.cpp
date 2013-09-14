@@ -1,12 +1,12 @@
-#include <sstream>
 #include "eclmplConfigFileTable.h"
 
-using std::ostringstream;
-using std::istringstream;
+#include <sstream>
+#include <vector>
+#include <string>
 
 void
 eclmplConfigFileTable::serialize(char *buf, unsigned int &bufSize) const {
-  ostringstream serializedBuf;
+  std::ostringstream serializedBuf;
 
   for (unsigned int i = 0; i < configTable.size(); i++) {
     serializedBuf << configTable[i].size() << DELIMITER;
@@ -15,7 +15,7 @@ eclmplConfigFileTable::serialize(char *buf, unsigned int &bufSize) const {
     }
   }
 
-  string tmpBuf = serializedBuf.str();
+  std::string tmpBuf = serializedBuf.str();
   bufSize = tmpBuf.size() +1;
   memcpy(buf, tmpBuf.c_str(), bufSize);
 } // End of serialize(...).
@@ -27,11 +27,11 @@ eclmplConfigFileTable::deserialize(const char * const buf) {
   }
   
   // receive the message as a character stream
-  istringstream inputStream(buf);
+  std::istringstream inputStream(buf);
 
   unsigned int stringsInEntry;
-  vector<string> entry;
-  string tmpString;
+  std::vector<std::string> entry;
+  std::string tmpString;
   while (inputStream >> stringsInEntry) {
     entry.clear();
     for (unsigned int i = 0; i < stringsInEntry; i++) {

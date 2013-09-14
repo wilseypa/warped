@@ -1,6 +1,8 @@
 #ifndef UDP_CONNECTION_INTERFACE_H
 #define UDP_CONNECTION_INTERFACE_H
 
+#include <vector>
+
 #include "eclmplCommonInclude.h"
 #include "SocketBasedConnectionInterface.h"
 
@@ -14,15 +16,15 @@ public:
   void send(const unsigned int &msgSize,  const char * const msg, const unsigned int &destinationId);
   bool recv(unsigned int &msgSize, char * const msg,unsigned int &sourceId);
 
-  vector<eclmplSocket *> sendSocket;
-  vector<eclmplSocket *> recvSocket;
+  std::vector<eclmplSocket *> sendSocket;
+  std::vector<eclmplSocket *> recvSocket;
 protected:
   void createAndDistributeRecvSocketVector(eclmplConfigFileTable &udpConnectionTable);
   void createAndReceiveSendSocketVector(eclmplConfigFileTable &udpConnectionTable);
   void closeTcpSockets();
   void createSocketPtrVector();
-  void createSocketPtrVector(vector<eclmplSocket *> &socketVector);
-  void obtainAndBindUnusedPorts(vector<eclmplSocket *> &socketVector);
+  void createSocketPtrVector(std::vector<eclmplSocket *> &socketVector);
+  void obtainAndBindUnusedPorts(std::vector<eclmplSocket *> &socketVector);
 };
 
 #endif

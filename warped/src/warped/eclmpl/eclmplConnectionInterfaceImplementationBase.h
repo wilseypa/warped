@@ -1,6 +1,9 @@
 #ifndef ECLMPL_CONNECTION_INTERFACE_IMPLEMENTATION_BASE
 #define ECLMPL_CONNECTION_INTERFACE_IMPLEMENTATION_BASE
 
+#include <vector>
+#include <string>
+
 #include "eclmplCommonInclude.h"
 #include "eclmplConnectionInterface.h"
 #include "eclmplContactInfo.h"
@@ -16,7 +19,7 @@ struct slaveStartupInfo {
   //@{
   
   /// Configuration table entry for a particular slave.
-  vector<string> configTableEntry;
+  std::vector<std::string> configTableEntry;
 
   /// Information that the slave needs to contact the master.
   eclmplContactInfo masterContactInfo;
@@ -114,7 +117,7 @@ protected:
       @param fileName Full path file name of the configuration file.
       @param argsPerEntry Number of arguments per line in the file.
   */
-  virtual eclmplConfigFileTable* scanConfigFile( const string &fileName, 
+  virtual eclmplConfigFileTable* scanConfigFile( const std::string &fileName, 
 						 int argsPerEntry = 2 );
 
   /** Parse command line arguments.
@@ -148,7 +151,7 @@ protected:
   virtual void createSlaveCommandLineArguments(const int * const argc, 
 					       const char * const * const * const argv,
 					       int &newArgc, char **&newArgv,
-					       const vector<string> &configTableEntry,
+					       const std::vector<std::string> &configTableEntry,
 					       const eclmplContactInfo &masterContactInfo,
 					       const unsigned int &id);
 

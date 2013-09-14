@@ -1,6 +1,10 @@
 #include "UDPConnectionInterface.h"
 
-const string configFile = "procgroup";
+#include <vector>
+#include <string>
+
+
+const std::string configFile = "procgroup";
 const int maxBuf = 65535;
 const int sendSocketBufferSize = 65535;
 const int recvSocketBufferSize = 65535;
@@ -17,7 +21,7 @@ UDPConnectionInterface::establishConnections(const int * const argc,
   // We have to check the last argument on the command line to be able
   // to figure out if we are the first communicator started, i.e. the
   // master, or if we have been forked off, i.e. a slave.
-  string finalParameter((*argv)[*argc - 1]);
+  std::string finalParameter((*argv)[*argc - 1]);
   if (finalParameter == "amslave") {
     slaveStartupInfo startupInfo;
     startupInfo = parseCommandLineArguments(argc, argv);
@@ -57,8 +61,8 @@ UDPConnectionInterface::createAndDistributeRecvSocketVector(eclmplConfigFileTabl
   // Distribute port number information.
   if (connectionId == 0) {
     // Add entry for master first.
-    vector<string> portInfoStr;
-    string tmpStr;
+    std::vector<std::string> portInfoStr;
+    std::string tmpStr;
     portInfoStr.push_back(hostName);
     for (unsigned int id = 0; id < numberOfConnections; id++) {
       if (id == connectionId) {
@@ -87,15 +91,15 @@ UDPConnectionInterface::createAndDistributeRecvSocketVector(eclmplConfigFileTabl
   else {
     // Each slave will send port number information to master.
     eclmplConfigFileTable tmpPortInfoTable;
-    vector<string> portInfoStr;
-    string tmpStr;
+    std::vector<std::string> portInfoStr;
+    std::string tmpStr;
     portInfoStr.push_back(hostName);
     for (unsigned int id = 0; id < numberOfConnections; id++) {
       if (id == connectionId) {
-	tmpStr = std::to_string(0);
+	       tmpStr = std::to_string(0);
       }
       else {
-	tmpStr = std::to_string(recvSocket[id]->getPortNumber());
+	       tmpStr = std::to_string(recvSocket[id]->getPortNumber());
       }
       portInfoStr.push_back(tmpStr);
     }
@@ -140,7 +144,7 @@ UDPConnectionInterface::createAndReceiveSendSocketVector(eclmplConfigFileTable &
   // will do a lookup for the remote hostname so that we will save time later on.
   for (unsigned int id = 0; id < numberOfConnections; id++) {
     if (id != connectionId) {
-      vector<string> entry = udpConnectionTable.getEntry(id);
+      std::vector<std::string> entry = udpConnectionTable.getEntry(id);
       string host = entry[0];
       // each entry looks like: hostname listenPort0 ... listenPortN, 
       // so Port_i is accessed through entry[i+1]
@@ -164,7 +168,7 @@ UDPConnectionInterface::createSocketPtrVector() {
 } // End of createSocketPtrVector().
 
 void
-UDPConnectionInterface::createSocketPtrVector(vector<eclmplSocket *> &socketVector) {
+UDPConnectionInterface::createSocketPtrVector(std::vector<eclmplSocket *> &socketVector) {
   ASSERT(numberOfConnections > 0);
   socketVector.resize(numberOfConnections);
 
@@ -181,7 +185,7 @@ UDPConnectionInterface::createSocketPtrVector(vector<eclmplSocket *> &socketVect
 } // End of createSocketVector()
 
 void
-UDPConnectionInterface::obtainAndBindUnusedPorts(vector<eclmplSocket *> &socketVector) {
+UDPConnectionInterface::obtainAndBindUnusedPorts(std::vector<eclmplSocket *> &socketVector) {
   // Registered ports range from 1024 to 49151.
   // Ephemeral ports (or private ports) range from 49152 to 65536, see Stevens p. 42.
   // All of these are available for us to use (if not already taken by someone else).

@@ -3,16 +3,16 @@
 
 #include "eclmplCommonInclude.h"
 
-//typedef struct eclmplConfigFileTableEntry vector<string>;
+#include <vector>
 
 class eclmplConfigFileTable {
 public:
   eclmplConfigFileTable() {}
   ~eclmplConfigFileTable() {}
 
-  inline void addEntry(const vector<string> &entry) { configTable.push_back(entry); }
+  inline void addEntry(const std::vector<string> &entry) { configTable.push_back(entry); }
 
-  inline vector<string> getEntry(const unsigned int &entryNr) const {
+  inline std::vector<string> getEntry(const unsigned int &entryNr) const {
     ASSERT(entryNr <= (configTable.size()-1));
     return configTable[entryNr];
   }
@@ -34,7 +34,7 @@ public:
     return os;
   }
 private:
-  vector<vector<string> > configTable; // Note space between > and >.
+  std::vector<std::vector<string>> configTable;
 };
 
 #endif
