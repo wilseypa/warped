@@ -31,14 +31,10 @@ public:
 
   /** Default constructor 
 
-  @param numSimMgrs The number of simulation managers that have been
-  requested.
-  @param arguments The list of arguments passed in.
   @param initApplication The application that we are starting with.
 
   */
-  TimeWarpConfigurationManager( const vector<string> &arguments,
-				Application *initApplication );
+  TimeWarpConfigurationManager(Application *initApplication);
    
   /// Default destructor
   ~TimeWarpConfigurationManager();
@@ -65,8 +61,6 @@ protected:
 
   /// the handle to the simulation manager
   TimeWarpSimulationManager *mySimulationManager;
-
-  const vector<string> &myCommandLineArguments;
 
   /// This is the handle to TimeWarp EventSet Factory
   TimeWarpEventSetFactory *myEventSetFactory;

@@ -1326,20 +1326,6 @@ void TimeWarpSimulationManager::configure(
     myCommunicationManager->waitForInitialization(
         numberOfSimulationManagers - 1);
 	}
-
-  ostringstream oss;
-  oss << "lp" << mySimulationManagerID << ".csv";
-  ofstream file(oss.str().c_str());
-  if(file) {
-      if(myDVFSManager)
-          file << *myDVFSManager;
-      const vector<string>& args = configuration.getArguments();
-      vector<string>::const_iterator it(args.begin());
-      for(; it != args.end(); ++it)
-        file << " " << *it;
-      file << endl;
-  }
-
 }
 
 bool TimeWarpSimulationManager::contains(const string &object) const {

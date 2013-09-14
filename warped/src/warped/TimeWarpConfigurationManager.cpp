@@ -12,13 +12,10 @@
 #include "Spinner.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 
-TimeWarpConfigurationManager::TimeWarpConfigurationManager(
-    const vector<string>& arguments, Application* initApplication) :
-    mySimulationManager(0), myCommandLineArguments(arguments),
-    myEventSetFactory(0), myStateFactory(0), myGVTFactory(0),
-    myCommunicationFactory(0), mySchedulingFactory(0),
-    myOutputFactory(0), myApplication(initApplication) {
-}
+TimeWarpConfigurationManager::TimeWarpConfigurationManager(Application* initApplication) :
+    mySimulationManager(0), myEventSetFactory(0), myStateFactory(0), myGVTFactory(0),
+    myCommunicationFactory(0), mySchedulingFactory(0), myOutputFactory(0),
+    myApplication(initApplication) {}
 
 TimeWarpConfigurationManager::~TimeWarpConfigurationManager() {
     delete myEventSetFactory;

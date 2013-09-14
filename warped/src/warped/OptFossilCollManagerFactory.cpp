@@ -44,7 +44,6 @@ OptFossilCollManagerFactory::allocate(SimulationConfiguration &configuration,
 		double riskFactor = configuration.get_double({"TimeWarp", "OptFossilCollManager", "AcceptableRisk"},
 		 											0.99);
 
-		configuration.getOptFossilCollRiskFactor(riskFactor);
 		if (simulationType == "ThreadedTimeWarp") {
 			retval = new ThreadedChebyFossilCollManager(myThreadedSimulationManager,
 					checkpointPeriod, minSamples, maxSamples, defaultLength,

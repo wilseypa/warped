@@ -40,8 +40,7 @@ Simulation::configure(SimulationConfiguration& configuration) {
         debug::debugout << "Configured a SequentialSimulationManager" << std::endl;
     } else if (simulationType == "TimeWarp"
                || simulationType == "ThreadedTimeWarp") {
-        myConfigurationManager = new TimeWarpConfigurationManager(configuration.getArguments(),
-                                                                  myApplication);
+        myConfigurationManager = new TimeWarpConfigurationManager(myApplication);
         debug::debugout << "Configured a TimeWarpSimulationManager" << std::endl;
     } else {
         std::cerr << "Unknown Simulation type \"" << simulationType << "\"" << std::endl;

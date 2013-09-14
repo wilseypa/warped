@@ -1121,17 +1121,6 @@ void ThreadedTimeWarpSimulationManager::configure(
 	// hence the n - 1.
 	myCommunicationManager->waitForInitialization(
 			numberOfSimulationManagers - 1);
-	ostringstream oss;
-	oss << "lp" << mySimulationManagerID << ".csv";
-	ofstream file(oss.str().c_str());
-	if (file) {
-		const vector<string>& args = configuration.getArguments();
-		vector<string>::const_iterator it(args.begin());
-		for (; it != args.end(); ++it)
-			file << " " << *it;
-		file << endl;
-	}
-
 }
 
 // this function constructs the map of simulation object names versus
