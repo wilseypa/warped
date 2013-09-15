@@ -229,28 +229,24 @@ TimeWarpReceiverQueue::handleAntiMessage( Event *event,
 
 void
 TimeWarpReceiverQueue::configure( SimulationConfiguration &configuration) {
-   string eventListValue =  configuration.findChoice("EVENTLIST")->getStringValue();
+    std::string eventListValue = configuration.get_string({"TimeWarp", "EventList", "Type"}, "MultiSet");
+    for (unsigned int count = 0; count < numberOfSimulationObjects; count++) {
+        ReceiverQueueContainer* receiverQContainer = new ReceiverQueueContainer();
 
-   for(unsigned int count = 0; count < numberOfSimulationObjects; count++) {
-     ReceiverQueueContainer* receiverQContainer = new ReceiverQueueContainer();
+        if (eventListValue == "MultiSet") {
+            receiverQContainer->eventSet = new TimeWarpMultiSet(mySimulationManager);
+        } else if (eventListValue == "AppendQ") {
+            receiverQContainer->eventSet = new TimeWarpAppendQueue(mySimulationManager);
+        } else {
+            cerr << "Invalid EventList setting" << endl;
+            exit(-1);
+        }
 
-     if(eventListValue == "MULTISET") {
-       receiverQContainer->eventSet = new TimeWarpMultiSet( mySimulationManager );
-     }
-     else if(eventListValue == "APPENDQ") {
-       receiverQContainer->eventSet = new TimeWarpAppendQueue( mySimulationManager );
-     }
-     else {
-       cerr << "Missing required configuration EVENTLIST" << endl;
-       exit( -1 );
-     }
-
-     this->myReceiverQueue.push_back(receiverQContainer);
-     ScheduleListContainer* scheduleListContainer = new ScheduleListContainer(&receiverQContainer->headEventPtr);
-     this->schedulingData->scheduleList->push_back(scheduleListContainer);
-   }
-   //debug << mySimulationManager->getSimulationManagerID()
-    //     << " - configured a MultiSet as the event set" << endl;
+        this->myReceiverQueue.push_back(receiverQContainer);
+        ScheduleListContainer* scheduleListContainer = new ScheduleListContainer(
+            &receiverQContainer->headEventPtr);
+        this->schedulingData->scheduleList->push_back(scheduleListContainer);
+    }
 }
 
 

@@ -5,9 +5,6 @@
 #include "SimulationConfiguration.h"
 #include "Application.h"
 #include "WarpedDebug.h"
-#include <utils/ConfigurationScope.h>
-#include <utils/ConfigurationChoice.h>
-#include <utils/ConfigurationValue.h>
 
 #include <iostream>
 
