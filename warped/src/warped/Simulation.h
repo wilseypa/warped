@@ -106,11 +106,6 @@ private:
   
   void cleanUp(){  delete myConfigurationManager; }
 
-  /**
-     This method returns a default configuration to use when none has been specified.
-   */
-  static SimulationConfiguration *getDefaultConfiguration();
-
   Application *myApplication;
 
   //@} // End of Private Class Attributes of Simulation.

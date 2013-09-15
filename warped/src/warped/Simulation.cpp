@@ -7,6 +7,7 @@
 #include "WarpedDebug.h"
 
 #include <iostream>
+#include <stdexcept>
 
 Simulation::Simulation( Application *initApplication ) : myApplication( initApplication ){
 }
@@ -19,7 +20,7 @@ Simulation::instance( SimulationConfiguration *configuration,
   if( singleton == 0 ){
     singleton = new Simulation( userApplication );
     if( configuration == 0 ){
-      configuration = getDefaultConfiguration();
+       throw std::runtime_error("Must provide a non-null configuration if userApplication is not null");
     }
     singleton->configure( *configuration );
   }
@@ -79,27 +80,6 @@ Simulation::reportError(const string& msg, const SEVERITY level){
   default:
     break;
   };
-}
-
-SimulationConfiguration *
-Simulation::getDefaultConfiguration(){
-  ConfigurationScope *outerScope = new ConfigurationScope( "" );
-  vector<string> emptyVector;
-  SimulationConfiguration *retval = new SimulationConfiguration( outerScope, emptyVector );
-
-  // Make the default a sequential simulation
-  ConfigurationChoice *simulationChoice = new ConfigurationChoice( "Simulation" );
-  simulationChoice->setConfigurationValue( new StringConfigurationValue("Sequential") );
-  outerScope->addChoice( simulationChoice );
-
-  // Make the default event list a splay tree.
-  ConfigurationScope *eventListScope = new ConfigurationScope( "EventList" );
-  ConfigurationChoice *eventListChoice = new ConfigurationChoice( "Type" );
-  eventListChoice->setConfigurationValue( new StringConfigurationValue("SplayTree") );
-  eventListScope->addChoice( eventListChoice );
-  outerScope->addScope( eventListScope );
-  
-  return retval;
 }
 
 void

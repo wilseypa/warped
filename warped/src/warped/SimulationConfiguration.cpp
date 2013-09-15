@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include <stringstream>
+#include <sstream>
 
 #include "json/json.h"
 #include "WarpedDebug.h"
