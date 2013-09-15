@@ -197,9 +197,9 @@ SocketBasedConnectionInterface::establishConnections(const int * const argc,
 	  {
 		  std::cout << " " << connTable.getEntry(i)[j];
 	  }
-	  std::cout << std::std::endl;
+	  std::cout << std::endl;
   }
-  std::cout << "NumberCons: " << numberOfConnections << std::std::endl;
+  std::cout << "NumberCons: " << numberOfConnections << std::endl;
 #endif
   for (unsigned int i = 1; i < numberOfConnections; i++) {
     forkOffSlave(argc, argv, connTable, myContactInfo, i);
@@ -372,7 +372,7 @@ SocketBasedConnectionInterface::tearDownConnections(){
     for (unsigned int i = 0; i < socket.size(); i++) {
       debug::debugout << "ShuttingDown: " << i << " ... ";
       int ret = shutdown(socket[i]->getSocketFd(),2);
-      debug::debugout << ret << std::std::endl;
+      debug::debugout << ret << std::endl;
     }
   }
   else{
@@ -387,7 +387,7 @@ SocketBasedConnectionInterface::tearDownConnections(){
    
       debug::debugout << "ShuttingDown: " << i << " ... ";
       int ret = shutdown(socket[i]->getSocketFd(),2);
-      debug::debugout << ret << std::std::endl;
+      debug::debugout << ret << std::endl;
     }
   }*/
   debug::debugout << "Begin tearing down connections for: " << connectionId;

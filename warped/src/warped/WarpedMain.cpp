@@ -30,8 +30,8 @@
 #include "TerminateToken.h"
 #include "WarpedMain.h"
 
-WarpedMain::WarpedMain(Application* application, std::std::string configurationFileName,
-                       std::std::string simulateUntil,  bool debug) :
+WarpedMain::WarpedMain(Application* application, std::string configurationFileName,
+                       std::string simulateUntil,  bool debug) :
     errors(0),
     warnings(0),
     configurationFileName(configurationFileName),
