@@ -7,6 +7,6 @@
 
     "EventList": {
         // Sequential EventList types can be "SplayTree" or "SingleLinkedList"
-        "Type": "SplayTree",
+        "Type": "SplayTree"
     }
 }
