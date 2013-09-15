@@ -61,15 +61,6 @@ WarpedMain::registerKernelDeserializers() {
     TerminateToken::registerDeserializer();
 }
 
-std::vector<std::string>
-WarpedMain::buildArgumentVector(int argc, char** argv) {
-    std::vector<std::string> retval;
-    for (int i = 0; i < argc; i++) {
-        retval.push_back(std::string(argv[i]));
-    }
-    return retval;
-}
-
 void
 WarpedMain::initializeSimulation() {
     registerKernelDeserializers();
@@ -82,17 +73,17 @@ WarpedMain::initializeSimulation() {
 
     try {
         SimulationConfiguration configuration(configurationFileName);
+
+        if (configuration.get_bool({"SpinBeforeConfiguration"}, false)) {
+            Spinner::spinForever();
+        }
+
+        mySimulation = Simulation::instance(&configuration, myApplication);
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
-        std::exit(std::EXIT_FAILURE);
+        std::exit(EXIT_FAILURE); // EXIT_FAILURE is a macro, so no namespace
     }
 
-
-    if (configuration.get_bool({"SpinBeforeConfiguration"}, false)) {
-        Spinner::spinForever();
-    }
-
-    mySimulation = Simulation::instance(&configuration, myApplication);
     mySimulation->initialize();
 }
 
@@ -123,8 +114,7 @@ WarpedMain::getNextEventTime() {
 
 int
 WarpedMain::main(int argc, char** argv) {
-    std::vector<std::string> args = buildArgumentVector(argc, argv);
-    initializeSimulation(args);
+    initializeSimulation();
 
     if (simulateUntil == "") {
         simulate(myApplication->getPositiveInfinity());

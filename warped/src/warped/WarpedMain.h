@@ -56,7 +56,7 @@ public:
      This does everything up until the moment that the simulation is about
      to start.  The SimulationManager that is returned can be used
   */
-  void initializeSimulation( vector<string> &args );
+  void initializeSimulation();
 
   /**
      Tells the simulation to run until the absolute time passed in.
