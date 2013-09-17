@@ -24,7 +24,7 @@ ThreadedOutputEvents::~ThreadedOutputEvents() {
 vector<const Event *> *
 ThreadedOutputEvents::getEventsSentAtOrAfter(const VTime &searchTime, int threadID) {
 	vector<const Event *> *retval = new vector<const Event *> ;
-	this->getLocalLock(threadID);
+	this->acquireLocalLock(threadID);
 	vector<SetObject<Event>*>::iterator out = outputEventsLocal.end();
 	if (out != outputEventsLocal.begin()) {
 		out--;
@@ -63,7 +63,7 @@ ThreadedOutputEvents::getEventsSentAtOrAfter(const VTime &searchTime, int thread
 	}
 	this->releaseLocalLock(threadID);
 
-	this->getRemoteLock(threadID);
+	this->acquireRemoteLock(threadID);
 	vector<const Event *>::iterator it = outputEventsRemote.end();
 	if (it != outputEventsRemote.begin()) {
 		it--;
@@ -89,7 +89,7 @@ ThreadedOutputEvents::getEventsSentAtOrAfterAndRemove(const VTime &searchTime,
 		int threadID) {
 	vector<const Event *> *retval = new vector<const Event *> ;
 
-	this->getLocalLock(threadID);
+	this->acquireLocalLock(threadID);
 	vector<SetObject<Event>*>::iterator out = outputEventsLocal.end();
 	if (out != outputEventsLocal.begin()) {
 		out--;
@@ -135,7 +135,7 @@ ThreadedOutputEvents::getEventsSentAtOrAfterAndRemove(const VTime &searchTime,
 	}
 	this->releaseLocalLock(threadID);
 
-	this->getRemoteLock(threadID);
+	this->acquireRemoteLock(threadID);
 	vector<const Event *>::iterator it = outputEventsRemote.end();
 	if (it != outputEventsRemote.begin()) {
 		it--;
@@ -166,7 +166,7 @@ void ThreadedOutputEvents::fossilCollect(const VTime &gCollectTime, int threadID
 	// The events sent to this same simulation manager (local events) will be deleted
 	// in the event set and should not be deleted here.
 
-	this->getRemoteLock(threadID);
+	this->acquireRemoteLock(threadID);
 	vector<const Event*>::iterator outRem = outputEventsRemote.begin();
 	while (outRem != outputEventsRemote.end() && (*outRem)->getSendTime()
 			< gCollectTime) {
@@ -176,7 +176,7 @@ void ThreadedOutputEvents::fossilCollect(const VTime &gCollectTime, int threadID
 	outputEventsRemote.erase(outputEventsRemote.begin(), outRem);
 	this->releaseRemoteLock(threadID);
 
-	this->getLocalLock(threadID);
+	this->acquireLocalLock(threadID);
 	vector<SetObject<Event>*>::iterator outLoc = outputEventsLocal.begin();
 	while (outLoc != outputEventsLocal.end() && (*outLoc)->getMainTime()
 			< gCollectTime) {
@@ -186,7 +186,7 @@ void ThreadedOutputEvents::fossilCollect(const VTime &gCollectTime, int threadID
 	outputEventsLocal.erase(outputEventsLocal.begin(), outLoc);
 	this->releaseLocalLock(threadID);
 
-	this->getRemovedLock(threadID);
+	this->acquireRemovedLock(threadID);
 	list<const Event*>::iterator rmRt = removedEventsRemote.begin();
 	while (rmRt != removedEventsRemote.end()) {
 		if ((*rmRt)->getSendTime() < gCollectTime) {
@@ -204,7 +204,7 @@ void ThreadedOutputEvents::fossilCollect(int gCollectTime, int threadID) {
 	// The events sent to this same simulation manager (local events) will be deleted
 	// in the event set and should not be deleted here.
 
-	this->getRemoteLock(threadID);
+	this->acquireRemoteLock(threadID);
 	vector<const Event*>::iterator outRem = outputEventsRemote.begin();
 	while (outRem != outputEventsRemote.end()
 			&& (*outRem)->getSendTime().getApproximateIntTime() < gCollectTime) {
@@ -214,7 +214,7 @@ void ThreadedOutputEvents::fossilCollect(int gCollectTime, int threadID) {
 	outputEventsRemote.erase(outputEventsRemote.begin(), outRem);
 	this->releaseRemoteLock(threadID);
 
-	this->getLocalLock(threadID);
+	this->acquireLocalLock(threadID);
 	vector<SetObject<Event>*>::iterator outLoc = outputEventsLocal.begin();
 	while (outLoc != outputEventsLocal.end()
 			&& (*outLoc)->getMainTime().getApproximateIntTime() < gCollectTime) {
@@ -224,7 +224,7 @@ void ThreadedOutputEvents::fossilCollect(int gCollectTime, int threadID) {
 	outputEventsLocal.erase(outputEventsLocal.begin(), outLoc);
 	this->releaseLocalLock(threadID);
 
-	this->getRemovedLock(threadID);
+	this->acquireRemovedLock(threadID);
 	list<const Event*>::iterator rmRt = removedEventsRemote.begin();
 	while (rmRt != removedEventsRemote.end()) {
 		if ((*rmRt)->getSendTime().getApproximateIntTime() < gCollectTime) {
@@ -240,7 +240,7 @@ void ThreadedOutputEvents::fossilCollect(int gCollectTime, int threadID) {
 const Event*
 ThreadedOutputEvents::getOldestEvent(unsigned int size, int threadID) {
 	const Event *retval = NULL;
-	this->getRemoteLock(threadID);
+	this->acquireRemoteLock(threadID);
 	vector<const Event*>::iterator it = outputEventsRemote.begin();
 	while (it != outputEventsRemote.end() && (*it)->getEventSize() != size) {
 		it++;
@@ -264,7 +264,7 @@ void ThreadedOutputEvents::insert(const Event *newEvent, int threadID) {
 	vector<const Event *>::iterator i;
 
 	if (isLocal) {
-		this->getLocalLock(threadID);
+		this->acquireLocalLock(threadID);
 		outputEventsLocal.push_back(
 				new SetObject<Event> (newEvent->getSendTime(),
 						newEvent->getReceiveTime(),
@@ -272,7 +272,7 @@ void ThreadedOutputEvents::insert(const Event *newEvent, int threadID) {
 						newEvent));
 		this->releaseLocalLock(threadID);
 	} else {
-		this->getRemoteLock(threadID);
+		this->acquireRemoteLock(threadID);
 		list<const Event *>::iterator it;
 		it = std::find(removedEventsRemote.begin(), removedEventsRemote.end(),
 				newEvent);
@@ -290,7 +290,7 @@ void ThreadedOutputEvents::fossilCollectEvent(const Event *toRemove, int threadI
 	vector<const Event *>::iterator it;
 	bool foundMatch = false;
 
-	this->getLocalLock(threadID);
+	this->acquireLocalLock(threadID);
 	sit = outputEventsLocal.begin();
 	while (sit != outputEventsLocal.end()) {
 		if ((*sit)->getElement() == toRemove) {
@@ -304,7 +304,7 @@ void ThreadedOutputEvents::fossilCollectEvent(const Event *toRemove, int threadI
 	}
 	this->releaseLocalLock(threadID);
 
-	this->getRemoteLock(threadID);
+	this->acquireRemoteLock(threadID);
 	it = outputEventsRemote.begin();
 	while (it != outputEventsRemote.end()) {
 		if (toRemove->getEventId() == (*it)->getEventId()
@@ -321,7 +321,7 @@ void ThreadedOutputEvents::fossilCollectEvent(const Event *toRemove, int threadI
 
 void ThreadedOutputEvents::remove(const Event *toRemove, int threadID) {
 	vector<const Event *>::iterator i;
-	this->getLocalLock(threadID);
+	this->acquireLocalLock(threadID);
 	vector<SetObject<Event>*>::iterator sit = outputEventsLocal.begin();
 	bool found = false;
 
@@ -337,7 +337,7 @@ void ThreadedOutputEvents::remove(const Event *toRemove, int threadID) {
 	}
 	this->releaseLocalLock(threadID);
 
-	this->getRemoteLock(threadID);
+	this->acquireRemoteLock(threadID);
 	if (!found) {
 		i = std::find(outputEventsRemote.begin(), outputEventsRemote.end(),
 				toRemove);
@@ -357,7 +357,7 @@ void ThreadedOutputEvents::remove(const vector<const Event *> &toRemove, int thr
 
 void ThreadedOutputEvents::saveOutputCheckpoint(ofstream* outFile,
 		unsigned int saveTime, int threadID) {
-	this->getRemoteLock(threadID);
+	this->acquireRemoteLock(threadID);
 	vector<const Event*>::iterator outRem = outputEventsRemote.begin();
 	char del = '_';
 	unsigned int eveSize = 0;
@@ -380,7 +380,7 @@ void ThreadedOutputEvents::saveOutputCheckpoint(ofstream* outFile,
 		outRem++;
 	}
 	this->releaseRemoteLock(threadID);
-	this->getLocalLock(threadID);
+	this->acquireLocalLock(threadID);
 	vector<SetObject<Event>*>::iterator outLoc = outputEventsLocal.begin();
 	while (outLoc != outputEventsLocal.end()) {
 		if ((*outLoc)->getMainTime().getApproximateIntTime() < saveTime
@@ -424,7 +424,7 @@ void ThreadedOutputEvents::ofcPurge(int threadID) {
 	// overloaded delete. Delete remote events and remove them from the queues.
 	// Just clear the local events.
 
-	this->getRemoteLock(threadID);
+	this->acquireRemoteLock(threadID);
 	vector<const Event*>::iterator outRem = outputEventsRemote.begin();
 	while (outRem != outputEventsRemote.end()) {
 		(*outRem)->~Event();
@@ -434,7 +434,7 @@ void ThreadedOutputEvents::ofcPurge(int threadID) {
 	outputEventsRemote.clear();
 	this->releaseRemoteLock(threadID);
 
-	this->getLocalLock(threadID);
+	this->acquireLocalLock(threadID);
 	vector<SetObject<Event>*>::iterator outLoc = outputEventsLocal.begin();
 	while (outLoc != outputEventsLocal.end()) {
 		delete *outLoc;
@@ -443,7 +443,7 @@ void ThreadedOutputEvents::ofcPurge(int threadID) {
 	outputEventsLocal.clear();
 	this->releaseLocalLock(threadID);
 
-	this->getRemovedLock(threadID);
+	this->acquireRemovedLock(threadID);
 	list<const Event*>::iterator rmRt = removedEventsRemote.begin();
 	while (rmRt != removedEventsRemote.end()) {
 		delete *rmRt;
@@ -452,35 +452,35 @@ void ThreadedOutputEvents::ofcPurge(int threadID) {
 	this->releaseRemovedLock(threadID);
 }
 
-bool ThreadedOutputEvents::getLocalLock(int threadId) {
+void ThreadedOutputEvents::acquireLocalLock(int threadId) {
 	while (!localQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism()))
 		;
 	ASSERT(localQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
-bool ThreadedOutputEvents::releaseLocalLock(int threadId) {
+void ThreadedOutputEvents::releaseLocalLock(int threadId) {
 	ASSERT(localQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 	localQueueLock->releaseLock(threadId, mySimulationManager->getSyncMechanism());
 }
 
-bool ThreadedOutputEvents::getRemoteLock(int threadId) {
+void ThreadedOutputEvents::acquireRemoteLock(int threadId) {
 	while (!remoteQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism()))
 		;
 	ASSERT(remoteQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
-bool ThreadedOutputEvents::releaseRemoteLock(int threadId) {
+void ThreadedOutputEvents::releaseRemoteLock(int threadId) {
 	ASSERT(remoteQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 	remoteQueueLock->releaseLock(threadId, mySimulationManager->getSyncMechanism());
 }
 
-bool ThreadedOutputEvents::getRemovedLock(int threadId) {
+void ThreadedOutputEvents::acquireRemovedLock(int threadId) {
 	while (!removedListLock->setLock(threadId, mySimulationManager->getSyncMechanism()))
 		;
 	ASSERT(removedListLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
-bool ThreadedOutputEvents::releaseRemovedLock(int threadId) {
+void ThreadedOutputEvents::releaseRemovedLock(int threadId) {
 	ASSERT(removedListLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 	removedListLock->releaseLock(threadId, mySimulationManager->getSyncMechanism());
 }

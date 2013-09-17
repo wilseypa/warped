@@ -117,13 +117,7 @@ public:
 
 	//@} // End of Public Class Methods of ThreadedOutputEvents.
 
-	bool getLocalLock(int threadId);
-	bool getRemoteLock(int threadId);
-	bool getRemovedLock(int threadId);
 
-	bool releaseLocalLock(int threadId);
-	bool releaseRemoteLock(int threadId);
-	bool releaseRemovedLock(int threadId);
 
 private:
 
@@ -149,6 +143,14 @@ private:
 
 	/// A handle to the simulation manager.
 	ThreadedTimeWarpSimulationManager *mySimulationManager;
+
+	void acquireLocalLock(int threadId);
+	void acquireRemoteLock(int threadId);
+	void acquireRemovedLock(int threadId);
+
+	void releaseLocalLock(int threadId);
+	void releaseRemoteLock(int threadId);
+	void releaseRemovedLock(int threadId);
 
 	///Lock Definitions
 	LockState* localQueueLock;
