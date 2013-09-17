@@ -99,12 +99,10 @@ DVFSManagerFactory::allocate( SimulationConfiguration &configuration,
                                       uwm,
                                       threshold);
   }
-  else {
-    stringstream err;
-    cerr << "DVFSManager: invalid type '" << dvfsManagerType << "'." << endl
-         << "Valid types are None | Shared | Distributed. Aborting simulation.";
-    mySimulationManager->shutdown(err.str());
-  }
+  stringstream err;
+  cerr << "DVFSManager: invalid type '" << dvfsManagerType << "'." << endl
+       << "Valid types are None | Shared | Distributed. Aborting simulation.";
+  mySimulationManager->shutdown(err.str());
 }
 
 const DVFSManagerFactory *
