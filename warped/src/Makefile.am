@@ -196,8 +196,6 @@ WARPED_H_FILES = \
 	warped/TimeWarpSenderQueue.h \
 	warped/TimeWarpSimulationManager.h \
 	warped/TimeWarpSimulationManagerFactory.h \
-	warped/TimeWarpSimulationObjectQueue.h \
-	warped/TimeWarpSimulationObjectQueueFactory.h \
 	warped/TimeWarpSimulationStream.h \
 	warped/TokenPassingTerminationManager.h \
 	warped/Transceiver.h \
@@ -313,8 +311,6 @@ libwarped_la_SOURCES = \
 	warped/TimeWarpSenderQueue.cpp \
 	warped/TimeWarpSimulationManager.cpp \
 	warped/TimeWarpSimulationManagerFactory.cpp \
-	warped/TimeWarpSimulationObjectQueue.cpp \
-	warped/TimeWarpSimulationObjectQueueFactory.cpp \
 	warped/TimeWarpSimulationStream.cpp \
 	warped/TokenPassingTerminationManager.cpp \
 	warped/Transceiver.cpp \

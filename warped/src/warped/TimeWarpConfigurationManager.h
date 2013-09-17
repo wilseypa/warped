@@ -10,7 +10,6 @@
 
 // components of a basic TimeWarp system
 #include "TimeWarpEventSetFactory.h"
-#include "TimeWarpSimulationObjectQueueFactory.h"
 #include "StateManagerFactory.h"
 #include "OutputManagerFactory.h"
 #include "SchedulingManagerFactory.h"

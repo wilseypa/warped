@@ -4,7 +4,6 @@
 #include "SimulationObjectProxy.h"
 #include "TimeWarpSimulationManager.h"
 #include "TimeWarpSimulationStream.h"
-#include "TimeWarpSimulationObjectQueue.h"
 #include "SchedulingManager.h"
 #include "CommunicationManager.h"
 #include "TerminationManager.h"
@@ -96,7 +95,6 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
 	delete myGVTManager;
 	delete myStateManager;
 	delete localArrayOfSimObjPtrs;
-	delete mySimulationObjectQueue;
     delete myDVFSManager;
 }
 
@@ -1234,17 +1232,6 @@ void TimeWarpSimulationManager::configure(
 	// b. resets the value of numberOfObjects to the number of objects
 	//    actually resident on this simulation manager.
 	localArrayOfSimObjPtrs = createMapOfObjects();
-
-	// For threaded simulation types, an objectQueue is allocated
-	const TimeWarpSimulationObjectQueueFactory
-			*myTimeWarpSimulationObjectQueueFactory =
-					TimeWarpSimulationObjectQueueFactory::instance();
-	mySimulationObjectQueue
-			= dynamic_cast<TimeWarpSimulationObjectQueue *> (myTimeWarpSimulationObjectQueueFactory->allocate(
-					configuration, this));
-	if (mySimulationObjectQueue != NULL) {
-		mySimulationObjectQueue->configure(configuration);
-	}
 
 	// configure the event set manager
 	const TimeWarpEventSetFactory *myEventSetFactory =

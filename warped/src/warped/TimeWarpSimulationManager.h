@@ -27,7 +27,6 @@ class StateManager;
 class TerminationManager;
 class TimeWarpSimulationStream;
 class TimeWarpEventSet;
-class TimeWarpSimulationObjectQueue;
 
 /** The TimeWarpSimulationManager class.
 
@@ -148,14 +147,6 @@ public:
 	 */
 	virtual SchedulingManager *getSchedulingManager() {
 		return mySchedulingManager;
-	}
-
-	/** Return a handle to the simulation object queue.
-
-	 @return A handle to the simulation object queue.
-	 */
-	virtual TimeWarpSimulationObjectQueue *getSimulationObjectQueue() {
-		return mySimulationObjectQueue;
 	}
 
 	/** Return a handle to the gvt manager.
@@ -486,9 +477,6 @@ protected:
 
 	/// Handle to the scheduler Factory
 	SchedulingManager *mySchedulingManager;
-
-	/// Handle to the scheduler Factory
-	TimeWarpSimulationObjectQueue *mySimulationObjectQueue;
 
 	/// Handle to the output manager Factory
 	OutputManager *myOutputManager;
