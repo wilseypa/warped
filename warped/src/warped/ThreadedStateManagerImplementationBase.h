@@ -108,9 +108,9 @@ public:
 
 	//@} // End of Public Class Methods of ThreadedStateManagerImplementationBase.
 
-	bool getStateQueueLock(int threadId, int objId);
+	void getStateQueueLock(int threadId, int objId);
 
-	bool releaseStateQueueLock(int threadId, int objId);
+	void releaseStateQueueLock(int threadId, int objId);
 
 	void initStateQueueLocks(ThreadedTimeWarpSimulationManager *simMgr);
 
