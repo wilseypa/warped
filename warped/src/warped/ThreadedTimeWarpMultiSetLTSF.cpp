@@ -1,5 +1,7 @@
 #include "ThreadedTimeWarpMultiSetLTSF.h"
 
+#include <stdexcept>
+
 ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, int LTSFCountVal,
         const string syncMech, const string scheQScheme, const string causalityType, int **inLTSFObjId) {
 	objectCount = inObjectCount;
@@ -131,9 +133,8 @@ bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty() {
 		return ladderQ->empty();
 	} else if( scheduleQScheme == "SPLAYTREE" ) {
 		return (splayTree->size() == 0) ? true : false;
-	} else {
-		cout << "Invalid schedule queue scheme" << endl;
-	}	
+	}
+	throw std::runtime_error("Invalid schedule queue scheme");
 }
 
 void ThreadedTimeWarpMultiSetLTSF::releaseAllScheduleQueueLocks()
@@ -299,9 +300,8 @@ int ThreadedTimeWarpMultiSetLTSF::getScheduleQueueSize()
 		cout << "LadderQ message count not handled for now" << endl;
 	} else if( scheduleQScheme == "SPLAYTREE" ) {
 		return splayTree->size();
-	} else {
-		cout << "Invalid schedule queue scheme" << endl;
-	}
+	} 
+	throw std::runtime_error("Invalid schedule queue scheme");
 }
 const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId)
 {
