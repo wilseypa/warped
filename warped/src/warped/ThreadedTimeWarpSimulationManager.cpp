@@ -30,6 +30,9 @@
 #include "ThreadedMatternGVTManager.h"
 #include "SimulationConfiguration.h"
 #include "ThreadedTimeWarpLoadBalancer.h"
+#include "DVFSManager.h"
+#include "DistributedDVFSManager.h"
+#include "DVFSManagerFactory.h"
 
 int WorkerInformation::globalStillBusyCount = 0;
 bool WorkerInformation::workRemaining = true;
@@ -1111,6 +1114,15 @@ void ThreadedTimeWarpSimulationManager::configure(
 	} else {
 		usingOptFossilCollection = false;
 	}
+
+	// setup and configure clock frequency manager
+	const DVFSManagerFactory* dvfsFactory =
+	    DVFSManagerFactory::instance();
+	myDVFSManager = dynamic_cast<DVFSManager*>(
+	    dvfsFactory->allocate(configuration, this));
+
+	if(myDVFSManager)
+      myDVFSManager->configure(configuration);
 
 	registerSimulationObjects();
 

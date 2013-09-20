@@ -1195,8 +1195,7 @@ void TimeWarpSimulationManager::displayGlobalObjectMap(std::ostream& out) {
 	}
 }
 
-void TimeWarpSimulationManager::configure(
-		SimulationConfiguration &configuration) {
+void TimeWarpSimulationManager::configure(SimulationConfiguration& configuration) {
 	const CommunicationManagerFactory *myCommFactory =
 			CommunicationManagerFactory::instance();
 
@@ -1212,7 +1211,6 @@ void TimeWarpSimulationManager::configure(
 	mySimulationManagerID = myCommunicationManager->getId();
 
 	ASSERT( myApplication != 0 );
-	//setNumberOfObjects( myApplication->getNumberOfSimulationObjects(mySimulationManagerID) );
 
 	// register simulation manager's message types with the comm. manager
 	registerWithCommunicationManager();
@@ -1272,12 +1270,6 @@ void TimeWarpSimulationManager::configure(
 			configuration, this));
 	ASSERT( myGVTFactory != 0 );
 	myGVTManager->configure(configuration);
-
-	// lets now set up and configure the fossil collection manager
-	//  const OptFossilCollManagerFactory *myFossilCollFactory = OptFossilCollManagerFactory::instance();
-	//  myFossilCollManager = dynamic_cast<OptFossilCollManager *>(myFossilCollFactory->allocate( configuration, this ));
-	//  ASSERT( myFossilCollManager != 0 );
-	//  myFossilCollManager->configure( configuration );
 
 	// lets now set up and configure the fossil collection manager
 	const OptFossilCollManagerFactory *myFossilCollFactory =
