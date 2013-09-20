@@ -1,19 +1,12 @@
 #ifndef COMMUNICATION_MANAGER_H
 #define COMMUNICATION_MANAGER_H
 
+#include <unordered_map>
 
 #include "warped.h"
 #include "CommunicatingEntity.h"
 #include "eclmpl/PhysicalCommunicationLayer.h"
 #include "Configurable.h"
-
-#ifdef HAVE_TR1_UNORDERED_MAP
-#include<tr1/unordered_map>
-using std::tr1::unordered_map;
-#else
-#include <unordered_map>
-using std::unordered_map;
-#endif
 
 class KernelMessage;
 class SimulationObject;

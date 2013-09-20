@@ -3,18 +3,10 @@
 
 
 #include "warped.h"
-#ifdef HAVE_TR1_UNORDERED_MAP
-#include<tr1/unordered_map>
-using std::tr1::unordered_map;
-#else
 #include <unordered_map>
-using std::unordered_map;
-#endif
-
 #include <string>
 #include "warped/FileManager.h"
 
-using std::tr1::unordered_map;
 using std::string;
 
 namespace warped{

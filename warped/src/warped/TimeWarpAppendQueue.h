@@ -1,19 +1,13 @@
 #ifndef TIME_WARP_APPEND_QUEUE_H
 #define TIME_WARP_APPEND_QUEUE_H
 
+#include <unordered_map>
 
 #include "warped.h"
 #include "TimeWarpEventSet.h"
 #include "InputSetObject.h"
 #include "SenderQueueContainer.h"
 
-#ifdef HAVE_TR1_UNORDERED_MAP
-#include<tr1/unordered_map>
-using std::tr1::unordered_map;
-#else
-#include <unordered_map>
-using std::unordered_map;
-#endif
 
 using std::equal_to;
 
