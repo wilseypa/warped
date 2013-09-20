@@ -25,11 +25,7 @@
 #ifndef TCLAP_ARGUMENT_H
 #define TCLAP_ARGUMENT_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#else
 #define HAVE_SSTREAM
-#endif
 
 #include <string>
 #include <vector>

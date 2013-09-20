@@ -8,7 +8,6 @@ AC_PREREQ(2.61)
 
 AC_SUBST(WARPED_VERSION, [3.0])
 
-AC_CANONICAL_HOST
 AC_LANG([C++])
 
 dnl Checks for programs.
@@ -83,9 +82,6 @@ dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h)
 
-dnl Look for libutils
-LIB_UTILS
-
 dnl Look for cppunit
 dnl Check to see if cppunit was enabled.
 AC_ARG_ENABLE(cppunit,
@@ -101,10 +97,6 @@ AM_CONDITIONAL(USE_CPPUNIT, test x$cppunit = xtrue)
 if test x$cppunit = xtrue; then
 LIB_CPPUNIT
 fi
-
-dnl Look for PCCTS headers.  That's all we need for warped - we don't need
-dnl the binaries.
-CL_PCCTS_HEADERS
 
 AH_TEMPLATE(USE_SOCKLEN_T, [LINUX platforms require "socklen_t" while
 SOLARIS platforms require it to be an "int".  This macro tells use whether

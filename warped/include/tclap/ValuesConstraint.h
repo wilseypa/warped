@@ -27,11 +27,7 @@
 #include <vector>
 #include <tclap/Constraint.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#else
 #define HAVE_SSTREAM
-#endif
 
 #include <sstream>
 

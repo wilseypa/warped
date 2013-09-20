@@ -8,16 +8,16 @@ lib_LTLIBRARIES = libwarped.la
 if USE_TIMEWARP
 
 if HAVE_MPICH
-libwarped_la_LIBADD = -lutils -lmpich -lmpl -lpthread 
+libwarped_la_LIBADD = -lmpich -lmpl -lpthread 
 else 
 if HAVE_MPI
-libwarped_la_LIBADD = -lutils -lmpi -lpthread 
+libwarped_la_LIBADD = -lmpi -lpthread 
 else
-libwarped_la_LIBADD = -lutils -lpthread
+libwarped_la_LIBADD = -lpthread
 endif
 endif
 else
-libwarped_la_LIBADD = -lutils -lpthread
+libwarped_la_LIBADD = -lpthread
 endif
 
 libwarped_la_LIBADD += $(top_builddir)/include/json/libjsoncpp.la

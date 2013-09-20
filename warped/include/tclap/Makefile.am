@@ -1,4 +1,3 @@
-
 libtclapincludedir = $(includedir)/tclap
 
 libtclapinclude_HEADERS = \
