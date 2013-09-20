@@ -7,10 +7,8 @@
 #include "SimulationConfiguration.h"
 #include <WarpedDebug.h>
 
-#ifdef USE_TIMEWARP
 #include "eclmpl/eclmpl.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#endif
 
 CommunicationManagerFactory::CommunicationManagerFactory(){}
 
@@ -27,10 +25,9 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
   ASSERT( parent != 0 );
   TimeWarpSimulationManager *mySimulationManager =
     dynamic_cast<TimeWarpSimulationManager *>( parent );
-#ifdef USE_TIMEWARP
+
   ThreadedTimeWarpSimulationManager *myThreadedSimulationManager =
       dynamic_cast<ThreadedTimeWarpSimulationManager *>( parent );
-#endif
 
   PhysicalCommunicationLayer *myPhysicalCommunicationLayer = NULL;
   Configurable *retval = 0;
@@ -55,7 +52,7 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
   std::string managerType = configuration.get_string({"TimeWarp", "CommunicationManager", "Type"},
                                                      "Default");
   std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
-#if USE_TIMEWARP
+
 	if (simulationType == "ThreadedTimeWarp") {
 		myPhysicalCommunicationLayer->physicalInit();
 		if (managerType == "Default") {
@@ -75,7 +72,7 @@ CommunicationManagerFactory::allocate( SimulationConfiguration &configuration,
 
 		return retval;
 	}
-#endif
+
   myPhysicalCommunicationLayer->physicalInit();
   if(managerType == "Default"){
     retval = new DefaultCommunicationManager( myPhysicalCommunicationLayer,
@@ -107,14 +104,12 @@ CommunicationManagerFactory::
 allocatePhysicalCommunicationLayer( const string &physicalLayer ){
   PhysicalCommunicationLayer *retval = 0;
 
-#ifdef USE_TIMEWARP
-    if (strcasecmp(physicalLayer.c_str(), "MPI") == 0) {
-        retval = new MPIPhysicalCommunicationLayer();
-    } else if (strcasecmp(physicalLayer.c_str(), "UDPSELECT") == 0) {
-        retval = new UDPSelectPhysicalCommunicationLayer();
-    } else if (strcasecmp(physicalLayer.c_str(), "TCPSELECT") == 0) {
-        retval = new TCPSelectPhysicalCommunicationLayer();
-    }
-#endif
+  if (strcasecmp(physicalLayer.c_str(), "MPI") == 0) {
+      retval = new MPIPhysicalCommunicationLayer();
+  } else if (strcasecmp(physicalLayer.c_str(), "UDPSELECT") == 0) {
+      retval = new UDPSelectPhysicalCommunicationLayer();
+  } else if (strcasecmp(physicalLayer.c_str(), "TCPSELECT") == 0) {
+      retval = new TCPSelectPhysicalCommunicationLayer();
+  }
   return retval;
 }

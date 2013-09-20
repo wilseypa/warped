@@ -2,7 +2,6 @@ MPI_SRC = warped/eclmpl/MPIPhysicalCommunicationLayer.cpp \
 	      warped/eclmpl/MPIPhysicalCommunicationLayer.h
 
 
-if USE_TIMEWARP
 ECLMPL_SRC = \
 	$(MPI_SRC) \
 	warped/eclmpl/eclmplConfigFileTable.cpp \
@@ -20,9 +19,6 @@ ECLMPL_SRC = \
 	warped/eclmpl/TCPSelectPhysicalCommunicationLayer.cpp \
 	warped/eclmpl/UDPConnectionInterface.cpp \
 	warped/eclmpl/UDPSelectPhysicalCommunicationLayer.cpp
-else
-ECLMPL_SRC = 
-endif
 
 ECLMPL_H_FILES = \
 	warped/eclmpl/eclmplCommonInclude.h \
