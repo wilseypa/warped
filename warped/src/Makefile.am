@@ -5,8 +5,6 @@ include warped/eclmpl/Makefile.am.stub
 
 lib_LTLIBRARIES = libwarped.la 
 
-if USE_TIMEWARP
-
 if HAVE_MPICH
 libwarped_la_LIBADD = -lmpich -lmpl -lpthread 
 else 
@@ -15,9 +13,6 @@ libwarped_la_LIBADD = -lmpi -lpthread
 else
 libwarped_la_LIBADD = -lpthread
 endif
-endif
-else
-libwarped_la_LIBADD = -lpthread
 endif
 
 libwarped_la_LIBADD += $(top_builddir)/include/json/libjsoncpp.la
