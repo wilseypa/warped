@@ -32,7 +32,6 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 	std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
 	int gvtPeriod = configuration.get_int({"TimeWarp", "GVTManager", "Period"}, 1000);
 
-#if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
 		if (gvtManagerType == "Mattern") {
 			retval = new ThreadedMatternGVTManager(
@@ -47,7 +46,6 @@ GVTManagerFactory::allocate(SimulationConfiguration &configuration,
 			mySimulationManager->shutdown("Unknown GVTManager choice \"" + gvtManagerType + "\"");
 		}
 	}
-#endif
 
 	if (gvtManagerType == "Mattern") {
 		retval = new MatternGVTManager(mySimulationManager, gvtPeriod);
