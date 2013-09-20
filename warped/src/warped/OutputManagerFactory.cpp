@@ -66,7 +66,6 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 		mySimulationManager->shutdown(error);
 	}
 
-#if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
 		if (outputManagerType == "Aggressive") {
 			retval = new ThreadedAggressiveOutputManager(
@@ -96,8 +95,6 @@ OutputManagerFactory::allocate(SimulationConfiguration &configuration,
 			mySimulationManager->shutdown(error);
 		}
 	}
-#endif
-
 	return retval;
 }
 
