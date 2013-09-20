@@ -27,16 +27,7 @@ AC_CHECK_LIB(socket,socket)
 AH_TEMPLATE([USE_TIMEWARP], [Compile in TIMEWARP support])
 AH_TEMPLATE([USE_CPPUNIT], [Compile cppunit tests])
 
-dnl Check to see if TIMEWARP was enabled.
-AC_ARG_ENABLE(timewarp,
- AS_HELP_STRING([--enable-timewarp],[build support for timewarp]),
- [AC_DEFINE(USE_TIMEWARP)]
- [case "${enableval}" in
-   yes) timewarp=true ;;
-   no)  timewarp=false ;;
-   *) AC_MSG_ERROR(bad value ${enableval} for --enable-timewarp) ;;
- esac],[timewarp=false])
- AM_CONDITIONAL(USE_TIMEWARP, test $timewarp = true)
+AC_ARG_ENABLE(timewarp, AS_HELP_STRING([]), [timewarp=true] ,[timewarp=true])
 
 dnl Find the tr1/unordered_map header.
 AC_CHECK_HEADERS([tr1/unordered_map], [break])
