@@ -33,7 +33,6 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 		usingOneAntiMessageOpt = true;
 	}
 
-#if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
 		eventListType = configuration.get_string({"TimeWarp", "EventList", "Type"}, "Default");
 		if (eventListType == "MultiSet") {
@@ -49,7 +48,7 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration &configuration,
 											+ "\" is not a valid choice.");
 		}
 	}
-#endif
+	
 	if (eventListType == "Default") {
 		retval = new DefaultTimeWarpEventSet(mySimulationManager,
 				usingOneAntiMessageOpt);

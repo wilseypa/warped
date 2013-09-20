@@ -24,9 +24,8 @@ Configurable *
 StateManagerFactory::allocate(SimulationConfiguration &configuration,
 		Configurable *parent) const {
 	StateManager *retval = 0;
-#ifdef USE_TIMEWARP
+
 	ThreadedStateManager *retvalue = 0;
-#endif
 
 	TimeWarpSimulationManager *mySimulationManager =
 			dynamic_cast<TimeWarpSimulationManager *> (parent);
@@ -47,7 +46,6 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 														"Periodic");
 	int stateManagerPeriod = configuration.get_int({"TimeWarp", "StateManager", "Period"}, 10);
 
-#if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
 		if (stateManagerType == "Periodic") {
 			retvalue = new ThreadedPeriodicStateManager(
@@ -72,7 +70,7 @@ StateManagerFactory::allocate(SimulationConfiguration &configuration,
 			mySimulationManager->shutdown("Unknown StateManager choice \"" + stateManagerType + "\"");
 		}
 	}
-#endif
+
 	if (stateManagerType == "Periodic") {
 		retval = new PeriodicStateManager(mySimulationManager, stateManagerPeriod);
 		mySimulationManager->setStateMgrType(STATICSTATE);
