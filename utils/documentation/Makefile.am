@@ -1,2 +1,0 @@
-doc:
-	doxygen doxygen.config
