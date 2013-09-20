@@ -63,14 +63,12 @@ ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
 }
 
 void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
-	debug::debugout << "( "<<threadId<<" T ) Getting the Sche Lock." << endl;
 	while (!scheduleQueueLock->setLock(threadId, syncMechanism));
 	ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
 	ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
 	scheduleQueueLock->releaseLock(threadId, syncMechanism);
-	debug::debugout << "( "<<threadId<<" T ) Releasing the Sche Lock." << endl;
 }
 const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int threadID) {
 	const VTime* ret = NULL;
