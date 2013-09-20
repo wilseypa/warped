@@ -9,7 +9,7 @@ DeserializerManager::registerDeserializer( const string &dataType,
 
 deserializeFunc 
 DeserializerManager::findDeserializer( const string &dataType ){
-  unordered_map<string, deserializeFunc>::iterator it = deserializerMap.find(dataType);
+  std::unordered_map<string, deserializeFunc>::iterator it = deserializerMap.find(dataType);
   if( it != deserializerMap.end() ){
     return (*it).second;
   }

@@ -122,7 +122,7 @@ protected:
   /// Number of simulation managers.
   unsigned int numberOfSimulationManagers;
 
-  typedef unordered_map<string, SimulationObject*> typeSimMap;
+  typedef std::unordered_map<string, SimulationObject*> typeSimMap;
   
   vector<SimulationObject *> *getElementVector(typeSimMap *elementMap) {
     vector<SimulationObject *> *objects = new vector<SimulationObject *>;

@@ -89,7 +89,7 @@ public:
    
 
 protected:
-  unordered_map<string, SimulationObject *> *createMapOfObjects(){ return 0; }
+  std::unordered_map<string, SimulationObject *> *createMapOfObjects(){ return 0; }
 
   void fossilCollect(const VTime& fossilCollectTime){}
 

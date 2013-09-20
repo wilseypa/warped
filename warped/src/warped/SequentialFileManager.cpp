@@ -15,7 +15,7 @@ namespace warped {
 
       vector<fstream *> *_files= new vector<fstream *>;
       //Obtains all the objects from files
-      for(unordered_map<string, fstream *>::iterator i = files.begin(); i != files.end(); i++) {
+      for(std::unordered_map<string, fstream *>::iterator i = files.begin(); i != files.end(); i++) {
           _files->push_back(i->second);
       }
 
@@ -34,7 +34,7 @@ namespace warped {
     SequentialFileManager::open( const string &fileName,
                                  ios::openmode mode ) {
         fstream *retval = 0;
-        unordered_map<string, fstream *>::iterator it = files.find( fileName );
+        std::unordered_map<string, fstream *>::iterator it = files.find( fileName );
         //If objectName is not found the end iterator is returned
         if ( it == files.end()) {
             retval = new fstream( fileName.c_str(), mode );

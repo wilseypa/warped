@@ -70,10 +70,10 @@ private:
   //@{
 
   /// the set of sensors in the system
-  unordered_map<string, Sensor *> sensorDataBase;
+  std::unordered_map<string, Sensor *> sensorDataBase;
 
   /// the set of actuators in the system
-  unordered_map<string, Actuator *> actuatorDataBase;
+  std::unordered_map<string, Actuator *> actuatorDataBase;
   
   /// handle to the local simulation manager
   TimeWarpSimulationManager *mySimulationManager;

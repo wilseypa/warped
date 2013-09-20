@@ -91,11 +91,11 @@ protected:
   //@{
 
   //map of SimulationObjectID and individual sender queues
-  unordered_map<OBJECT_ID, SenderQueueContainer*, hashObjectID,
+  std::unordered_map<OBJECT_ID, SenderQueueContainer*, hashObjectID,
     equal_to<OBJECT_ID> >* senderQMap;
 
   //map of SimulationObjectID and individual processedQ per receiver
-  unordered_map<OBJECT_ID, list<Event*>*, hashObjectID,
+  std::unordered_map<OBJECT_ID, list<Event*>*, hashObjectID,
     equal_to<OBJECT_ID> >* processedQMap;
 
   list<Event*>* sortedUnProcessedQ;
@@ -114,7 +114,7 @@ private:
   TimeWarpSimulationManager *mySimulationManager;
 };
 
-typedef unordered_map<OBJECT_ID, SenderQueueContainer*, hashObjectID,
+typedef std::unordered_map<OBJECT_ID, SenderQueueContainer*, hashObjectID,
   equal_to<OBJECT_ID> > SENDERQMAP;
 
 class SenderQElementLessThan : public binary_function<Event*, Event*, bool> {

@@ -21,7 +21,7 @@ class Configurer {
 public:
   class Choice;
 
-  class ChoiceHashMap : public unordered_map<string, const Choice *> {
+  class ChoiceHashMap : public std::unordered_map<string, const Choice *> {
   public:
     ChoiceHashMap(){}
     ~ChoiceHashMap(){}

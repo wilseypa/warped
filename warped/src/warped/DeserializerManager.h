@@ -31,7 +31,7 @@ protected:
 
 
 private:
-  unordered_map<string, deserializeFunc> deserializerMap;
+  std::unordered_map<string, deserializeFunc> deserializerMap;
 
   DeserializerManager(){}
 };

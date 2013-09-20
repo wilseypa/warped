@@ -92,7 +92,7 @@ protected:
   //@{
 
   /// Mapping between simulation object names, object pointers & id
-  typedef unordered_map<string,  SenderQueueContainer* >  typeSenderMap;
+  typedef std::unordered_map<string,  SenderQueueContainer* >  typeSenderMap;
 
   //map of SimulationObjectID and individual sender queues
   typeSenderMap *senderQMap;

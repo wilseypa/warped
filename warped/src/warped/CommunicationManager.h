@@ -169,7 +169,7 @@ protected:
 	/// A list of receivers.
 
 	//Define a type typeCommMap with a string key, containing communicatingEntities
-	typedef unordered_map<string, CommunicatingEntity *> typeCommMap;
+	typedef std::unordered_map<string, CommunicatingEntity *> typeCommMap;
 	typeCommMap listOfReceivers;
 
 	/// Handle to physical communication layer.

@@ -664,9 +664,9 @@ void ThreadedTimeWarpSimulationManager::cancelEvents(
 	 Every time there is a new object, add it to a map and add the event to list for that object.
 	 Then go through the map, determining whether to cancelLocal or cancelRemote.
 	 */
-	unordered_map<SimulationObject *, vector<const NegativeEvent *> >
+	std::unordered_map<SimulationObject *, vector<const NegativeEvent *> >
 			cancelEventObjects;
-	unordered_map<SimulationObject *, vector<const NegativeEvent *> >::iterator
+	std::unordered_map<SimulationObject *, vector<const NegativeEvent *> >::iterator
 			cancelObjectIt;
 
 	for (vector<const Event *>::const_iterator cancelEventIt =

@@ -8,8 +8,8 @@ using std::endl;
 
 TimeWarpSenderQueue::TimeWarpSenderQueue( TimeWarpSimulationManager *initSimulationManager ): 
   TimeWarpCentralizedEventSet() {
-  senderQMap = new unordered_map<OBJECT_ID, SenderQueueContainer*, hashObjectID, equal_to<OBJECT_ID> >;
-  processedQMap = new unordered_map<OBJECT_ID, list<Event*>*, hashObjectID, equal_to<OBJECT_ID> >;
+  senderQMap = new std::unordered_map<OBJECT_ID, SenderQueueContainer*, hashObjectID, equal_to<OBJECT_ID> >;
+  processedQMap = new std::unordered_map<OBJECT_ID, list<Event*>*, hashObjectID, equal_to<OBJECT_ID> >;
   sortedUnProcessedQ = new list<Event*>;
   scheduleList = new vector<ScheduleListContainer*>;
   peekedEvent=0;
@@ -48,7 +48,7 @@ TimeWarpSenderQueue::insert( Event * event, SimulationObject* object ){
     //Add the new sender's event
     SenderQueueContainer* senderQContainer = new SenderQueueContainer;
 
-    senderQMap->insert(unordered_map<OBJECT_ID,
+    senderQMap->insert(std::unordered_map<OBJECT_ID,
 		       SenderQueueContainer*,
 		       hashObjectID,
 		       equal_to<OBJECT_ID> >::value_type(senderID, senderQContainer)
@@ -69,7 +69,7 @@ TimeWarpSenderQueue::insert( Event * event, SimulationObject* object ){
 
   if(processedQMap->count(receiverID) == 0) {
     list<Event*>* ptr = new list<Event*>;
-    processedQMap->insert(unordered_map<OBJECT_ID,list<Event*>*,
+    processedQMap->insert(std::unordered_map<OBJECT_ID,list<Event*>*,
 			  hashObjectID,
 			  equal_to<OBJECT_ID> >::value_type(receiverID, ptr)
 			  );
@@ -418,7 +418,7 @@ TimeWarpSenderQueue::getEvent(SimulationObject* object) {
     list<Event*>* processedQ = 0;
     if(processedQMap->count(receiverID) == 0) {
       list<Event*>* ptr = new list<Event*>;
-      processedQMap->insert(unordered_map<OBJECT_ID,
+      processedQMap->insert(std::unordered_map<OBJECT_ID,
 			    list<Event*>*,
 			    hashObjectID,
 			    equal_to<OBJECT_ID> >::value_type(receiverID, ptr)
@@ -532,7 +532,7 @@ TimeWarpSenderQueue::isInThePast( const Event *event ){
   list<Event*>* processedQ = 0;
   if(processedQMap->count(receiverID) == 0) {
     list<Event*>* ptr = new list<Event*>;
-    processedQMap->insert(unordered_map<OBJECT_ID,
+    processedQMap->insert(std::unordered_map<OBJECT_ID,
 			  list<Event*>*,
 			  hashObjectID,
 			  equal_to<OBJECT_ID> >::value_type(receiverID, ptr)

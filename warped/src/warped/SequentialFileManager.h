@@ -21,7 +21,7 @@ protected:
   ~SequentialFileManager();
 
 private:
-  unordered_map<string, fstream *> files;
+  std::unordered_map<string, fstream *> files;
 };
 
 }
