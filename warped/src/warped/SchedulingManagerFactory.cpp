@@ -7,12 +7,7 @@
 #include "DefaultSchedulingManager.h"
 #include "TimeWarpMultiSetSchedulingManager.h"
 #include <WarpedDebug.h>
-/*
-#if USE_TIMEWARP
-#include "threadedtimewarp/ThreadedTimeWarpSimulationManager.h"
-#include "threadedtimewarp/ThreadedSchedulingManager.h"
-#endif
-*/
+
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "ThreadedTimeWarpMultiSetSchedulingManager.h"
 using std::cerr;
@@ -46,7 +41,6 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
   }
   
 
-#if USE_TIMEWARP
 	if (simulationType == "ThreadedTimeWarp") {
 		if (schedulerType == "MultiSet") {
 			ThreadedTimeWarpSimulationManager *mySimulationManager =
@@ -59,7 +53,6 @@ SchedulingManagerFactory::allocate( SimulationConfiguration &configuration,
 					"Unknown SCHEDULER choice \"" + schedulerType + "\"");
 		}
 	}
-#endif
 
   return retval;
 }
