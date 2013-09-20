@@ -85,17 +85,17 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
 
 	// This simulation manager is responsible for the deletion of all
 	// its components.
-	delete myFossilCollManager;
-	delete myTerminationManager;
-	delete mySchedulingData;
-	delete myEventSet;
-	delete myOutputManager;
-	delete mySchedulingManager;
-	delete myCommunicationManager;
-	delete myGVTManager;
-	delete myStateManager;
-	delete localArrayOfSimObjPtrs;
-    delete myDVFSManager;
+	if (myFossilCollManager) {delete myFossilCollManager;}
+	if (myTerminationManager) {delete myTerminationManager;}
+	if (mySchedulingData) {delete mySchedulingData;}
+	if (myEventSet) {delete myEventSet;}
+	if (myOutputManager) {delete myOutputManager;}
+	if (mySchedulingManager) {delete mySchedulingManager;}
+	if (myCommunicationManager) {delete myCommunicationManager;}
+	if (myGVTManager) {delete myGVTManager;}
+	if (myStateManager) {delete myStateManager;}
+	if (localArrayOfSimObjPtrs) {delete localArrayOfSimObjPtrs;}
+	if (myDVFSManager) {delete myDVFSManager;}
 }
 
 const VTime &
@@ -1299,6 +1299,7 @@ void TimeWarpSimulationManager::configure(
 	    DVFSManagerFactory::instance();
 	myDVFSManager = dynamic_cast<DVFSManager*>(
 	    dvfsFactory->allocate(configuration, this));
+
 	if(myDVFSManager)
       myDVFSManager->configure(configuration);
 
