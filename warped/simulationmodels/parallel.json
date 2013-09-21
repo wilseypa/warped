@@ -1,17 +1,18 @@
 {
 "ParallelDebug": {
-    //Put every CPU into a loop that could only break out in gdb.  
-    //To Use: set true and
-    //Kick off a simulation, all sim managers will be sitting there spinning,
-    //Attach on every CPU with gdb, and then break them out and you could watch
-    //every CPU in gdb simultaneously. Use: "set x=0" in gdb to break the while loop
+    //Put every CPU into a loop that could only break out in gdb.   
+    //To Use:
+    //set true and Kick off a simulation, all sim managers will be sitting
+    //there spinning, Attach on every CPU with gdb, and then break them out
+    //and you could watch every CPU in gdb simultaneously. Use: "set x=0" in
+    //gdb to break the while loop
     "SpinBeforeSimulationStart": false
 },
 
 // Simulation Options:
-//   TimeWarp,    (Single thread TimeWarp simulation)
-//   ThreadedTimeWarp       (TimeWarp with multiple threads executing objects)
-//   Sequential   (Single thread sequential simulation)
+//   TimeWarp : Single thread TimeWarp simulation
+//   ThreadedTimewarp : TimeWarp with multiple threads executing objects
+//   Sequential : Single thread sequential simulation
 "Simulation": "ThreadedTimeWarp",
 
 //TimeWarp Scope
@@ -69,9 +70,9 @@
 
     // CommunicationManager:
     // PhysicalLayer Options:
-    //     MPI         requires (--enable-timewarp)
-    //     TCPSelect   requires (--enable-timewarp)
-    //     UDPSelect   requires (--enable-timewarp), not implemented yet
+    //     MPI      
+    //     TCPSelect
+    //     UDPSelect, not implemented yet
     // Type Options:
     //     Default
     //     MessageAggregating - Not fully implemented yet.
