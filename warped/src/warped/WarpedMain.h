@@ -84,8 +84,6 @@ public:
   const VTime &getNextEventTime();
 
 private:
-  int errors;
-  int warnings;
   string configurationFileName;
   bool debugFlag;
   string simulateUntil;

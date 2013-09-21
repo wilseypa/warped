@@ -32,8 +32,6 @@
 
 WarpedMain::WarpedMain(Application* application, std::string configurationFileName,
                        std::string simulateUntil,  bool debug) :
-    errors(0),
-    warnings(0),
     configurationFileName(configurationFileName),
     debugFlag(debug),
     simulateUntil(simulateUntil),
@@ -124,5 +122,5 @@ WarpedMain::main(int argc, char** argv) {
 
     finalize();
 
-    return errors;
+    return 0;
 }
