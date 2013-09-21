@@ -24,23 +24,20 @@ AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])
 AC_CHECK_LIB(nsl, gethostent)
 AC_CHECK_LIB(socket,socket)
 
-AH_TEMPLATE([USE_TIMEWARP], [Compile in TIMEWARP support])
 AH_TEMPLATE([USE_CPPUNIT], [Compile cppunit tests])
-
-AC_ARG_ENABLE(timewarp, AS_HELP_STRING([]), [timewarp=true] ,[timewarp=true])
 
 dnl Find the tr1/unordered_map header.
 AC_CHECK_HEADERS([tr1/unordered_map], [break])
 
 havempi=no
 havempich=no
-if test x$timewarp = xtrue; then
+
 AC_CHECK_HEADER( mpi.h,,
 	AC_MSG_ERROR(Couldn't find mpi.h and you asked to enable mpi.  You probably need to define an include path.) )
 AC_CHECK_LIB( mpi, MPI_Init, havempi=yes,
 	AC_CHECK_LIB( mpich, MPI_Init, havempich=yes,
 	  AC_MSG_ERROR([Could neither find libmpi.a nor libmpich.a and you asked to enable mpi.  You probably need to define a lib path via LDFLAGS and -L]), -lmpl  -lpthread))
-fi
+
 AM_CONDITIONAL(HAVE_MPICH, test $havempich = yes)
 AM_CONDITIONAL(HAVE_MPI, test $havempi = yes)
 
