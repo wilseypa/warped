@@ -5,7 +5,7 @@
 #include "SingleLinkedList.h"
 #include "SimulationConfiguration.h"
 #include "TimeWarpSimulationManager.h"
-#include <WarpedDebug.h>
+#include "WarpedDebug.h"
 
 EventSetFactory::EventSetFactory(){}
 

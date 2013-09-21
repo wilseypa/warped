@@ -5,7 +5,7 @@
 #include "SimulationConfiguration.h"
 #include "TimeWarpConfigurationManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include <WarpedDebug.h>
+#include "WarpedDebug.h"
 
 GVTManagerFactory::GVTManagerFactory() {
 }

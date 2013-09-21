@@ -5,7 +5,7 @@
 #include "MsgAggregatingCommunicationManager.h"
 #include "TimeWarpSimulationManager.h"
 #include "SimulationConfiguration.h"
-#include <WarpedDebug.h>
+#include "WarpedDebug.h"
 
 #include "eclmpl/eclmpl.h"
 #include "ThreadedTimeWarpSimulationManager.h"

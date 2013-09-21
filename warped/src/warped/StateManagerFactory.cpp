@@ -8,7 +8,7 @@
 #include "ThreadedPeriodicStateManager.h"
 #include "ThreadedCostAdaptiveStateManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include <WarpedDebug.h>
+#include "WarpedDebug.h"
 
 #include <string>
 

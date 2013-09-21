@@ -8,7 +8,7 @@
 #include "SerializedInstance.h"
 #include "CommunicationManager.h"
 #include "TimeWarpSimulationManager.h"
-#include <WarpedDebug.h>
+#include "WarpedDebug.h"
 
 using std::cerr;
 using std::endl;

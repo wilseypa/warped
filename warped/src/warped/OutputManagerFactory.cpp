@@ -13,7 +13,7 @@
 #include "ThreadedLazyOutputManager.h"
 #include "ThreadedDynamicOutputManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include <WarpedDebug.h>
+#include "WarpedDebug.h"
 
 using std::cerr;
 using std::endl;
