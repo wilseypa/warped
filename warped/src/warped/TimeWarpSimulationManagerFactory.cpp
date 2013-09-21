@@ -24,11 +24,11 @@ TimeWarpSimulationManagerFactory::allocate(
 		//Count the number of threads, if none specified try reading the proc file
 		int numberOfWorkerThreads = configuration.get_int({"TimeWarp", "ThreadControl", "WorkerThreadCount"}, 4);
 		//Specify the synchronization mechanism
-		std::string syncMechanism = configuration.get_string({"TimeWarp", "ThreadControl", "AntiMessages"},
-                                                     			"MUTEX");
+		std::string syncMechanism = configuration.get_string({"TimeWarp", "ThreadControl", "SyncMechanism"},
+                                                     			"Mutex");
 		//Specify the load balancing option
-		std::string loadBalancing = configuration.get_string({"TimeWarp", "ThreadControl", "LoadBalancing"},
-                                                     			"OFF");
+		bool loadBalancing = configuration.get_bool({"TimeWarp", "ThreadControl", "LoadBalancing"},
+                                                     			false);
 		//Specify the load balancing metric
 		std::string loadBalancingMetric = configuration.get_string({"TimeWarp", "ThreadControl", "LoadBalancingMetric"},
                                                      			"EventExecutionRatio");
@@ -52,10 +52,10 @@ TimeWarpSimulationManagerFactory::allocate(
 																2);
 		//Specify the schedule queue scheme
 		std::string scheduleQScheme = configuration.get_string({"TimeWarp", "Scheduler", "ScheduleQScheme"},
-                                                     			"MULTISET");
+                                                     			"MultiSet");
 		//Specify the schedule queue causality type
 		std::string causalityType = configuration.get_string({"TimeWarp", "Scheduler", "CausalityType"},
-                                                     			"STRICT");
+                                                     			"Strict");
 		//Count the number of schedule queues, if none specified try reading the proc file
 		int scheduleQCount = configuration.get_int({"TimeWarp", "Scheduler", "ScheduleQCount"}, 2);
 

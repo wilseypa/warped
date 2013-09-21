@@ -41,7 +41,7 @@ extern pthread_key_t threadKey;
 
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
 		unsigned int numberOfWorkerThreads, const string syncMechanism, 
-		const string loadBalancing, const string loadBalancingMetric, 
+		bool loadBalancing, const string loadBalancingMetric, 
 		const string loadBalancingTrigger, double loadBalancingVarianceThresh, 
 		unsigned int loadBalancingNormalInterval,unsigned int loadBalancingNormalThresh, 
 		unsigned int loadBalancingRelaxedInterval, unsigned int loadBalancingRelaxedThresh, 
@@ -354,7 +354,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
 			}
 		}
 		// Initiate load balancer measurement / movement
-		if (loadBalancing == "ON" && loadBalancingTrigger == "MasterPoll") {
+		if (loadBalancing && loadBalancingTrigger == "MasterPoll") {
 			loadBalancer->balanceCheck();
 		}
 		//Clear message Buffer
@@ -1054,7 +1054,7 @@ void ThreadedTimeWarpSimulationManager::configure(
 	// Setup load balancer
 	//Configurable *loadBalancer = myLoadBalancerFactory->allocate(configuration, this);
 	//myLoadBalancer = dynamic_cast<ThreadedTimeWarpLoadBalancer *>(loadBalancer);
-	if (loadBalancing == "ON") {
+	if (loadBalancing) {
 		loadBalancer = new ThreadedTimeWarpLoadBalancer(this,
 				dynamic_cast<ThreadedTimeWarpMultiSet *>(myEventSet),
 				getLoadBalancingVarianceThresh(),

@@ -20,9 +20,9 @@
     // ThreadControl:
     // WorkerThreadCount : Integer value for the number of worker threads
     // SyncMechanism Options:
-    //     ATOMICLOCK
-    //     MUTEX
-    // LoadBalancing Options : Load balancing needed or not (ON or OFF)
+    //     AtomicLock
+    //     Mutex
+    // LoadBalancing Options : Load balancing needed or not (true or false)
     // LoadBalancingMetric Options : Type of load balancing algorithm :-
     //     EventExecutionRatio
     // LoadBalancingTrigger Options : Type of load balancing trigger :-
@@ -31,8 +31,8 @@
     // LoadBalancingInterval : Minimum waiting time (in secs) between readings
     "ThreadControl": {
         "WorkerThreadCount": 4,
-        "SyncMechanism": "MUTEX",
-        "LoadBalancing": "OFF",
+        "SyncMechanism": "Mutex",
+        "LoadBalancing": false,
         "LoadBalancingMetric": "EventExecutionRatio",
         "LoadBalancingTrigger": "Rollback",
         "LoadBalancingVarianceThresh": 0.2,
@@ -44,19 +44,19 @@
     
     // Type Options:
     //     Default, MultiSet (must use if using MultiSet event list)
-    // ThreadedTimewarp has only Multiset Scheduler
+    // ThreadedTimewarp has only MultiSet Scheduler
     // Overall Schedule Queue Scheme Options:
-    //     MULTISET
-    //     LADDERQ
-    //     SPLAYTREE
+    //     MultiSet
+    //     LadderQueue
+    //     SplayTree
     // Ladder Queue Causality (not available for the other queues):
-    //     STRICT
-    //     RELAXED
+    //     Strict
+    //     Relaxed
     // Schedule Queue count (changed based on WorkerThreadCount)
     "Scheduler": {
         "Type": "MultiSet",
-        "ScheduleQScheme": "MULTISET",
-        "CausalityType": "STRICT",
+        "ScheduleQScheme": "MultiSet",
+        "CausalityType": "Strict",
         "ScheduleQCount": 2
     },
     

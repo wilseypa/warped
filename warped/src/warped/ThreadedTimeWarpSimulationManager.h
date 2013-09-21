@@ -25,7 +25,7 @@ template<class element> class LockedQueue;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
 	ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
-			const string syncMechanism, const string loadBalancing, 
+			const string syncMechanism, bool loadBalancing, 
 			const string loadBalancingMetric, const string loadBalancingTrigger, 
 			double loadBalancingVarianceThresh, unsigned int loadBalancingNormalInterval, 
 			unsigned int loadBalancingNormalThresh, unsigned int loadBalancingRelaxedInterval, 
@@ -73,7 +73,7 @@ public:
 		return syncMechanism;
 	}
 
-	const string getLoadBalancing() {
+	bool getLoadBalancing() {
 		return loadBalancing;
 	}
 
@@ -383,7 +383,7 @@ private:
 	const string syncMechanism;
 
 	//Specfied in the ThreadControl scope the configuraion file
-	const string loadBalancing;
+	bool loadBalancing;
 
 	//Specfied in the ThreadControl scope the configuraion file
 	const string loadBalancingMetric;

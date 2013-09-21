@@ -17,11 +17,11 @@ public:
 		pthread_mutex_destroy(&mutexLock);
 	}
 	bool releaseLock(const unsigned int &threadNumber, const string syncMechanism) {
-		if(syncMechanism == "ATOMICLOCK") {
+		if(syncMechanism == "AtomicLock") {
 			//If Currently Working and we can set it to Available then return true else return false;
 			return __sync_bool_compare_and_swap(&lockOwner, threadNumber, NOONE);
 		}
-		else if(syncMechanism == "MUTEX") {
+		else if(syncMechanism == "Mutex") {
 			if( !pthread_mutex_lock(&mutexLock) ) {
 				if(threadNumber == lockOwner) {
 					lockOwner = NOONE;
@@ -42,11 +42,11 @@ public:
 		}
 	}
 	bool setLock(const unsigned int &threadNumber, const string syncMechanism) {
-		if(syncMechanism == "ATOMICLOCK") {
+		if(syncMechanism == "AtomicLock") {
 			//If Available and we can set it to Working then return true else return false;
 			return __sync_bool_compare_and_swap(&lockOwner, NOONE, threadNumber);
 		}
-		else if(syncMechanism == "MUTEX") {
+		else if(syncMechanism == "Mutex") {
 			if( !pthread_mutex_lock(&mutexLock) ) {
 				if( lockOwner == NOONE ) {
 					lockOwner = threadNumber;
@@ -67,10 +67,10 @@ public:
 		}
 	}
 	const bool hasLock(const unsigned int &threadNumber, const string syncMechanism) const {
-		if(syncMechanism == "ATOMICLOCK") {
+		if(syncMechanism == "AtomicLock") {
 			return (threadNumber == lockOwner);
 		}
-		else if(syncMechanism == "MUTEX") {
+		else if(syncMechanism == "Mutex") {
 			return (threadNumber == lockOwner);
 		}
 		else {
