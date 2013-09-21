@@ -328,5 +328,7 @@ libwarped_la_SOURCES = \
     warped/ThreadedTimeWarpMultiSetSchedulingManager.cpp \
     warped/ThreadedTimeWarpSimulationManager.cpp
 
+libwarped_la_CXXFLAGS = -Wall -Wextra -pedantic
+
 CLEANFILES=$(BUILT_SOURCES)
 
