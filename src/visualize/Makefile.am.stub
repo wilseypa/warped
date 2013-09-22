@@ -1,11 +1,11 @@
 libvisualize_la_SOURCES= \
-	warped/visualize/DefaultVisualizationManager.cpp \
-	warped/visualize/NullVisualizationManager.cpp \
-	warped/visualize/TimeWarpSimMgrWithVisualization.cpp \
-	warped/visualize/VisualizationClient.cpp \
-	warped/visualize/VisualizationManager.cpp \
-	warped/visualize/DefaultVisualizationManager.h \
-	warped/visualize/NullVisualizationManager.h \
-	warped/visualize/TimeWarpSimMgrWithVisualization.h \
-	warped/visualize/VisualizationClient.h \
-	warped/visualize/VisualizationManager.h
+	visualize/DefaultVisualizationManager.cpp \
+	visualize/NullVisualizationManager.cpp \
+	visualize/TimeWarpSimMgrWithVisualization.cpp \
+	visualize/VisualizationClient.cpp \
+	visualize/VisualizationManager.cpp \
+	visualize/DefaultVisualizationManager.h \
+	visualize/NullVisualizationManager.h \
+	visualize/TimeWarpSimMgrWithVisualization.h \
+	visualize/VisualizationClient.h \
+	visualize/VisualizationManager.h

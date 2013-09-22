@@ -1,8 +1,8 @@
 AC_INIT([warped],[3.0])
-AC_CONFIG_HEADERS([src/warped/WarpedConfig.h])
+AC_CONFIG_HEADERS([src/WarpedConfig.h])
 
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SRCDIR([src/warped/Event.cpp])
+AC_CONFIG_SRCDIR([src/Event.cpp])
 AM_INIT_AUTOMAKE([foreign])
 AC_PREREQ(2.61)
 
