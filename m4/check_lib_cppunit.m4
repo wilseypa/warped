@@ -1,8 +1,8 @@
 dnl Check for cppunit
 
-dnl Usage: LIB_CPPUNIT
+dnl Usage: CHECK_LIB_CPPUNIT
 
-AC_DEFUN([LIB_CPPUNIT],
+AC_DEFUN([CHECK_LIB_CPPUNIT],
 [
 AC_CACHE_CHECK([for location of libcppunit], [cl_cv_lib_cppunit],
   [AC_ARG_WITH(cppunit,

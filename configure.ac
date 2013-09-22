@@ -80,7 +80,8 @@ esac],[cppunit=false])
 AM_CONDITIONAL(USE_CPPUNIT, test x$cppunit = xtrue)
 
 if test x$cppunit = xtrue; then
-LIB_CPPUNIT
+m4_include([m4/check_lib_cppunit.m4])
+CHECK_LIB_CPPUNIT
 fi
 
 AH_TEMPLATE(USE_SOCKLEN_T, [LINUX platforms require "socklen_t" while
