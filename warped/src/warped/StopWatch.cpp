@@ -1,4 +1,5 @@
 #include "StopWatch.h"
+#include <iostream>                     // for operator<<, cerr, ostream
 
   ////////////////////////////////
   //  Private Member Functions  //

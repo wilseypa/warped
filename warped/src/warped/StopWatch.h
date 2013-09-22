@@ -20,8 +20,6 @@
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "warped.h"
-#include <iostream>
 #include <sys/time.h>   // to get the system time
 
 class StopWatch{
