@@ -195,7 +195,6 @@ WARPED_H_FILES = \
 	TreeElement.h \
 	Types.h \
 	UsefulWorkMessage.h \
-	version.h \
 	VTime.h \
 	warped.h \
 	WarpedDebug.h \
