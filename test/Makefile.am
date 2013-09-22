@@ -64,4 +64,7 @@ warpedUnitTests_SOURCES = \
 warpedUnitTests_LDFLAGS=-static
 warpedUnitTests_LDADD=$(top_builddir)/src/libwarped.la
 
+# Add the executable to the TESTS variable so we can run it with 'make check'
+TESTS=warpedUnitTests
+
 endif

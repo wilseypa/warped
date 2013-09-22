@@ -1,4 +1,4 @@
-SUBDIRS= thirdparty src simulationmodels 
+SUBDIRS= thirdparty src test simulationmodels 
 
 EXTRA_DIST = Makefile.am.common \
 	src/Makefile.am.stub \

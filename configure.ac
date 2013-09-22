@@ -154,7 +154,7 @@ AC_SUBST(LDFLAGS)
 AC_SUBST(LIBS)
 AC_SUBST(CXX)
 AC_SUBST(MAKEDEPEND)
-AC_CONFIG_FILES([Makefile src/Makefile simulationmodels/Makefile thirdparty/Makefile thirdparty/tclap/Makefile thirdparty/json/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile simulationmodels/Makefile thirdparty/Makefile thirdparty/tclap/Makefile thirdparty/json/Makefile test/Makefile])
 AC_OUTPUT
 
 dnl rm -f ./config.cache

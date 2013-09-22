@@ -1,8 +1,6 @@
 include $(top_srcdir)/Makefile.am.common
 # Ping pong stuff
 include pingPong/Makefile.am.stub
-# Unit test stuff
-include warped/Makefile.am.stub
 # Adaptive test stuff
 include adaptTest/Makefile.am.stub
 # PHOLD stuff
@@ -17,8 +15,6 @@ include smmp/Makefile.am.stub
 include epidemic/Makefile.am.stub
 # iscas85 stuff
 # include circuitsimulationmodels/iscas85/Makefile.am.stub
-# DFF stuff
-# include circuitsimulationmodels/iscas89/Makefile.am.DFF
 # iscas89 stuff
 include circuitsimulationmodels/iscas89/Makefile.am.stub
 # fulladder stuff
