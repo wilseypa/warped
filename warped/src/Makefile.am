@@ -15,7 +15,7 @@ libwarped_la_LIBADD = -lpthread
 endif
 endif
 
-libwarped_la_LIBADD += $(top_builddir)/include/json/libjsoncpp.la
+libwarped_la_LIBADD += $(top_builddir)/thirdparty/json/libjsoncpp.la
 
 WARPED_H_FILES = \
 	$(ECLMPL_H_FILES) \

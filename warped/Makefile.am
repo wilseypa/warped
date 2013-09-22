@@ -1,4 +1,4 @@
-SUBDIRS= include src simulationmodels 
+SUBDIRS= thirdparty src simulationmodels 
 
 EXTRA_DIST = Makefile.am.common \
 	src/warped/Makefile.am.stub \
