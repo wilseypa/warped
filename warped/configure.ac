@@ -26,9 +26,6 @@ AC_CHECK_LIB(socket,socket)
 
 AH_TEMPLATE([USE_CPPUNIT], [Compile cppunit tests])
 
-dnl Find the tr1/unordered_map header.
-AC_CHECK_HEADERS([tr1/unordered_map], [break])
-
 havempi=no
 havempich=no
 
