@@ -1,5 +1,5 @@
 if USE_CPPUNIT
-UNIT_TEST_PROGRAM=warpedUnitTests
+noinst_PROGRAMS=warpedUnitTests
 
 warpedUnitTests_SOURCES = \
 	warpedUnitTestsMain.cpp	\

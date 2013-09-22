@@ -63,5 +63,7 @@ int main() {
   runner.addTest(registry.makeTest());
   bool result =  runner.run();
 
-  return result;
+  // Result is true if the tests succeed, but make check excpects a 0 return
+  // value on success.
+  return !result;
 }
