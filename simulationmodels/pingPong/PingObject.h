@@ -1,8 +1,8 @@
 #ifndef PINGOBJECT_HH
 #define PINGOBJECT_HH
 
-#include <warped/warped.h>
-#include <warped/SimulationObject.h>
+#include <warped.h>
+#include <SimulationObject.h>
 
 /**
    This class is the simulation object for the Ping Pong simulation.  The

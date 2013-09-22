@@ -1,7 +1,7 @@
 #include "PingEvent.h"
 #include <cstdlib>
-#include <warped/SerializedInstance.h>
-#include <warped/ObjectID.h>
+#include <SerializedInstance.h>
+#include <ObjectID.h>
 
 void 
 PingEvent::serialize( SerializedInstance *addTo ) const {

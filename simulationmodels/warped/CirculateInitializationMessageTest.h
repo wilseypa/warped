@@ -1,7 +1,7 @@
 #ifndef CIRCULATE_INITIALIZATION_MESSAGE_TEST_H
 #define CIRCULATE_INITIALIZATION_MESSAGE_TEST_H
 
-#include "warped/CirculateInitializationMessage.h"
+#include "CirculateInitializationMessage.h"
 #include "KernelMessageTest.h"
 
 class CirculateInitializationMessageTest : public KernelMessageTest {

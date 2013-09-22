@@ -2,7 +2,7 @@
 #define SINGLE_TERMINATION_MANAGER_H_
 
 
-#include <warped/TerminationManager.h>
+#include <TerminationManager.h>
 
 class TimeWarpSimulationManager;
 class KernelMessage;

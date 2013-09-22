@@ -3,9 +3,9 @@
 #include "EpidemicPartitioner.h"
 #include "Person.h"
 #include "tinyxml2.h"
-#include "warped/PartitionInfo.h"
-#include "warped/RoundRobinPartitioner.h"
-#include "warped/DeserializerManager.h"
+#include "PartitionInfo.h"
+#include "RoundRobinPartitioner.h"
+#include "DeserializerManager.h"
 
 #include <vector>
 #include <map>

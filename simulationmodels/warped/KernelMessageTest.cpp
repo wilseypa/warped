@@ -1,5 +1,5 @@
 #include "KernelMessageTest.h"
-#include "warped/KernelMessage.h"
+#include "KernelMessage.h"
 
 // Create anything needed for the tests here
 void 

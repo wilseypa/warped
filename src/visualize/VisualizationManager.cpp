@@ -1,6 +1,6 @@
 
 #include "VisualizationManager.h"
-#include <warped/Socket.h>
+#include <Socket.h>
 #include <iostream>
 using std::cout;
 

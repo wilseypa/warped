@@ -2,7 +2,7 @@
 #define LOGIC_COMPONENT_H
 
 #include "LogicEvent.h"
-#include <warped/SimulationObject.h>
+#include <SimulationObject.h>
 using std::string;
 using std::vector;
 

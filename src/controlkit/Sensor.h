@@ -2,7 +2,7 @@
 #define SENSOR_H
 
 
-#include <warped/warped.h>
+#include <warped.h>
 #include <string>
 using std::string;
 

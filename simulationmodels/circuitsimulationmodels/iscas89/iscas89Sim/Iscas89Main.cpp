@@ -1,5 +1,5 @@
 #include "Iscas89Application.h"
-#include "warped/WarpedMain.h"
+#include "WarpedMain.h"
 
 #include "tclap/CmdLine.h"
 

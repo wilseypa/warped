@@ -1,7 +1,7 @@
 #ifndef SIMULATION_OBJECT_ADAPTER_H
 #define SIMULATION_OBJECT_ADAPTER_H
 
-#include "warped/SimulationObject.h"
+#include "SimulationObject.h"
 
 class SimulationObjectAdapter : public SimulationObject {
 public:

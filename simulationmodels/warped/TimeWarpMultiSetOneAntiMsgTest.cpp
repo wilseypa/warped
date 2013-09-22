@@ -1,5 +1,5 @@
 #include "TimeWarpMultiSetOneAntiMsgTest.h"
-#include "warped/TimeWarpMultiSetOneAntiMsg.h"
+#include "TimeWarpMultiSetOneAntiMsg.h"
 
 void
 TimeWarpMultiSetOneAntiMsgTest::setUp(){

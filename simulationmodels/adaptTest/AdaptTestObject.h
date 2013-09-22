@@ -1,8 +1,8 @@
 #ifndef ADAPTTESTOBJECT_HH
 #define ADAPTTESTOBJECT_HH
 
-#include <warped/warped.h>
-#include <warped/SimulationObject.h>
+#include <warped.h>
+#include <SimulationObject.h>
 #include <vector>
 using std::vector;
 

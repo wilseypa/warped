@@ -1,7 +1,7 @@
 #ifndef START_MESSAGE_TEST_H
 #define START_MESSAGE_TEST_H
 
-#include "warped/StartMessage.h"
+#include "StartMessage.h"
 #include "KernelMessageTest.h"
 
 class StartMessageTest : public KernelMessageTest {

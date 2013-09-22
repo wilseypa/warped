@@ -1,8 +1,8 @@
 #ifndef FULLADDER_APPLICATION
 #define FULLADDER_APPLICATION
 
-#include <warped/Application.h>
-#include <warped/IntVTime.h>
+#include <Application.h>
+#include <IntVTime.h>
 
 class FullAdderApplication : public Application {
 public:

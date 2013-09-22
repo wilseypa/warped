@@ -1,7 +1,7 @@
 #ifndef MPI_PHYSICAL_COMMUNICATION_LAYER_H
 #define MPI_PHYSICAL_COMMUNICATION_LAYER_H
 
-#include "warped/warped.h"
+#include "warped.h"
 #include "eclmplCommonInclude.h"
 #include "PhysicalCommunicationLayer.h"
 #include "MPIMessage.h"

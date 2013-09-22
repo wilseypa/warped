@@ -2,8 +2,8 @@
 #define EVENT_MESSAGE_BASE_TEST_H
 
 #include "KernelMessageTest.h"
-#include "warped/DefaultEvent.h"
-#include "warped/IntVTime.h"
+#include "DefaultEvent.h"
+#include "IntVTime.h"
 
 class EventMessageBase;
 

@@ -2,7 +2,7 @@
 #define DEFAULTPARTITIONER_H
 
 
-#include <warped/Partitioner.h>
+#include <Partitioner.h>
 
 class DefaultPartitioner : public Partitioner {
 public:

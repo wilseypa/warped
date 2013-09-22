@@ -1,7 +1,7 @@
 #ifndef MATTERN_GVT_MESSAGE_TEST_H
 #define MATTERN_GVT_MESSAGE_TEST_H
 
-#include "warped/MatternGVTMessage.h"
+#include "MatternGVTMessage.h"
 #include "KernelMessageTest.h"
 
 class MatternGVTMessageTest : public KernelMessageTest {

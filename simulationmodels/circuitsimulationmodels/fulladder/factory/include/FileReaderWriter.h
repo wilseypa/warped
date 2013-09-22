@@ -1,8 +1,8 @@
 #ifndef FILE_READERWRITER_H
 #define FILE_READERWRITER_H
 
-#include <warped/SimulationObject.h>
-#include <warped/SimulationStream.h>
+#include <SimulationObject.h>
+#include <SimulationStream.h>
 #include <vector>
 #include <string>
 

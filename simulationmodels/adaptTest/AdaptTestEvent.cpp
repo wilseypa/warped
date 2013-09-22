@@ -1,6 +1,6 @@
 #include "AdaptTestEvent.h"
 #include <cstdlib>
-#include <warped/SerializedInstance.h>
+#include <SerializedInstance.h>
 
 void 
 AdaptTestEvent::serialize( SerializedInstance *addTo ) const {

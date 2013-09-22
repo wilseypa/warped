@@ -1,7 +1,7 @@
 
 #include "ThreadedTimeWarpMultiSetSchedulingManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "warped/Event.h"
+#include "Event.h"
 
 class ThreadedTimeWarpEventSet;
 

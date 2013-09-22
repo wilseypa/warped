@@ -1,5 +1,5 @@
 #include "../include/PHOLDEvent.h"
-#include <warped/SerializedInstance.h>
+#include <SerializedInstance.h>
 
 void
 PHOLDEvent::serialize( SerializedInstance *addTo ) const{

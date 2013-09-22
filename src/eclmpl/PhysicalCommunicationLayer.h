@@ -1,7 +1,7 @@
 #ifndef PHYSICAL_COMMUNICATION_LAYER_H
 #define PHYSICAL_COMMUNICATION_LAYER_H
 
-#include <warped/warped.h>
+#include <warped.h>
 
 class SimulationConfiguration;
 class SerializedInstance;

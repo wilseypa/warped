@@ -2,9 +2,9 @@
 #include "PingEvent.h"
 #include "PingObject.h"
 #include "PingObjectState.h"
-#include <warped/SimulationManager.h>
-#include <warped/warped.h>
-#include <warped/IntVTime.h>
+#include <SimulationManager.h>
+#include <warped.h>
+#include <IntVTime.h>
 
 #include <sstream>
 using std::stringstream;

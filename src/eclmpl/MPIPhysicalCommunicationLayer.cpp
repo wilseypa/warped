@@ -1,6 +1,6 @@
 #include <mpi.h>
 #include "MPIPhysicalCommunicationLayer.h"
-#include "warped/SerializedInstance.h"
+#include "SerializedInstance.h"
 
 using std::ofstream;
 using std::endl;

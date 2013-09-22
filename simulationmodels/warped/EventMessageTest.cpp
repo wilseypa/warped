@@ -1,6 +1,6 @@
 #include "EventMessageTest.h"
 #include <cppunit/extensions/HelperMacros.h>
-#include "warped/DeserializerManager.h"
+#include "DeserializerManager.h"
 
 Event *
 EventMessageTest::getDefaultEvent(){

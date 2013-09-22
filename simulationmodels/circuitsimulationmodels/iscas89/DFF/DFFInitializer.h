@@ -1,7 +1,7 @@
 #ifndef DFF_INI
 #define DFF_INI
 
-#include <warped/SimulationObject.h>
+#include <SimulationObject.h>
 #include "LogicEvent.h"
 #include <iostream>
 #include <vector>

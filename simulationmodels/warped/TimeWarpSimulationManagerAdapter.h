@@ -1,9 +1,9 @@
 #ifndef TIMEWARP_SIMULATION_MANAGER_ADAPTER_H
 #define TIMEWARP_SIMULATION_MANAGER_ADAPTER_H
 
-#include "warped/TimeWarpSimulationManager.h"
-#include "warped/ObjectID.h"
-#include "warped/IntVTime.h"
+#include "TimeWarpSimulationManager.h"
+#include "ObjectID.h"
+#include "IntVTime.h"
 
 class TimeWarpSimulationManagerAdapter : public TimeWarpSimulationManager {
 public:

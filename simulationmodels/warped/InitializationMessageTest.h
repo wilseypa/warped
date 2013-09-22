@@ -1,7 +1,7 @@
 #ifndef INITIALIZATION_MESSAGE_TEST_H
 #define INITIALIZATION_MESSAGE_TEST_H
 
-#include "warped/InitializationMessage.h"
+#include "InitializationMessage.h"
 #include "KernelMessageTest.h"
 
 class InitializationMessageTest : public KernelMessageTest {

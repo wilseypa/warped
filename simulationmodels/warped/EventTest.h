@@ -1,10 +1,10 @@
 #ifndef EVENT_TEST_H
 #define EVENT_TEST_H
 
-#include "warped/DefaultEvent.h"
+#include "DefaultEvent.h"
 #include "SerializableTest.h"
-#include "warped/SerializedInstance.h"
-#include "warped/IntVTime.h"
+#include "SerializedInstance.h"
+#include "IntVTime.h"
 
 class EventTest : public SerializableTest {
   class EventTestTestEvent : public DefaultEvent {

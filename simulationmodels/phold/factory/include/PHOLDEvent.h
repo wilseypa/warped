@@ -2,7 +2,7 @@
 #define PHOLD_EVENT_H
 
 #include "warped.h"
-#include <warped/DefaultEvent.h>
+#include <DefaultEvent.h>
 
 class PHOLDEvent: public DefaultEvent {
 public:

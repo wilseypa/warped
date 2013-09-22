@@ -1,6 +1,6 @@
 
-#include "warped/FileManager.h"
-#include "warped/SequentialFileManager.h"
+#include "FileManager.h"
+#include "SequentialFileManager.h"
 
 namespace warped {
 

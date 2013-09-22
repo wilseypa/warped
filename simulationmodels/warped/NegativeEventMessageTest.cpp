@@ -1,8 +1,8 @@
 #include "NegativeEventMessageTest.h"
 #include <cppunit/extensions/HelperMacros.h>
-#include "warped/DeserializerManager.h"
-#include "warped/EventId.h"
-#include "warped/NegativeEvent.h"
+#include "DeserializerManager.h"
+#include "EventId.h"
+#include "NegativeEvent.h"
 
 void 
 NegativeEventMessageTest::setUp(){

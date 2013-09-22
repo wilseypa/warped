@@ -3,7 +3,7 @@
 
 
 #include "warped.h"
-#include <warped/Serializable.h>
+#include <Serializable.h>
 
 class VTime;
 class EventId;

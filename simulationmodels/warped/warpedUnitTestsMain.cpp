@@ -27,7 +27,7 @@
 #include "TerminateTokenTest.h"
 #include "TimeWarpMultiSetTest.h"
 #include "TimeWarpMultiSetOneAntiMsgTest.h"
-#include "warped/WarpedMain.h"
+#include "WarpedMain.h"
 
 // Add your tests to the suite here
 CPPUNIT_TEST_SUITE_REGISTRATION( DynamicOutputManagerTest );

@@ -1,7 +1,7 @@
 #ifndef  INITIALIZER_H
 #define  INITIALIZER_H
 
-#include <warped/FlatState.h>
+#include <FlatState.h>
 
 class InitializerState : public FlatState {
   public :

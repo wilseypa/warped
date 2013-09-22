@@ -1,5 +1,5 @@
 #include "DefaultTimeWarpEventSetOneAntiMsgTest.h"
-#include "warped/DefaultTimeWarpEventSet.h"
+#include "DefaultTimeWarpEventSet.h"
 
 void
 DefaultTimeWarpEventSetOneAntiMsgTest::setUp(){

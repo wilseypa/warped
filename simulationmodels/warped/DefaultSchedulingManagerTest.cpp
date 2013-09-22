@@ -1,5 +1,5 @@
 #include "DefaultSchedulingManagerTest.h"
-#include "warped/DefaultSchedulingManager.h"
+#include "DefaultSchedulingManager.h"
 
 DefaultSchedulingManagerTest::DefaultSchedulingManagerTest()
  : toTest(0){}

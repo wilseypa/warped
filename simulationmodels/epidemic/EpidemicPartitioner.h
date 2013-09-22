@@ -1,7 +1,7 @@
 #ifndef EPIDEMIC_PARTITIONER_H
 #define EPIDEMIC_PARTITIONER_H
 
-#include <warped/Partitioner.h>
+#include <Partitioner.h>
 
 /* 
    This class is designed specifically to partition the objects

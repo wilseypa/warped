@@ -6,9 +6,9 @@
 
 #include "SimulationObjectAdapter.h"
 #include "TimeWarpSimulationManagerAdapter.h"
-#include "warped/DefaultEvent.h"
-#include "warped/DefaultTimeWarpEventSet.h"
-#include "warped/State.h"
+#include "DefaultEvent.h"
+#include "DefaultTimeWarpEventSet.h"
+#include "State.h"
 
 /**
    An abstract class that other tests can derive from.  Tries to set up a

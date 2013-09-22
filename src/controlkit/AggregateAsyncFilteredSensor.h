@@ -2,7 +2,7 @@
 #define AGGREGATE_ASYNC_FILTERED_SENSOR_H
 
 
-#include <warped/warped.h>
+#include <warped.h>
 #include "AsyncFilteredSensor.h"
 #include "SensorImplementationBase.h"
 

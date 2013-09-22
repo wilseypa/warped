@@ -1,5 +1,5 @@
 #include "TimeWarpMultiSetTest.h"
-#include "warped/TimeWarpMultiSet.h"
+#include "TimeWarpMultiSet.h"
 
 void 
 TimeWarpMultiSetTest::setUp(){

@@ -2,7 +2,7 @@
 #define TOKEN_PASSING_TERMINATION_MANAGER_H
 
 
-#include <warped/TerminationManager.h>
+#include <TerminationManager.h>
 class TerminateToken;
 class TimeWarpSimulationManager;
 class KernelMessage;

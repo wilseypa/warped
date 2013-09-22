@@ -1,7 +1,7 @@
 #ifndef EVENT_MESSAGE_TEST_H
 #define EVENT_MESSAGE_TEST_H
 
-#include "warped/EventMessage.h"
+#include "EventMessage.h"
 #include "EventMessageBaseTest.h"
 
 class EventMessageTest : public EventMessageBaseTest {

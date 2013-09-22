@@ -3,7 +3,7 @@
 
 
 #include "warped.h"
-#include "warped/Configurable.h"
+#include "Configurable.h"
 #include <vector>
 #include <string>
 

@@ -1,7 +1,7 @@
 #ifndef APPLICATION_ADAPTER_H
 #define APPLICATION_ADAPTER_H
 
-#include "warped/Application.h"
+#include "Application.h"
 
 class ApplicationAdapter : public Application {
 public:

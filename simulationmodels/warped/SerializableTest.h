@@ -2,7 +2,7 @@
 #define SERIALIZABLE_TEST_H
 
 #include "WarpedUnitTest.h"
-#include "warped/Serializable.h"
+#include "Serializable.h"
 
 class SerializableTest : public WarpedUnitTest {
   CPPUNIT_TEST_SUITE( SerializableTest );

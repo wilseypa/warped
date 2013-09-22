@@ -1,7 +1,7 @@
 #ifndef SMMPPARTITIONER_H
 #define SMMPPARTITIONER_H
 
-#include <warped/Partitioner.h>
+#include <Partitioner.h>
 
 /* 
    This class is designed specifically to partition the objects

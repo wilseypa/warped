@@ -1,5 +1,5 @@
 #include "AdaptiveStateManagerBaseTest.h"
-#include "warped/IntVTime.h"
+#include "IntVTime.h"
 
 AdaptiveStateManagerBaseTest::AdaptiveStateManagerBaseTest(){}
 

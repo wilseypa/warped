@@ -1,7 +1,7 @@
 #ifndef RESTORE_CKPT_MESSAGE_TEST_H
 #define RESTORE_CKPT_MESSAGE_TEST_H
 
-#include "warped/RestoreCkptMessage.h"
+#include "RestoreCkptMessage.h"
 #include "KernelMessageTest.h"
 
 class RestoreCkptMessageTest : public KernelMessageTest {

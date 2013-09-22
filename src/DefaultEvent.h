@@ -2,9 +2,9 @@
 #define DEFAULT_EVENT_H
 
 
-#include "warped/Event.h"
-#include "warped/EventId.h"
-#include "warped/SimulationObject.h"
+#include "Event.h"
+#include "EventId.h"
+#include "SimulationObject.h"
 
 /** A default implementation of the Event interface. */
 

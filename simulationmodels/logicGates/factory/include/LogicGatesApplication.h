@@ -1,8 +1,8 @@
 #ifndef LOGIC_GATES_APPLICATION
 #define LOGIC_GATES_APPLICATION
 
-#include <warped/Application.h>
-#include <warped/IntVTime.h>
+#include <Application.h>
+#include <IntVTime.h>
 
 class LogicGatesApplication : public Application {
 public:

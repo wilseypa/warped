@@ -4,9 +4,9 @@
 #include "FileReaderWriter.h"
 #include "NInputNandGate.h"
 #include "NotGate.h"
-#include "warped/PartitionInfo.h"
-#include "warped/RoundRobinPartitioner.h"
-#include "warped/DeserializerManager.h"
+#include "PartitionInfo.h"
+#include "RoundRobinPartitioner.h"
+#include "DeserializerManager.h"
 
 #include <vector>
 #include <iostream>

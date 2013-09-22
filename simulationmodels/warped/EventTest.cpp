@@ -1,7 +1,7 @@
 #include "EventTest.h"
 #include <cppunit/extensions/HelperMacros.h>
-#include "warped/SerializedInstance.h"
-#include "warped/DeserializerManager.h"
+#include "SerializedInstance.h"
+#include "DeserializerManager.h"
 
 void 
 EventTest::setUp(){

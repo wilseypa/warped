@@ -1,7 +1,7 @@
 #ifndef NEGATIVE_EVENT_MESSAGE_TEST_H
 #define NEGATIVE_EVENT_MESSAGE_TEST_H
 
-#include "warped/NegativeEventMessage.h"
+#include "NegativeEventMessage.h"
 #include "KernelMessageTest.h"
 
 class NegativeEventMessageTest : public KernelMessageTest {

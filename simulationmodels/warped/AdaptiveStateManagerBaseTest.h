@@ -2,7 +2,7 @@
 #define ADAPTIVE_STATE_MANAGER_BASE_TEST_H
 
 #include "WarpedUnitTest.h"
-#include "warped/AdaptiveStateManagerBase.h"
+#include "AdaptiveStateManagerBase.h"
 
 class AdaptiveStateManagerBase;
 

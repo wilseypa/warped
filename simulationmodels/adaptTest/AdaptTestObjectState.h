@@ -1,7 +1,7 @@
 #ifndef ADAPTTESTOBJECTSTATE_H
 #define ADAPTTESTOBJECTSTATE_H
 
-#include <warped/State.h>
+#include <State.h>
 #include <string>
 
 class AdaptTestObjectState : public State {

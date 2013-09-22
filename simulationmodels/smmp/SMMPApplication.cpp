@@ -7,8 +7,8 @@
 #include "SMMPServerObject.h"
 #include "SMMPQueueObject.h"
 #include "SMMPPartitioner.h"
-#include "warped/PartitionInfo.h"
-#include "warped/DeserializerManager.h"
+#include "PartitionInfo.h"
+#include "DeserializerManager.h"
 
 #include <vector>
 #include <iostream>

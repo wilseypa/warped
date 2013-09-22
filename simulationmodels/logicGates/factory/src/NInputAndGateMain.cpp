@@ -1,5 +1,5 @@
 #include "../include/TwoInputAndGateApplication.h"
-#include <warped/WarpedMain.h>
+#include <WarpedMain.h>
 
 int
 main(int argc, char** argv) {

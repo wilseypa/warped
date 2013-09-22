@@ -2,9 +2,9 @@
 #include "AdaptTestEvent.h"
 #include "AdaptTestObject.h"
 #include "AdaptTestObjectState.h"
-#include <warped/SimulationManager.h>
-#include <warped/warped.h>
-#include <warped/IntVTime.h>
+#include <SimulationManager.h>
+#include <warped.h>
+#include <IntVTime.h>
 using namespace std;
 
 const unsigned int numAdaptObjects = 6;

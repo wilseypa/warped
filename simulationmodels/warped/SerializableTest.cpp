@@ -1,5 +1,5 @@
 #include "SerializableTest.h"
-#include "warped/SerializedInstance.h"
+#include "SerializedInstance.h"
 
 // Create anything needed for the tests here
 void 

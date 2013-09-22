@@ -2,7 +2,7 @@
 #define KERNEL_MESSAGE_TEST_H
 
 
-#include "warped/SerializableTest.h"
+#include "SerializableTest.h"
 
 class KernelMessage;
 

@@ -1,9 +1,9 @@
 #include "PingPongApplication.h"
 #include "PingObject.h"
 #include "PingEvent.h"
-#include <warped/PartitionInfo.h>
-#include <warped/RoundRobinPartitioner.h>
-#include <warped/DeserializerManager.h>
+#include <PartitionInfo.h>
+#include <RoundRobinPartitioner.h>
+#include <DeserializerManager.h>
 
 #include <vector>
 using std::string;

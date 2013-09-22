@@ -1,7 +1,7 @@
 #ifndef TERMINATE_TOKEN_TEST_H
 #define TERMINATE_TOKEN_TEST_H
 
-#include "warped/TerminateToken.h"
+#include "TerminateToken.h"
 #include "KernelMessageTest.h"
 
 class TerminateTokenTest : public KernelMessageTest {

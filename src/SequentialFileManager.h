@@ -5,7 +5,7 @@
 #include "warped.h"
 #include <unordered_map>
 #include <string>
-#include "warped/FileManager.h"
+#include "FileManager.h"
 
 using std::string;
 

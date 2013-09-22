@@ -2,7 +2,7 @@
 #define TIMEWARP_SIM_MGR_WITH_VISUALIZATION_H
 
 
-#include <warped/TimeWarpSimulationManager.h>
+#include <TimeWarpSimulationManager.h>
 
 using std::string;
 

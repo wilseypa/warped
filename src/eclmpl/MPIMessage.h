@@ -2,7 +2,7 @@
 #define MPI_MESSAGE_H
 
 #include <mpi.h>
-#include "warped/SerializedInstance.h"
+#include "SerializedInstance.h"
 #include <algorithm>
 #include <functional>
 

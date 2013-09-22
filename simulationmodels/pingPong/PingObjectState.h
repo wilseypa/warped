@@ -1,7 +1,7 @@
 #ifndef PINGOBJECTSTATE_H
 #define PINGOBJECTSTATE_H
 
-#include <warped/State.h>
+#include <State.h>
 #include <sstream>
 
 class PingObjectState : public State {

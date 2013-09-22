@@ -1,7 +1,7 @@
 #ifndef N_FILE_STATE_H
 #define N_FILE_STATE_H
 
-#include <warped/FlatState.h>
+#include <FlatState.h>
 
 class FileState : public FlatState {
 public:

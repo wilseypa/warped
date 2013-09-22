@@ -5,8 +5,8 @@
 // intellectual property laws, and all other applicable laws of the
 // U.S., and the terms of this license.
 
-#include <warped/Application.h>
-#include <warped/IntVTime.h>
+#include <Application.h>
+#include <IntVTime.h>
 
 class EpidemicApplication : public Application {
 

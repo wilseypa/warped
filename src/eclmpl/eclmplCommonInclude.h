@@ -1,8 +1,8 @@
 #ifndef ECLMPL_COMMON_INCLUDE_H
 #define ECLMPL_COMMON_INCLUDE_H 
 
-#include "warped/warped.h"
-#include "warped/SimulationConfiguration.h"
+#include "warped.h"
+#include "SimulationConfiguration.h"
 
 #include <iostream>
 #include <iterator>

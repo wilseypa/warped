@@ -1,8 +1,8 @@
 #ifndef RAID_APPLICATION
 #define RAID_APPLICATION
 
-#include "warped/Application.h"
-#include "warped/IntVTime.h"
+#include "Application.h"
+#include "IntVTime.h"
 
 class RAIDApplication : public Application {
 public:

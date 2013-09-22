@@ -4,7 +4,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "warped/SerializedInstance.h"
+#include "SerializedInstance.h"
 
 class SerializedInstanceTest : public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE( SerializedInstanceTest);

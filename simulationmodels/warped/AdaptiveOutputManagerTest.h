@@ -2,7 +2,7 @@
 #define ADAPTIVE_OUTPUT_MANAGER_TEST_H
 
 #include "OutputManagerTest.h"
-#include "warped/AdaptiveOutputManager.h"
+#include "AdaptiveOutputManager.h"
 
 class DynamicOutputManager;
 

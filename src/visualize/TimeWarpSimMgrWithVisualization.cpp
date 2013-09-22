@@ -1,10 +1,10 @@
 
 #include "TimeWarpSimMgrWithVisualization.h"
 #include "DefaultVisualizationManager.h"
-#include "warped/CommunicationManager.h"
-#include "warped/SchedulingManager.h"
-#include "warped/Event.h"
-#include <warped/StopWatch.h>
+#include "CommunicationManager.h"
+#include "SchedulingManager.h"
+#include "Event.h"
+#include <StopWatch.h>
 #include <sstream>
 
 using std::fstream;

@@ -2,7 +2,7 @@
 #define ROUNDROBINPARTITIONER_H
 
 
-#include <warped/Partitioner.h>
+#include <Partitioner.h>
 
 class RoundRobinPartitioner : public Partitioner {
 public:

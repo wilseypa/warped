@@ -1,8 +1,8 @@
 #ifndef ISCAS85_APPLICATION
 #define ISCAS85_APPLICATION
 
-#include <warped/Application.h>
-#include <warped/IntVTime.h>
+#include <Application.h>
+#include <IntVTime.h>
 
 class Iscas89Application : public Application{
 public:

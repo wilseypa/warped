@@ -1,8 +1,8 @@
 #ifndef SMMP_APPLICATION
 #define SMMP_APPLICATION
 
-#include <warped/Application.h>
-#include <warped/IntVTime.h>
+#include <Application.h>
+#include <IntVTime.h>
 
 class SMMPApplication : public Application {
 public:

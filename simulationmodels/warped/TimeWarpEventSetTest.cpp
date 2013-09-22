@@ -1,6 +1,6 @@
 #include "TimeWarpEventSetTest.h"
-#include "warped/TimeWarpEventSet.h"
-#include "warped/IntVTime.h"
+#include "TimeWarpEventSet.h"
+#include "IntVTime.h"
 
 
 void

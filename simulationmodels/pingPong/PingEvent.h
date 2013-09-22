@@ -1,7 +1,7 @@
 #ifndef PINGEVENT_HH
 #define PINGEVENT_HH
 
-#include <warped/DefaultEvent.h>
+#include <DefaultEvent.h>
 
 class PingEvent : public DefaultEvent {
 public:

@@ -2,11 +2,11 @@
 #define INTVTIME_H
 
 
-#include <warped/warped.h>
+#include <warped.h>
 #include <iostream>
 #include <string>
-#include <warped/Serializable.h>
-#include <warped/VTime.h>
+#include <Serializable.h>
+#include <VTime.h>
 
 class IntVTime : public VTime {
 

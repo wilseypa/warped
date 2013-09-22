@@ -2,7 +2,7 @@
 #define COST_ADAPTIVE_STATE_MANAGER_TEST_H
 
 #include "WarpedUnitTest.h"
-#include "warped/CostAdaptiveStateManager.h"
+#include "CostAdaptiveStateManager.h"
 
 //#include <set>
 //using std::multiset;

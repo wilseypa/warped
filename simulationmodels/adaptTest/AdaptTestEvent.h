@@ -1,7 +1,7 @@
 #ifndef ADAPTTESTEVENT_HH
 #define ADAPTTESTEVENT_HH
 
-#include <warped/DefaultEvent.h>
+#include <DefaultEvent.h>
 
 class AdaptTestEvent : public DefaultEvent {
 public:

@@ -1,7 +1,7 @@
 
 #include "DefaultSchedulingManager.h"
-#include "warped/TimeWarpSimulationManager.h"
-#include "warped/Event.h"
+#include "TimeWarpSimulationManager.h"
+#include "Event.h"
 
 DefaultSchedulingManager::DefaultSchedulingManager( TimeWarpSimulationManager *initSimulationManager ) 
   : mySimulationManager( initSimulationManager ),

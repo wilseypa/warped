@@ -2,7 +2,7 @@
 #define LAZY_OUTPUT_MANAGER_TEST_H
 
 #include "OutputManagerTest.h"
-#include "warped/LazyOutputManager.h"
+#include "LazyOutputManager.h"
 
 class LazyOutputManager;
 

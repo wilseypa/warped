@@ -1,6 +1,6 @@
 #include "GVTUpdateMessageTest.h"
 #include <cppunit/extensions/HelperMacros.h>
-#include "warped/IntVTime.h"
+#include "IntVTime.h"
 
 const VTime &
 GVTUpdateMessageTest::getDefaultGVT(){

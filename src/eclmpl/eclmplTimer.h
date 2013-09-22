@@ -1,7 +1,7 @@
 #ifndef ECLMPL_TIMER_H
 #define ECLMPL_TIMER_H
 
-#include "warped/warped.h"
+#include "warped.h"
 #include "eclmplCommonInclude.h"
 
 class eclmplTimer {

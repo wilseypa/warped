@@ -1,5 +1,5 @@
 #include "CostAdaptiveStateManagerTest.h"
-#include "warped/IntVTime.h"
+#include "IntVTime.h"
 
 CostAdaptiveStateManagerTest::CostAdaptiveStateManagerTest(){}
 

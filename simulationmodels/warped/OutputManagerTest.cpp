@@ -1,6 +1,6 @@
 #include "OutputManagerTest.h"
-#include "warped/OutputManager.h"
-#include "warped/IntVTime.h"
+#include "OutputManager.h"
+#include "IntVTime.h"
 
 OutputManagerTest::OutputManagerTest(){}
 

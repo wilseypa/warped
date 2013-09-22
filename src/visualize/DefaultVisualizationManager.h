@@ -7,7 +7,7 @@
 //g++-4.2 does not allow unordered_map to be used in this case
 #include <map>
 #include "VisualizationManager.h"
-#include <warped/Socket.h>
+#include <Socket.h>
 #include <stdlib.h>
 #include <string.h>
 

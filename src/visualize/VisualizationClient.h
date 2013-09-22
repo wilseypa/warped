@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <pthread.h>
 #include <string>
-#include <warped/Socket.h>
+#include <Socket.h>
 #include <string.h>
 using std::cout;
 using std::cerr;

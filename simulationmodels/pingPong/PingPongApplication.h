@@ -1,8 +1,8 @@
 #ifndef PING_PONG_APPLICATION
 #define PING_PONG_APPLICATION
 
-#include <warped/Application.h>
-#include <warped/IntVTime.h>
+#include <Application.h>
+#include <IntVTime.h>
 
 class PingPongApplication : public Application {
 public:

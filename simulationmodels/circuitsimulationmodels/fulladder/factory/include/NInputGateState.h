@@ -1,7 +1,7 @@
 #ifndef N_INPUT_GATE_STATE_H
 #define N_INPUT_GATE_STATE_H
 
-#include <warped/FlatState.h>
+#include <FlatState.h>
 
 class NInputGateState : public FlatState {
 public:

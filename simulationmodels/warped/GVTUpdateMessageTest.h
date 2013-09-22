@@ -1,7 +1,7 @@
 #ifndef GVT_UPDATE_MESSAGE_TEST_H
 #define GVT_UPDATE_MESSAGE_TEST_H
 
-#include "warped/GVTUpdateMessage.h"
+#include "GVTUpdateMessage.h"
 #include "KernelMessageTest.h"
 
 class GVTUpdateMessageTest : public KernelMessageTest {

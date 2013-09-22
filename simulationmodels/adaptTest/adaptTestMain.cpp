@@ -1,5 +1,5 @@
 #include "AdaptTestApplication.h"
-#include "warped/WarpedMain.h"
+#include "WarpedMain.h"
 
 #include "tclap/CmdLine.h"
 
