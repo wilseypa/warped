@@ -20,4 +20,4 @@ include circuitsimulationmodels/iscas89/Makefile.am.stub
 # fulladder stuff
 # include circuitsimulationmodels/fulladder/Makefile.am.stub
 
-noinst_PROGRAMS = $(PING_PONG_PROGRAM) $(UNIT_TEST_PROGRAM) $(ADAPT_TEST_PROGRAM) $(PHOLD_PROGRAM) $(RAID_PROGRAM) $(SMMP_PROGRAM) $(ISCAS89_PROGRAM) $(EPIDEMIC_PROGRAM) #$(FULLADDER_PROGRAM)
+noinst_PROGRAMS = $(PING_PONG_PROGRAM) $(ADAPT_TEST_PROGRAM) $(PHOLD_PROGRAM) $(RAID_PROGRAM) $(SMMP_PROGRAM) $(ISCAS89_PROGRAM) $(EPIDEMIC_PROGRAM) #$(FULLADDER_PROGRAM)
