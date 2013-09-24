@@ -1,2 +1,5 @@
 lib_LTLIBRARIES = libjsoncpp.la
-libjsoncpp_la_SOURCES = json.h jsoncpp.cpp
+libjsoncpp_la_SOURCES = jsoncpp.cpp
+
+libjsoncppincludedir = $(includedir)/json
+libjsoncppinclude_HEADERS = json.h
