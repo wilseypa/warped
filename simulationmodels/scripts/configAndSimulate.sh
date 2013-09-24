@@ -26,17 +26,17 @@ function set_config {
 	loadBalancingRelaxedThresh=${10}
 
 	# Copy config file to tmp folder
-	cp parallel.config /tmp/$hostname.parallel.config
-	configFile="/tmp/$hostname.parallel.config"
+	cp parallel.json /tmp/$hostname.parallel.json
+	configFile="/tmp/$hostname.parallel.json"
 
 	# Set configuration parameters
-	sed -i "s/WorkerThreadCount : [0-9]*$/WorkerThreadCount : "$threads"/g" $configFile
-	sed -i "s/ScheduleQScheme : [A-Z]*$/ScheduleQScheme : "$scheduleQScheme"/g" $configFile
-	sed -i "s/ScheduleQCount : [0-9]*$/ScheduleQCount : "$scheduleQCount"/g" $configFile
-	sed -i "s/LoadBalancing : [A-Z]*$/LoadBalancing : "$loadBalancing"/g" $configFile
-	sed -i "s/LoadBalancingMetric : [A-Za-z]*$/LoadBalancingMetric : "$loadBalancingMetric"/g" $configFile
-	sed -i "s/LoadBalancingTrigger : [A-Za-z]*$/LoadBalancingTrigger : "$loadBalancingTrigger"/g" $configFile
-	sed -i "s/LoadBalancingNormalInterval : [0-9]*$/LoadBalancingInterval : "$loadBalancingInterval"/g" $configFile
+	sed -i "s/\"WorkerThreadCount\"\s*:\s*[0-9]+/\"WorkerThreadCount\": $threads/p" $configFile
+	sed -i "s/\"ScheduleQScheme\"\s*:\s*[A-Za-z]+/\"ScheduleQScheme\": \"$scheduleQScheme\"/p" $configFile
+	sed -i "s/\"ScheduleQCount\"\s*:\s*[0-9]+/\"ScheduleQCount\": $scheduleQCount/p" $configFile
+	sed -i "s/\"LoadBalancing\"\s*:\s*[A-Za-z]+/\"LoadBalancing\": $loadBalancing/p" $configFile
+	sed -i "s/\"LoadBalancingMetric\"\s*:\s*[A-Za-z]+/\"LoadBalancingMetric\": \"$loadBalancingMetric\"/p" $configFile
+	sed -i "s/\"LoadBalancingTrigger\"\s*:\s*[A-Za-z]+/\"LoadBalancingTrigger\": \"$loadBalancingTrigger\"/p" $configFile
+	sed -i "s/\"LoadBalancingNormalInterval\"\s*:\s*[0-9]+/\"LoadBalancingNormalInterval\": $loadBalancingInterval/p" $configFile
 }
 
 function run {
@@ -60,9 +60,9 @@ function run {
 
 	if [ $simulateUntil == "-" ]
 	then
-		runCommand="./$binary -configuration $configFile -simulate $binaryConfig"
+		runCommand="./$binary --configuration $configFile --simulate $binaryConfig"
 	else
-		runCommand="./$binary -configuration $configFile -simulate $binaryConfig -simulateUntil $simulateUntil"
+		runCommand="./$binary --configuration $configFile --simulate $binaryConfig --simulateUntil $simulateUntil"
 	fi
 	date=`date +"%m-%d-%y_%T"`
 	grepMe=`$runCommand | grep "Simulation complete"`
@@ -78,7 +78,7 @@ function run {
 }
 
 hostname=`hostname`
-date=`date +"%m-%d-%y_%T"`
+date=`date +"%m-%d-%y_%H-%M-%S"`
 logFile="scripts/logs/$hostname---$date.csv"
 
 # Write csv header
@@ -88,7 +88,6 @@ echo "Simulation,SimulationConfig,Threads,Scheme,ScheduleQCount,LoadBalancing,Lo
 trap control_c SIGINT
 
 . scripts/$1
-#run raidSim raid/LargeRAID 6 MULTISET 1 100000
 
 # Upload output to dropbox
 scripts/dropbox_uploader.sh upload $logFile
