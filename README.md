@@ -1,24 +1,31 @@
-pdes: Parallel & Distributed Simulation (discrete event)
+# WAPRED
+A Parallel & Distributed Discrete Simulation Library
 
-This repository contains the software that my students and I are creating during our investigations of Time Warp 
-synchronized parallel simulation.  The directory structure of this archive is:
+# Building
 
-warped: containing the source code and documentation for the warped simulation kernel.  This kernel is written in C++
-  and has been designed so that most of the options can be configured in a runtime configuration file.  The kernel
-  supports both sequential and parallel (time warp synchronized) simulations.  The time warp kernel is designed 
-  primarily for efficient execution on a Beowulf cluster.  A threaded configuration is available that causes the
-  kernel to spawn multiple threads on each node of the cluster.  The kernel supports numerous options within the
-  time warp runtime space (e.g., periodic checkpointing; aggressive, lazy, or dynamic cancellation; optimistic fossil 
-  collection; and so on).  Additional details on the software architecture and configuration options are available
-  in the documentation subdirectory.
+WARPED is built with a C++11 compiler (see [here](http://lektiondestages.blogspot.de/2013/05/installing-and-switching-gccg-versions.html) for instructions about upgrading and switching GCC versions if you have a GCC older than 4.7).  
 
-utils: contains a collection of utility functions used by the warped kernel.  This needs to be built before the warped
-  subtree.
-  
-ns3towarped: (forthcoming) contains a llvm based tool to translate NS-3 network simulation models for execution on
-  the warped kernel.  This is a source-to-source translator.  This translator is currently under development and not
-  yet ready for external consumption/use.
-  
-questions, email me: wilseypa@gmail.com
+To build from the git repository, first clone a local copy.
 
-thank you.
+	git clone https://github.com/wilseypa/pdes.git ~/warped
+
+You can run the Autotools build without any options, although specifying a prefix (install location) is recommended.
+
+	autoreconf -i && ./configure --prefix=~/lib/warped && make && make install
+
+If you get a linker error telling you that the MPI library couldn't be found, you may need to specify the path to the MPI headers and libraries manually in the confuration step.
+
+ 	CPPFLAGS="-I/usr/include/mpich" LDFLAGS="-L/usr/lib/mpich2/lib" ./configure
+
+Replace the paths in the above example with the locations of the MPI libraries and headers on your machine. 
+
+# Prerequisites
+WARPED depends on an MPI implementation. It has only been tested with [mpich](http://www.mpich.org/), although other implementations may work.
+
+If building from the git repository, you  will also need the GNU Autotools tool-chain, including Automake, Autoconf, and Libtool.
+
+
+# License
+The WARPED code in this repository is licensed under the MIT license, unless otherwise specified. The full text of the MIT license can be found in the `LICENSE.txt` file. 
+
+WARPED depends on some third party libraries which are redistributed in the `thirdparty/` folder. Each third party library used is licensed under a license that can be found at the top of each file for which the license applies.
