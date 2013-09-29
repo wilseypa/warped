@@ -15,6 +15,22 @@ endif
 
 libwarped_la_LIBADD += $(top_builddir)/thirdparty/json/libjsoncpp.la
 
+CONTROLKIT_H_FILES = \
+	controlkit/Actuator.h \
+	controlkit/ActuatorImplementationBase.h \
+	controlkit/AggregateAsyncFilteredSensor.h \
+	controlkit/AggregateSyncSensor.h \
+	controlkit/AsyncFilteredSensor.h \
+	controlkit/AsyncSensor.h \
+	controlkit/AverageFilter.h \
+	controlkit/Filter.h \
+	controlkit/FIRFilter.h \
+	controlkit/IIRFilter.h \
+	controlkit/MedianFilter.h \
+	controlkit/Sensor.h \
+	controlkit/SensorImplementationBase.h \
+	controlkit/SyncSensor.h
+
 WARPED_H_FILES = \
 	$(ECLMPL_H_FILES) \
 	AdaptiveOutputManager.h \
@@ -33,20 +49,6 @@ WARPED_H_FILES = \
 	Configurer.h \
 	ConsoleIO.cpp \
 	ConsoleIO.h \
-	controlkit/Actuator.h \
-	controlkit/ActuatorImplementationBase.h \
-	controlkit/AggregateAsyncFilteredSensor.h \
-	controlkit/AggregateSyncSensor.h \
-	controlkit/AsyncFilteredSensor.h \
-	controlkit/AsyncSensor.h \
-	controlkit/AverageFilter.h \
-	controlkit/Filter.h \
-	controlkit/FIRFilter.h \
-	controlkit/IIRFilter.h \
-	controlkit/MedianFilter.h \
-	controlkit/Sensor.h \
-	controlkit/SensorImplementationBase.h \
-	controlkit/SyncSensor.h \
 	ControlManager.h \
 	CostAdaptiveStateManager.h \
 	DefaultCommunicationManager.h \
@@ -205,7 +207,11 @@ library_includedir=$(includedir)
 library_include_HEADERS = $(WARPED_H_FILES) \
 	$(top_builddir)/src/WarpedConfig.h
 
+controlkit_includedir=$(includedir)/controlkit
+controlkit_include_HEADERS= $(CONTROLKIT_H_FILES)
+
 libwarped_la_SOURCES = \
+	$(CONTROLKIT_H_FILES) \
 	$(WARPED_H_FILES) \
 	$(ECLMPL_SRC) \
 	AdaptiveOutputManager.cpp \
