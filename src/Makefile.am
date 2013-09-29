@@ -1,7 +1,3 @@
-INSTALL_HEADER = $(INSTALL) -p -m 644
-
-INCLUDES=-I$(top_builddir)/src -I$(top_builddir)/thirdparty
-
 include eclmpl/Makefile.am.stub
 
 lib_LTLIBRARIES = libwarped.la 
