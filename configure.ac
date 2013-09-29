@@ -64,7 +64,6 @@ AC_CHECK_SIZEOF( long )
 AC_CHECK_SIZEOF( long long )
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h)
 
 dnl Look for cppunit
@@ -157,5 +156,3 @@ AC_SUBST(CXX)
 AC_SUBST(MAKEDEPEND)
 AC_CONFIG_FILES([Makefile src/Makefile simulationmodels/Makefile thirdparty/Makefile thirdparty/tclap/Makefile thirdparty/json/Makefile test/Makefile])
 AC_OUTPUT
-
-dnl rm -f ./config.cache
