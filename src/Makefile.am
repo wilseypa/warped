@@ -1,4 +1,7 @@
-include $(top_srcdir)/Makefile.am.common
+INSTALL_HEADER = $(INSTALL) -p -m 644
+
+INCLUDES=-I$(top_builddir)/src -I$(top_builddir)/thirdparty
+
 include eclmpl/Makefile.am.stub
 
 lib_LTLIBRARIES = libwarped.la 
@@ -332,6 +335,10 @@ libwarped_la_SOURCES = \
     ThreadedTimeWarpSimulationManager.cpp
 
 libwarped_la_CXXFLAGS = -Wall -Wextra -pedantic
+
+EXTRA_DIST = \
+	eclmpl/Makefile.am.stub \
+	WarpedConfig.h.in
 
 CLEANFILES=$(BUILT_SOURCES)
 

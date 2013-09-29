@@ -1,4 +1,4 @@
-AC_INIT([warped],[3.0])
+AC_INIT([warped],[4.0])
 AC_CONFIG_HEADERS([src/WarpedConfig.h])
 
 AC_CONFIG_MACRO_DIR([m4])
@@ -6,7 +6,7 @@ AC_CONFIG_SRCDIR([src/Event.cpp])
 AM_INIT_AUTOMAKE([foreign])
 AC_PREREQ(2.61)
 
-AC_SUBST(WARPED_VERSION, [3.0])
+AC_SUBST(WARPED_VERSION, [4.0])
 
 AC_LANG([C++])
 
@@ -154,5 +154,5 @@ AC_SUBST(LDFLAGS)
 AC_SUBST(LIBS)
 AC_SUBST(CXX)
 AC_SUBST(MAKEDEPEND)
-AC_CONFIG_FILES([Makefile src/Makefile simulationmodels/Makefile thirdparty/Makefile thirdparty/tclap/Makefile thirdparty/json/Makefile test/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile thirdparty/Makefile thirdparty/json/Makefile test/Makefile])
 AC_OUTPUT

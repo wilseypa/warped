@@ -1,1 +1,1 @@
-SUBDIRS = tclap json
+SUBDIRS = json
