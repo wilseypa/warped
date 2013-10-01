@@ -1,3 +1,5 @@
+AM_CPPFLAGS=-I$(top_srcdir)/thirdparty
+
 include eclmpl/Makefile.am.stub
 
 lib_LTLIBRARIES = libwarped.la 
