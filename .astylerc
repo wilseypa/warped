@@ -1,0 +1,17 @@
+# This is a configuration for the Artistic Style program. This is the
+# recommended style for WARPED code. To use this style, specify this file with
+# the `--option` flag to AStyle. See http://astyle.sourceforge.net for
+# instructions.
+
+--style="attach"
+--add-brackets
+--add-one-line-brackets
+--align-pointer="type"
+--align-reference="type"
+--break-blocks
+--convert-tabs
+--keep-one-line-blocks
+--pad-first-paren-out
+--unpad-paren
+--max-code-length=100
+--max-instatement-indent=100
