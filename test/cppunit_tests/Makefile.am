@@ -1,5 +1,3 @@
-SUBDIRS = catch_tests
-
 if USE_CPPUNIT
 noinst_PROGRAMS=warpedUnitTests
 

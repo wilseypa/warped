@@ -1,0 +1,1 @@
+SUBDIRS = catch_tests cppunit_tests

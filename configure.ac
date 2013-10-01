@@ -154,5 +154,5 @@ AC_SUBST(LDFLAGS)
 AC_SUBST(LIBS)
 AC_SUBST(CXX)
 AC_SUBST(MAKEDEPEND)
-AC_CONFIG_FILES([Makefile src/Makefile thirdparty/Makefile thirdparty/json/Makefile test/Makefile test/catch_tests/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile thirdparty/Makefile thirdparty/json/Makefile test/Makefile test/catch_tests/Makefile test/cppunit_tests/Makefile])
 AC_OUTPUT
