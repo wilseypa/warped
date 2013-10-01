@@ -1,8 +1,16 @@
 # WARPED Unit Tests
 
-These tests are written with the CPPUnit library, which must be installed on your machine to run these tests. To run the tests, pass the `--enable-cppunit` option to `configure` when building WARPED. 
+This directory contains all unit tests for the WARPED library.
 
-The following command builds warped and runs all unit tests if the build was successful:
+For historical reasons, the WARPED unit tests are written with two different frameworks: [CppUnit](http://cppunit.sourceforge.net) and [Catch](http://catch-test.net/). The tests are located in the `cppunit_tests` and `catch_tests` directories, respectively. 
+
+## Usage
+
+To build the tests written with CppUnit, you must install the CppUnit library separately before building WARPED. To build the tests, pass the `--enable-cppunit` option to `configure` when building WARPED. 
+
+The Catch library is included with the WARPED source, so installing it separately is not required. All tests written with Catch are built automatically.
+
+If CppUnit is installed, the following command builds warped and runs all unit tests if the build was successful:
 
 	autoreconf -i && ./configure --prefix=~/lib/warped --enable-cppunit && make && make check
 
