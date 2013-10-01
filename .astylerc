@@ -3,15 +3,14 @@
 # the `--option` flag to AStyle. See http://astyle.sourceforge.net for
 # instructions.
 
---style="attach"
+--style=attach
 --add-brackets
 --add-one-line-brackets
---align-pointer="type"
---align-reference="type"
---break-blocks
+--align-pointer=type
+--align-reference=type
 --convert-tabs
 --keep-one-line-blocks
---pad-first-paren-out
+--pad-header
 --unpad-paren
 --max-code-length=100
 --max-instatement-indent=100
