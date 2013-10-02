@@ -54,7 +54,7 @@ for each class in their own files.
   (additional discussion [here](http://www.levelofindirection.com/journal/tag/catch))
 * [CppUnit](http://cpptest.sourceforge.net/tutorial.html)
 
-## Style Guide.
+## Style Guide
 
 As with most style guides, the most important rule is to remain consistent
 with the surrounding code. If a file differs from acceptable style, it is more
