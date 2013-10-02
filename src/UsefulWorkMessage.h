@@ -9,46 +9,46 @@
 
 class UsefulWorkMessage : public KernelMessage {
 public:
-  enum MessageRound {
-    COLLECT,
-    SETFREQ,
-    CIRCULATECPU
-  };
+    enum MessageRound {
+        COLLECT,
+        SETFREQ,
+        CIRCULATECPU
+    };
 
-  UsefulWorkMessage(unsigned int source,
-                unsigned int dest, int nSimMgrs, MessageRound r) :
-    KernelMessage(source, dest),
-    numSimulationManagers(nSimMgrs),
-    myData(nSimMgrs),
-    myRound(r)
-  {}
-  
-  void serialize( SerializedInstance * ) const;
-  static Serializable *deserialize( SerializedInstance *data );
+    UsefulWorkMessage(unsigned int source,
+                      unsigned int dest, int nSimMgrs, MessageRound r) :
+        KernelMessage(source, dest),
+        numSimulationManagers(nSimMgrs),
+        myData(nSimMgrs),
+        myRound(r)
+    {}
 
-  const string &getDataType() const { return dataType(); }
-  void getData(std::vector<double>& data) const { data = myData; }
-  void setData(std::vector<double>& data) { myData = data; }
-  MessageRound getRound() const { return myRound; }
-  void setRound(MessageRound mr) { myRound = mr; }
+    void serialize(SerializedInstance*) const;
+    static Serializable* deserialize(SerializedInstance* data);
 
-  static const string& dataType();
+    const string& getDataType() const { return dataType(); }
+    void getData(std::vector<double>& data) const { data = myData; }
+    void setData(std::vector<double>& data) { myData = data; }
+    MessageRound getRound() const { return myRound; }
+    void setRound(MessageRound mr) { myRound = mr; }
 
-  static void registerDeserializer();
+    static const string& dataType();
+
+    static void registerDeserializer();
 
 private:
-  /**
-     Default constructor - to be used only by the deserializer.
-  */
-  UsefulWorkMessage() :
-    numSimulationManagers(0),
-    myData(0),
-    myRound(COLLECT)
-  {}
+    /**
+       Default constructor - to be used only by the deserializer.
+    */
+    UsefulWorkMessage() :
+        numSimulationManagers(0),
+        myData(0),
+        myRound(COLLECT)
+    {}
 
-  const unsigned int numSimulationManagers;
-  std::vector<double> myData;
-  MessageRound myRound;
+    const unsigned int numSimulationManagers;
+    std::vector<double> myData;
+    MessageRound myRound;
 };
 
 #endif //CF_ROLLBACK_VECTOR_MESSAGE_H

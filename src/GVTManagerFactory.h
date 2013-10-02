@@ -21,33 +21,33 @@
 class GVTManagerFactory : virtual public Configurer {
 public:
 
-  /**@name Public Class Methods of GVTManagerFactory. */
-  //@{
+    /**@name Public Class Methods of GVTManagerFactory. */
+    //@{
 
-  /// Constructor.
-  GVTManagerFactory();
+    /// Constructor.
+    GVTManagerFactory();
 
-  /// Destructor
-  virtual ~GVTManagerFactory();
+    /// Destructor
+    virtual ~GVTManagerFactory();
 
-  /** Configures the GVT manager.
+    /** Configures the GVT manager.
 
-  @param configurationMap The set of configuration options set.
-  */
-  Configurable *allocate( SimulationConfiguration &configuration,
-			  Configurable *parent ) const;
+    @param configurationMap The set of configuration options set.
+    */
+    Configurable* allocate(SimulationConfiguration& configuration,
+                           Configurable* parent) const;
 
-  static const GVTManagerFactory *instance();
-   
-  //@} // End of Public Class Methods of GVTManagerFactory.
+    static const GVTManagerFactory* instance();
+
+    //@} // End of Public Class Methods of GVTManagerFactory.
 
 private:
 
-  /**@name Private Class Attributes of GVTManagerFactory. */
-  //@{
-   
-  //@} // End of  Private Class Attributes of GVTManagerFactory.
-   
+    /**@name Private Class Attributes of GVTManagerFactory. */
+    //@{
+
+    //@} // End of  Private Class Attributes of GVTManagerFactory.
+
 };
 
 #endif

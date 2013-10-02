@@ -13,7 +13,7 @@
     ease of use and performance.  Many tradeoffs can be made with respect
     to {\tt ObjectID}. Some of the discussion and tradeoffs have been
     summarized in here.  The definition that the developers decided on for
-    {\tt ObjectID} is a compromise of flexibility and performance. 
+    {\tt ObjectID} is a compromise of flexibility and performance.
 
     A simple integer definition for simulation object ids would suffice
     for many non-distributed applications, and would provide excellent
@@ -44,175 +44,168 @@
     simulation object ids or the two tuple version of simulation object ids
     will be used.
 
-    This class provides the two tuple definition of ObjectID.  
+    This class provides the two tuple definition of ObjectID.
 */
 class ObjectID {
 public:
-   /**@name Public Class Methods of ObjectID. */
-   //@{
+    /**@name Public Class Methods of ObjectID. */
+    //@{
 
-   /** Constructor.
-      
-       @param simObjID Id of the simulation object.
-       @param simMgrID Id of the simulation manager that contains this object.
-   */
-   inline ObjectID( unsigned int simObjID, unsigned int simMgrID ) : 
-      mySimulationObjectID( simObjID ), mySimulationManagerID( simMgrID ){}
+    /** Constructor.
 
-   /** Constructor.
-      
-       Simulation Manager id is set to 0 by default.
-      
-       @param simObjID Simulation object id.
-   */
-   inline ObjectID( unsigned int simObjID ) : mySimulationObjectID(simObjID), 
-      mySimulationManagerID(0){}
+        @param simObjID Id of the simulation object.
+        @param simMgrID Id of the simulation manager that contains this object.
+    */
+    inline ObjectID(unsigned int simObjID, unsigned int simMgrID) :
+        mySimulationObjectID(simObjID), mySimulationManagerID(simMgrID) {}
 
-   /** Default Constructor.
-      
-       Simulation Manager id is set to 0 by default.
-      
-       @param simObjID Simulation object id.
-   */
-   inline ObjectID(): mySimulationObjectID(0), mySimulationManagerID(0){}
+    /** Constructor.
 
-   /** Copy Constructor.
-	
-       @param init ObjectID object that is copied.
-   */
-   inline ObjectID( const ObjectID &init ) : 
-      mySimulationObjectID( init.getSimulationObjectID() ), 
-      mySimulationManagerID( init.getSimulationManagerID() ){}
+        Simulation Manager id is set to 0 by default.
 
-   /** Get simulation object id.
-	
-       @return Simulation object id.
-   */
-   inline unsigned int getSimulationObjectID() const { return mySimulationObjectID; }
+        @param simObjID Simulation object id.
+    */
+    inline ObjectID(unsigned int simObjID) : mySimulationObjectID(simObjID),
+        mySimulationManagerID(0) {}
 
-   /** Get simulation manager id.
-	
-       @return Simulation manager id.
-   */
-   inline unsigned int getSimulationManagerID() const { return mySimulationManagerID; }
+    /** Default Constructor.
 
-   /// Overloaded operator
-   inline const ObjectID& operator=( const ObjectID &from  ){
-      mySimulationObjectID = from.getSimulationObjectID();
-      mySimulationManagerID = from.getSimulationManagerID();
-      return *this;
-   }
+        Simulation Manager id is set to 0 by default.
 
-   /// Overloaded operator
-   inline const ObjectID operator+( const ObjectID &right ) const {
-      return ObjectID(mySimulationObjectID + right.getSimulationObjectID(),
-                       mySimulationManagerID + right.getSimulationManagerID());
-   }
+        @param simObjID Simulation object id.
+    */
+    inline ObjectID(): mySimulationObjectID(0), mySimulationManagerID(0) {}
 
-   /// Overloaded operator
-   inline const ObjectID operator-( const ObjectID &right ) const {
-      return ObjectID(mySimulationObjectID - right.getSimulationObjectID(),
-                      mySimulationManagerID - right.getSimulationManagerID());
-   }
+    /** Copy Constructor.
 
-   /// Overloaded operator
-   inline bool operator<( const ObjectID &right ) const {
-      if(mySimulationObjectID < right.getSimulationObjectID()) {
-         return true;
-      }
-      else if(mySimulationObjectID == right.getSimulationObjectID() &&
-              mySimulationManagerID < right.getSimulationManagerID()){
-         return true;
-      }
-      else{
-         return false;
-      }
-   }
+        @param init ObjectID object that is copied.
+    */
+    inline ObjectID(const ObjectID& init) :
+        mySimulationObjectID(init.getSimulationObjectID()),
+        mySimulationManagerID(init.getSimulationManagerID()) {}
 
-   /// Overloaded operator
-   inline bool operator>( const ObjectID &right ) const {
-      if(mySimulationObjectID > right.getSimulationObjectID()){
-         return true;
-      }
-      else if(mySimulationObjectID == right.getSimulationObjectID() &&
-              mySimulationManagerID > right.getSimulationManagerID()){
-         return true;
-      }
-      else{
-         return false;
-      }
-   }
+    /** Get simulation object id.
 
-   /// Overloaded operator
-   inline bool operator==( const ObjectID &right ) const {
-      if( mySimulationObjectID == right.getSimulationObjectID() && 
-          mySimulationManagerID == right.getSimulationManagerID() ){
-         return true;
-      }
-      else{
-         return false;
-      }
-   }
+        @return Simulation object id.
+    */
+    inline unsigned int getSimulationObjectID() const { return mySimulationObjectID; }
 
-   /// Overloaded operator
-   inline bool operator!=( const ObjectID &right ) const {
-      return !operator==( right );
-   }
+    /** Get simulation manager id.
 
-   /// Overloaded operator
-   inline bool operator<=( const ObjectID &right ) const {
-      if( *this < right || *this == right ){
-         return true;
-      }
-      else{
-         return false;
-      }
-   }
+        @return Simulation manager id.
+    */
+    inline unsigned int getSimulationManagerID() const { return mySimulationManagerID; }
 
-   /// Overloaded operator
-   inline bool operator>=( const ObjectID &right ) const {
-      if( *this > right || *this == right ){
-         return true;
-      }
-      else{
-         return false;
-      }
-   }
+    /// Overloaded operator
+    inline const ObjectID& operator=(const ObjectID& from) {
+        mySimulationObjectID = from.getSimulationObjectID();
+        mySimulationManagerID = from.getSimulationManagerID();
+        return *this;
+    }
 
-   /// Destructor.
-   inline ~ObjectID(){}
+    /// Overloaded operator
+    inline const ObjectID operator+(const ObjectID& right) const {
+        return ObjectID(mySimulationObjectID + right.getSimulationObjectID(),
+                        mySimulationManagerID + right.getSimulationManagerID());
+    }
 
-   //@} // End of Public Class Methods of ObjectID. 
+    /// Overloaded operator
+    inline const ObjectID operator-(const ObjectID& right) const {
+        return ObjectID(mySimulationObjectID - right.getSimulationObjectID(),
+                        mySimulationManagerID - right.getSimulationManagerID());
+    }
+
+    /// Overloaded operator
+    inline bool operator<(const ObjectID& right) const {
+        if (mySimulationObjectID < right.getSimulationObjectID()) {
+            return true;
+        } else if (mySimulationObjectID == right.getSimulationObjectID() &&
+                   mySimulationManagerID < right.getSimulationManagerID()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /// Overloaded operator
+    inline bool operator>(const ObjectID& right) const {
+        if (mySimulationObjectID > right.getSimulationObjectID()) {
+            return true;
+        } else if (mySimulationObjectID == right.getSimulationObjectID() &&
+                   mySimulationManagerID > right.getSimulationManagerID()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /// Overloaded operator
+    inline bool operator==(const ObjectID& right) const {
+        if (mySimulationObjectID == right.getSimulationObjectID() &&
+                mySimulationManagerID == right.getSimulationManagerID()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /// Overloaded operator
+    inline bool operator!=(const ObjectID& right) const {
+        return !operator==(right);
+    }
+
+    /// Overloaded operator
+    inline bool operator<=(const ObjectID& right) const {
+        if (*this < right || *this == right) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /// Overloaded operator
+    inline bool operator>=(const ObjectID& right) const {
+        if (*this > right || *this == right) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /// Destructor.
+    inline ~ObjectID() {}
+
+    //@} // End of Public Class Methods of ObjectID.
 
 private:
 
-   /**@name Private Class Attributes of ObjectID. */
-   //@{
+    /**@name Private Class Attributes of ObjectID. */
+    //@{
 
-   /// Simulation object id.
-   unsigned int mySimulationObjectID;
+    /// Simulation object id.
+    unsigned int mySimulationObjectID;
 
-   /// Simulation manager id.
-   unsigned int mySimulationManagerID;
+    /// Simulation manager id.
+    unsigned int mySimulationManagerID;
 
-   //@} // End of Private Class Attributes of ObjectID.
+    //@} // End of Private Class Attributes of ObjectID.
 };
 
-inline 
-std::ostream &
-operator<<( std::ostream &os, const ObjectID &vt ){
-  os << "(" << vt.getSimulationObjectID() << ", " 
-     << vt.getSimulationManagerID() << ")";
-   return os;
+inline
+std::ostream&
+operator<<(std::ostream& os, const ObjectID& vt) {
+    os << "(" << vt.getSimulationObjectID() << ", "
+       << vt.getSimulationManagerID() << ")";
+    return os;
 }
 
 // hash function object for ObjectID
 //This function object can be useful as a hash function while using stl
 class hashObjectID {
 public:
-  size_t operator()(const ObjectID &objId) const {
-    return size_t(objId.getSimulationManagerID()*10000 + objId.getSimulationObjectID());
-  }
+    size_t operator()(const ObjectID& objId) const {
+        return size_t(objId.getSimulationManagerID()*10000 + objId.getSimulationObjectID());
+    }
 };
 
 //Equal function object for ObjectID
@@ -220,9 +213,9 @@ public:
 //while using stl
 class EqualObjectID {
 public:
-  bool operator()(const ObjectID &lhs, const ObjectID& rhs) const {
-    return (lhs == rhs);
-  }
+    bool operator()(const ObjectID& lhs, const ObjectID& rhs) const {
+        return (lhs == rhs);
+    }
 };
 
 #endif

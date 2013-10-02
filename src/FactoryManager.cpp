@@ -1,5 +1,6 @@
 
 #include "FactoryManager.h"
 
-FactoryManager::FactoryManager(FactoryImplementationBase *parent) : FactoryImplementationBase(parent){
+FactoryManager::FactoryManager(FactoryImplementationBase* parent) : FactoryImplementationBase(
+        parent) {
 }

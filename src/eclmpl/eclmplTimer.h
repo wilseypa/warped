@@ -5,15 +5,15 @@
 #include "eclmplCommonInclude.h"
 
 class eclmplTimer {
-public: 
-  eclmplTimer(const double timeOutVal);
-  bool timedOut() const;
-  void setTimeOut(const double timeOutVal);
-  inline void start() { gettimeofday(&startTime, NULL); }
+public:
+    eclmplTimer(const double timeOutVal);
+    bool timedOut() const;
+    void setTimeOut(const double timeOutVal);
+    inline void start() { gettimeofday(&startTime, NULL); }
 protected:
-  eclmplTimer(){} // Disallow instantiation without a timeOut value.
-  timeval startTime;
-  double timeOut;
-}; 
+    eclmplTimer() {} // Disallow instantiation without a timeOut value.
+    timeval startTime;
+    double timeOut;
+};
 
 #endif

@@ -18,68 +18,68 @@ class MsgAggregatingCommunicationManager : public CommunicationManagerImplementa
 
 public:
 
-  /**@name Public Class Methods of MsgAggregatingCommunicationManager. */
-  //@{
-  
-  /** Constructor.
+    /**@name Public Class Methods of MsgAggregatingCommunicationManager. */
+    //@{
 
-  @param physicalLayer Handle to the phys. comm. mgr.
-  */
-  MsgAggregatingCommunicationManager( PhysicalCommunicationLayer *physicalLayer,
-				      TimeWarpSimulationManager *simMgr);
+    /** Constructor.
 
-  /// Destructor.
-  ~MsgAggregatingCommunicationManager();
+    @param physicalLayer Handle to the phys. comm. mgr.
+    */
+    MsgAggregatingCommunicationManager(PhysicalCommunicationLayer* physicalLayer,
+                                       TimeWarpSimulationManager* simMgr);
 
-  /// initialize the communication manager
-  void initializeCommunicationManager();
+    /// Destructor.
+    ~MsgAggregatingCommunicationManager();
 
-  /** Send message.
+    /// initialize the communication manager
+    void initializeCommunicationManager();
 
-  @param msg Message to send.
-  */
-  void sendMessage( KernelMessage *msg, unsigned int dest);
-   
-  /** Retrieve a message from the physical comm. layer.
+    /** Send message.
 
-  @return Retrieved message.
-  */
-  SerializedInstance *retrieveMessageFromPhysicalLayer();
+    @param msg Message to send.
+    */
+    void sendMessage(KernelMessage* msg, unsigned int dest);
 
-  unsigned int checkPhysicalLayerForMessages(int maxNum);
-   
-  void incrementAgeOfMessage(){
-    myMessageManager->incrementAgeOfMessage();
-  }
-   
-  void setRollingBackFlagInMessageManager(){
-    myMessageManager->setRollBackFlag();
-  }
-   
-  void resetRollingBackFlagInMessageManager(){
-    myMessageManager->resetRollBackFlag();
-  }
+    /** Retrieve a message from the physical comm. layer.
 
-  void flush(){
-    myMessageManager->sendMessage();
-  }
+    @return Retrieved message.
+    */
+    SerializedInstance* retrieveMessageFromPhysicalLayer();
 
-  void flushIfAgeExceeded(){
-    myMessageManager->flushIfAgeExceeded();
-  }
+    unsigned int checkPhysicalLayerForMessages(int maxNum);
 
-  void flushIfWaitedTooLong(){
-    myMessageManager->flushIfWaitedTooLong(waitedWithNoInputMessages);
-  }
+    void incrementAgeOfMessage() {
+        myMessageManager->incrementAgeOfMessage();
+    }
 
-  virtual void configure( SimulationConfiguration & ){}
+    void setRollingBackFlagInMessageManager() {
+        myMessageManager->setRollBackFlag();
+    }
+
+    void resetRollingBackFlagInMessageManager() {
+        myMessageManager->resetRollBackFlag();
+    }
+
+    void flush() {
+        myMessageManager->sendMessage();
+    }
+
+    void flushIfAgeExceeded() {
+        myMessageManager->flushIfAgeExceeded();
+    }
+
+    void flushIfWaitedTooLong() {
+        myMessageManager->flushIfWaitedTooLong(waitedWithNoInputMessages);
+    }
+
+    virtual void configure(SimulationConfiguration&) {}
 
 private:
 
-  MessageManager *myMessageManager;
-  int waitedWithNoInputMessages;
+    MessageManager* myMessageManager;
+    int waitedWithNoInputMessages;
 
-  //@} // End of Public Class Methods of MsgAggregatingCommunicationManager
+    //@} // End of Public Class Methods of MsgAggregatingCommunicationManager
 };
 
 #endif

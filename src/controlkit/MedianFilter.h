@@ -13,7 +13,7 @@ using std::ostream_iterator;
 using std::cout;
 
 /** The MedianFilter class.
-   
+
     The MedianFilter is an implementation of a simple filter that
     reports the median of a set of value. The number of elements in
     this set is specified by the user at start-up.
@@ -28,66 +28,66 @@ using std::cout;
 template <class Type>
 class MedianFilter : public Filter <Type> {
 public:
-   
-   /**@name Public Class Methods of MedianFilter */
-   //@{
 
-   /// Default Constructor
-   MedianFilter(int numSamples = 20);
+    /**@name Public Class Methods of MedianFilter */
+    //@{
 
-   /// Default Destructor
-   ~MedianFilter();
+    /// Default Constructor
+    MedianFilter(int numSamples = 20);
 
-   /// reset the value of this filter
-   inline void reset();
+    /// Default Destructor
+    ~MedianFilter();
 
-   /// add another value to the filtered set
-   inline void update(Type);
+    /// reset the value of this filter
+    inline void reset();
 
-   /// obtain the value of the filter
-   inline Type getData();
+    /// add another value to the filtered set
+    inline void update(Type);
 
-   //@} // End of Public Class Methods of MedianFilter
+    /// obtain the value of the filter
+    inline Type getData();
+
+    //@} // End of Public Class Methods of MedianFilter
 
 private:
 
-   /**@name Private Class Attributes of MedianFilter */
-   //@{
+    /**@name Private Class Attributes of MedianFilter */
+    //@{
 
-   /// current number of samples to calculate median over
-   int numberOfSamples;
+    /// current number of samples to calculate median over
+    int numberOfSamples;
 
-   /// the number of effective samples
-   int count;
+    /// the number of effective samples
+    int count;
 
-   /// variable size buffer of samples
-   deque<Type> *buffer;
+    /// variable size buffer of samples
+    deque<Type>* buffer;
 
-   /// the actual median that we are maintaining
-   Type runningMedian;
+    /// the actual median that we are maintaining
+    Type runningMedian;
 
-   //@} // End of Private Class Attributes of MedianFilter
+    //@} // End of Private Class Attributes of MedianFilter
 };
 
 
 // This is the constructor code for the class MedianFilter.
 template <class Type>
-MedianFilter<Type>::MedianFilter(int numSamples){
-   numberOfSamples = numSamples;
-   runningMedian = 0;
-   count = 0;
-   buffer = new deque<Type>;
+MedianFilter<Type>::MedianFilter(int numSamples) {
+    numberOfSamples = numSamples;
+    runningMedian = 0;
+    count = 0;
+    buffer = new deque<Type>;
 }
 
 template <class Type>
-MedianFilter<Type>::~MedianFilter(){
-   delete buffer;
+MedianFilter<Type>::~MedianFilter() {
+    delete buffer;
 }
 
 
 template <class Type>
-inline void MedianFilter<Type>::reset(){
-   runningMedian = 0;
+inline void MedianFilter<Type>::reset() {
+    runningMedian = 0;
 }
 
 // This is the method to enter new data into the MedianFilter.  The
@@ -96,35 +96,34 @@ inline void MedianFilter<Type>::reset(){
 template <class Type>
 inline void MedianFilter<Type>::update(Type new_sample) {
 
-   // Note: we are going to calculate the median of a set of samples
-   // and return the result.
-   buffer->push_front(new_sample);
-   count++;
-   copy(buffer->begin(), buffer->end(), std::ostream_iterator<Type>(cout, " "));
+    // Note: we are going to calculate the median of a set of samples
+    // and return the result.
+    buffer->push_front(new_sample);
+    count++;
+    copy(buffer->begin(), buffer->end(), std::ostream_iterator<Type>(cout, " "));
 
-   // first sort the entries in the vector
-   stable_sort(buffer->begin(), buffer->end());
+    // first sort the entries in the vector
+    stable_sort(buffer->begin(), buffer->end());
 
-   if(numberOfSamples % 2 != 0){
-      // n is odd
-      runningMedian = (*buffer)[((numberOfSamples + 1)/2)-1];
-   }
-   else {
-      // n is even
-      runningMedian = ((*buffer)[(numberOfSamples/2)-1] +
-                       (*buffer)[(numberOfSamples/2)])/2;
-   }
+    if (numberOfSamples % 2 != 0) {
+        // n is odd
+        runningMedian = (*buffer)[((numberOfSamples + 1)/2)-1];
+    } else {
+        // n is even
+        runningMedian = ((*buffer)[(numberOfSamples/2)-1] +
+                         (*buffer)[(numberOfSamples/2)])/2;
+    }
 
-   if (count >= numberOfSamples){
-      buffer->pop_front();
-   }
+    if (count >= numberOfSamples) {
+        buffer->pop_front();
+    }
 }
 
 // This is the method to read the output of the filter.  It returns the
 // running median in the type the the template was declared with.
 template <class Type>
 inline Type MedianFilter<Type>::getData() {
-  return runningMedian;
+    return runningMedian;
 }
 
 #endif

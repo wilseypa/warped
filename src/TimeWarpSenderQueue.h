@@ -27,117 +27,115 @@ class TimeWarpSimulationManager;
 class TimeWarpSenderQueue : public TimeWarpCentralizedEventSet {
 public:
 
-  /**@name Public Class Methods of TimeWarpSenderQueue. */
-  //@{
+    /**@name Public Class Methods of TimeWarpSenderQueue. */
+    //@{
 
-  /// Default Constructor
-  TimeWarpSenderQueue( TimeWarpSimulationManager *initSimulationManager );
-   
-  /// Virtual Destructor
-  virtual ~TimeWarpSenderQueue();
-   
-  /** Insert an event into the event set.
+    /// Default Constructor
+    TimeWarpSenderQueue(TimeWarpSimulationManager* initSimulationManager);
 
-      @param Event The event to be inserted.
-  */
-  bool insert( Event *event, SimulationObject *object );
+    /// Virtual Destructor
+    virtual ~TimeWarpSenderQueue();
 
-  /** Cancel out positive message corresponding to the anti message.
-       
-      @param cancelEvent The antimessage.
-      @param object The object who receives the antimessage.
-  */
-  void handleAntiMessage( Event *cancelEvent, SimulationObject *object );
+    /** Insert an event into the event set.
 
-  /** Remove an event from the event set.
+        @param Event The event to be inserted.
+    */
+    bool insert(Event* event, SimulationObject* object);
 
-      @param Event The event to be removed.
-      @param findMode Option for how to find the event.
-  */
-  virtual void remove( Event *, findMode, SimulationObject * );
+    /** Cancel out positive message corresponding to the anti message.
 
-  /** Remove and return the next event in the event set.
+        @param cancelEvent The antimessage.
+        @param object The object who receives the antimessage.
+    */
+    void handleAntiMessage(Event* cancelEvent, SimulationObject* object);
 
-      @return The removed event.
-  */
-  virtual Event *getEvent(SimulationObject*);
+    /** Remove an event from the event set.
 
-  /** Return a reference to the next event in the event set.
+        @param Event The event to be removed.
+        @param findMode Option for how to find the event.
+    */
+    virtual void remove(Event*, findMode, SimulationObject*);
 
-      @return A reference to the next event in the event set.
-  */
-  virtual Event *peekEvent(SimulationObject*);
+    /** Remove and return the next event in the event set.
 
-  /** Get a reference to some event in the event set.
+        @return The removed event.
+    */
+    virtual Event* getEvent(SimulationObject*);
 
-      @param Event The event to find.
-      @param findMode Option for how to find the event.
-      @return A reference to the found event.
-  */
-  virtual Event *find(const VTime&, findMode, SimulationObject* );
+    /** Return a reference to the next event in the event set.
 
-  /** Fossil collect the event set upto a given time.
+        @return A reference to the next event in the event set.
+    */
+    virtual Event* peekEvent(SimulationObject*);
 
-      @param VTime Time upto which to fossil collect.
-  */
-  virtual void fossilCollect(const VTime&, SimulationObject * );
+    /** Get a reference to some event in the event set.
 
-  void configure( SimulationConfiguration & ){}
+        @param Event The event to find.
+        @param findMode Option for how to find the event.
+        @return A reference to the found event.
+    */
+    virtual Event* find(const VTime&, findMode, SimulationObject*);
 
-  //@} // End of Public Class Methods of TimeWarpSenderQueue.
+    /** Fossil collect the event set upto a given time.
+
+        @param VTime Time upto which to fossil collect.
+    */
+    virtual void fossilCollect(const VTime&, SimulationObject*);
+
+    void configure(SimulationConfiguration&) {}
+
+    //@} // End of Public Class Methods of TimeWarpSenderQueue.
 
 protected:
-  /**@name Protected Class Methods of TimeWarpSenderQueue. */
-  //@{
+    /**@name Protected Class Methods of TimeWarpSenderQueue. */
+    //@{
 
-  //map of SimulationObjectID and individual sender queues
-  std::unordered_map<OBJECT_ID, SenderQueueContainer*, hashObjectID,
-    equal_to<OBJECT_ID> >* senderQMap;
+    //map of SimulationObjectID and individual sender queues
+    std::unordered_map<OBJECT_ID, SenderQueueContainer*, hashObjectID,
+        equal_to<OBJECT_ID> >* senderQMap;
 
-  //map of SimulationObjectID and individual processedQ per receiver
-  std::unordered_map<OBJECT_ID, list<Event*>*, hashObjectID,
-    equal_to<OBJECT_ID> >* processedQMap;
+    //map of SimulationObjectID and individual processedQ per receiver
+    std::unordered_map<OBJECT_ID, list<Event*>*, hashObjectID,
+        equal_to<OBJECT_ID> >* processedQMap;
 
-  list<Event*>* sortedUnProcessedQ;
+    list<Event*>* sortedUnProcessedQ;
 
-  vector<ScheduleListContainer*>* scheduleList;
+    vector<ScheduleListContainer*>* scheduleList;
 
-  bool isInThePast( const Event *event );
+    bool isInThePast(const Event* event);
 
-  //@} // End of Protected Class Methods of TimeWarpSenderQueue.
+    //@} // End of Protected Class Methods of TimeWarpSenderQueue.
 
 private:
-  Event *peekedEvent;
-  int noOfCommittedEvents;
-  bool makeHeapFlag;
-  bool popHeapFlag;
-  TimeWarpSimulationManager *mySimulationManager;
+    Event* peekedEvent;
+    int noOfCommittedEvents;
+    bool makeHeapFlag;
+    bool popHeapFlag;
+    TimeWarpSimulationManager* mySimulationManager;
 };
 
 typedef std::unordered_map<OBJECT_ID, SenderQueueContainer*, hashObjectID,
-  equal_to<OBJECT_ID> > SENDERQMAP;
+        equal_to<OBJECT_ID> > SENDERQMAP;
 
 class SenderQElementLessThan : public binary_function<Event*, Event*, bool> {
 public:
-  bool operator()(const Event* const & lhs, const Event* const & rhs) {
-    bool retval;
-    if(lhs->getReceiveTime() < rhs->getReceiveTime()) {
-      retval = true;
+    bool operator()(const Event* const& lhs, const Event* const& rhs) {
+        bool retval;
+        if (lhs->getReceiveTime() < rhs->getReceiveTime()) {
+            retval = true;
+        } else if (lhs->getReceiveTime() == rhs->getReceiveTime()) {
+            retval = lhs->getReceiver() < rhs->getReceiver();
+        } else {
+            retval = false;
+        }
+        return retval;
     }
-    else if(lhs->getReceiveTime() == rhs->getReceiveTime()) {
-      retval = lhs->getReceiver() < rhs->getReceiver();
-    }
-    else {
-      retval = false;
-    }
-    return retval;
-  }
 };
 /*
 class equalTo_EventSetIterators {
 public:
   bool operator()(const multiset<SetObject<Event> >::iterator& lhs,
-		  const multiset<SetObject<Event> >::iterator& rhs) const {
+          const multiset<SetObject<Event> >::iterator& rhs) const {
     return (*lhs == *rhs);
   }
 };
@@ -145,9 +143,9 @@ public:
 class lessThan_EventSetIterators {
 public:
   bool operator()(const multiset<SetObject<Event> >::iterator& lhs,
-		  const multiset<SetObject<Event> >::iterator& rhs) const {
+          const multiset<SetObject<Event> >::iterator& rhs) const {
     return (*lhs < *rhs);
   }
 };
 */
-#endif 
+#endif

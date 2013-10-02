@@ -19,29 +19,29 @@ class OutputManager;
 class AggressiveOutputManager : public OutputManagerImplementationBase {
 public:
 
-  /**@name Public Class Methods of AggressiveOutputManager. */
-  //@{
+    /**@name Public Class Methods of AggressiveOutputManager. */
+    //@{
 
-  /** Constructor.
-      
-      @param simMgr Handle to the simulation manager.
-  */
-  AggressiveOutputManager( TimeWarpSimulationManager *simMgr );
-  
-  /// Destructor.
-  ~AggressiveOutputManager();
-  
-  
-  /** Send out anti-messages.
-      
-      @param rollbackTime Bound for how many antimessages will be sent.
-      @param object A pointer to the object who experienced rollback.
-  */
-  void rollback( SimulationObject *object,  const VTime &rollbackTime );
+    /** Constructor.
 
-  virtual void configure( SimulationConfiguration & ){}
+        @param simMgr Handle to the simulation manager.
+    */
+    AggressiveOutputManager(TimeWarpSimulationManager* simMgr);
 
-  //@} // End of Public Class Methods of AggressiveOutputManager.
+    /// Destructor.
+    ~AggressiveOutputManager();
+
+
+    /** Send out anti-messages.
+
+        @param rollbackTime Bound for how many antimessages will be sent.
+        @param object A pointer to the object who experienced rollback.
+    */
+    void rollback(SimulationObject* object,  const VTime& rollbackTime);
+
+    virtual void configure(SimulationConfiguration&) {}
+
+    //@} // End of Public Class Methods of AggressiveOutputManager.
 
 };
 

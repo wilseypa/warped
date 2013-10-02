@@ -13,73 +13,73 @@ using std::deque;
 */
 class eclmplPhysicalCommunicationLayer : public PhysicalCommunicationLayer {
 public:
-  /**@name Public Class Methods of eclmplPhysicalCommunicationLayer. */
-  //@{
+    /**@name Public Class Methods of eclmplPhysicalCommunicationLayer. */
+    //@{
 
-  /// Default Constructor.
-  eclmplPhysicalCommunicationLayer();
+    /// Default Constructor.
+    eclmplPhysicalCommunicationLayer();
 
-  /// Destructor.
-  virtual ~eclmplPhysicalCommunicationLayer();
-  
-  /** Init physical layer.
-  */
-  virtual void physicalInit();
+    /// Destructor.
+    virtual ~eclmplPhysicalCommunicationLayer();
 
-  /** Get the Id of the simulation manager.
+    /** Init physical layer.
+    */
+    virtual void physicalInit();
 
-      @return Id of the simulation manager.
-  */
-  int physicalGetId() const;
+    /** Get the Id of the simulation manager.
 
-  /** Send buffer.
+        @return Id of the simulation manager.
+    */
+    int physicalGetId() const;
 
-      @param buffer Char buffer to send.
-      @param size Size of the buffer to send.
-  */
-  virtual void physicalSend( const SerializedInstance *toSend, 
-			     unsigned int dest);
+    /** Send buffer.
 
-  /** Probe to see if there are messages to retrieve.
+        @param buffer Char buffer to send.
+        @param size Size of the buffer to send.
+    */
+    virtual void physicalSend(const SerializedInstance* toSend,
+                              unsigned int dest);
 
-      @return The retrieved message (NULL if no message).
-  */
-  virtual SerializedInstance *physicalProbeRecv();
+    /** Probe to see if there are messages to retrieve.
 
-  /// Clean up and call MPI_Finalize.
-  virtual void physicalFinalize();
-  
-  /** Return how many processes are involved in the communicator.
+        @return The retrieved message (NULL if no message).
+    */
+    virtual SerializedInstance* physicalProbeRecv();
 
-      @return The number of processes involved in the communicator.
-  */
-  virtual int physicalGetSize() const;
+    /// Clean up and call MPI_Finalize.
+    virtual void physicalFinalize();
 
-  //@} // End of Public Class Methods of eclmplPhysicalCommunicationLayer.
+    /** Return how many processes are involved in the communicator.
+
+        @return The number of processes involved in the communicator.
+    */
+    virtual int physicalGetSize() const;
+
+    //@} // End of Public Class Methods of eclmplPhysicalCommunicationLayer.
 
 protected:
-  /**@name Protected Class Methods of eclmplPhysicalCommunicationLayer. */
-  //@{
-  virtual void probeNetwork() = 0;
-  virtual SerializedInstance *getNextInSequence();
-  virtual int peekNextInSequenceSize();
-  virtual void initializeCommunicationLayerAttributes() = 0;
-  //@} // End of Protected Class Attributes of eclmplPhysicalCommunicationLayer.
+    /**@name Protected Class Methods of eclmplPhysicalCommunicationLayer. */
+    //@{
+    virtual void probeNetwork() = 0;
+    virtual SerializedInstance* getNextInSequence();
+    virtual int peekNextInSequenceSize();
+    virtual void initializeCommunicationLayerAttributes() = 0;
+    //@} // End of Protected Class Attributes of eclmplPhysicalCommunicationLayer.
 
-  /**@name Protected Class Attributes of eclmplPhysicalCommunicationLayer. */
-  //@{
+    /**@name Protected Class Attributes of eclmplPhysicalCommunicationLayer. */
+    //@{
 
-  /// Id of this communicator.
-  unsigned int physicalId;
+    /// Id of this communicator.
+    unsigned int physicalId;
 
-  /// Number of simulation managers involved in the communicator.
-  unsigned int physicalSize;
+    /// Number of simulation managers involved in the communicator.
+    unsigned int physicalSize;
 
-  eclmplConnectionInterface *connInterface;
+    eclmplConnectionInterface* connInterface;
 
-  deque<NetworkMessage *> inOrderMessageQ;
+    deque<NetworkMessage*> inOrderMessageQ;
 
-  //@} // End of Protected Class Attributes of eclmplPhysicalCommunicationLayer.
+    //@} // End of Protected Class Attributes of eclmplPhysicalCommunicationLayer.
 };
 
 #endif

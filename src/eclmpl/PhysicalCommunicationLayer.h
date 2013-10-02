@@ -34,44 +34,44 @@ class SerializedInstance;
 class PhysicalCommunicationLayer {
 
 public:
-  /**@name Public Class Methods of PhysicalCommunicationLayer. */
-  //@{
+    /**@name Public Class Methods of PhysicalCommunicationLayer. */
+    //@{
 
-  /// Destructor.
-  virtual ~PhysicalCommunicationLayer(){};
-  
-  /** Init physical layer.
+    /// Destructor.
+    virtual ~PhysicalCommunicationLayer() {};
 
-      This is a pure virtual function that has to be overriden.
-  */
-  virtual void physicalInit() = 0;
-  
-  /** Get the Id of the simulation manager.
+    /** Init physical layer.
 
-      This is a pure virtual function that has to be overriden.
+        This is a pure virtual function that has to be overriden.
+    */
+    virtual void physicalInit() = 0;
 
-      @return Id of the simulation manager.
-  */
-  virtual int physicalGetId() const = 0; 
+    /** Get the Id of the simulation manager.
+
+        This is a pure virtual function that has to be overriden.
+
+        @return Id of the simulation manager.
+    */
+    virtual int physicalGetId() const = 0;
 
 
-  /** Send buffer.
+    /** Send buffer.
 
-      This is a pure virtual function that has to be overriden.
+        This is a pure virtual function that has to be overriden.
 
-      @param buffer Char buffer to send.
-      @param size Size of the buffer to send.
-  */
-  virtual void physicalSend( const SerializedInstance *toSend,
-			     unsigned int dest) = 0;
-  
-  /** Check the probe to see if there are message to retrieve.
+        @param buffer Char buffer to send.
+        @param size Size of the buffer to send.
+    */
+    virtual void physicalSend(const SerializedInstance* toSend,
+                              unsigned int dest) = 0;
 
-      This is a pure virtual function that has to be overriden.
+    /** Check the probe to see if there are message to retrieve.
 
-      @return The retrieved message (NULL if no message).
-  */
-  virtual SerializedInstance *physicalProbeRecv() = 0;
+        This is a pure virtual function that has to be overriden.
+
+        @return The retrieved message (NULL if no message).
+    */
+    virtual SerializedInstance* physicalProbeRecv() = 0;
 
 
 //   /** Retrieve message into a buffer.
@@ -82,27 +82,27 @@ public:
 //       @return True/False, Was any message retrieved?
 //   */
 //   virtual bool physicalProbeRecvBuffer(char *buffer, int size,
-// 				       bool& sizeStatus) = 0;
-  
-  /// Clean up.
-  virtual void physicalFinalize() = 0;
+//                     bool& sizeStatus) = 0;
 
-  /** Return how many processes are involved in the communicator.
+    /// Clean up.
+    virtual void physicalFinalize() = 0;
 
-      @return The number of processes involved in the communicator.
-  */
-  virtual int physicalGetSize() const = 0;
+    /** Return how many processes are involved in the communicator.
 
-  //@} // End of Public Class Methods of PhysicalCommunicationLayer.
+        @return The number of processes involved in the communicator.
+    */
+    virtual int physicalGetSize() const = 0;
+
+    //@} // End of Public Class Methods of PhysicalCommunicationLayer.
 
 protected:
-  /**@name Protected Class Methods of PhysicalCommunicationLayer. */
-  //@{
+    /**@name Protected Class Methods of PhysicalCommunicationLayer. */
+    //@{
 
-  /// Default Constructor.
-  PhysicalCommunicationLayer(){};
+    /// Default Constructor.
+    PhysicalCommunicationLayer() {};
 
-  //@} // End of Protected Class Methods of PhysicalCommunicationLayer.
+    //@} // End of Protected Class Methods of PhysicalCommunicationLayer.
 };
 
 #endif

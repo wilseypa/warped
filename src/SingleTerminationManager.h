@@ -14,74 +14,66 @@ class KernelMessage;
 
 class SingleTerminationManager : public TerminationManager {
 public:
-	SingleTerminationManager( TimeWarpSimulationManager *initSimulationManager )
-		: mySimulationManager(initSimulationManager),
-		  simulationCompleteFlag( false ) {};
+    SingleTerminationManager(TimeWarpSimulationManager* initSimulationManager)
+        : mySimulationManager(initSimulationManager),
+          simulationCompleteFlag(false) {};
 
-  /**
-     The simulation manager queries this method to see if we need to
-     terminate the simulation or not.
-  */
-  bool terminateSimulation()
-  {
-	  if( simulationCompleteFlag == true){
-		return true;
-	  }
-	  else
-	  {
-		  return false;
-	  }
-  }
+    /**
+       The simulation manager queries this method to see if we need to
+       terminate the simulation or not.
+    */
+    bool terminateSimulation() {
+        if (simulationCompleteFlag == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-  /**
-     Our simulation manager calls this to set our status as active.
-  */
-  void setStatusActive()
-  {
-	  simulationCompleteFlag = false;
-  }
+    /**
+       Our simulation manager calls this to set our status as active.
+    */
+    void setStatusActive() {
+        simulationCompleteFlag = false;
+    }
 
-  /**
-     Our simulation manager calls this to set our status to passive.
-  */
-  void setStatusPassive()
-  {
-          simulationCompleteFlag = true;
-  }
+    /**
+       Our simulation manager calls this to set our status to passive.
+    */
+    void setStatusPassive() {
+        simulationCompleteFlag = true;
+    }
 
-  void simulationComplete()
-  {
-	  simulationCompleteFlag = true;
-  }
+    void simulationComplete() {
+        simulationCompleteFlag = true;
+    }
 
-  void receiveKernelMessage( KernelMessage *msg )
-  {
-	  std::cerr << "Impossible to receive a message with only 1 simulation manager" << std::endl;
-	  abort();
-  }
+    void receiveKernelMessage(KernelMessage* msg) {
+        std::cerr << "Impossible to receive a message with only 1 simulation manager" << std::endl;
+        abort();
+    }
 
-  void ofcReset()
-  {
-	  simulationCompleteFlag = false;
-	  mySimManagerStatus = ACTIVE;
-  }
+    void ofcReset() {
+        simulationCompleteFlag = false;
+        mySimManagerStatus = ACTIVE;
+    }
 
 private:
 
-   /**
-     Our simulation manager.
-  */
-  TimeWarpSimulationManager *mySimulationManager;
+    /**
+      Our simulation manager.
+    */
+    TimeWarpSimulationManager* mySimulationManager;
 
-  /**
-     This flag gets set when the simulation has completed.
-  */
-  bool simulationCompleteFlag;
+    /**
+       This flag gets set when the simulation has completed.
+    */
+    bool simulationCompleteFlag;
 
-  /**
-     Where we note our simulation manager's status.
-  */
-  SIM_MGR_IDLE_STATUS mySimManagerStatus;
+    /**
+       Where we note our simulation manager's status.
+    */
+    SIM_MGR_IDLE_STATUS mySimManagerStatus;
 
 };
 

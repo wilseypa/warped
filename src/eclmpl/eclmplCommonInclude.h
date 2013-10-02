@@ -1,5 +1,5 @@
 #ifndef ECLMPL_COMMON_INCLUDE_H
-#define ECLMPL_COMMON_INCLUDE_H 
+#define ECLMPL_COMMON_INCLUDE_H
 
 #include "warped.h"
 #include "SimulationConfiguration.h"
@@ -10,7 +10,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <stdio.h>
-#include <errno.h>       
+#include <errno.h>
 #include <signal.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -61,11 +61,11 @@ typedef unsigned long SequenceNumber;
 // When high priority is considered a low number, we have to reverse the operator <.
 // I.e. x has higher priority than y if x < y. So, for a less-operator relating to
 // this priority, less(x, y) is true if x > y.
-template <class _Tp>  
+template <class _Tp>
 struct lessPriority : public binary_function<_Tp,_Tp,bool> {
-   bool operator()(const _Tp __x, const _Tp __y) const {
-     return *__x > *__y; // checking based on ' class::operator< '
-   }                                              
+    bool operator()(const _Tp __x, const _Tp __y) const {
+        return *__x > *__y; // checking based on ' class::operator< '
+    }
 };
 
 /**
@@ -76,7 +76,7 @@ struct lessPriority : public binary_function<_Tp,_Tp,bool> {
    @param toDup String to duplicate.  Does not have to be null terminated
    if the second parameter is supplied.
    @param len (optional) The length of the string to duplicate.  If this
-   parameter is not supplied, strlen will be called on "toDup".  (In that 
+   parameter is not supplied, strlen will be called on "toDup".  (In that
    case "toDup" should be NULL terminated!
 */
 inline char* cppStrDup(const char* toDup, int len = -1) {
@@ -100,20 +100,20 @@ inline char* cppStrDup(const char* toDup, int len = -1) {
 // This is a debugging function that lets you print a character string
 // that may contain control characters.
 #if 0
-void __eclmpl__printCharStr(const char * const str, const unsigned int &strLen) {
-  cerr << "\"";
-  for (unsigned int i = 0; i < strLen; i++) {
-    if (str[i] == '\0')
-      cerr << "'\\0'";
-    else if (str[i] == '\n')
-      cerr << "'\\n'";
-    else if (str[i] >= 32 && str[i] <= 126)
-      cerr << str[i];
-    else 
-      cerr << "'ascii_" << (int)str[i] << "'";
-  }
-  cerr << "\"";
-} 
+void __eclmpl__printCharStr(const char* const str, const unsigned int& strLen) {
+    cerr << "\"";
+    for (unsigned int i = 0; i < strLen; i++) {
+        if (str[i] == '\0')
+        { cerr << "'\\0'"; }
+        else if (str[i] == '\n')
+        { cerr << "'\\n'"; }
+        else if (str[i] >= 32 && str[i] <= 126)
+        { cerr << str[i]; }
+        else
+        { cerr << "'ascii_" << (int)str[i] << "'"; }
+    }
+    cerr << "\"";
+}
 #endif
 
 // No messages with greater size may be received or sent.

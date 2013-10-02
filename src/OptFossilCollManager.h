@@ -26,197 +26,197 @@ class State;
 
 */
 class OptFossilCollManager : virtual public CommunicatingEntity,
-                             virtual public Configurable{
+        virtual public Configurable {
 public:
-  /**@name Public Class Methods of OptFossilCollManager. */
-  //@{
+    /**@name Public Class Methods of OptFossilCollManager. */
+    //@{
 
-  /** Constructor.
-      
-      @param sim Handle to the simulation manager.
-      @param checkPeriod The amount to increment the checkpoint by.
-      @param minimumSamples The minimum rollback samples taken before calculating the active history length.
-      @param maximumSamples The maximum rollback samples.
-      @param defaultLength The initial active history length of all objects.
-      @param risk The risk safety factor. Higher values have less risk of catastrophic rollback.
-  */
-  OptFossilCollManager(TimeWarpSimulationManager *sim,
-                       int checkPeriod,
-                       int minimumSamples,
-                       int maximumSamples,
-                       int defaultLen,
-                       double risk);
+    /** Constructor.
 
-  // Destructor.
-  virtual ~OptFossilCollManager();
+        @param sim Handle to the simulation manager.
+        @param checkPeriod The amount to increment the checkpoint by.
+        @param minimumSamples The minimum rollback samples taken before calculating the active history length.
+        @param maximumSamples The maximum rollback samples.
+        @param defaultLength The initial active history length of all objects.
+        @param risk The risk safety factor. Higher values have less risk of catastrophic rollback.
+    */
+    OptFossilCollManager(TimeWarpSimulationManager* sim,
+                         int checkPeriod,
+                         int minimumSamples,
+                         int maximumSamples,
+                         int defaultLen,
+                         double risk);
 
-  // Configure.
-  void configure( SimulationConfiguration &configuration );
+    // Destructor.
+    virtual ~OptFossilCollManager();
 
-  // Register OptFossilCollManager specific message types with the comm. manager
-  virtual void registerWithCommunicationManager();
+    // Configure.
+    void configure(SimulationConfiguration& configuration);
 
-  // The method the communication manager will call to deliver messages
-  virtual void receiveKernelMessage(KernelMessage *msg);
+    // Register OptFossilCollManager specific message types with the comm. manager
+    virtual void registerWithCommunicationManager();
 
-  /** Return the last time of garbage collection for the object.
+    // The method the communication manager will call to deliver messages
+    virtual void receiveKernelMessage(KernelMessage* msg);
 
-      @param id The simulation object id of the object.
-      @return int The time of garbage collection for the object.
-  */
-  inline int getLastCollectTime(unsigned int id){
-    return lastCollectTimes[id];
-  }
+    /** Return the last time of garbage collection for the object.
 
-  /** Saves the simulation state when the time to be examined is greater
-      than the next checkpoint time.
+        @param id The simulation object id of the object.
+        @return int The time of garbage collection for the object.
+    */
+    inline int getLastCollectTime(unsigned int id) {
+        return lastCollectTimes[id];
+    }
 
-      @param checkTime The time to be examined.
-      @param objId The simulation object id of the object to be examined.
-  */
-  virtual void checkpoint(const VTime &checkTime, const ObjectID &objId);
+    /** Saves the simulation state when the time to be examined is greater
+        than the next checkpoint time.
 
-  /** Save the checkpoint at the beginning of the simulation.
-  */
-  virtual void makeInitialCheckpoint();
+        @param checkTime The time to be examined.
+        @param objId The simulation object id of the object to be examined.
+    */
+    virtual void checkpoint(const VTime& checkTime, const ObjectID& objId);
 
-  /** Restores a given checkpoint state.
+    /** Save the checkpoint at the beginning of the simulation.
+    */
+    virtual void makeInitialCheckpoint();
 
-      @param restoredTime The time of the checkpoint to restore.
-  */
-  virtual void restoreCheckpoint(unsigned int restoredTime);
+    /** Restores a given checkpoint state.
 
-  /** Updates the next checkpoint time if necessary. If the time is less
-      than the last checkpoint time, the last checkpoint time and the next
-      checkpoint time are updated accordingly.
+        @param restoredTime The time of the checkpoint to restore.
+    */
+    virtual void restoreCheckpoint(unsigned int restoredTime);
 
-      @param objId The simulation object id of the object to examine.
-      @param time The time to examine.
-  */
-  virtual void updateCheckpointTime(unsigned int objId, int time);
+    /** Updates the next checkpoint time if necessary. If the time is less
+        than the last checkpoint time, the last checkpoint time and the next
+        checkpoint time are updated accordingly.
 
-  /** Starts the recovery from a catastrophic rollback. Stops all processing
-      on the simulation manager and sends a restore message.
+        @param objId The simulation object id of the object to examine.
+        @param time The time to examine.
+    */
+    virtual void updateCheckpointTime(unsigned int objId, int time);
 
-      @param objectId The simulation object id of the object that caused the rollback.
-      @param rollbackTime The time of the catastrophic rollback.
-  */
-  virtual void startRecovery(unsigned int objectId, unsigned int rollbackTime);
+    /** Starts the recovery from a catastrophic rollback. Stops all processing
+        on the simulation manager and sends a restore message.
 
-  /** Performs fossil collect for a single object based on the object's
-      active history length.
+        @param objectId The simulation object id of the object that caused the rollback.
+        @param rollbackTime The time of the catastrophic rollback.
+    */
+    virtual void startRecovery(unsigned int objectId, unsigned int rollbackTime);
 
-      @param object The object to perform fossil collection for.
-      @param currentTime Used to determine a proper fossil collection time.
-  */
-  virtual void fossilCollect(SimulationObject *object, const VTime &currentTime);
+    /** Performs fossil collect for a single object based on the object's
+        active history length.
 
-  /** Samples rollback lengths and calculates the active history length.
+        @param object The object to perform fossil collection for.
+        @param currentTime Used to determine a proper fossil collection time.
+    */
+    virtual void fossilCollect(SimulationObject* object, const VTime& currentTime);
 
-      @param obj The object that is rolling back.
-      @param time The rollback time to be sampled.
-  */
-  virtual void sampleRollback(SimulationObject *obj, const VTime &time) = 0;
+    /** Samples rollback lengths and calculates the active history length.
 
-  /** Used to handle a special case rollback after recovery has occurred.
-      It is only called when a fault occurs. It checks to see if a recovery
-      just occurred and restores the proper state if necessary.
+        @param obj The object that is rolling back.
+        @param time The rollback time to be sampled.
+    */
+    virtual void sampleRollback(SimulationObject* obj, const VTime& time) = 0;
 
-      @param obj The simulation object that is rolling back.
-      @return bool True if this an actual fault. False otherwise.
-  */
-  virtual bool checkFault(SimulationObject *obj);
+    /** Used to handle a special case rollback after recovery has occurred.
+        It is only called when a fault occurs. It checks to see if a recovery
+        just occurred and restores the proper state if necessary.
 
-  /*// These are not currently used anywhere. It was a potential solution
-  // that did not work out as well as was hoped.
-  void *newEvent(size_t size);
+        @param obj The simulation object that is rolling back.
+        @return bool True if this an actual fault. False otherwise.
+    */
+    virtual bool checkFault(SimulationObject* obj);
 
-  void *newNegativeEvent(size_t size);
+    /*// These are not currently used anywhere. It was a potential solution
+    // that did not work out as well as was hoped.
+    void *newEvent(size_t size);
 
-  State *newState(SimulationObject *);
+    void *newNegativeEvent(size_t size);
 
-  void deleteEvent(void *);
+    State *newState(SimulationObject *);
 
-  void deleteNegativeEvent(void *);
+    void deleteEvent(void *);
 
-  void deleteState(const State *, unsigned int);
-  
-  void setStateQueue(multiset< SetObject<State> > *initStateQueue);
-  */
+    void deleteNegativeEvent(void *);
 
-  //@} // End of Public Class Methods of OptFossilCollManager. */
+    void deleteState(const State *, unsigned int);
+
+    void setStateQueue(multiset< SetObject<State> > *initStateQueue);
+    */
+
+    //@} // End of Public Class Methods of OptFossilCollManager. */
 
 protected:
-  /**@name protected Class Methods of OptFossilCollManager. */
-  //@{
+    /**@name protected Class Methods of OptFossilCollManager. */
+    //@{
 
-  TimeWarpSimulationManager *mySimManager;
-  CommunicationManager *myCommManager;
+    TimeWarpSimulationManager* mySimManager;
+    CommunicationManager* myCommManager;
 
-  /// The active history length of the object.
-  vector<int> activeHistoryLength;
+    /// The active history length of the object.
+    vector<int> activeHistoryLength;
 
-  /// The time of the most recent fossil collection for an object.
-  vector<int> lastCollectTimes;
+    /// The time of the most recent fossil collection for an object.
+    vector<int> lastCollectTimes;
 
-  /// The period at which fossil collection is performed.
-  vector<int> fossilPeriod;
+    /// The period at which fossil collection is performed.
+    vector<int> fossilPeriod;
 
-  /// The time of the initial checkpoint save.
-  const int firstCheckpointTime;
+    /// The time of the initial checkpoint save.
+    const int firstCheckpointTime;
 
-  /// The time of the next checkpoint save.
-  vector<int> nextCheckpointTime;
+    /// The time of the next checkpoint save.
+    vector<int> nextCheckpointTime;
 
-  /// The time of the last checkpoint save.
-  vector<int> lastCheckpointTime;
+    /// The time of the last checkpoint save.
+    vector<int> lastCheckpointTime;
 
-  /// The time of the last restored checkpoint. -1 if no restores have occurred.
-  int lastRestoreTime;
+    /// The time of the last restored checkpoint. -1 if no restores have occurred.
+    int lastRestoreTime;
 
-  /// The period at which simulation state is to be saved.
-  int checkpointPeriod;
+    /// The period at which simulation state is to be saved.
+    int checkpointPeriod;
 
-  /// The risk of having a catastrophic rollback. Higher values provide
-  /// a lower chance of having a rollback. Range is 0 < riskFactor < 1.
-  double riskFactor;
+    /// The risk of having a catastrophic rollback. Higher values provide
+    /// a lower chance of having a rollback. Range is 0 < riskFactor < 1.
+    double riskFactor;
 
-  /// The initial active history length of all objects.
-  int defaultLength;
+    /// The initial active history length of all objects.
+    int defaultLength;
 
-  /// The number of rollback samples that have been taken.
-  vector<int> numSamples;
+    /// The number of rollback samples that have been taken.
+    vector<int> numSamples;
 
-  /// The minimum number of rollback samples taken before calculating
-  /// the active history length.
-  int minSamples;
+    /// The minimum number of rollback samples taken before calculating
+    /// the active history length.
+    int minSamples;
 
-  /// The maximum number of rollback samples taken.
-  int maxSamples;
+    /// The maximum number of rollback samples taken.
+    int maxSamples;
 
-  /// The simulation manager to which restore messages are sent.
-  int myPeer;
+    /// The simulation manager to which restore messages are sent.
+    int myPeer;
 
-  /// True if recovering from a catastrophic rollback.
-  bool recovering;
+    /// True if recovering from a catastrophic rollback.
+    bool recovering;
 
-  /// The saved states for every object at checkpoint times. These
-  /// are not written to a file because there is no function to serialize states.
-  map< int, vector<State*>* > checkpointedStates;
+    /// The saved states for every object at checkpoint times. These
+    /// are not written to a file because there is no function to serialize states.
+    map< int, vector<State*>* > checkpointedStates;
 
-  /// The path to the directory where the OFC checkpoint files are stored.
-  string ckptFilePath;
+    /// The path to the directory where the OFC checkpoint files are stored.
+    string ckptFilePath;
 
-  /*// These are not currently used anywhere. It was a potential solution
-  // that did not work out as well as was hoped.
-  // The state queue from the state manager.
-  multiset< SetObject<State> > *stateQueue;
-  vector<NegativeEvent*> availableNegEventMem;
-  vector<NegativeEvent*> inUseNegEventMem;
-  vector< vector<State*> > availableStateMem;
-  */
+    /*// These are not currently used anywhere. It was a potential solution
+    // that did not work out as well as was hoped.
+    // The state queue from the state manager.
+    multiset< SetObject<State> > *stateQueue;
+    vector<NegativeEvent*> availableNegEventMem;
+    vector<NegativeEvent*> inUseNegEventMem;
+    vector< vector<State*> > availableStateMem;
+    */
 
-  //@} // End of Protected Class Methods of OptFossilCollManager.
+    //@} // End of Protected Class Methods of OptFossilCollManager.
 };
 
 #endif

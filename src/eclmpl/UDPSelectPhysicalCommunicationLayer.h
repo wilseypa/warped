@@ -13,37 +13,37 @@
 */
 class UDPSelectPhysicalCommunicationLayer : public eclmplReliablePhysicalCommunicationLayer {
 public:
-  /**@name Public Class Methods of UDPSelectPhysicalCommunicationLayer. */
-  //@{
+    /**@name Public Class Methods of UDPSelectPhysicalCommunicationLayer. */
+    //@{
 
-  /// Default Constructor.
-  UDPSelectPhysicalCommunicationLayer();
+    /// Default Constructor.
+    UDPSelectPhysicalCommunicationLayer();
 
-  /// Destructor.
-  ~UDPSelectPhysicalCommunicationLayer();
-  
-  //@} // End of Public Class Methods of UDPSelectPhysicalCommunicationLayer.
+    /// Destructor.
+    ~UDPSelectPhysicalCommunicationLayer();
+
+    //@} // End of Public Class Methods of UDPSelectPhysicalCommunicationLayer.
 
 protected:
-  /**@name Protected Class Methods of UDPSelectPhysicalCommunicationLayer. */
-  //@{
-  void probeNetwork();
-  void initializeCommunicationLayerAttributes();
+    /**@name Protected Class Methods of UDPSelectPhysicalCommunicationLayer. */
+    //@{
+    void probeNetwork();
+    void initializeCommunicationLayerAttributes();
 
-  //bool UDP_SynchronizeMaster(const eclmplUnreliableNetworkMessageType &msgType);
-  //bool UDP_SynchronizeSlave(const eclmplUnreliableNetworkMessageType &msgType);
-  //void UDP_Finalize();
+    //bool UDP_SynchronizeMaster(const eclmplUnreliableNetworkMessageType &msgType);
+    //bool UDP_SynchronizeSlave(const eclmplUnreliableNetworkMessageType &msgType);
+    //void UDP_Finalize();
 
-  //@} // End of Protected Class Attributes of UDPSelectPhysicalCommunicationLayer.
+    //@} // End of Protected Class Attributes of UDPSelectPhysicalCommunicationLayer.
 
-  /**@name Protected Class Attributes of UDPSelectPhysicalCommunicationLayer. */
-  //@{
+    /**@name Protected Class Attributes of UDPSelectPhysicalCommunicationLayer. */
+    //@{
 
-  // UDP_SELECT:
-  fd_set selectListenSet, fdSet;
-  int maxFd;
+    // UDP_SELECT:
+    fd_set selectListenSet, fdSet;
+    int maxFd;
 
-  //@} // End of Protected Class Attributes of UDPSelectPhysicalCommunicationLayer.
+    //@} // End of Protected Class Attributes of UDPSelectPhysicalCommunicationLayer.
 };
 
 #endif

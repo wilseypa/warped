@@ -12,135 +12,134 @@
 
     The SplayTree class is an implementation of the abstract
     EventSet class. It implemented a splay tree data structure
-    that is used as an event queue in a sequential simulation. 
+    that is used as an event queue in a sequential simulation.
 
 */
 class SplayTree : public EventSet {
 
 public:
 
-  /**@name Public Class Methods of SplayTree. */
-  //@{
+    /**@name Public Class Methods of SplayTree. */
+    //@{
 
-  /// Default Constructor.
-  SplayTree();
+    /// Default Constructor.
+    SplayTree();
 
-  /// Destructor.
-  ~SplayTree();
+    /// Destructor.
+    ~SplayTree();
 
-  /** Insert an event into the event set.
+    /** Insert an event into the event set.
 
-      @param event A pointer to the event to insert.
-  */
-  void insert( const Event *event );
-   
-  /** Return a reference to the first event and remove from the event set.
+        @param event A pointer to the event to insert.
+    */
+    void insert(const Event* event);
 
-      @return A reference to the first event in the event set.
-  */
-  const Event *getEvent();
+    /** Return a reference to the first event and remove from the event set.
 
-  /** Return reference to first event without removing it from the event set.
+        @return A reference to the first event in the event set.
+    */
+    const Event* getEvent();
 
-      @return A reference to the first event in the event set.
-  */
-  const Event *peekEvent();
+    /** Return reference to first event without removing it from the event set.
 
-  /// Delete any old, unwanted events.
-  void cleanUp();
+        @return A reference to the first event in the event set.
+    */
+    const Event* peekEvent();
 
-  /// Delete the entire splay tree
-  void clear();
+    /// Delete any old, unwanted events.
+    void cleanUp();
 
-  /** Return a reference to the end of the event set.
+    /// Delete the entire splay tree
+    void clear();
 
-      @return A reference to the end of the event set.
-  */
-  const Event *end();
+    /** Return a reference to the end of the event set.
 
-  /** Delete an event from the event set.
+        @return A reference to the end of the event set.
+    */
+    const Event* end();
 
-      @param event A pointer to the event to delete.
-  */
-  void erase(const Event *delEvent);
+    /** Delete an event from the event set.
 
-  /** Return the size of the splay tree.
+        @param event A pointer to the event to delete.
+    */
+    void erase(const Event* delEvent);
 
-      @return The count of elements in splay tree.
-  */
-  int size();
+    /** Return the size of the splay tree.
 
-  virtual void configure( SimulationConfiguration & ){}
+        @return The count of elements in splay tree.
+    */
+    int size();
 
-  static const string &getType();
+    virtual void configure(SimulationConfiguration&) {}
 
-  //@} // End of Public Class Methods of SplayTree
+    static const string& getType();
+
+    //@} // End of Public Class Methods of SplayTree
 
 private:
 
-  /**@name Private Class Methods of SplayTree. */
-  //@{
+    /**@name Private Class Methods of SplayTree. */
+    //@{
 
-  /** Internal data structure functions - splay the tree.
+    /** Internal data structure functions - splay the tree.
 
-      @param event Splayed event.
-  */
-  void splay( TreeElement *event);
+        @param event Splayed event.
+    */
+    void splay(TreeElement* event);
 
-  /** Internal data structure functions - rotate to the left.
+    /** Internal data structure functions - rotate to the left.
 
-      @param treeItem Tree item on which to rotate.
-      @return A pointer to the new root of the splay tree.
-  */
-  TreeElement *rotateLeft(TreeElement *treeItem);
+        @param treeItem Tree item on which to rotate.
+        @return A pointer to the new root of the splay tree.
+    */
+    TreeElement* rotateLeft(TreeElement* treeItem);
 
-  /** Internal data structure functions - rotate to the right.
+    /** Internal data structure functions - rotate to the right.
 
-      @param treeItem Tree item on which to rotate.
-      @return A pointer to the new root of the splay tree.
-  */
-  TreeElement *rotateRight(TreeElement *treeItem);
+        @param treeItem Tree item on which to rotate.
+        @return A pointer to the new root of the splay tree.
+    */
+    TreeElement* rotateRight(TreeElement* treeItem);
 
-  /// The compareEvent method for SplayTree...
-  inline int CompareEvent(const Event *a, const Event *b){
-    ASSERT(a != NULL);
-    ASSERT(b != NULL);
-    if (a->getReceiveTime() == b->getReceiveTime()) {
-      //return ((a->getReceiver() > b->getReceiver() ? 1 : -1));
-      if(a->getReceiver() > b->getReceiver()) {
-        return 1;
-      } else if(a->getReceiver() == b->getReceiver()) {
-        return 0;
-      } else {
-        return -1;
-      }
+    /// The compareEvent method for SplayTree...
+    inline int CompareEvent(const Event* a, const Event* b) {
+        ASSERT(a != NULL);
+        ASSERT(b != NULL);
+        if (a->getReceiveTime() == b->getReceiveTime()) {
+            //return ((a->getReceiver() > b->getReceiver() ? 1 : -1));
+            if (a->getReceiver() > b->getReceiver()) {
+                return 1;
+            } else if (a->getReceiver() == b->getReceiver()) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else {
+            return ((a->getReceiveTime() > b->getReceiveTime()) ? 1 : -1);
+        }
     }
-    else {
-      return ((a->getReceiveTime() > b->getReceiveTime()) ? 1 : -1);
-    }
-  }
-   
-  //@} End of Private Class Methods of SplayTree.
 
-  /**@name Private Class Attributes of SplayTree. */
-  //@{
+    //@} End of Private Class Methods of SplayTree.
 
-  /// Tree Element Denoting the root of the SplayTree.
-  TreeElement *root;
-   
-  /**
-     Tree Element denoting the current Element that is with the
-     lowest timestamp and is the current (next) element to be processed
-  */
-  TreeElement *current;
+    /**@name Private Class Attributes of SplayTree. */
+    //@{
 
-  /// List of processed elements that can be deleted.
-  StackOfPtr<TreeElement> processedElements;
+    /// Tree Element Denoting the root of the SplayTree.
+    TreeElement* root;
 
-  /// Number of elements in the event set.
-  int numberOfElements;
+    /**
+       Tree Element denoting the current Element that is with the
+       lowest timestamp and is the current (next) element to be processed
+    */
+    TreeElement* current;
 
-  //@} // End of  Private Class Attributes of SplayTree
+    /// List of processed elements that can be deleted.
+    StackOfPtr<TreeElement> processedElements;
+
+    /// Number of elements in the event set.
+    int numberOfElements;
+
+    //@} // End of  Private Class Attributes of SplayTree
 };
 
 #endif

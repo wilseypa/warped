@@ -10,7 +10,7 @@ class Event;
 class CommunicationManager;
 class SimulationConfiguration;
 
-/** The SimulationObjectProxy Class. 
+/** The SimulationObjectProxy Class.
 
     Simulation objects are the core of a discrete event simulation.  A
     simulation object proxy represents a local representation of a
@@ -23,95 +23,95 @@ class SimulationConfiguration;
 */
 class SimulationObjectProxy : public SimulationObject {
 public:
-   
-  /**@name Public Class Methods of SimulationObjectProxy */
-  //@{
 
-  /** Constructor.
+    /**@name Public Class Methods of SimulationObjectProxy */
+    //@{
 
-  @param sourceSimMgr 
-  */
-  SimulationObjectProxy( const string &objectName,
-			 unsigned int sourceSimMgr, 
-			 unsigned int destSimMgr,
-			 CommunicationManager *commMgr);
+    /** Constructor.
 
-  /// Destructor.
-  ~SimulationObjectProxy();
-  
-  /// reclaim the event
-  void reclaimEvent(const Event *);
+    @param sourceSimMgr
+    */
+    SimulationObjectProxy(const string& objectName,
+                          unsigned int sourceSimMgr,
+                          unsigned int destSimMgr,
+                          CommunicationManager* commMgr);
 
-  void configure( SimulationConfiguration & ){}
+    /// Destructor.
+    ~SimulationObjectProxy();
 
-  /** Returns the message type for an EventMessage */
-  static const string &getEventMessageType();
+    /// reclaim the event
+    void reclaimEvent(const Event*);
 
-  /** Returns the message type for a NegativeEventMessage */
-  static const string &getNegativeEventMessageType();
+    void configure(SimulationConfiguration&) {}
 
-  const string &getName() const {
-    return objectName;
-  }
+    /** Returns the message type for an EventMessage */
+    static const string& getEventMessageType();
 
-  unsigned int getDestId(){
-    return destinationSimulationManager;
-  }
-  
+    /** Returns the message type for a NegativeEventMessage */
+    static const string& getNegativeEventMessageType();
 
-  //@} // End of Public Class Methods of SimulationObjectProxy
-   
+    const string& getName() const {
+        return objectName;
+    }
+
+    unsigned int getDestId() {
+        return destinationSimulationManager;
+    }
+
+
+    //@} // End of Public Class Methods of SimulationObjectProxy
+
 private:
 
-  /**@name Private Class Methods of SimulationObjectProxy */
-  //@{
+    /**@name Private Class Methods of SimulationObjectProxy */
+    //@{
 
-  /// Empty (does not do anything).
-  void initialize();
+    /// Empty (does not do anything).
+    void initialize();
 
-  /// Empty (does not do anything).
-  void finalize();
+    /// Empty (does not do anything).
+    void finalize();
 
-  /// Empty (does not do anything).
-  void executeProcess();
+    /// Empty (does not do anything).
+    void executeProcess();
 
-  /// Empty (does not do anything, except return NULL).
-  State* allocateState();
+    /// Empty (does not do anything, except return NULL).
+    State* allocateState();
 
-  /// Empty (does not do anything).
-  void deallocateState( const State *state );
+    /// Empty (does not do anything).
+    void deallocateState(const State* state);
 
-  /// Empty (does not do anything).
-  void reportError(const string&, SEVERITY);
-  
-  //@} // End of Private Class Attributes of SimulationObjectProxy
-  
-  /**@name Private Class Attributes of SimulationObjectProxy */
-  //@{
+    /// Empty (does not do anything).
+    void reportError(const string&, SEVERITY);
 
-  /// My source simulation manager id.
-  unsigned int sourceSimulationManager;
-
-  /// My destination simulation manager id.
-  unsigned int destinationSimulationManager;
-  
-  /// My handle to the communication fabric.
-  static CommunicationManager *myCommunicationManagerHandle;
-
-  /**
-     The name of the object I'm proxying for.
-  */
-  const string objectName;
-
-
-  DEBUG (
-	 unsigned int numberOfPositiveNetworkEvents;
-	 unsigned int numberOfNegativeNetworkEvents;
-	 )
-    
-   
     //@} // End of Private Class Attributes of SimulationObjectProxy
-  
-    };
+
+    /**@name Private Class Attributes of SimulationObjectProxy */
+    //@{
+
+    /// My source simulation manager id.
+    unsigned int sourceSimulationManager;
+
+    /// My destination simulation manager id.
+    unsigned int destinationSimulationManager;
+
+    /// My handle to the communication fabric.
+    static CommunicationManager* myCommunicationManagerHandle;
+
+    /**
+       The name of the object I'm proxying for.
+    */
+    const string objectName;
+
+
+    DEBUG(
+        unsigned int numberOfPositiveNetworkEvents;
+        unsigned int numberOfNegativeNetworkEvents;
+    )
+
+
+    //@} // End of Private Class Attributes of SimulationObjectProxy
+
+};
 
 #endif

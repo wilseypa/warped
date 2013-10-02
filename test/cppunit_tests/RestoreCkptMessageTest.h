@@ -5,38 +5,38 @@
 #include "KernelMessageTest.h"
 
 class RestoreCkptMessageTest : public KernelMessageTest {
-  CPPUNIT_TEST_SUITE( RestoreCkptMessageTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST( testSerialization );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(RestoreCkptMessageTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testSerialization);
+    CPPUNIT_TEST_SUITE_END();
 
 private:
-  RestoreCkptMessage *testToken;
-  
-  static int getDefaultCkptTime(){
-    static int defaultCkptTime = 123;
-    return defaultCkptTime;
-  }
+    RestoreCkptMessage* testToken;
 
-  static RestoreCkptMessage::RestoreState getDefaultRestoreState(){
-    static RestoreCkptMessage::RestoreState defaultRestoreState =  RestoreCkptMessage::SEND_TO_MASTER;
-    return defaultRestoreState;
-  }
+    static int getDefaultCkptTime() {
+        static int defaultCkptTime = 123;
+        return defaultCkptTime;
+    }
 
-  static bool getDefaultCkptConsensus(){
-    static bool defaultCheckpointConsensus = false;
-    return defaultCheckpointConsensus;
-  }
+    static RestoreCkptMessage::RestoreState getDefaultRestoreState() {
+        static RestoreCkptMessage::RestoreState defaultRestoreState =  RestoreCkptMessage::SEND_TO_MASTER;
+        return defaultRestoreState;
+    }
 
-  static void checkDefaults( const RestoreCkptMessage *testToken );
+    static bool getDefaultCkptConsensus() {
+        static bool defaultCheckpointConsensus = false;
+        return defaultCheckpointConsensus;
+    }
+
+    static void checkDefaults(const RestoreCkptMessage* testToken);
 
 public:
-  // Test interface
-  void setUp();
-  void tearDown();
+    // Test interface
+    void setUp();
+    void tearDown();
 
-  void testConstructor();
-  void testSerialization();
+    void testConstructor();
+    void testSerialization();
 };
 
 #endif

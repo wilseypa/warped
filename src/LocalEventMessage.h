@@ -6,25 +6,24 @@
 //#include "EventMessage.h"
 #include "Event.h"
 
-class LocalEventMessage : public LocalKernelMessage
-{
+class LocalEventMessage : public LocalKernelMessage {
 private:
-	const Event *myEvent;
+    const Event* myEvent;
 public:
-	LocalEventMessage(const Event *event, local_kernel_message_type messageType, SimulationObject *object)
-		: myEvent(event), LocalKernelMessage(messageType, object, event->getReceiveTime().clone()) {}
+    LocalEventMessage(const Event* event, local_kernel_message_type messageType,
+                      SimulationObject* object)
+        : myEvent(event), LocalKernelMessage(messageType, object, event->getReceiveTime().clone()) {}
 
-	 ~LocalEventMessage() {}
+    ~LocalEventMessage() {}
 
-	const Event* getEvent()
-	{
-		return myEvent;
-	}
+    const Event* getEvent() {
+        return myEvent;
+    }
 
-	/*EventMessage* getMessage()
-	{
-		return myMessage;
-	}*/
+    /*EventMessage* getMessage()
+    {
+        return myMessage;
+    }*/
 };
 
 #endif /* LOCAL_EVENT_MESSAGE_H_ */

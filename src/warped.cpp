@@ -28,22 +28,22 @@
 #include "warped.h"
 #include <iostream>
 
-warped64_t 
-getWarped64Max(){
-  return _WARPED64MAX;
+warped64_t
+getWarped64Max() {
+    return _WARPED64MAX;
 }
 
 warped64_t
-getWarped64Min(){
-  return _WARPED64MIN;
+getWarped64Min() {
+    return _WARPED64MIN;
 }
 
-warped32_t 
-getWarped32Max(){
-  return _WARPED32MAX;
+warped32_t
+getWarped32Max() {
+    return _WARPED32MAX;
 }
 
-warped32_t 
-getWarped32Min(){
-  return _WARPED32MIN;
+warped32_t
+getWarped32Min() {
+    return _WARPED32MIN;
 }

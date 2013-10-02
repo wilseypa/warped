@@ -13,33 +13,33 @@ class TimeWarpSimulationManager;
 */
 class SharedDVFSManager : public DVFSManagerImplementationBase {
 public:
-   
-  /**@name Public Class Methods of SharedDVFSManager. */
-  //@{
 
-  /// Constructor
-  SharedDVFSManager(TimeWarpSimulationManager*, int, int, Algorithm, bool,
-                    UsefulWorkMetric, double);
+    /**@name Public Class Methods of SharedDVFSManager. */
+    //@{
 
-  /// Destructor
-  virtual ~SharedDVFSManager();
+    /// Constructor
+    SharedDVFSManager(TimeWarpSimulationManager*, int, int, Algorithm, bool,
+                      UsefulWorkMetric, double);
 
-  /// to be called from the simulation manager's simulation loop
-  virtual void poll();
+    /// Destructor
+    virtual ~SharedDVFSManager();
 
-  virtual void registerWithCommunicationManager();
+    /// to be called from the simulation manager's simulation loop
+    virtual void poll();
 
-  virtual void configure(SimulationConfiguration &);
+    virtual void registerWithCommunicationManager();
 
-  /// from CommunicatingEntity
-  virtual void receiveKernelMessage(KernelMessage*);
+    virtual void configure(SimulationConfiguration&);
 
-  virtual string toString();
+    /// from CommunicatingEntity
+    virtual void receiveKernelMessage(KernelMessage*);
 
-  //@} // End of Public Class Methods of DVFSManager.
+    virtual string toString();
+
+    //@} // End of Public Class Methods of DVFSManager.
 
 private:
-  std::vector<int>myCPUs;
+    std::vector<int>myCPUs;
 };
 
 #endif //CENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

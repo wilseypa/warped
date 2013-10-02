@@ -11,29 +11,29 @@ class Deserializer;
 class Serializable;
 class SerializedInstance;
 
-typedef Serializable *(*deserializeFunc)(SerializedInstance * );
+typedef Serializable* (*deserializeFunc)(SerializedInstance*);
 
 class DeserializerManager {
 public:
-  /**
-     Each serializable type should register with the DeserializerManager
-     singleton before attempting to deserialize.  Typically a static code
-     
-  */
-  void registerDeserializer( const string &dataType, deserializeFunc );
+    /**
+       Each serializable type should register with the DeserializerManager
+       singleton before attempting to deserialize.  Typically a static code
 
-  deserializeFunc findDeserializer( const string &dataType );
+    */
+    void registerDeserializer(const string& dataType, deserializeFunc);
 
-  static DeserializerManager *instance();
+    deserializeFunc findDeserializer(const string& dataType);
+
+    static DeserializerManager* instance();
 
 protected:
-  ~DeserializerManager(){}
+    ~DeserializerManager() {}
 
 
 private:
-  std::unordered_map<string, deserializeFunc> deserializerMap;
+    std::unordered_map<string, deserializeFunc> deserializerMap;
 
-  DeserializerManager(){}
+    DeserializerManager() {}
 };
 
 #endif

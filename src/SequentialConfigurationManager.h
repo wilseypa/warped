@@ -18,43 +18,43 @@ class Application;
 class SequentialConfigurationManager : public ConfigurationManager {
 public:
 
-   /**@name Public Class Methods of SequentialConfigurationManager */
-   //@{
+    /**@name Public Class Methods of SequentialConfigurationManager */
+    //@{
 
-   /// Default constructor
-   SequentialConfigurationManager( Application *initApplication );
-   
-   /// Default destructor
-   ~SequentialConfigurationManager();
+    /// Default constructor
+    SequentialConfigurationManager(Application* initApplication);
 
-  /** 
-      configure the sequential simulation manager.
-  */
-  void configure( SimulationConfiguration &configuration );
+    /// Default destructor
+    ~SequentialConfigurationManager();
 
-  vector<Configurer *> &getConfigurers() const;
+    /**
+        configure the sequential simulation manager.
+    */
+    void configure(SimulationConfiguration& configuration);
 
-  /**
-     Gets the simulation manager for this configuration.
-     
-     @return The Simulation Manager;
-  */
-  SimulationManager *getSimulationManager();
-  
-  //@} // End of Public Class Methods of SequentialConfigurationManager
+    vector<Configurer*>& getConfigurers() const;
+
+    /**
+       Gets the simulation manager for this configuration.
+
+       @return The Simulation Manager;
+    */
+    SimulationManager* getSimulationManager();
+
+    //@} // End of Public Class Methods of SequentialConfigurationManager
 
 protected:
 
-   /**@name Protected Class Attributes of SequentialConfigurationManager */
-   //@{
+    /**@name Protected Class Attributes of SequentialConfigurationManager */
+    //@{
 
-   /// handle to the sequential simulation manager
-   SequentialSimulationManager *const mySimulationManager;
+    /// handle to the sequential simulation manager
+    SequentialSimulationManager* const mySimulationManager;
 
-   /// handle to the event set factory
-   EventSetFactory *myEventSetFactory;
-   
-   //@} // End of Protected Class Attributes of SequentialConfigurationManager
-   
+    /// handle to the event set factory
+    EventSetFactory* myEventSetFactory;
+
+    //@} // End of Protected Class Attributes of SequentialConfigurationManager
+
 };
 #endif

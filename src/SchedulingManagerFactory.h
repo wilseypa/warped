@@ -12,7 +12,7 @@ class SchedulingManager;
 class TimeWarpEventSetFactory;
 
 /** The SchedulingManagerFactory class.
-    
+
 This is the class interface for the various scheduler
 implementations that are possible in the Simulation kernel. The
 specific implementation is hidden from the other
@@ -24,36 +24,36 @@ SchedulingManager abstract base class.
 */
 class SchedulingManagerFactory : virtual public Configurer {
 public:
-   
-  /**@name Public Class Methods of SchedulingManagerFactory. */
-  //@{
 
-  /** Constructor.
+    /**@name Public Class Methods of SchedulingManagerFactory. */
+    //@{
 
-  @param simMgr Handle to the simulation manager.
-  */
-  SchedulingManagerFactory();
-  
-  /// Destructor.
-  virtual ~SchedulingManagerFactory();
+    /** Constructor.
 
-  /** Configure the scheduler.
+    @param simMgr Handle to the simulation manager.
+    */
+    SchedulingManagerFactory();
 
-  @param configurationMap Set of configuration options.
-  */
-  Configurable *allocate( SimulationConfiguration &configuration,
-			  Configurable *parent ) const;
+    /// Destructor.
+    virtual ~SchedulingManagerFactory();
 
-  static const SchedulingManagerFactory *instance();
-   
-  //@} // End of SchedulingManagerFactory Public Class Methods
+    /** Configure the scheduler.
+
+    @param configurationMap Set of configuration options.
+    */
+    Configurable* allocate(SimulationConfiguration& configuration,
+                           Configurable* parent) const;
+
+    static const SchedulingManagerFactory* instance();
+
+    //@} // End of SchedulingManagerFactory Public Class Methods
 
 protected:
-   
-  /**@name Protected Class Attributes of SchedulingManagerFactory. */
-  //@{
 
-  //@} // End of Protected Class Attributes of SchedulingManagerFactory 
+    /**@name Protected Class Attributes of SchedulingManagerFactory. */
+    //@{
+
+    //@} // End of Protected Class Attributes of SchedulingManagerFactory
 };
 
 #endif

@@ -14,45 +14,45 @@ using std::endl;
 
 /** The VisualizationClient class.
 
-    This class connects to the Visualization Server which runs a 
+    This class connects to the Visualization Server which runs a
     a specified host and a specified port.
 
 */
 class VisualizationClient {
- public:
+public:
 
-  /**@name Public Class Methods of VisualizationClient. */
-  //@{
+    /**@name Public Class Methods of VisualizationClient. */
+    //@{
 
-  /** Default constructor.
+    /** Default constructor.
 
-      @param hostname
-      @param port
-   */
-  VisualizationClient(const char *hostname, int port);
+        @param hostname
+        @param port
+     */
+    VisualizationClient(const char* hostname, int port);
 
-  /**
-   * Destructor
-   */
-  ~VisualizationClient();
+    /**
+     * Destructor
+     */
+    ~VisualizationClient();
 
-  /** Connects this client to a server
-  */
-  int clientConnect(void);
+    /** Connects this client to a server
+    */
+    int clientConnect(void);
 
-  /** Close connection
-   */
-  int clientClose(void);
+    /** Close connection
+     */
+    int clientClose(void);
 
 
 protected:
 
 
 private:
-  const char *hostname;
-  int port;
-  //  Socket visSocket;
-  //void* readIn(void*);
+    const char* hostname;
+    int port;
+    //  Socket visSocket;
+    //void* readIn(void*);
 
 };
 

@@ -7,31 +7,31 @@
 class TimeWarpMultiSetOneAntiMsg;
 
 class TimeWarpMultiSetOneAntiMsgTest : public TimeWarpEventSetTest {
-  CPPUNIT_TEST_SUITE( TimeWarpMultiSetOneAntiMsgTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST( testHandleOneAntiMessage );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(TimeWarpMultiSetOneAntiMsgTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testHandleOneAntiMessage);
+    CPPUNIT_TEST_SUITE_END();
 
 private:
-  TimeWarpMultiSetOneAntiMsg *toTest;
+    TimeWarpMultiSetOneAntiMsg* toTest;
 
 public:
-  // Test interfaces
-  void setUp();
-  void tearDown();
+    // Test interfaces
+    void setUp();
+    void tearDown();
 
-  void testConstructor();
-  void testInsert();
-  void testGetEvent();
-  void testGetEventTime();
-  void testPeekEvent();
-  void testPeekEventTime();
-  void testHandleAntiMessage();
-  void testHandleOneAntiMessage();
-  void testRollback();
-  void testFossilCollect();
-  void testFossilCollectInt();
-  void testOfcPurge();
+    void testConstructor();
+    void testInsert();
+    void testGetEvent();
+    void testGetEventTime();
+    void testPeekEvent();
+    void testPeekEventTime();
+    void testHandleAntiMessage();
+    void testHandleOneAntiMessage();
+    void testRollback();
+    void testFossilCollect();
+    void testFossilCollectInt();
+    void testOfcPurge();
 };
 
 #endif

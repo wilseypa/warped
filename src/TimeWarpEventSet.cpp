@@ -3,4 +3,4 @@
 using std::cerr;
 using std::endl;
 
-TimeWarpEventSet::~TimeWarpEventSet(){}
+TimeWarpEventSet::~TimeWarpEventSet() {}

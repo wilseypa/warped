@@ -16,74 +16,74 @@
 template <class Element>
 class InputSetObject : public SetObject< Element > {
 public:
-   /**@name Public Class Methods of InputSetObject. */
-   //@{
+    /**@name Public Class Methods of InputSetObject. */
+    //@{
 
-   /** Constructor.
+    /** Constructor.
 
-       @param currentTime Current time  of event.
-       @param currentElement Element to be encapsulated.
-       @param senderID sender object if of the element.
-   */
-   InputSetObject(const VTime& currentTime, Element* currentElement,
-                  const OBJECT_ID& id) :
-      SetObject< Element >(currentTime, currentElement), senderID(id){}
+        @param currentTime Current time  of event.
+        @param currentElement Element to be encapsulated.
+        @param senderID sender object if of the element.
+    */
+    InputSetObject(const VTime& currentTime, Element* currentElement,
+                   const OBJECT_ID& id) :
+        SetObject< Element >(currentTime, currentElement), senderID(id) {}
 
-   /** Constructor.
+    /** Constructor.
 
-       @param currentTime Current time  of event.
-       @param currentElement Element to be encapsulated.
-   */
-   InputSetObject(const VTime& currentTime, Element* currentElement):
-      SetObject< Element >(currentTime, currentElement){}
+        @param currentTime Current time  of event.
+        @param currentElement Element to be encapsulated.
+    */
+    InputSetObject(const VTime& currentTime, Element* currentElement):
+        SetObject< Element >(currentTime, currentElement) {}
 
-   /** Constructor.
+    /** Constructor.
 
-       @param currentTime Current time  of event.
-   */
-   InputSetObject(const VTime& currentTime):
-      SetObject< Element >(currentTime, NULL){}
+        @param currentTime Current time  of event.
+    */
+    InputSetObject(const VTime& currentTime):
+        SetObject< Element >(currentTime, NULL) {}
 
-   /** Constructor.
+    /** Constructor.
 
-       @param senderID sender Object id of the event.
-   */
-   InputSetObject(const OBJECT_ID& id) :
-      SetObject< Element >(0, NULL), senderID(id){}
+        @param senderID sender Object id of the event.
+    */
+    InputSetObject(const OBJECT_ID& id) :
+        SetObject< Element >(0, NULL), senderID(id) {}
 
-   /// Destructor.
-   ~InputSetObject(){}
+    /// Destructor.
+    ~InputSetObject() {}
 
-   /// Overloaded operator <
-   friend bool operator<(const InputSetObject& a, const InputSetObject& b){
-     return ((a.time < b.time) ? true : ((a.time == b.time) ? (a.senderID < b.senderID) : false));
-   }
-  
-   /// Overloaded operator ==
-   friend bool operator==(const InputSetObject& a, const InputSetObject& b){
-      return (a.time == b.time) && (a.senderID == b.senderID);
-   }
-  
-   /// Overloaded operator >
-   friend bool operator>(const InputSetObject& a, const InputSetObject& b){
-     return ((a.time > b.time) ? true : ((a.time == b.time) ? (a.senderID > b.senderID) : false));
-   }
-  
-   /// Overloaded operator <<
-   friend std::ostream& operator<<(std::ostream& os, const InputSetObject& a){
-      return os << a.time;
-   }
+    /// Overloaded operator <
+    friend bool operator<(const InputSetObject& a, const InputSetObject& b) {
+        return ((a.time < b.time) ? true : ((a.time == b.time) ? (a.senderID < b.senderID) : false));
+    }
 
-   //@} // End of Public Class Methods of InputSetObject.
+    /// Overloaded operator ==
+    friend bool operator==(const InputSetObject& a, const InputSetObject& b) {
+        return (a.time == b.time) && (a.senderID == b.senderID);
+    }
+
+    /// Overloaded operator >
+    friend bool operator>(const InputSetObject& a, const InputSetObject& b) {
+        return ((a.time > b.time) ? true : ((a.time == b.time) ? (a.senderID > b.senderID) : false));
+    }
+
+    /// Overloaded operator <<
+    friend std::ostream& operator<<(std::ostream& os, const InputSetObject& a) {
+        return os << a.time;
+    }
+
+    //@} // End of Public Class Methods of InputSetObject.
 
 protected:
-   /**@name Protected Class Attributes of InputSetObject. */
-   //@{
+    /**@name Protected Class Attributes of InputSetObject. */
+    //@{
 
-   ///OBJECT_ID of the process created this element(senderID)
-   OBJECT_ID senderID;
+    ///OBJECT_ID of the process created this element(senderID)
+    OBJECT_ID senderID;
 
-   //@} // End of Protected Class Attributes of InputSetObject.
+    //@} // End of Protected Class Attributes of InputSetObject.
 
 };
 

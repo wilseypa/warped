@@ -8,66 +8,66 @@
 //#include "OptFossilCollManager.h"
 
 void
-NegativeEvent::serialize( SerializedInstance *addTo ) const {
-  addTo->addSerializable( sendTime );
-  addTo->addSerializable( receiveTime );
-  addTo->addUnsigned( sender->getSimulationManagerID() );
-  addTo->addUnsigned( sender->getSimulationObjectID() );
-  addTo->addUnsigned( receiver->getSimulationManagerID() );
-  addTo->addUnsigned( receiver->getSimulationObjectID() );
-  addTo->addUnsigned( id->val );
+NegativeEvent::serialize(SerializedInstance* addTo) const {
+    addTo->addSerializable(sendTime);
+    addTo->addSerializable(receiveTime);
+    addTo->addUnsigned(sender->getSimulationManagerID());
+    addTo->addUnsigned(sender->getSimulationObjectID());
+    addTo->addUnsigned(receiver->getSimulationManagerID());
+    addTo->addUnsigned(receiver->getSimulationObjectID());
+    addTo->addUnsigned(id->val);
 }
 
-Serializable *
-NegativeEvent::deserialize( SerializedInstance *instance ){
-  VTime *sendingTime = dynamic_cast<VTime *>(instance->getSerializable());
-  VTime *recvTime = dynamic_cast<VTime *>(instance->getSerializable());
-  unsigned int senderSimManID = instance->getUnsigned();
-  unsigned int senderSimObjID = instance->getUnsigned();
-  unsigned int receiverSimManID = instance->getUnsigned();
-  unsigned int receiverSimObjID = instance->getUnsigned();
-  unsigned int eventId = instance->getUnsigned();
+Serializable*
+NegativeEvent::deserialize(SerializedInstance* instance) {
+    VTime* sendingTime = dynamic_cast<VTime*>(instance->getSerializable());
+    VTime* recvTime = dynamic_cast<VTime*>(instance->getSerializable());
+    unsigned int senderSimManID = instance->getUnsigned();
+    unsigned int senderSimObjID = instance->getUnsigned();
+    unsigned int receiverSimManID = instance->getUnsigned();
+    unsigned int receiverSimObjID = instance->getUnsigned();
+    unsigned int eventId = instance->getUnsigned();
 
-  ObjectID sendObj(senderSimObjID, senderSimManID);
-  ObjectID recvObj(receiverSimObjID, receiverSimManID);
+    ObjectID sendObj(senderSimObjID, senderSimManID);
+    ObjectID recvObj(receiverSimObjID, receiverSimManID);
 
-  NegativeEvent *negEvent = new NegativeEvent( *sendingTime,
-                                               *recvTime,
-                                               sendObj,
-                                               recvObj,
-                                               eventId);
-  delete sendingTime;
-  delete recvTime;
+    NegativeEvent* negEvent = new NegativeEvent(*sendingTime,
+                                                *recvTime,
+                                                sendObj,
+                                                recvObj,
+                                                eventId);
+    delete sendingTime;
+    delete recvTime;
 
-  return negEvent;
+    return negEvent;
 }
 
-void 
-NegativeEvent::registerDeserializer(){
-  DeserializerManager::instance()->registerDeserializer( getNegativeEventDataType(),
-                                                         &NegativeEvent::deserialize );
+void
+NegativeEvent::registerDeserializer() {
+    DeserializerManager::instance()->registerDeserializer(getNegativeEventDataType(),
+                                                          &NegativeEvent::deserialize);
 }
 
 std::ostream&
 operator<<(std::ostream& os, const NegativeEvent& event) {
-   os << "sender: " << event.getSender() 
-      << " receiver: " << event.getReceiver()
-      << " sendTime: " << event.getSendTime()
-      << " receiveTime: " << event.getReceiveTime()
-      << " eventId: " << event.getEventId();
-   return(os);
+    os << "sender: " << event.getSender()
+       << " receiver: " << event.getReceiver()
+       << " sendTime: " << event.getSendTime()
+       << " receiveTime: " << event.getReceiveTime()
+       << " eventId: " << event.getEventId();
+    return (os);
 }
 
-bool 
-NegativeEvent::eventCompare( const Event *a ){
-  bool retval = true;
+bool
+NegativeEvent::eventCompare(const Event* a) {
+    bool retval = true;
 
-  if( a->getSender() != this->getSender() ||
-      a->getEventId() != this->getEventId() ){
-    retval = false;
-  }
+    if (a->getSender() != this->getSender() ||
+            a->getEventId() != this->getEventId()) {
+        retval = false;
+    }
 
-  return retval;
+    return retval;
 }
 
 // No longer using these for optimistic fossil collection.

@@ -7,34 +7,34 @@
 class TimeWarpAppendQueue;
 
 class TimeWarpAppendQueueTest : public TimeWarpEventSetTest {
-  CPPUNIT_TEST_SUITE( TimeWarpAppendQueueTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST( testGetEvent );
-  CPPUNIT_TEST( testHandleAntiMessage );
-  CPPUNIT_TEST( testInsert );
-  CPPUNIT_TEST( testPeekEvent );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(TimeWarpAppendQueueTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testGetEvent);
+    CPPUNIT_TEST(testHandleAntiMessage);
+    CPPUNIT_TEST(testInsert);
+    CPPUNIT_TEST(testPeekEvent);
+    CPPUNIT_TEST_SUITE_END();
 
-  class TWAQTimeWarpSimulationManager : public TimeWarpSimulationManagerAdapter {
-  public:
-    TWAQTimeWarpSimulationManager(){}
-    ~TWAQTimeWarpSimulationManager(){}
-  };
+    class TWAQTimeWarpSimulationManager : public TimeWarpSimulationManagerAdapter {
+    public:
+        TWAQTimeWarpSimulationManager() {}
+        ~TWAQTimeWarpSimulationManager() {}
+    };
 
 private:
-  TimeWarpAppendQueue *toTest;
+    TimeWarpAppendQueue* toTest;
 
 
 public:
-  // Test interface
-  void setUp();
-  void tearDown();
+    // Test interface
+    void setUp();
+    void tearDown();
 
-  void testConstructor();
-  void testInsert();
-  void testGetEvent();
-  void testPeekEvent();
-  void testHandleAntiMessage();
+    void testConstructor();
+    void testInsert();
+    void testGetEvent();
+    void testPeekEvent();
+    void testHandleAntiMessage();
 
 };
 

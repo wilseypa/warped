@@ -9,11 +9,11 @@
 using std::priority_queue;
 
 struct compareEvents {
-  bool operator()( const Event *a, const Event *b ) {
-    return ((a->getReceiveTime() == b->getReceiveTime()) ?
-	    ((a->getReceiver() > b->getReceiver()) ? false : true) :
-	    ((a->getReceiveTime() > b->getReceiveTime())));
-  }
+    bool operator()(const Event* a, const Event* b) {
+        return ((a->getReceiveTime() == b->getReceiveTime()) ?
+                ((a->getReceiver() > b->getReceiver()) ? false : true) :
+                    ((a->getReceiveTime() > b->getReceiveTime())));
+    }
 };
 
 /** The SingleLinkedList class.
@@ -29,63 +29,63 @@ struct compareEvents {
     (compareEvents).
 
 */
-class SingleLinkedList : public priority_queue<const Event*, 
-			 vector<const Event*>,
-                         compareEvents>, public EventSet {
+class SingleLinkedList : public priority_queue<const Event*,
+    vector<const Event*>,
+        compareEvents>, public EventSet {
 public:
 
-  /**@name Public Class Methods of SingleLinkedList. */
-  //@{
+    /**@name Public Class Methods of SingleLinkedList. */
+    //@{
 
-  /// Default Constructor
-  SingleLinkedList();
+    /// Default Constructor
+    SingleLinkedList();
 
-  /// Destructor.
-  ~SingleLinkedList();
+    /// Destructor.
+    ~SingleLinkedList();
 
-  /** Insert an event into the event set.
+    /** Insert an event into the event set.
 
-      @param event Pointer to the event to be inserted.
-  */
-  void insert( const Event *event);
+        @param event Pointer to the event to be inserted.
+    */
+    void insert(const Event* event);
 
-  /** Return a reference to the first event and remove from the event set.
+    /** Return a reference to the first event and remove from the event set.
 
-      @return A reference to the first event in the event set.
-  */
-  const Event *getEvent();
+        @return A reference to the first event in the event set.
+    */
+    const Event* getEvent();
 
-  /** Return reference to first event without removing it from the event set.
+    /** Return reference to first event without removing it from the event set.
 
-      @return A reference to the first event in the event set.
-  */
-  const Event *peekEvent();
+        @return A reference to the first event in the event set.
+    */
+    const Event* peekEvent();
 
-  /// Delete any old, unwanted events.
-  void cleanUp();
+    /// Delete any old, unwanted events.
+    void cleanUp();
 
-  virtual void configure( SimulationConfiguration & ){}
+    virtual void configure(SimulationConfiguration&) {}
 
-  static const string &getType();
+    static const string& getType();
 
-  //@} // End of Public Class Methods of SingleLinkedList
+    //@} // End of Public Class Methods of SingleLinkedList
 
-  /**@name Public Class Attributes of SingleLinkedList. */
-  //@{
+    /**@name Public Class Attributes of SingleLinkedList. */
+    //@{
 
-  /// The comparison function object used by priority_queue
+    /// The comparison function object used by priority_queue
 
-  //@} // End of Public Class Attributes of SingleLinkedList. */
-   
+    //@} // End of Public Class Attributes of SingleLinkedList. */
+
 private:
 
-  /**@name Private Class Attributes of SingleLinkedList. */
-  //@{
+    /**@name Private Class Attributes of SingleLinkedList. */
+    //@{
 
-  /// List of processedEvents that can be deleted.
-  vector<const Event *> *processedEvents;
+    /// List of processedEvents that can be deleted.
+    vector<const Event*>* processedEvents;
 
-  //@} // End of  Private Class Attributes of SingleLinkedList
+    //@} // End of  Private Class Attributes of SingleLinkedList
 };
 
 #endif

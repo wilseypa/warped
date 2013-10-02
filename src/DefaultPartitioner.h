@@ -6,10 +6,10 @@
 
 class DefaultPartitioner : public Partitioner {
 public:
-  DefaultPartitioner();
+    DefaultPartitioner();
 
-  const PartitionInfo *partition( const vector<SimulationObject *> *objects,
-				  const unsigned int numLPs ) const;
+    const PartitionInfo* partition(const vector<SimulationObject*>* objects,
+                                   const unsigned int numLPs) const;
 };
 
 #endif

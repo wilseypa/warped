@@ -20,23 +20,23 @@ class SimulationObject;
 */
 class TimeWarpCentralizedEventSet : public TimeWarpEventSet {
 public:
-  /**@name Public Class Methods of TimeWarpCentralizedEventSet. */
-  //@{
-   
-  /// Virtual Destructor
-  virtual ~TimeWarpCentralizedEventSet(){};
+    /**@name Public Class Methods of TimeWarpCentralizedEventSet. */
+    //@{
 
-  //@} // End of Public Class Methods of TimeWarpCentralizedEventSet.
+    /// Virtual Destructor
+    virtual ~TimeWarpCentralizedEventSet() {};
+
+    //@} // End of Public Class Methods of TimeWarpCentralizedEventSet.
 
 protected:
 
-  /**@name Protected Class Methods of TimeWarpCentralizedEventSet. */
-  //@{
+    /**@name Protected Class Methods of TimeWarpCentralizedEventSet. */
+    //@{
 
-  /// Default Constructor
-  TimeWarpCentralizedEventSet() {};
+    /// Default Constructor
+    TimeWarpCentralizedEventSet() {};
 
-  //@} // End of Protected Class Methods of TimeWarpCentralizedEventSet.
+    //@} // End of Protected Class Methods of TimeWarpCentralizedEventSet.
 };
 
-#endif 
+#endif

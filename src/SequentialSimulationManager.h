@@ -12,172 +12,172 @@ class Application;
 
 /** The SequentialSimulationManager class.
 
-    The SequentialSimulationManager class implements a simulation manager 
+    The SequentialSimulationManager class implements a simulation manager
     that performs a sequential discrete-event simulation.
 
 */
-class SequentialSimulationManager : public SimulationManagerImplementationBase{
+class SequentialSimulationManager : public SimulationManagerImplementationBase {
 
 public:
 
-  /**@type friend class declarations */
-  //@{
+    /**@type friend class declarations */
+    //@{
 
-  /** Builder class */
-  friend class SequentialConfigurationManager;
+    /** Builder class */
+    friend class SequentialConfigurationManager;
 
-  //@} // End of friend class declarations  
+    //@} // End of friend class declarations
 
-  /**@name Public Class Methods of SequentialSimulationManager. */
-  //@{
-  
-  /** Constructor.
+    /**@name Public Class Methods of SequentialSimulationManager. */
+    //@{
 
-  */
-  SequentialSimulationManager( Application * initApplication );
-   
-  /// Destructor.
-  ~SequentialSimulationManager();
+    /** Constructor.
 
-  void initialize();
+    */
+    SequentialSimulationManager(Application* initApplication);
 
-  /** Perform the sequential simulation.
-  @param simulateUntil Time to simulate until.
-  */
-  void simulate ( const VTime& simulateUntil );
+    /// Destructor.
+    ~SequentialSimulationManager();
 
-  void finalize();
+    void initialize();
 
-  /** Receive an event.
+    /** Perform the sequential simulation.
+    @param simulateUntil Time to simulate until.
+    */
+    void simulate(const VTime& simulateUntil);
 
-  @param event Pointer to the received event.
-  */
-  void handleEvent( const Event *event );
+    void finalize();
 
-  /** Get and remove event for simulation object.
+    /** Receive an event.
 
-  @param object Simulation object whose event to get.
-  @return Pointer to the event.
-  */
-  const Event *getEvent(SimulationObject *object);
+    @param event Pointer to the received event.
+    */
+    void handleEvent(const Event* event);
 
-  /** Get a pointer to the next event for a simulation object.
-      
-  @param object Simulation object whose event to peek at.
-  @return Pointer to the event.
-  */
-  const Event *peekEvent(SimulationObject *object);
+    /** Get and remove event for simulation object.
 
-  /// registers a set of simulation objects with this simulation manager.
-  void registerSimulationObjects ();
-   
-  /** Get the current simulation time.
+    @param object Simulation object whose event to get.
+    @return Pointer to the event.
+    */
+    const Event* getEvent(SimulationObject* object);
 
-  @return The current simulation time.
-  */
-  const VTime &getSimulationTime() const { return *simulationTime; }
+    /** Get a pointer to the next event for a simulation object.
 
-  /** Get object handle with string object as lookup.
+    @param object Simulation object whose event to peek at.
+    @return Pointer to the event.
+    */
+    const Event* peekEvent(SimulationObject* object);
 
-  @param object String used to look up object.
-  @return Handle to the object.
-  */
-  SimulationObject *getObjectHandle( const string &object ) const {
-	typeSimMap::const_iterator it = localArrayOfSimObjPtrs->find(object);
-	if (it == localArrayOfSimObjPtrs->end())
-		return 0;
-    return it->second;
-  }
+    /// registers a set of simulation objects with this simulation manager.
+    void registerSimulationObjects();
 
-  /** Get object handle with object Id as lookup.
+    /** Get the current simulation time.
 
-  @param objectID Object Id used to look up object.
-  @return Handle to the object.
-  */
-  SimulationObject *getObjectHandle( const OBJECT_ID &objectID ){
-    return localArrayOfSimObjIDs[objectID.getSimulationObjectID()];
-  }
+    @return The current simulation time.
+    */
+    const VTime& getSimulationTime() const { return *simulationTime; }
 
-  /// get a handle to a simulation input stream
-  SimulationStream *getIFStream(const string &filename,
-				SimulationObject *object);
+    /** Get object handle with string object as lookup.
 
-  /// get a handle to a simulation output stream
-  SimulationStream *getOFStream(const string &filename,
-				SimulationObject *object,
-				ios::openmode mode=ios::out);
+    @param object String used to look up object.
+    @return Handle to the object.
+    */
+    SimulationObject* getObjectHandle(const string& object) const {
+        typeSimMap::const_iterator it = localArrayOfSimObjPtrs->find(object);
+        if (it == localArrayOfSimObjPtrs->end())
+        { return 0; }
+        return it->second;
+    }
 
-  /// get a handle to a simulation input-output stream
-  SimulationStream *getIOFStream(const string &filename,
-				 SimulationObject *object);
+    /** Get object handle with object Id as lookup.
 
-  virtual void configure( SimulationConfiguration &configuration );
-   
-  /**
-     @see SimulationManager#contains.  This implementation always returns
-     true since there can only be one SimulationManager.
-  */
-  bool contains( const string & ){ return true; }
+    @param objectID Object Id used to look up object.
+    @return Handle to the object.
+    */
+    SimulationObject* getObjectHandle(const OBJECT_ID& objectID) {
+        return localArrayOfSimObjIDs[objectID.getSimulationObjectID()];
+    }
 
-  const VTime &getCommittedTime();
-  const VTime &getNextEventTime();
-  const VTime &getPositiveInfinity() const;
-  const VTime &getZero() const;
+    /// get a handle to a simulation input stream
+    SimulationStream* getIFStream(const string& filename,
+                                  SimulationObject* object);
 
-  bool simulationComplete();
+    /// get a handle to a simulation output stream
+    SimulationStream* getOFStream(const string& filename,
+                                  SimulationObject* object,
+                                  ios::openmode mode=ios::out);
 
-  void shutdown( const string &errorMessage );
+    /// get a handle to a simulation input-output stream
+    SimulationStream* getIOFStream(const string& filename,
+                                   SimulationObject* object);
 
-  //@} // End of Public Class Methods of SequentialSimulationManager.
+    virtual void configure(SimulationConfiguration& configuration);
+
+    /**
+       @see SimulationManager#contains.  This implementation always returns
+       true since there can only be one SimulationManager.
+    */
+    bool contains(const string&) { return true; }
+
+    const VTime& getCommittedTime();
+    const VTime& getNextEventTime();
+    const VTime& getPositiveInfinity() const;
+    const VTime& getZero() const;
+
+    bool simulationComplete();
+
+    void shutdown(const string& errorMessage);
+
+    //@} // End of Public Class Methods of SequentialSimulationManager.
 
 protected:
-  /**@name Protected Class Methods of SequentialSimulationManager. */
-  //@{
-  /// Mapping between simulation object names, object pointers & id
-  //typedef map<string, SimulationObject * >  typeNewSimMap;
-    
-  typeSimMap *createMapOfObjects();
-  //@} // End of Protected Class Methods of SequentialSimulationManager.
+    /**@name Protected Class Methods of SequentialSimulationManager. */
+    //@{
+    /// Mapping between simulation object names, object pointers & id
+    //typedef map<string, SimulationObject * >  typeNewSimMap;
 
-  /**@name Protected Class Attributes of SequentialSimulationManager. */
-  //@{
+    typeSimMap* createMapOfObjects();
+    //@} // End of Protected Class Methods of SequentialSimulationManager.
 
-  /// This is my current simulation time.
-  const VTime *simulationTime;
-   
-  /// the number of processed events
-  unsigned int numberOfProcessedEvents;
-   
-  /// This is the handle to set of pending events
-  EventSet *myEventSet;
+    /**@name Protected Class Attributes of SequentialSimulationManager. */
+    //@{
 
-  //@} // End of Protected Class Attributes of SequentialSimulationManager.
+    /// This is my current simulation time.
+    const VTime* simulationTime;
+
+    /// the number of processed events
+    unsigned int numberOfProcessedEvents;
+
+    /// This is the handle to set of pending events
+    EventSet* myEventSet;
+
+    //@} // End of Protected Class Attributes of SequentialSimulationManager.
 
 private:
-  /**@name Private Class Attributes of SequentialSimulationManager. */
-  //@{
+    /**@name Private Class Attributes of SequentialSimulationManager. */
+    //@{
 
-  void setSimulationTime( const VTime &newTime ){
-    delete simulationTime;
-    simulationTime = newTime.clone();
-  }
+    void setSimulationTime(const VTime& newTime) {
+        delete simulationTime;
+        simulationTime = newTime.clone();
+    }
 
-  ///Local stream to be associated with global stream "wout"
-  SequentialSimulationStream sequentialWout;
+    ///Local stream to be associated with global stream "wout"
+    SequentialSimulationStream sequentialWout;
 
-  
-  ///Local stream to be associated with global stream "werr"
-  SequentialSimulationStream sequentialWerr;
 
-  /**
-     The application I am managing.
-  */
-  Application *myApplication;
+    ///Local stream to be associated with global stream "werr"
+    SequentialSimulationStream sequentialWerr;
 
-  StopWatch initializeWatch;
-  double totalSimulationTime;
+    /**
+       The application I am managing.
+    */
+    Application* myApplication;
 
-  //@} // End of Protected Class Attributes of SequentialSimulationManager.
+    StopWatch initializeWatch;
+    double totalSimulationTime;
+
+    //@} // End of Protected Class Attributes of SequentialSimulationManager.
 };
 
 #endif

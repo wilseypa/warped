@@ -2,76 +2,76 @@
 #include "DefaultTimeWarpEventSet.h"
 
 
-void 
-DefaultTimeWarpEventSetTest::setUp(){
-  TimeWarpEventSetTest::setUp();
-  toTest = new DefaultTimeWarpEventSet( getSimManager(), false );
-}
-
-void 
-DefaultTimeWarpEventSetTest::tearDown(){
-  delete toTest;
-  TimeWarpEventSetTest::tearDown();
-}
-
-void 
-DefaultTimeWarpEventSetTest::testConstructor(){
-  CPPUNIT_ASSERT( toTest != 0 );
-}
-
-
-void 
-DefaultTimeWarpEventSetTest::testInsert(){
-  TimeWarpEventSetTest::testInsert( toTest );
+void
+DefaultTimeWarpEventSetTest::setUp() {
+    TimeWarpEventSetTest::setUp();
+    toTest = new DefaultTimeWarpEventSet(getSimManager(), false);
 }
 
 void
-DefaultTimeWarpEventSetTest::testGetEvent(){
-  TimeWarpEventSetTest::testGetEvent( toTest );
+DefaultTimeWarpEventSetTest::tearDown() {
+    delete toTest;
+    TimeWarpEventSetTest::tearDown();
 }
 
 void
-DefaultTimeWarpEventSetTest::testGetEventTime(){
-  TimeWarpEventSetTest::testGetEventTime( toTest );
+DefaultTimeWarpEventSetTest::testConstructor() {
+    CPPUNIT_ASSERT(toTest != 0);
+}
+
+
+void
+DefaultTimeWarpEventSetTest::testInsert() {
+    TimeWarpEventSetTest::testInsert(toTest);
 }
 
 void
-DefaultTimeWarpEventSetTest::testPeekEvent(){
-  TimeWarpEventSetTest::testPeekEvent( toTest );
+DefaultTimeWarpEventSetTest::testGetEvent() {
+    TimeWarpEventSetTest::testGetEvent(toTest);
 }
 
 void
-DefaultTimeWarpEventSetTest::testPeekEventTime(){
-  TimeWarpEventSetTest::testPeekEventTime( toTest );
+DefaultTimeWarpEventSetTest::testGetEventTime() {
+    TimeWarpEventSetTest::testGetEventTime(toTest);
 }
 
 void
-DefaultTimeWarpEventSetTest::testHandleAntiMessage(){
-  TimeWarpEventSetTest::testHandleAntiMessage( toTest );
+DefaultTimeWarpEventSetTest::testPeekEvent() {
+    TimeWarpEventSetTest::testPeekEvent(toTest);
 }
 
 void
-DefaultTimeWarpEventSetTest::testHandleOneAntiMessage(){
-  // This test is only required for the one anti-message
-  // event set implementations, do nothing here.
+DefaultTimeWarpEventSetTest::testPeekEventTime() {
+    TimeWarpEventSetTest::testPeekEventTime(toTest);
 }
 
 void
-DefaultTimeWarpEventSetTest::testRollback(){
-  TimeWarpEventSetTest::testRollback( toTest );
+DefaultTimeWarpEventSetTest::testHandleAntiMessage() {
+    TimeWarpEventSetTest::testHandleAntiMessage(toTest);
 }
 
 void
-DefaultTimeWarpEventSetTest::testFossilCollect(){
-  TimeWarpEventSetTest::testFossilCollect( toTest );
+DefaultTimeWarpEventSetTest::testHandleOneAntiMessage() {
+    // This test is only required for the one anti-message
+    // event set implementations, do nothing here.
 }
 
 void
-DefaultTimeWarpEventSetTest::testFossilCollectInt(){
-  TimeWarpEventSetTest::testFossilCollectInt( toTest );
+DefaultTimeWarpEventSetTest::testRollback() {
+    TimeWarpEventSetTest::testRollback(toTest);
 }
 
 void
-DefaultTimeWarpEventSetTest::testOfcPurge(){
-  TimeWarpEventSetTest::testOfcPurge( toTest );
+DefaultTimeWarpEventSetTest::testFossilCollect() {
+    TimeWarpEventSetTest::testFossilCollect(toTest);
+}
+
+void
+DefaultTimeWarpEventSetTest::testFossilCollectInt() {
+    TimeWarpEventSetTest::testFossilCollectInt(toTest);
+}
+
+void
+DefaultTimeWarpEventSetTest::testOfcPurge() {
+    TimeWarpEventSetTest::testOfcPurge(toTest);
 }

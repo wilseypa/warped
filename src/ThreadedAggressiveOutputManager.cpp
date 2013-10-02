@@ -6,24 +6,24 @@
 #include "Event.h"
 
 ThreadedAggressiveOutputManager::ThreadedAggressiveOutputManager(
-		ThreadedTimeWarpSimulationManager *simMgr) :
-	ThreadedOutputManagerImplementationBase(simMgr) {
+    ThreadedTimeWarpSimulationManager* simMgr) :
+    ThreadedOutputManagerImplementationBase(simMgr) {
 }
 
 ThreadedAggressiveOutputManager::~ThreadedAggressiveOutputManager() {
 }
 
-void ThreadedAggressiveOutputManager::rollback(SimulationObject *object,
-		const VTime &rollbackTime, int threadID) {
-	ThreadedOutputEvents &outputEvents = getOutputEventsFor(
-			*(object->getObjectID()));
-	vector<const Event *>
-			*eventsToCancel = outputEvents.getEventsSentAtOrAfterAndRemove(
-					rollbackTime, threadID);
+void ThreadedAggressiveOutputManager::rollback(SimulationObject* object,
+                                               const VTime& rollbackTime, int threadID) {
+    ThreadedOutputEvents& outputEvents = getOutputEventsFor(
+                                             *(object->getObjectID()));
+    vector<const Event*>
+    * eventsToCancel = outputEvents.getEventsSentAtOrAfterAndRemove(
+                           rollbackTime, threadID);
 
-	if (eventsToCancel->size() > 0) {
-		getSimulationManager()->cancelEvents(*eventsToCancel);
-	}
+    if (eventsToCancel->size() > 0) {
+        getSimulationManager()->cancelEvents(*eventsToCancel);
+    }
 
-	delete eventsToCancel;
+    delete eventsToCancel;
 }

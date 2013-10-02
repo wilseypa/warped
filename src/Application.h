@@ -24,74 +24,74 @@ class PartitionInfo;
 
 class Application : public Configurable {
 public:
-   /**@name Public Class Methods of Application */
-  //@{
+    /**@name Public Class Methods of Application */
+    //@{
 
-  /**
-     The kernel can/will request partitioning information from the
-     application.  The application must at least give back information for
-     one partition - this is how the simulation objects are handed back to
-     the kernel.  After the kernel calls this method, it will delete the
-     returned PartitionInfo.
-     
-     @return A reference to partitioning information for at least one
-     partition.
-  */
-  virtual const PartitionInfo *getPartitionInfo( unsigned int numProcessorsAvailable ) = 0;
-  
-  /** This method is invoked by the kernel to find out how many simulation
-      objects are involved in this simulation
-      
-      @param MgrId The id of the simulation manager
-      @return number of simulation objects. (-1) indicates error
-  */
-  virtual int getNumberOfSimulationObjects(int mgrId) const = 0;
-  
-  /** This method is invoked by the kernel so that the application can wind up
-      and perform any cleanups etc.
+    /**
+       The kernel can/will request partitioning information from the
+       application.  The application must at least give back information for
+       one partition - this is how the simulation objects are handed back to
+       the kernel.  After the kernel calls this method, it will delete the
+       returned PartitionInfo.
 
-      @return Error code (non-zero return value indicates error)
-  */
-  
-  virtual int finalize() = 0;
+       @return A reference to partitioning information for at least one
+       partition.
+    */
+    virtual const PartitionInfo* getPartitionInfo(unsigned int numProcessorsAvailable) = 0;
 
-  //@} // End of public class methods of Application
+    /** This method is invoked by the kernel to find out how many simulation
+        objects are involved in this simulation
 
-  /// Destructor.
-  virtual ~Application() {}
+        @param MgrId The id of the simulation manager
+        @return number of simulation objects. (-1) indicates error
+    */
+    virtual int getNumberOfSimulationObjects(int mgrId) const = 0;
 
-  /**
-     The user is not forced to override this.
-  */
-  virtual void configure( SimulationConfiguration & ){}
+    /** This method is invoked by the kernel so that the application can wind up
+        and perform any cleanups etc.
 
-  /**
-     The application should register all of it's deserializers when this
-     callback is called.
-  */
-  virtual void registerDeserializers() = 0;
+        @return Error code (non-zero return value indicates error)
+    */
 
-  /**
-     Returns positive infinity in this application's time definition.
-  */
-  virtual const VTime &getPositiveInfinity() = 0;
+    virtual int finalize() = 0;
 
-  /**
-     Returns zero in this application's time definition;
-  */
-  virtual const VTime &getZero() = 0;
+    //@} // End of public class methods of Application
 
-  /**  
-     Returns a specified time in this application's time definition;
-  */
-  virtual const VTime &getTime(string&) = 0;
+    /// Destructor.
+    virtual ~Application() {}
+
+    /**
+       The user is not forced to override this.
+    */
+    virtual void configure(SimulationConfiguration&) {}
+
+    /**
+       The application should register all of it's deserializers when this
+       callback is called.
+    */
+    virtual void registerDeserializers() = 0;
+
+    /**
+       Returns positive infinity in this application's time definition.
+    */
+    virtual const VTime& getPositiveInfinity() = 0;
+
+    /**
+       Returns zero in this application's time definition;
+    */
+    virtual const VTime& getZero() = 0;
+
+    /**
+       Returns a specified time in this application's time definition;
+    */
+    virtual const VTime& getTime(string&) = 0;
 
 protected:
-  /** Default constructor. It is protected to make sure this class never
-      gets instantiated directly, but instead gets instantiated by
-      derivation. */
+    /** Default constructor. It is protected to make sure this class never
+        gets instantiated directly, but instead gets instantiated by
+        derivation. */
 
-  Application() {}
+    Application() {}
 
 private:
 };

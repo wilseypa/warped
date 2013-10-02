@@ -17,28 +17,28 @@
 class CommunicatingEntity {
 public:
 
-   /**@name Public Class Methods of CommunicatingEntity. */
-   //@{
-   
-   /// Destructor.
-   virtual ~CommunicatingEntity(){};
+    /**@name Public Class Methods of CommunicatingEntity. */
+    //@{
 
-   /** Method the communication mgr calls to deliver a message.
+    /// Destructor.
+    virtual ~CommunicatingEntity() {};
 
-       This is a pure virtual function that has to be overriden.
+    /** Method the communication mgr calls to deliver a message.
 
-       @param msg Pointer to the received message.
-   */
-   virtual void receiveKernelMessage(KernelMessage *msg) = 0;
-   //@} // End of Public Class Methods of CommunicatingEntity.
-   
+        This is a pure virtual function that has to be overriden.
+
+        @param msg Pointer to the received message.
+    */
+    virtual void receiveKernelMessage(KernelMessage* msg) = 0;
+    //@} // End of Public Class Methods of CommunicatingEntity.
+
 protected:
-   /**@name Protected Class Methods of CommunicatingEntity. */
-   //@{
+    /**@name Protected Class Methods of CommunicatingEntity. */
+    //@{
 
-   /// Default Constructor.
-   CommunicatingEntity(){};
-   //@} // End of Protected Class Methods of CommunicatingEntity.
+    /// Default Constructor.
+    CommunicatingEntity() {};
+    //@} // End of Protected Class Methods of CommunicatingEntity.
 };
 
 #endif

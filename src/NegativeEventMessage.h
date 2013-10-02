@@ -4,7 +4,7 @@
 
 /**
    This is the class defining the termination token that gets passed
-   around.  Essentially, it has a color and a terminator.  
+   around.  Essentially, it has a color and a terminator.
 
    The color can be WHITE, which means it's on the first cycle,
    RED, which means it's on it's second cycle, or BLACK.
@@ -25,36 +25,36 @@ class SerializedInstance;
 
 class NegativeEventMessage : public KernelMessage {
 public:
-  NegativeEventMessage(	unsigned int source,
-			unsigned int dest,
-			const vector<const NegativeEvent*> &events,
-                        const string &initGVTInfo ):
-    KernelMessage( source, dest ),
-    myEvents( events ),
-    gVTInfo( initGVTInfo ){}
+    NegativeEventMessage(unsigned int source,
+                         unsigned int dest,
+                         const vector<const NegativeEvent*>& events,
+                         const string& initGVTInfo):
+        KernelMessage(source, dest),
+        myEvents(events),
+        gVTInfo(initGVTInfo) {}
 
-  ~NegativeEventMessage();
+    ~NegativeEventMessage();
 
-  static Serializable *deserialize( SerializedInstance *data );
-  static const string &getNegativeEventMessageType();
+    static Serializable* deserialize(SerializedInstance* data);
+    static const string& getNegativeEventMessageType();
 
-  void serialize( SerializedInstance * ) const;
+    void serialize(SerializedInstance*) const;
 
-  const string &getDataType() const {
-    return getNegativeEventMessageType();
-  }
+    const string& getDataType() const {
+        return getNegativeEventMessageType();
+    }
 
-  static void registerDeserializer();
+    static void registerDeserializer();
 
-  const vector<const NegativeEvent*> &getEvents(){ return myEvents; }
+    const vector<const NegativeEvent*>& getEvents() { return myEvents; }
 
-  const string getGVTInfo(){
-    return gVTInfo;
-  }
+    const string getGVTInfo() {
+        return gVTInfo;
+    }
 
 private:
-  vector<const NegativeEvent*> myEvents;
-  const string gVTInfo;
+    vector<const NegativeEvent*> myEvents;
+    const string gVTInfo;
 };
 
 #endif

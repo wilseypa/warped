@@ -26,46 +26,46 @@ class DefaultTimeWarpEventContainer;
 */
 class DefaultTimeWarpEventSet : public TimeWarpEventSet {
 public:
-  DefaultTimeWarpEventSet( TimeWarpSimulationManager *initSimManager,
-                           bool usingOneAntiMsg );
+    DefaultTimeWarpEventSet(TimeWarpSimulationManager* initSimManager,
+                            bool usingOneAntiMsg);
 
-  ~DefaultTimeWarpEventSet();
+    ~DefaultTimeWarpEventSet();
 
-  bool insert( const Event *event );
+    bool insert(const Event* event);
 
-  bool handleAntiMessage( SimulationObject *eventFor,
-                          const NegativeEvent *cancelEvent );
+    bool handleAntiMessage(SimulationObject* eventFor,
+                           const NegativeEvent* cancelEvent);
 
-  const Event *getEvent(SimulationObject *);
+    const Event* getEvent(SimulationObject*);
 
-  const Event *getEvent(SimulationObject *, const VTime&);
+    const Event* getEvent(SimulationObject*, const VTime&);
 
-  const Event *peekEvent(SimulationObject *);
+    const Event* peekEvent(SimulationObject*);
 
-  const Event *peekEvent(SimulationObject *, const VTime&);
+    const Event* peekEvent(SimulationObject*, const VTime&);
 
-  void fossilCollect( SimulationObject *, const VTime & );
+    void fossilCollect(SimulationObject*, const VTime&);
 
-  void fossilCollect( SimulationObject *, int );
+    void fossilCollect(SimulationObject*, int);
 
-  void fossilCollect( const Event * );
+    void fossilCollect(const Event*);
 
-  void configure( SimulationConfiguration & ){}
+    void configure(SimulationConfiguration&) {}
 
-  void rollback( SimulationObject *, const VTime & );
+    void rollback(SimulationObject*, const VTime&);
 
-  bool inThePast( const Event * );
+    bool inThePast(const Event*);
 
-  void ofcPurge();
+    void ofcPurge();
 
-  void debugDump( const string &objectName, std::ostream &os );
+    void debugDump(const string& objectName, std::ostream& os);
 
 private:
-  DefaultTimeWarpEventContainer &getEventContainer( const OBJECT_ID *objectID );
-  
-  vector<DefaultTimeWarpEventContainer *> events;
+    DefaultTimeWarpEventContainer& getEventContainer(const OBJECT_ID* objectID);
 
-  TimeWarpSimulationManager *mySimulationManager;
+    vector<DefaultTimeWarpEventContainer*> events;
+
+    TimeWarpSimulationManager* mySimulationManager;
 };
 
 #endif

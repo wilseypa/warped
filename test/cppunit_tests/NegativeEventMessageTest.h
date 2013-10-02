@@ -5,21 +5,21 @@
 #include "KernelMessageTest.h"
 
 class NegativeEventMessageTest : public KernelMessageTest {
-  CPPUNIT_TEST_SUITE( NegativeEventMessageTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST( testSerialization );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(NegativeEventMessageTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testSerialization);
+    CPPUNIT_TEST_SUITE_END();
 
 private:
-  NegativeEventMessage *testMessage;
+    NegativeEventMessage* testMessage;
 
 public:
-  // Test interface
-  void setUp();
-  void tearDown();
+    // Test interface
+    void setUp();
+    void tearDown();
 
-  void testConstructor();
-  void testSerialization();
+    void testConstructor();
+    void testSerialization();
 };
 
 #endif

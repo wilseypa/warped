@@ -17,27 +17,27 @@
 
 */
 class DefaultCommunicationManager :
-   public CommunicationManagerImplementationBase {
+    public CommunicationManagerImplementationBase {
 
 public:
 
-   /**@name Public Class Methods of DefaultCommunicationManager. */
-   //@{
-  
-   /** Constructor.
+    /**@name Public Class Methods of DefaultCommunicationManager. */
+    //@{
 
-       @param initPhysicalLayer Handle to the physical comm. layer.
-       @param initSimulationManager Handle to the Simulation Manager.
-   */
-   DefaultCommunicationManager( PhysicalCommunicationLayer *initPhysicalLayer,
-				TimeWarpSimulationManager *initSimulationManager );
+    /** Constructor.
 
-   /// Destructor.
-   ~DefaultCommunicationManager();
+        @param initPhysicalLayer Handle to the physical comm. layer.
+        @param initSimulationManager Handle to the Simulation Manager.
+    */
+    DefaultCommunicationManager(PhysicalCommunicationLayer* initPhysicalLayer,
+                                TimeWarpSimulationManager* initSimulationManager);
 
-  virtual void configure( SimulationConfiguration & ){}
-  
-  //@} // End of Public Class Methods of DefaultCommunicationManager
+    /// Destructor.
+    ~DefaultCommunicationManager();
+
+    virtual void configure(SimulationConfiguration&) {}
+
+    //@} // End of Public Class Methods of DefaultCommunicationManager
 
 };
 

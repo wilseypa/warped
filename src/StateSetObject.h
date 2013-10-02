@@ -18,87 +18,87 @@
 template <class Element>
 class StateSetObject : public SetObject< Element > {
 public:
-   /**@name Public Class Methods of StateSetObject. */
-   //@{
+    /**@name Public Class Methods of StateSetObject. */
+    //@{
 
-   /** Constructor.
+    /** Constructor.
 
-       @param currentTime Current time  of event.
-       @param currentElement Element to be encapsulated.
-       @param eventID sender object if of the element.
-   */
-   StateSetObject(const VTime& currentTime, Element* currentElement,
-                  const EventId *id, const ObjectID *sender) :
-      SetObject< Element >(currentTime, currentElement), eventID(id), eventSender(sender){}
+        @param currentTime Current time  of event.
+        @param currentElement Element to be encapsulated.
+        @param eventID sender object if of the element.
+    */
+    StateSetObject(const VTime& currentTime, Element* currentElement,
+                   const EventId* id, const ObjectID* sender) :
+        SetObject< Element >(currentTime, currentElement), eventID(id), eventSender(sender) {}
 
-   /** Constructor.
+    /** Constructor.
 
-       @param currentTime Current time  of event.
-       @param currentElement Element to be encapsulated.
-   */
-   StateSetObject(const VTime& currentTime, Element* currentElement):
-      SetObject< Element >(currentTime, currentElement){}
+        @param currentTime Current time  of event.
+        @param currentElement Element to be encapsulated.
+    */
+    StateSetObject(const VTime& currentTime, Element* currentElement):
+        SetObject< Element >(currentTime, currentElement) {}
 
-   /** Constructor.
+    /** Constructor.
 
-       @param currentTime Current time  of event.
-   */
-   StateSetObject(const VTime& currentTime):
-      SetObject< Element >(currentTime, NULL){}
+        @param currentTime Current time  of event.
+    */
+    StateSetObject(const VTime& currentTime):
+        SetObject< Element >(currentTime, NULL) {}
 
-   /** Constructor.
+    /** Constructor.
 
-       @param eventID sender Object id of the event.
-   */
-   StateSetObject(const EventId& id) :
-      SetObject< Element >(0, NULL), eventID(&id){}
+        @param eventID sender Object id of the event.
+    */
+    StateSetObject(const EventId& id) :
+        SetObject< Element >(0, NULL), eventID(&id) {}
 
-   /// Destructor.
-   ~StateSetObject(){}
+    /// Destructor.
+    ~StateSetObject() {}
 
-   // Returns the event ID associated with the state save.
-   const EventId *getEventId() const{
-     return eventID;
-   }
+    // Returns the event ID associated with the state save.
+    const EventId* getEventId() const {
+        return eventID;
+    }
 
-   // Returns the object sender of the event associated with the state save.
-   const ObjectID *getEventSender() const{
-     return eventSender;
-   }
+    // Returns the object sender of the event associated with the state save.
+    const ObjectID* getEventSender() const {
+        return eventSender;
+    }
 
-   /// Overloaded operator <
-   //friend bool operator<(const StateSetObject& a, const StateSetObject& b){
-   //  return ((a.time < b.time) ? true : ((a.time == b.time) ? (a.eventID < b.eventID) : false));
-   //}
-  
-   /// Overloaded operator ==
-   friend bool operator==(const StateSetObject& a, const StateSetObject& b){
-      return (a.time == b.time) && (a->eventID == b->eventID) && (a->eventSender == b->eventSender);
-   }
-  
-   /// Overloaded operator >
-   //friend bool operator>(const StateSetObject& a, const StateSetObject& b){
-   //  return ((a.time > b.time) ? true : ((a.time == b.time) ? (a.eventID > b.eventID) : false));
-   //}
-  
-   /// Overloaded operator <<
-   friend std::ostream& operator<<(std::ostream& os, const StateSetObject& a){
-      return os << a.getTime();
-   }
+    /// Overloaded operator <
+    //friend bool operator<(const StateSetObject& a, const StateSetObject& b){
+    //  return ((a.time < b.time) ? true : ((a.time == b.time) ? (a.eventID < b.eventID) : false));
+    //}
 
-   //@} // End of Public Class Methods of StateSetObject.
+    /// Overloaded operator ==
+    friend bool operator==(const StateSetObject& a, const StateSetObject& b) {
+        return (a.time == b.time) && (a->eventID == b->eventID) && (a->eventSender == b->eventSender);
+    }
+
+    /// Overloaded operator >
+    //friend bool operator>(const StateSetObject& a, const StateSetObject& b){
+    //  return ((a.time > b.time) ? true : ((a.time == b.time) ? (a.eventID > b.eventID) : false));
+    //}
+
+    /// Overloaded operator <<
+    friend std::ostream& operator<<(std::ostream& os, const StateSetObject& a) {
+        return os << a.getTime();
+    }
+
+    //@} // End of Public Class Methods of StateSetObject.
 
 protected:
-   /**@name Protected Class Attributes of StateSetObject. */
-   //@{
+    /**@name Protected Class Attributes of StateSetObject. */
+    //@{
 
-   ///EventId of the process created this element(eventID)
-   const EventId *eventID;
+    ///EventId of the process created this element(eventID)
+    const EventId* eventID;
 
-   ///Sender of the event of this point.
-   const ObjectID *eventSender;
+    ///Sender of the event of this point.
+    const ObjectID* eventSender;
 
-   //@} // End of Protected Class Attributes of StateSetObject.
+    //@} // End of Protected Class Attributes of StateSetObject.
 
 };
 

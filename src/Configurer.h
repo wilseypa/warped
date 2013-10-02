@@ -19,60 +19,60 @@ class Application;
 
 class Configurer {
 public:
-  class Choice;
+    class Choice;
 
-  class ChoiceHashMap : public std::unordered_map<string, const Choice *> {
-  public:
-    ChoiceHashMap(){}
-    ~ChoiceHashMap(){}
-  };
+    class ChoiceHashMap : public std::unordered_map<string, const Choice*> {
+    public:
+        ChoiceHashMap() {}
+        ~ChoiceHashMap() {}
+    };
 
-  class Choice {
-  public:
-    Choice( string optionName,
-	    string optionDescription,
-	    string value,
-	    ChoiceHashMap &additionalArguments ) :
-      myOptionName( optionName ),
-      myValue( value ),
-      myOptionDescription( optionDescription ),
-      myAdditionalArguments( additionalArguments ){}
+    class Choice {
+    public:
+        Choice(string optionName,
+               string optionDescription,
+               string value,
+               ChoiceHashMap& additionalArguments) :
+            myOptionName(optionName),
+            myValue(value),
+            myOptionDescription(optionDescription),
+            myAdditionalArguments(additionalArguments) {}
 
-    const string getOptionName() const {
-      return myOptionName;
-    }
+        const string getOptionName() const {
+            return myOptionName;
+        }
 
-    const string getOptionDescription() const {
-      return myOptionDescription;
-    }
+        const string getOptionDescription() const {
+            return myOptionDescription;
+        }
 
-    const string getValue() const {
-      return myValue;
-    }
+        const string getValue() const {
+            return myValue;
+        }
 
-    ChoiceHashMap &getAdditionalArguments() const {
-      return myAdditionalArguments;
-    }
+        ChoiceHashMap& getAdditionalArguments() const {
+            return myAdditionalArguments;
+        }
 
-  private:
-    const string myOptionName;
-    const string myValue;
-    const string myOptionDescription;
-    ChoiceHashMap &myAdditionalArguments;
-  };
+    private:
+        const string myOptionName;
+        const string myValue;
+        const string myOptionDescription;
+        ChoiceHashMap& myAdditionalArguments;
+    };
 
-  /** Allocate one of my objects based on the configuration.  This method
-      is overloaded by all ancestors.  @param configurationMap Set of
-      configuration options.
+    /** Allocate one of my objects based on the configuration.  This method
+        is overloaded by all ancestors.  @param configurationMap Set of
+        configuration options.
 
-      @param myConfiguration The configuration that will determine what
-      type of child to instantiate.
+        @param myConfiguration The configuration that will determine what
+        type of child to instantiate.
 
-      @param parent The parent that is allocating this child.  Can be NULL.
+        @param parent The parent that is allocating this child.  Can be NULL.
 
-  */
-  virtual Configurable *allocate( SimulationConfiguration &myConfiguration,
-				  Configurable *parent ) const = 0;
+    */
+    virtual Configurable* allocate(SimulationConfiguration& myConfiguration,
+                                   Configurable* parent) const = 0;
 
 
 protected:
@@ -83,8 +83,8 @@ protected:
 //   */
 //   virtual Configurable *allocate( const Choice * ) = 0;
 
-  Configurer(){}
-  virtual ~Configurer(){}
+    Configurer() {}
+    virtual ~Configurer() {}
 };
 
 #endif

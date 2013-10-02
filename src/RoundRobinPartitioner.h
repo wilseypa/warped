@@ -6,10 +6,10 @@
 
 class RoundRobinPartitioner : public Partitioner {
 public:
-  RoundRobinPartitioner();
+    RoundRobinPartitioner();
 
-  const PartitionInfo *partition( const vector<SimulationObject *> *objects,
-                                  const unsigned int numLPs ) const;
+    const PartitionInfo* partition(const vector<SimulationObject*>* objects,
+                                   const unsigned int numLPs) const;
 };
 
 #endif

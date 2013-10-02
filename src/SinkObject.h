@@ -36,68 +36,68 @@
     execution anymore.  In addition, in order to intelligently partition
     simulation objects in a distributed simulation, the kernel can call
     the sink object's {\tt getFanins} method to determine the set of
-    simulation objects that send events to this sink object.  
+    simulation objects that send events to this sink object.
 */
 class SinkObject : public SimulationObject {
 public:
-  /**@name Public Class Methods of SinkObject. */
-  //@{
+    /**@name Public Class Methods of SinkObject. */
+    //@{
 
-  /** Constructor.
+    /** Constructor.
 
-      @param starttime Time when simulation object will start.
-   */
-  SinkObject(const VTime& starttime);
+        @param starttime Time when simulation object will start.
+     */
+    SinkObject(const VTime& starttime);
 
-  /// Destructor
-  virtual ~SinkObject();
+    /// Destructor
+    virtual ~SinkObject();
 
-  /** Tells whether simulation object has finished its simulation.
+    /** Tells whether simulation object has finished its simulation.
 
-      The kernel calls this method to see if the simulation object
-      has finished its simulation.
+        The kernel calls this method to see if the simulation object
+        has finished its simulation.
 
-      @return A boolean that tells whether simulation is finished.
-  */
-  bool amIDone();
+        @return A boolean that tells whether simulation is finished.
+    */
+    bool amIDone();
 
-  /** Tell kernel that simulation has finished.
+    /** Tell kernel that simulation has finished.
 
-      This method is used to tell the kernel that this simulation object
-      has finished its simulation and need not be scheduled anymore.
-  */
-  void iAmFinished();
+        This method is used to tell the kernel that this simulation object
+        has finished its simulation and need not be scheduled anymore.
+    */
+    void iAmFinished();
 
-  /** Get set of simulation objects that call this simulation object.
+    /** Get set of simulation objects that call this simulation object.
 
-      @return Set of object id's that call this object.
-  */
-  const int* getFanins();
+        @return Set of object id's that call this object.
+    */
+    const int* getFanins();
 
-  //@} // End of Public Class Methods of SinkObject.
+    //@} // End of Public Class Methods of SinkObject.
 
 private:
-  /**@name Private Class Attributes of SinkObject. */
-  //@{
+    /**@name Private Class Attributes of SinkObject. */
+    //@{
 
-  /// Time at which this simulation object should start. 
-  const VTime& startTime;
+    /// Time at which this simulation object should start.
+    const VTime& startTime;
 
-  /// Tells whether simulation has finished for this object.
-  bool sinkFinished;
+    /// Tells whether simulation has finished for this object.
+    bool sinkFinished;
 
-  //@} // End of Private Class Attributes of SinkObject.
+    //@} // End of Private Class Attributes of SinkObject.
 
-  /**@name Private Class Methods of SinkObject. */
-  //@{
-  /** Redefined and hidden method (should not be called).
+    /**@name Private Class Methods of SinkObject. */
+    //@{
+    /** Redefined and hidden method (should not be called).
 
-      Since SinkObjects only consume events, this method cannot be called.
-      If this method is called from within SinkObject, an error will be
-      flagged.  
-  */
-  void sendEvent(const Event* event);
-  //@} // End of Private Class Methods of SinkObject.
+        Since SinkObjects only consume events, this method cannot be called.
+        If this method is called from within SinkObject, an error will be
+        flagged.
+    */
+    void sendEvent(const Event* event);
+    //@} // End of Private Class Methods of SinkObject.
 };
 
 #endif

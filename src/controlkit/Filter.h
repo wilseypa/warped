@@ -13,18 +13,18 @@ template <class Type>
 class Filter {
 public:
 
-   /**@name Public Class Methods of Filter */
-   //@{
+    /**@name Public Class Methods of Filter */
+    //@{
 
-   Filter(){};
+    Filter() {};
 
-   virtual ~Filter(){};
+    virtual ~Filter() {};
 
-   virtual void reset() = 0;
-   virtual void update(Type) = 0;
-   virtual Type getData() = 0;
+    virtual void reset() = 0;
+    virtual void update(Type) = 0;
+    virtual Type getData() = 0;
 
-   //@} // End of Public Class Methods of Filter 
+    //@} // End of Public Class Methods of Filter
 };
 
 

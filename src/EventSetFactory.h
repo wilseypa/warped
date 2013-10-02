@@ -23,37 +23,37 @@ class EventSetFactory : virtual public Configurer {
 
 public:
 
-  /**@name Public Class Methods of EventSetFactory. */
-  //@{
+    /**@name Public Class Methods of EventSetFactory. */
+    //@{
 
-  /// Default Constructor
-  EventSetFactory();
+    /// Default Constructor
+    EventSetFactory();
 
-  /// Destructor
-  virtual ~EventSetFactory();
+    /// Destructor
+    virtual ~EventSetFactory();
 
-  /** Set the configured event set implementation.
-       
-  Function to attach the particular event set implementation in
-  the kernel. Will be called by the configuration step to set the
-  appropriate event set implementation.
+    /** Set the configured event set implementation.
 
-  @param configurationMap Map of configuration choices.
-  */
-  Configurable *allocate( SimulationConfiguration &configuration,
-			  Configurable *parent ) const;
-   
-  static const EventSetFactory *instance();
+    Function to attach the particular event set implementation in
+    the kernel. Will be called by the configuration step to set the
+    appropriate event set implementation.
 
-  //@} // End of Public Class Methods of EventSetFactory.
-   
+    @param configurationMap Map of configuration choices.
+    */
+    Configurable* allocate(SimulationConfiguration& configuration,
+                           Configurable* parent) const;
+
+    static const EventSetFactory* instance();
+
+    //@} // End of Public Class Methods of EventSetFactory.
+
 protected:
-   
-  /**@name Private Class Attributes of EventSetFactory. */
-  //@{
 
-  //@} // End of Private Class Attributes of EventSetFactory.
-   
+    /**@name Private Class Attributes of EventSetFactory. */
+    //@{
+
+    //@} // End of Private Class Attributes of EventSetFactory.
+
 };
 
 #endif

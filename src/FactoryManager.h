@@ -4,7 +4,7 @@
 
 #include "FactoryImplementationBase.h"
 
-/** The FactoryManager base class.  
+/** The FactoryManager base class.
 
     The FactoryManager base class is the class from where the user
     starts derives his/her own factory definitions. Each
@@ -17,41 +17,41 @@
 */
 class FactoryManager : public FactoryImplementationBase {
 public:
-   
-   /**@name Public Class Methods of FactoryManager */
-   //@{
 
-  /// Virtual Destructor.
-   virtual ~FactoryManager(){};
+    /**@name Public Class Methods of FactoryManager */
+    //@{
 
-   /** This method will be defined by the user.
+    /// Virtual Destructor.
+    virtual ~FactoryManager() {};
 
-       @return A handle to the created user factory manager.
-   */
-   static FactoryManager* createUserFactory();
+    /** This method will be defined by the user.
 
-   /** Get the kind of factory.
+        @return A handle to the created user factory manager.
+    */
+    static FactoryManager* createUserFactory();
 
-       @return The kind of factory.
-   */
-   const Kind getKind() const {
-      return SUB_FACTORY;
-   }
+    /** Get the kind of factory.
 
-   //@} // End of Public Class Methods of FactoryManager
-   
+        @return The kind of factory.
+    */
+    const Kind getKind() const {
+        return SUB_FACTORY;
+    }
+
+    //@} // End of Public Class Methods of FactoryManager
+
 protected:
 
-   /**@name Protected Class Methods of FactoryManager */
-   //@{
+    /**@name Protected Class Methods of FactoryManager */
+    //@{
 
-   /** Constructor.
+    /** Constructor.
 
-       @param parent Handle the to oarect factory.
-   */
-   FactoryManager(FactoryImplementationBase *parent);
+        @param parent Handle the to oarect factory.
+    */
+    FactoryManager(FactoryImplementationBase* parent);
 
-   //@} // End of Protected Class Methods of FactoryManager.
+    //@} // End of Protected Class Methods of FactoryManager.
 };
 
 #endif

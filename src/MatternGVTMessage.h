@@ -4,7 +4,7 @@
 
 /**
    This is the class defining the termination token that gets passed
-   around.  Essentially, it has a color and a terminator.  
+   around.  Essentially, it has a color and a terminator.
 
    The color can be WHITE, which means it's on the first cycle,
    RED, which means it's on it's second cycle, or BLACK.
@@ -21,57 +21,57 @@ class SerializedInstance;
 
 class MatternGVTMessage : public KernelMessage {
 public:
-  inline MatternGVTMessage( unsigned int source,
-			    unsigned int dest,
-			    const VTime &initLastScheduledEventTime,
-			    const VTime &initMinimumTimeStamp,
-			    const int initNumMessagesInTransit ) :
-    KernelMessage( source, dest ),
-    lastScheduledEventTime( initLastScheduledEventTime.clone() ),
-    minimumTimeStamp( initMinimumTimeStamp.clone() ),
-    numMessagesInTransit( initNumMessagesInTransit ){}
-  
-  void serialize( SerializedInstance * ) const;
-  static Serializable *deserialize( SerializedInstance *data );
+    inline MatternGVTMessage(unsigned int source,
+                             unsigned int dest,
+                             const VTime& initLastScheduledEventTime,
+                             const VTime& initMinimumTimeStamp,
+                             const int initNumMessagesInTransit) :
+        KernelMessage(source, dest),
+        lastScheduledEventTime(initLastScheduledEventTime.clone()),
+        minimumTimeStamp(initMinimumTimeStamp.clone()),
+        numMessagesInTransit(initNumMessagesInTransit) {}
 
-  static const string &getMatternGVTMessageType();
+    void serialize(SerializedInstance*) const;
+    static Serializable* deserialize(SerializedInstance* data);
 
-  const string &getDataType() const {
-    return getMatternGVTMessageType();
-  }
+    static const string& getMatternGVTMessageType();
 
-  static void registerDeserializer();
+    const string& getDataType() const {
+        return getMatternGVTMessageType();
+    }
 
-  const VTime &getLastScheduledEventTime() const {
-    return *lastScheduledEventTime;
-  }
+    static void registerDeserializer();
 
-  const VTime &getMinimumTimeStamp() const {
-    return *minimumTimeStamp;
-  }
+    const VTime& getLastScheduledEventTime() const {
+        return *lastScheduledEventTime;
+    }
 
-  const int getNumMessagesInTransit() const {
-    return numMessagesInTransit;
-  }
+    const VTime& getMinimumTimeStamp() const {
+        return *minimumTimeStamp;
+    }
 
-  ~MatternGVTMessage(){
-    delete lastScheduledEventTime;
-    delete minimumTimeStamp;
-  }
+    const int getNumMessagesInTransit() const {
+        return numMessagesInTransit;
+    }
+
+    ~MatternGVTMessage() {
+        delete lastScheduledEventTime;
+        delete minimumTimeStamp;
+    }
 
 private:
-  /**
-     Default constructor - to be used only by the deserializer.
-  */
-  MatternGVTMessage() : 
-    lastScheduledEventTime( 0 ),
-    minimumTimeStamp( 0 ),
-    numMessagesInTransit(0){}
+    /**
+       Default constructor - to be used only by the deserializer.
+    */
+    MatternGVTMessage() :
+        lastScheduledEventTime(0),
+        minimumTimeStamp(0),
+        numMessagesInTransit(0) {}
 
 
-  const VTime *lastScheduledEventTime;
-  const VTime *minimumTimeStamp;
-  const int numMessagesInTransit;
+    const VTime* lastScheduledEventTime;
+    const VTime* minimumTimeStamp;
+    const int numMessagesInTransit;
 };
 
 #endif

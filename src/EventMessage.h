@@ -4,7 +4,7 @@
 
 /**
    This is the class defining the termination token that gets passed
-   around.  Essentially, it has a color and a terminator.  
+   around.  Essentially, it has a color and a terminator.
 
    The color can be WHITE, which means it's on the first cycle,
    RED, which means it's on it's second cycle, or BLACK.
@@ -25,20 +25,20 @@ class Event;
 
 class EventMessage : public EventMessageBase {
 public:
-  EventMessage(	unsigned int source,
-		unsigned int dest,
-		const Event *initEvent,
-		const string &initGVTInfo ) :
-    EventMessageBase( source, dest, initEvent, initGVTInfo ){}
-  
-  static Serializable *deserialize( SerializedInstance *data );
-  static const string &getEventMessageType();
+    EventMessage(unsigned int source,
+                 unsigned int dest,
+                 const Event* initEvent,
+                 const string& initGVTInfo) :
+        EventMessageBase(source, dest, initEvent, initGVTInfo) {}
 
-  const string &getDataType() const {
-    return getEventMessageType();
-  }
+    static Serializable* deserialize(SerializedInstance* data);
+    static const string& getEventMessageType();
 
-  static void registerDeserializer();
+    const string& getDataType() const {
+        return getEventMessageType();
+    }
+
+    static void registerDeserializer();
 
 private:
 };

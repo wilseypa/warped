@@ -5,25 +5,25 @@
 #include "KernelMessageTest.h"
 
 class MatternGVTMessageTest : public KernelMessageTest {
-  CPPUNIT_TEST_SUITE( MatternGVTMessageTest);
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST( testSerialization );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(MatternGVTMessageTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testSerialization);
+    CPPUNIT_TEST_SUITE_END();
 
 private:
-  MatternGVTMessage *testMessage;
+    MatternGVTMessage* testMessage;
 
-  static const VTime &getDefaultLastScheduledEventTime();
-  static const VTime &getDefaultMinimumTimeStamp();
-  static unsigned int getDefaultNumMessagesInTransit();
+    static const VTime& getDefaultLastScheduledEventTime();
+    static const VTime& getDefaultMinimumTimeStamp();
+    static unsigned int getDefaultNumMessagesInTransit();
 
 public:
-  // Test interface
-  void setUp();
-  void tearDown();
+    // Test interface
+    void setUp();
+    void tearDown();
 
-  void testConstructor();
-  void testSerialization();
+    void testConstructor();
+    void testSerialization();
 };
 
 #endif

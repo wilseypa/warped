@@ -18,47 +18,47 @@ using std::cerr;
 /** The DefaultVisualizationManager class.
 
     This is the class for visualization thingies.  More documentation to
-    follow... 
+    follow...
 
         "It Better" -DJ
 
 */
 class DefaultVisualizationManager : public VisualizationManager {
- public:
+public:
 
-  /**@name Public Class Methods of DefaultVisualizationManager. */
-  //@{
+    /**@name Public Class Methods of DefaultVisualizationManager. */
+    //@{
 
-  /** Default constructor.
+    /** Default constructor.
 
-      @param void
-   */
-  DefaultVisualizationManager(TimeWarpSimMgrWithVisualization *, 
-			      map<const string, string>& configurationMap);
+        @param void
+     */
+    DefaultVisualizationManager(TimeWarpSimMgrWithVisualization*,
+                                map<const string, string>& configurationMap);
 
-  /// destructor
-  ~DefaultVisualizationManager();
+    /// destructor
+    ~DefaultVisualizationManager();
 
-  int openVisualizationObject(const char *name, 
-			      VisualizationManager::DisplayKind kind, 
-			      VisualizationManager::VisualizationTools vizTools);
- 
-  int openVisualizationObject(const char *name, 
-			      VisualizationManager::DisplayKind kind, 
-			      VisualizationManager::VisualizationTools vizTools, 
-			      VisualizationManager::DataType, void *);
+    int openVisualizationObject(const char* name,
+                                VisualizationManager::DisplayKind kind,
+                                VisualizationManager::VisualizationTools vizTools);
+
+    int openVisualizationObject(const char* name,
+                                VisualizationManager::DisplayKind kind,
+                                VisualizationManager::VisualizationTools vizTools,
+                                VisualizationManager::DataType, void*);
 
 
-  void closeVisualizationObject(int);
+    void closeVisualizationObject(int);
 
-  void addListener(int, void *);
-  void updateVisalizationValue(int);
+    void addListener(int, void*);
+    void updateVisalizationValue(int);
 
-  void receiveData(char *);
+    void receiveData(char*);
 
 protected:
 
-  Socket *server;
+    Socket* server;
 
 private:
 

@@ -7,40 +7,40 @@
 /** The NullVisualizationManager class.
 
     This is the class for visualization thingies.  More documentation to
-    follow... 
+    follow...
 
         "It Better" -DJ
 
 */
 class NullVisualizationManager : public VisualizationManager {
- public:
+public:
 
-  /**@name Public Class Methods of NullVisualizationManager. */
-  //@{
+    /**@name Public Class Methods of NullVisualizationManager. */
+    //@{
 
-  /** Default constructor.
+    /** Default constructor.
 
-      @param void
-   */
-  NullVisualizationManager(TimeWarpSimMgrWithVisualization *);
+        @param void
+     */
+    NullVisualizationManager(TimeWarpSimMgrWithVisualization*);
 
-  /// destructor
-  ~NullVisualizationManager();
+    /// destructor
+    ~NullVisualizationManager();
 
-  virtual int openVisualizationObject(const char *name, 
-				      VisualizationManager::DisplayKind kind, 
-				      VisualizationManager::VisualizationTools vizTools) = 0;
- 
-  virtual int openVisualizationObject(const char *name, 
-				      VisualizationManager::DisplayKind kind, 
-				      VisualizationManager::VisualizationTools
-				      vizTools, VisualizationManager::DataType,
-				      void *);
+    virtual int openVisualizationObject(const char* name,
+                                        VisualizationManager::DisplayKind kind,
+                                        VisualizationManager::VisualizationTools vizTools) = 0;
 
-  virtual void closeVisualizationObject(int);
+    virtual int openVisualizationObject(const char* name,
+                                        VisualizationManager::DisplayKind kind,
+                                        VisualizationManager::VisualizationTools
+                                        vizTools, VisualizationManager::DataType,
+                                        void*);
 
-  virtual void addListener(int, void *);
-  virtual void updateVisalizationValue(int);
+    virtual void closeVisualizationObject(int);
+
+    virtual void addListener(int, void*);
+    virtual void updateVisalizationValue(int);
 };
 
 #endif

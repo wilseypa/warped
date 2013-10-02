@@ -23,34 +23,34 @@ class TimeWarpCentralizedEventSetFactory : public TimeWarpEventSetFactory {
 
 public:
 
-  /**@name Public Class Methods of EventSetAbstractFactory. */
-  //@{
+    /**@name Public Class Methods of EventSetAbstractFactory. */
+    //@{
 
-  /// Default Constructor.
-  TimeWarpCentralizedEventSetFactory();
+    /// Default Constructor.
+    TimeWarpCentralizedEventSetFactory();
 
-  /// Destructor.
-  virtual ~TimeWarpCentralizedEventSetFactory();
+    /// Destructor.
+    virtual ~TimeWarpCentralizedEventSetFactory();
 
-  /** Set the configured event set implementation.
-      
-      Function to attach the particular event set implementation in
-      the kernel. Will be called by the configuration step to set the
-      appropriate event set implementation.
+    /** Set the configured event set implementation.
 
-      @param configurationMap Set of configuration options.
-  */
-  Configurable *allocate( SimulationConfiguration &configuration,
-			  Configurable *parent ) const;
+        Function to attach the particular event set implementation in
+        the kernel. Will be called by the configuration step to set the
+        appropriate event set implementation.
 
-  //@} // End of Public Class Methods of EventSetAbstractFactory.
-   
+        @param configurationMap Set of configuration options.
+    */
+    Configurable* allocate(SimulationConfiguration& configuration,
+                           Configurable* parent) const;
+
+    //@} // End of Public Class Methods of EventSetAbstractFactory.
+
 protected:
-   
-  /**@name Protected Class Attributes of EventSetAbstractFactory. */
-  //@{
 
-  //@} // End of Protected Class Attributes of EventSetAbstractFactory.
+    /**@name Protected Class Attributes of EventSetAbstractFactory. */
+    //@{
+
+    //@} // End of Protected Class Attributes of EventSetAbstractFactory.
 };
 
 #endif //ifdef TIME_WARP_CENTRALIZED_EVENT_SET_FACTORY_H

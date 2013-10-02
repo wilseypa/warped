@@ -8,19 +8,19 @@ using std::ios;
 #include <string>
 using std::string;
 
-namespace warped{
+namespace warped {
 
 class FileManager {
 public:
-  static FileManager &instance();
-  virtual fstream &open( const string &fileName, ios::openmode ) = 0;
+    static FileManager& instance();
+    virtual fstream& open(const string& fileName, ios::openmode) = 0;
 
 protected:
-  FileManager();
-  virtual ~FileManager() = 0;
+    FileManager();
+    virtual ~FileManager() = 0;
 
 private:
-  static FileManager *initSingleton();
+    static FileManager* initSingleton();
 };
 
 }

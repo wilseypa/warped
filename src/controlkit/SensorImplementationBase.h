@@ -16,50 +16,50 @@ template <class NormalType>
 class SensorImplementationBase : public Sensor {
 public:
 
-   /**@name Public Class Methods of SensorImplementationBase */
-   //@{
+    /**@name Public Class Methods of SensorImplementationBase */
+    //@{
 
-   /// Default constructor
-   SensorImplementationBase(string name,
-                            sensorStatus currentStatus=SENSOR_INACTIVE,
-                            sensorType currentType=SCALAR_SENSOR)
-      : sensorName(name), status(currentStatus), sensor_type(currentType){};
+    /// Default constructor
+    SensorImplementationBase(string name,
+                             sensorStatus currentStatus=SENSOR_INACTIVE,
+                             sensorType currentType=SCALAR_SENSOR)
+        : sensorName(name), status(currentStatus), sensor_type(currentType) {};
 
-   /// Default Destructor
-   virtual ~SensorImplementationBase(){};
+    /// Default Destructor
+    virtual ~SensorImplementationBase() {};
 
-   /// make the sensor active
-   virtual void makeSensorActive(){
-      status = SENSOR_ACTIVE;
-   };
+    /// make the sensor active
+    virtual void makeSensorActive() {
+        status = SENSOR_ACTIVE;
+    };
 
-   /// make the sensor inactive
-   virtual void makeSensorInActive(){
-      status = SENSOR_INACTIVE;
-   };
+    /// make the sensor inactive
+    virtual void makeSensorInActive() {
+        status = SENSOR_INACTIVE;
+    };
 
-   /// is the sensor currently active
-   virtual bool isSensorActive(){
-      return (status == SENSOR_ACTIVE ? true : false);
-   };
-   
-   //@} // End of Public Class Methods of SensorImplementationBase
+    /// is the sensor currently active
+    virtual bool isSensorActive() {
+        return (status == SENSOR_ACTIVE ? true : false);
+    };
+
+    //@} // End of Public Class Methods of SensorImplementationBase
 
 protected:
 
-   /**@name Protected Class Attributes of SensorImplementationBase */
-   //@{
+    /**@name Protected Class Attributes of SensorImplementationBase */
+    //@{
 
-   /// the name of the sensor
-   string sensorName;
+    /// the name of the sensor
+    string sensorName;
 
-   /// is the sensor active or inactive
-   sensorStatus status;
+    /// is the sensor active or inactive
+    sensorStatus status;
 
-   /// what type of sensor is it
-   sensorType sensor_type;
-   
-   //@} // End of Protected Class Attributes of SensorImplementationBase
+    /// what type of sensor is it
+    sensorType sensor_type;
+
+    //@} // End of Protected Class Attributes of SensorImplementationBase
 
 };
 

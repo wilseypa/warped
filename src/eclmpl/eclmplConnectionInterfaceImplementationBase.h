@@ -15,16 +15,16 @@
     start-up a slave.
 */
 struct slaveStartupInfo {
-  /**@name Public Struct Attributes of slaveStartupInfo. */
-  //@{
-  
-  /// Configuration table entry for a particular slave.
-  std::vector<std::string> configTableEntry;
+    /**@name Public Struct Attributes of slaveStartupInfo. */
+    //@{
 
-  /// Information that the slave needs to contact the master.
-  eclmplContactInfo masterContactInfo;
+    /// Configuration table entry for a particular slave.
+    std::vector<std::string> configTableEntry;
 
- //@} // End of Public Struct Attributes of slaveStartupInfo.
+    /// Information that the slave needs to contact the master.
+    eclmplContactInfo masterContactInfo;
+
+//@} // End of Public Struct Attributes of slaveStartupInfo.
 };
 
 /** The eclmplConnectionInterfaceImplementationBase class.
@@ -34,193 +34,193 @@ struct slaveStartupInfo {
     a connection interface, but provides implementations for tasks
     that can be directly used by a most connection interfaces, such as
     parsing a configuration file and forking off slaves by a
-    master. 
+    master.
 */
 class eclmplConnectionInterfaceImplementationBase : public eclmplConnectionInterface {
 public:
-  /**@name Public Class Methods of eclmplConnectionInterfaceImplementationBase. */
-  //@{
+    /**@name Public Class Methods of eclmplConnectionInterfaceImplementationBase. */
+    //@{
 
-  /** Constructor.
+    /** Constructor.
 
-      @param mtuSize Maximum transfer unit (in bytes).
-  */
-  eclmplConnectionInterfaceImplementationBase(const unsigned int &mtuSize);
+        @param mtuSize Maximum transfer unit (in bytes).
+    */
+    eclmplConnectionInterfaceImplementationBase(const unsigned int& mtuSize);
 
-  /// Destructor.
-  virtual ~eclmplConnectionInterfaceImplementationBase();
+    /// Destructor.
+    virtual ~eclmplConnectionInterfaceImplementationBase();
 
-  /** Establish connections.
+    /** Establish connections.
 
-      See eclmplConnectionInterface for description.
+        See eclmplConnectionInterface for description.
 
-      @return True if successful, false otherwise.
-      @param argc Number of startup arguments.
-      @param argv Startup arguments.  
-  */
-  virtual bool establishConnections(const int * const argc, 
-				    const char * const * const * const argv);
+        @return True if successful, false otherwise.
+        @param argc Number of startup arguments.
+        @param argv Startup arguments.
+    */
+    virtual bool establishConnections(const int* const argc,
+                                      const char* const* const* const argv);
 
-  /** Tear down connections.
+    /** Tear down connections.
 
-      See eclmplConnectionInterface for description.
-  */  
-  virtual void tearDownConnections();
+        See eclmplConnectionInterface for description.
+    */
+    virtual void tearDownConnections();
 
-  /** Send message.
+    /** Send message.
 
-      See eclmplConnectionInterface for description.
+        See eclmplConnectionInterface for description.
 
-      This method must be implemented by anyone inheriting this class.
+        This method must be implemented by anyone inheriting this class.
 
-      @param msgSize Size of message in bytes.
-      @param msg Message to be transmitted.
-      @param destinationId Destination of the message.  
-  */
-  virtual void send(const unsigned int &msgSize, const char * const msg, 
-		    const unsigned int &destinationId);
+        @param msgSize Size of message in bytes.
+        @param msg Message to be transmitted.
+        @param destinationId Destination of the message.
+    */
+    virtual void send(const unsigned int& msgSize, const char* const msg,
+                      const unsigned int& destinationId);
 
-  /** Received message.
+    /** Received message.
 
-      See eclmplConnectionInterface for description.
+        See eclmplConnectionInterface for description.
 
-      This method must be implemented by anyone inheriting this class.
+        This method must be implemented by anyone inheriting this class.
 
-      @return True if a message was retrieved, false otherwise.
-      @param msgSize Value-return parameter for retrieved message.
-      @param msg A buffer than should be allocated prior to method call.
-      @param sourceId Id of peer that sent message.
-  */
-  virtual bool recv(unsigned int &msgSize, char * const msg, unsigned int &sourceId);  
+        @return True if a message was retrieved, false otherwise.
+        @param msgSize Value-return parameter for retrieved message.
+        @param msg A buffer than should be allocated prior to method call.
+        @param sourceId Id of peer that sent message.
+    */
+    virtual bool recv(unsigned int& msgSize, char* const msg, unsigned int& sourceId);
 
-  //@} // End of Public Class Methods of eclmplConnectionInterfaceImplementationBase.
+    //@} // End of Public Class Methods of eclmplConnectionInterfaceImplementationBase.
 
 protected:
-  /**@name Protected Class Methods of eclmplConnectionInterfaceImplementationBase. */
-  //@{
+    /**@name Protected Class Methods of eclmplConnectionInterfaceImplementationBase. */
+    //@{
 
-  /** Default constructor.
+    /** Default constructor.
 
-      Having default constructor as protected prohibits instantiation
-      without specifying mtu.
-  */
-  eclmplConnectionInterfaceImplementationBase(){}
+        Having default constructor as protected prohibits instantiation
+        without specifying mtu.
+    */
+    eclmplConnectionInterfaceImplementationBase() {}
 
-  /** Scan a configuration file and store it.
+    /** Scan a configuration file and store it.
 
-      This method will scan a configuration file and store it in an
-      eclmplConfigFileTable object. A new object will be created and
-      returned, so whoever is calling this method is responsible for
-      freeing up the memory that was allocated.
+        This method will scan a configuration file and store it in an
+        eclmplConfigFileTable object. A new object will be created and
+        returned, so whoever is calling this method is responsible for
+        freeing up the memory that was allocated.
 
-      @return A new populated configuration table.
-      @param fileName Full path file name of the configuration file.
-      @param argsPerEntry Number of arguments per line in the file.
-  */
-  virtual eclmplConfigFileTable* scanConfigFile( const std::string &fileName, 
-						 int argsPerEntry = 2 );
+        @return A new populated configuration table.
+        @param fileName Full path file name of the configuration file.
+        @param argsPerEntry Number of arguments per line in the file.
+    */
+    virtual eclmplConfigFileTable* scanConfigFile(const std::string& fileName,
+                                                  int argsPerEntry = 2);
 
-  /** Parse command line arguments.
+    /** Parse command line arguments.
 
-      This method will parse command line arguments that were passed
-      by the master who forked the slave that is this connection
-      interface. A slaveStartupInfo structure will be populated so
-      that the slave knows how to contact the master.
-      
-      @return Startup info for the slave.
-      @param argc Number of arguments to parse.
-      @param argv Arguments to parse.
-   */
-  virtual slaveStartupInfo parseCommandLineArguments(const int * const argc, 
-						     const char * const * const * const argv);
+        This method will parse command line arguments that were passed
+        by the master who forked the slave that is this connection
+        interface. A slaveStartupInfo structure will be populated so
+        that the slave knows how to contact the master.
 
-  /** Create command line arguments for the slave to parse.
+        @return Startup info for the slave.
+        @param argc Number of arguments to parse.
+        @param argv Arguments to parse.
+     */
+    virtual slaveStartupInfo parseCommandLineArguments(const int* const argc,
+                                                       const char* const* const* const argv);
 
-      This method will create the command line arguments that will be
-      read by a forked off slave in order to successfully establish
-      connections.
+    /** Create command line arguments for the slave to parse.
 
-      @param argc Number of arguments that the master was started with.
-      @param argv Arguments that the master was started with.
-      @param newArgc Number of arguments that the slave will be started with.
-      @param newArgv Arguments that the slave will be started with.
-      @param configTableEntry Configuration file entry for the slave.
-      @param masterContactInfo Information necessary for the slave to contact the master.
-      @param id Connection id of slave to be started.
-  */
-  virtual void createSlaveCommandLineArguments(const int * const argc, 
-					       const char * const * const * const argv,
-					       int &newArgc, char **&newArgv,
-					       const std::vector<std::string> &configTableEntry,
-					       const eclmplContactInfo &masterContactInfo,
-					       const unsigned int &id);
+        This method will create the command line arguments that will be
+        read by a forked off slave in order to successfully establish
+        connections.
 
-  /** Fork off slave.
+        @param argc Number of arguments that the master was started with.
+        @param argv Arguments that the master was started with.
+        @param newArgc Number of arguments that the slave will be started with.
+        @param newArgv Arguments that the slave will be started with.
+        @param configTableEntry Configuration file entry for the slave.
+        @param masterContactInfo Information necessary for the slave to contact the master.
+        @param id Connection id of slave to be started.
+    */
+    virtual void createSlaveCommandLineArguments(const int* const argc,
+                                                 const char* const* const* const argv,
+                                                 int& newArgc, char**& newArgv,
+                                                 const std::vector<std::string>& configTableEntry,
+                                                 const eclmplContactInfo& masterContactInfo,
+                                                 const unsigned int& id);
 
-      This method is called by the master in order to fork off
-      slaves. The total number of slaves that will be forked off is
-      numberOfConnections - 1.
+    /** Fork off slave.
 
-      @param argc Number of arguments that the master was started with.
-      @param argv Arguments that the master was started with.
-      @param connTable The scanned configuration file.
-      @param masterContactInfo Information about how to contact the master.
-      @param id Connection Id of slave to fork off.
-  */
-  virtual void forkOffSlave(const int * const argc, 
-			    const char * const * const * const argv,
-			    const eclmplConfigFileTable &connTable,
-			    const eclmplContactInfo &masterContactInfo,
-			    const unsigned int &id);
+        This method is called by the master in order to fork off
+        slaves. The total number of slaves that will be forked off is
+        numberOfConnections - 1.
 
-  /** Fork off slaves.
+        @param argc Number of arguments that the master was started with.
+        @param argv Arguments that the master was started with.
+        @param connTable The scanned configuration file.
+        @param masterContactInfo Information about how to contact the master.
+        @param id Connection Id of slave to fork off.
+    */
+    virtual void forkOffSlave(const int* const argc,
+                              const char* const* const* const argv,
+                              const eclmplConfigFileTable& connTable,
+                              const eclmplContactInfo& masterContactInfo,
+                              const unsigned int& id);
 
-      This method is called by the master in order to fork off
-      slaves. The total number of slaves that will be forked off is
-      numberOfConnections - 1.
+    /** Fork off slaves.
 
-      @param argc Number of arguments that the master was started with.
-      @param argv Arguments that the master was started with.
-      @param connTable The scanned configuration file.
-      @param masterContactInfo Information about how to contact the master.
-  */
-  virtual void forkOffSlaves(const int * const argc, 
-			     const char * const * const * const argv, 
-			     const eclmplConfigFileTable &connTable, 
-			     const eclmplContactInfo &masterContactInfo) ;
+        This method is called by the master in order to fork off
+        slaves. The total number of slaves that will be forked off is
+        numberOfConnections - 1.
 
-  /** Distribute a configuration table to all slaves.
+        @param argc Number of arguments that the master was started with.
+        @param argv Arguments that the master was started with.
+        @param connTable The scanned configuration file.
+        @param masterContactInfo Information about how to contact the master.
+    */
+    virtual void forkOffSlaves(const int* const argc,
+                               const char* const* const* const argv,
+                               const eclmplConfigFileTable& connTable,
+                               const eclmplContactInfo& masterContactInfo) ;
 
-      @param connTable The configuration table.
-  */
-  virtual void distributeConfigFileTable(const eclmplConfigFileTable &connTable);
+    /** Distribute a configuration table to all slaves.
 
-  /** Master establishes connections wiht slaves.
+        @param connTable The configuration table.
+    */
+    virtual void distributeConfigFileTable(const eclmplConfigFileTable& connTable);
 
-      This method is called by the master in order to establish
-      connections with the slaves.
+    /** Master establishes connections wiht slaves.
 
-      @param argc Number of arguments that the master was started with.
-      @param argv Arguments that the master was started with.
-      @param connTable The scanned configuration file.
-  */
-  virtual void establishConnections(const int * const argc, 
-				    const char * const * const * const argv,
-				    const eclmplConfigFileTable &connTable) = 0;
+        This method is called by the master in order to establish
+        connections with the slaves.
 
-  /** Slave establishes connections with everyone else.
+        @param argc Number of arguments that the master was started with.
+        @param argv Arguments that the master was started with.
+        @param connTable The scanned configuration file.
+    */
+    virtual void establishConnections(const int* const argc,
+                                      const char* const* const* const argv,
+                                      const eclmplConfigFileTable& connTable) = 0;
 
-      This method is called by the slave in order to establish
-      connections with everyone else. In most cases this means first
-      establishing a connection with the master, receiving information
-      about all peers, and then finally establishing connections with
-      all these peers.
+    /** Slave establishes connections with everyone else.
 
-      @param info Information necessary to initialize slave and begin connection establishment.
-  */
-  virtual void establishConnections(const slaveStartupInfo &info) = 0;
+        This method is called by the slave in order to establish
+        connections with everyone else. In most cases this means first
+        establishing a connection with the master, receiving information
+        about all peers, and then finally establishing connections with
+        all these peers.
 
-  //@} // End of Protected Class Methods of eclmplConnectionInterfaceImplementationBase.
+        @param info Information necessary to initialize slave and begin connection establishment.
+    */
+    virtual void establishConnections(const slaveStartupInfo& info) = 0;
+
+    //@} // End of Protected Class Methods of eclmplConnectionInterfaceImplementationBase.
 };
 
 #endif

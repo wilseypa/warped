@@ -10,7 +10,7 @@ class PhysicalCommunicationLayer;
 class TimeWarpSimulationManager;
 
 /** The CommunicationManagerFactory class.
-    
+
 The CommunicationManagerFactory class is the interface
 through which the various communication manager implementations
 that are available in the simulation kernel are accessed. The
@@ -22,48 +22,48 @@ implementations ({\it DefaultCommunicationManager} and {\it
 MsgAggregatingCommunicationManager}) must, however, be derived
 from the CommunicationManager abstract base class.
 */
-  
+
 class CommunicationManagerFactory : virtual public Configurer {
 public:
-  
-  /**@name Public Class Methods of CommunicationManagerFactory. */
-  //@{
-  
-  /// Constructor.
-  CommunicationManagerFactory();
 
-  /// Destructor.
-  virtual ~CommunicationManagerFactory();
+    /**@name Public Class Methods of CommunicationManagerFactory. */
+    //@{
 
-  /** Set the configured communication manager implementation.
+    /// Constructor.
+    CommunicationManagerFactory();
 
-    Function to attach the particular communication manager
-    implementation in the kernel. Will be called by the
-    configuration step to set the appropriate communication manager
-    set implementation.
+    /// Destructor.
+    virtual ~CommunicationManagerFactory();
 
-    @param configurationMap Contains configuration parameters.
-    @param mySimulationManager handle to the sim. mgr.
-  */
-  Configurable *allocate( SimulationConfiguration &configuration,
-			  Configurable *parent ) const;
+    /** Set the configured communication manager implementation.
 
-  static const CommunicationManagerFactory *instance();
-   
-  //@} // End of Public Class Methods of CommunicationManagerFactory
-   
-private:
-   
-  /**@name Private Class Attributes of CommunicationManagerFactory. */
-  //@{
-  
-  /** The MPI layer may or may not be compiled in.  This method will
-	return a MPIPhysicalCommunicationLayer if it was, and 0 if it
-	wasn't.
+      Function to attach the particular communication manager
+      implementation in the kernel. Will be called by the
+      configuration step to set the appropriate communication manager
+      set implementation.
+
+      @param configurationMap Contains configuration parameters.
+      @param mySimulationManager handle to the sim. mgr.
     */
-  static PhysicalCommunicationLayer *allocatePhysicalCommunicationLayer(const string&);
+    Configurable* allocate(SimulationConfiguration& configuration,
+                           Configurable* parent) const;
 
-  //@} // End of Private Class Attributes of CommunicationManagerFactory.
+    static const CommunicationManagerFactory* instance();
+
+    //@} // End of Public Class Methods of CommunicationManagerFactory
+
+private:
+
+    /**@name Private Class Attributes of CommunicationManagerFactory. */
+    //@{
+
+    /** The MPI layer may or may not be compiled in.  This method will
+    return a MPIPhysicalCommunicationLayer if it was, and 0 if it
+    wasn't.
+      */
+    static PhysicalCommunicationLayer* allocatePhysicalCommunicationLayer(const string&);
+
+    //@} // End of Private Class Attributes of CommunicationManagerFactory.
 };
 
 #endif

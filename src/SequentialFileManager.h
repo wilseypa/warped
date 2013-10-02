@@ -9,19 +9,19 @@
 
 using std::string;
 
-namespace warped{
+namespace warped {
 
 class SequentialFileManager : public FileManager {
-  friend class FileManager;
+    friend class FileManager;
 public:
-  fstream &open( const string &fileName, ios::openmode mode );
+    fstream& open(const string& fileName, ios::openmode mode);
 
 protected:
-  SequentialFileManager();
-  ~SequentialFileManager();
+    SequentialFileManager();
+    ~SequentialFileManager();
 
 private:
-  std::unordered_map<string, fstream *> files;
+    std::unordered_map<string, fstream*> files;
 };
 
 }

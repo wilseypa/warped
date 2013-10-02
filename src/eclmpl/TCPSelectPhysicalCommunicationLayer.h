@@ -11,35 +11,35 @@
 */
 class TCPSelectPhysicalCommunicationLayer : public eclmplPhysicalCommunicationLayer {
 public:
-  /**@name Public Class Methods of TCPSelectPhysicalCommunicationLayer. */
-  //@{
+    /**@name Public Class Methods of TCPSelectPhysicalCommunicationLayer. */
+    //@{
 
-  /// Default Constructor.
-  TCPSelectPhysicalCommunicationLayer();
+    /// Default Constructor.
+    TCPSelectPhysicalCommunicationLayer();
 
-  /// Destructor.
-  ~TCPSelectPhysicalCommunicationLayer();
-  
-  //@} // End of Public Class Methods of TCPSelectPhysicalCommunicationLayer.
+    /// Destructor.
+    ~TCPSelectPhysicalCommunicationLayer();
+
+    //@} // End of Public Class Methods of TCPSelectPhysicalCommunicationLayer.
 
 protected:
-  /**@name Protected Class Methods of TCPSelectPhysicalCommunicationLayer. */
-  //@{
+    /**@name Protected Class Methods of TCPSelectPhysicalCommunicationLayer. */
+    //@{
 
-  void probeNetwork();
-  void initializeCommunicationLayerAttributes();
+    void probeNetwork();
+    void initializeCommunicationLayerAttributes();
 
-  //@} // End of Protected Class Attributes of TCPSelectPhysicalCommunicationLayer.
+    //@} // End of Protected Class Attributes of TCPSelectPhysicalCommunicationLayer.
 
-  /**@name Protected Class Attributes of TCPSelectPhysicalCommunicationLayer. */
-  //@{
+    /**@name Protected Class Attributes of TCPSelectPhysicalCommunicationLayer. */
+    //@{
 
-  // For calls to select.
-  fd_set selectListenSet, fdSet;
-  int maxFd;
-  char *recvBuf;
+    // For calls to select.
+    fd_set selectListenSet, fdSet;
+    int maxFd;
+    char* recvBuf;
 
-  //@} // End of Protected Class Attributes of TCPSelectPhysicalCommunicationLayer.
+    //@} // End of Protected Class Attributes of TCPSelectPhysicalCommunicationLayer.
 };
 
 #endif

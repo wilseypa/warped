@@ -18,48 +18,48 @@ struct Transceiver {
 
 public:
 
-  Transceiver();
-  ~Transceiver();
+    Transceiver();
+    ~Transceiver();
 
-  /* AFAICS, this struct is unused currently
-  struct InputMessageInfo {
-    VTime& receivedMessageSendTime;
-    VTime& myLVT;
-  };
-  */
-   
-  /* AFAICS, this struct is unused currently
-  struct OutputMessageInfo {
-    VTime& leastReceiveTime;
-  };
-  */
-   
-  char buffer[INTERNAL_BUFFER_SIZE];
+    /* AFAICS, this struct is unused currently
+    struct InputMessageInfo {
+      VTime& receivedMessageSendTime;
+      VTime& myLVT;
+    };
+    */
 
-  void setLpId(unsigned int id);
-  void setMessageManagerHandle(MessageManager* msgMgrPtr);
-  unsigned int  readMsgSize();
-  SerializedInstance *readMessage();
-  void writeMsgSize(unsigned int msgSize);
-  void writeMessage(SerializedInstance *message);
-  void sendMessage();
-  void receiveMessage();
-  bool canWriteMessage(int size);
-  bool canReceiveMessage(int);
-  void probeToSend();
-  void probeToReceive();
-  void setCommPhyInterface(PhysicalCommunicationLayer *phyLib);
+    /* AFAICS, this struct is unused currently
+    struct OutputMessageInfo {
+      VTime& leastReceiveTime;
+    };
+    */
 
-  int numberOfMsgs;
+    char buffer[INTERNAL_BUFFER_SIZE];
+
+    void setLpId(unsigned int id);
+    void setMessageManagerHandle(MessageManager* msgMgrPtr);
+    unsigned int  readMsgSize();
+    SerializedInstance* readMessage();
+    void writeMsgSize(unsigned int msgSize);
+    void writeMessage(SerializedInstance* message);
+    void sendMessage();
+    void receiveMessage();
+    bool canWriteMessage(int size);
+    bool canReceiveMessage(int);
+    void probeToSend();
+    void probeToReceive();
+    void setCommPhyInterface(PhysicalCommunicationLayer* phyLib);
+
+    int numberOfMsgs;
 
 private:
-  int lpId;
-  char *currentPosition;
-  unsigned int curSize;
-   
-  // communication interface
-  MessageManager* messageManagerHandle;
-  PhysicalCommunicationLayer *commPhyLib;
+    int lpId;
+    char* currentPosition;
+    unsigned int curSize;
+
+    // communication interface
+    MessageManager* messageManagerHandle;
+    PhysicalCommunicationLayer* commPhyLib;
 };
 
 #endif

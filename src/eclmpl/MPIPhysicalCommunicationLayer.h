@@ -11,89 +11,89 @@
 */
 class MPIPhysicalCommunicationLayer : public PhysicalCommunicationLayer {
 public:
-  /**@name Public Class Methods of MPIPhysicalCommunicationLayer. */
-  //@{
+    /**@name Public Class Methods of MPIPhysicalCommunicationLayer. */
+    //@{
 
-  /// Default Constructor.
-  MPIPhysicalCommunicationLayer();
+    /// Default Constructor.
+    MPIPhysicalCommunicationLayer();
 
-  /// Destructor.
-  ~MPIPhysicalCommunicationLayer();
-  
-  /** Init physical layer.
+    /// Destructor.
+    ~MPIPhysicalCommunicationLayer();
 
-      MPI_init(argc, argv) is called from this method, as need to be
-      done before any other MPI call can be done. Thus, argc and argv
-      needs to be passed in to this method.
-      
-      @param configuration The simulation configuration being used.      
-  */
-  virtual void physicalInit();
+    /** Init physical layer.
 
-  /** Get the Id of the simulation manager.
+        MPI_init(argc, argv) is called from this method, as need to be
+        done before any other MPI call can be done. Thus, argc and argv
+        needs to be passed in to this method.
 
-      @return Id of the simulation manager.
-  */
-  int physicalGetId() const;
+        @param configuration The simulation configuration being used.
+    */
+    virtual void physicalInit();
 
-  /** Send buffer.
+    /** Get the Id of the simulation manager.
 
-      @param buffer Char buffer to send.
-      @param size Size of the buffer to send.
-  */
-  virtual void physicalSend( const SerializedInstance *toSend, unsigned int dest );
+        @return Id of the simulation manager.
+    */
+    int physicalGetId() const;
 
-  /** Check the MPI-probe to see if there are message to retrieve.
+    /** Send buffer.
 
-      @return The retrieved message (NULL if no message).
-  */
-  virtual SerializedInstance *physicalProbeRecv();
+        @param buffer Char buffer to send.
+        @param size Size of the buffer to send.
+    */
+    virtual void physicalSend(const SerializedInstance* toSend, unsigned int dest);
 
-  /** Retrieve message into a buffer.
+    /** Check the MPI-probe to see if there are message to retrieve.
 
-      @param buffer Buffer to which we save the message.
-      @param size Size of the buffer.
-      @param sizeStatus Was the size of retr. msg > size?
-      @return True/False, Was any message retrieved?
-  */
-  virtual bool physicalProbeRecvBuffer(char *buffer, int size, bool& sizeStatus);
+        @return The retrieved message (NULL if no message).
+    */
+    virtual SerializedInstance* physicalProbeRecv();
 
-  /// Clean up and call MPI_Finalize.
-  void physicalFinalize();
-  
-  /** Return how many processes are involved in the communicator.
+    /** Retrieve message into a buffer.
 
-      @return The number of processes involved in the communicator.
-  */
-  virtual int physicalGetSize() const;
-  
-  //@} // End of Public Class Methods of MPIPhysicalCommunicationLayer.
+        @param buffer Buffer to which we save the message.
+        @param size Size of the buffer.
+        @param sizeStatus Was the size of retr. msg > size?
+        @return True/False, Was any message retrieved?
+    */
+    virtual bool physicalProbeRecvBuffer(char* buffer, int size, bool& sizeStatus);
+
+    /// Clean up and call MPI_Finalize.
+    void physicalFinalize();
+
+    /** Return how many processes are involved in the communicator.
+
+        @return The number of processes involved in the communicator.
+    */
+    virtual int physicalGetSize() const;
+
+    //@} // End of Public Class Methods of MPIPhysicalCommunicationLayer.
 
 protected:
-  /**@name Protected Class Attributes of MPIPhysicalCommunicationLayer. */
-  //@{
+    /**@name Protected Class Attributes of MPIPhysicalCommunicationLayer. */
+    //@{
 
-  /// Id of the simulation manager.
-  int mySimulationManagerID;
+    /// Id of the simulation manager.
+    int mySimulationManagerID;
 
-  //@} // End of Protected Class Attributes of MPIPhysicalCommunicationLayer.
+    //@} // End of Protected Class Attributes of MPIPhysicalCommunicationLayer.
 
 private:
-  /**
-     Checks the status of pending sends.  Clears completed sends out of the
-     pendingSend vector, and deallocates the resources associated with
-     them.
-  */
-  void checkPendingSends();
+    /**
+       Checks the status of pending sends.  Clears completed sends out of the
+       pendingSend vector, and deallocates the resources associated with
+       them.
+    */
+    void checkPendingSends();
 
-  /**
-     Does the dirty work of actually starting MPI.
-  */
-  void startMPI();
+    /**
+       Does the dirty work of actually starting MPI.
+    */
+    void startMPI();
 
-  
-  vector<MPIMessage> pendingSends;
-  vector<MPIMessage> pendingReceives;
+
+    vector<MPIMessage> pendingSends;
+    vector<MPIMessage> pendingReceives;
 };
 
 #endif

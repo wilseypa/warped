@@ -8,24 +8,22 @@
 #include "Event.h"
 #include <vector>
 
-class LocalNegativeEventMessage : public LocalKernelMessage
-{
+class LocalNegativeEventMessage : public LocalKernelMessage {
 private:
-	vector<const NegativeEvent *> *negativeEvents;
+    vector<const NegativeEvent*>* negativeEvents;
 public:
-	LocalNegativeEventMessage(const vector<const NegativeEvent *> &negEvents, local_kernel_message_type messageType, SimulationObject *object)
-		: negativeEvents(new vector<const NegativeEvent *>(negEvents.begin(), negEvents.end())),
-		  LocalKernelMessage(messageType, object, negEvents[0]->getReceiveTime().clone()) {}
+    LocalNegativeEventMessage(const vector<const NegativeEvent*>& negEvents,
+                              local_kernel_message_type messageType, SimulationObject* object)
+        : negativeEvents(new vector<const NegativeEvent*>(negEvents.begin(), negEvents.end())),
+          LocalKernelMessage(messageType, object, negEvents[0]->getReceiveTime().clone()) {}
 
-	~LocalNegativeEventMessage()
-	{
-		delete negativeEvents;
-	}
+    ~LocalNegativeEventMessage() {
+        delete negativeEvents;
+    }
 
-	const vector<const NegativeEvent*> &getNegativeEvents()
-	{
-		return *negativeEvents;
-	}
+    const vector<const NegativeEvent*>& getNegativeEvents() {
+        return *negativeEvents;
+    }
 };
 
 #endif /* LOCALNEGATIVEEVENTMESSAGE_H_ */

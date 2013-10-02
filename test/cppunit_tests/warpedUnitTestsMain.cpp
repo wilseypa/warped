@@ -30,40 +30,40 @@
 #include "WarpedMain.h"
 
 // Add your tests to the suite here
-CPPUNIT_TEST_SUITE_REGISTRATION( DynamicOutputManagerTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( AdaptiveStateManagerBaseTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( AggressiveOutputManagerTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( CirculateInitializationMessageTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( CostAdaptiveStateManagerTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( DefaultSchedulingManagerTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( DefaultTimeWarpEventSetTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( DefaultTimeWarpEventSetOneAntiMsgTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( EventMessageTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( EventTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( KernelMessageTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( GVTUpdateMessageTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( InitializationMessageTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( LazyOutputManagerTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( MatternGVTMessageTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( NegativeEventMessageTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( RestoreCkptMessageTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( SerializedInstanceTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( SerializableTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( StartMessageTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( TerminateTokenTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( TimeWarpMultiSetTest );
-CPPUNIT_TEST_SUITE_REGISTRATION( TimeWarpMultiSetOneAntiMsgTest );
+CPPUNIT_TEST_SUITE_REGISTRATION(DynamicOutputManagerTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(AdaptiveStateManagerBaseTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(AggressiveOutputManagerTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(CirculateInitializationMessageTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(CostAdaptiveStateManagerTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(DefaultSchedulingManagerTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(DefaultTimeWarpEventSetTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(DefaultTimeWarpEventSetOneAntiMsgTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(EventMessageTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(EventTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(KernelMessageTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(GVTUpdateMessageTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(InitializationMessageTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(LazyOutputManagerTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(MatternGVTMessageTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(NegativeEventMessageTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(RestoreCkptMessageTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(SerializedInstanceTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(SerializableTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(StartMessageTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(TerminateTokenTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(TimeWarpMultiSetTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(TimeWarpMultiSetOneAntiMsgTest);
 // CPPUNIT_TEST_SUITE_REGISTRATION( TimeWarpAppendQueueTest );
 
-int main() { 
-  WarpedMain::registerKernelDeserializers();
+int main() {
+    WarpedMain::registerKernelDeserializers();
 
-  CppUnit::TextUi::TestRunner runner;
-  CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry();
-  runner.addTest(registry.makeTest());
-  bool result =  runner.run();
+    CppUnit::TextUi::TestRunner runner;
+    CppUnit::TestFactoryRegistry& registry = CppUnit::TestFactoryRegistry::getRegistry();
+    runner.addTest(registry.makeTest());
+    bool result =  runner.run();
 
-  // Result is true if the tests succeed, but make check excpects a 0 return
-  // value on success.
-  return !result;
+    // Result is true if the tests succeed, but make check excpects a 0 return
+    // value on success.
+    return !result;
 }

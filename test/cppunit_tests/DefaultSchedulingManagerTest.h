@@ -6,24 +6,24 @@
 class DefaultSchedulingManager;
 
 class DefaultSchedulingManagerTest : public SchedulingManagerTest {
-  CPPUNIT_TEST_SUITE( DefaultSchedulingManagerTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST( testGetNextEvent );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(DefaultSchedulingManagerTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testGetNextEvent);
+    CPPUNIT_TEST_SUITE_END();
 
 public:
-  DefaultSchedulingManagerTest();
+    DefaultSchedulingManagerTest();
 
-  void setUp();
-  void teardown();
+    void setUp();
+    void teardown();
 
-  void testConstructor();
-  void testGetNextEvent();
+    void testConstructor();
+    void testGetNextEvent();
 
-protected:  
+protected:
 
 private:
-  SchedulingManager *toTest;
+    SchedulingManager* toTest;
 
 };
 

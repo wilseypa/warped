@@ -23,60 +23,60 @@ using std::fstream;
 class InFileQueue : public multiset< InFileData > {
 public:
 
-   /**@name Public Class Methods of InFileQueue. */
-   //@{
+    /**@name Public Class Methods of InFileQueue. */
+    //@{
 
-   /// Default Constructor that takes a file name
-   InFileQueue(const string &fileName);
+    /// Default Constructor that takes a file name
+    InFileQueue(const string& fileName);
 
-   /// Destructor
-   ~InFileQueue();
+    /// Destructor
+    ~InFileQueue();
 
-   /// Open a particular file
-   void open(const string &fileName);
+    /// Open a particular file
+    void open(const string& fileName);
 
-   /// fossil collect everything earlier than fossil collect time
-   void fossilCollect(const VTime &fossilCollectTime);
+    /// fossil collect everything earlier than fossil collect time
+    void fossilCollect(const VTime& fossilCollectTime);
 
-   /// fossil collect everything earlier than fossil collect time
-   /// only used with optimistic fossil collection
-   void fossilCollect(int fossilCollectTime);
+    /// fossil collect everything earlier than fossil collect time
+    /// only used with optimistic fossil collection
+    void fossilCollect(int fossilCollectTime);
 
-   /// rollback to the rollback time
-   void rollbackTo(const VTime &rollbackTime);
+    /// rollback to the rollback time
+    void rollbackTo(const VTime& rollbackTime);
 
-   /// store the current position at the current time
-   void storePos(const VTime &time);
+    /// store the current position at the current time
+    void storePos(const VTime& time);
 
-   // sets the position of the file during the last fossil
-   // collection or the optimistic fossil collection restore.
-   void restoreFilePosition(streampos newPos);
+    // sets the position of the file during the last fossil
+    // collection or the optimistic fossil collection restore.
+    void restoreFilePosition(streampos newPos);
 
-   /// close the file queue
-   void close();
+    /// close the file queue
+    void close();
 
-   /// get a handle to the file stream
-   fstream* access() {
-      return &inFile;
-   };
+    /// get a handle to the file stream
+    fstream* access() {
+        return &inFile;
+    };
 
-   //@} // End of Public Class Methods of InFileQueue.
-  
+    //@} // End of Public Class Methods of InFileQueue.
+
 private:
 
-   /**@name Private Class Attributes of InFileQueue. */
-   //@{
+    /**@name Private Class Attributes of InFileQueue. */
+    //@{
 
-   /// name of the file
-   string inFileName;
+    /// name of the file
+    string inFileName;
 
-   /// the file stream
-   fstream inFile;
+    /// the file stream
+    fstream inFile;
 
-   /// the position in the file at the last rollback.
-   streampos lastFossilCollPos;
+    /// the position in the file at the last rollback.
+    streampos lastFossilCollPos;
 
-   //@} // End of Private Class Attributes of InFileQueue.
+    //@} // End of Private Class Attributes of InFileQueue.
 };
 #endif
 

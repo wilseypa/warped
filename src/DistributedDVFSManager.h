@@ -14,35 +14,35 @@ class TimeWarpSimulationManager;
 */
 class DistributedDVFSManager : public DVFSManagerImplementationBase {
 public:
-   
-  /**@name Public Class Methods of DistributedDVFSManager. */
-  //@{
 
-  /// Constructor
-  DistributedDVFSManager(TimeWarpSimulationManager*, int, int, Algorithm, bool,
-                         UsefulWorkMetric, double);
+    /**@name Public Class Methods of DistributedDVFSManager. */
+    //@{
 
-  /// Destructor
-  virtual ~DistributedDVFSManager();
+    /// Constructor
+    DistributedDVFSManager(TimeWarpSimulationManager*, int, int, Algorithm, bool,
+                           UsefulWorkMetric, double);
 
-  /// to be called from the simulation manager's simulation loop
-  virtual void poll();
+    /// Destructor
+    virtual ~DistributedDVFSManager();
 
-  virtual void registerWithCommunicationManager();
-  virtual void configure(SimulationConfiguration &);
+    /// to be called from the simulation manager's simulation loop
+    virtual void poll();
 
-  /// from CommunicatingEntity
-  virtual void receiveKernelMessage(KernelMessage* msg);
+    virtual void registerWithCommunicationManager();
+    virtual void configure(SimulationConfiguration&);
 
-  virtual string toString();
+    /// from CommunicatingEntity
+    virtual void receiveKernelMessage(KernelMessage* msg);
 
-  //@} // End of Public Class Methods of DistributedDVFSManager.
+    virtual string toString();
+
+    //@} // End of Public Class Methods of DistributedDVFSManager.
 
 private:
-  void setFrequencies(int);
-  void setGovernors(const char*);
+    void setFrequencies(int);
+    void setGovernors(const char*);
 
-  bool myWaitingForMessage;
+    bool myWaitingForMessage;
 };
 
 #endif //DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H

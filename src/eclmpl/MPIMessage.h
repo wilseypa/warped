@@ -15,78 +15,78 @@ using std::unary_function;
 class MPIMessage {
 
 public:
-  MPIMessage( const SerializedInstance *initMessage, 
-	      MPI_Request initRequest ) 
-    : myMessage( initMessage ), 
-      myRequest( initRequest ){}
-  
-  MPIMessage() : myMessage( 0 ), 
-		 myRequest( MPI_REQUEST_NULL ){}
+    MPIMessage(const SerializedInstance* initMessage,
+               MPI_Request initRequest)
+        : myMessage(initMessage),
+          myRequest(initRequest) {}
+
+    MPIMessage() : myMessage(0),
+        myRequest(MPI_REQUEST_NULL) {}
 
 
-  MPIMessage( const MPIMessage &m ) : myMessage( m.myMessage ), 
-				      myRequest( m.myRequest ){}
+    MPIMessage(const MPIMessage& m) : myMessage(m.myMessage),
+        myRequest(m.myRequest) {}
 
-  bool isComplete() const {
-    return myMessage == 0;
-  }
-
-  bool checkForCompletion() const {
-    int mpiCompleteStatus = 0;
-    MPI_Test( &myRequest, &mpiCompleteStatus, &myLastStatus );
-    return bool( mpiCompleteStatus );
-  }
-
-  void complete(){
-    delete myMessage;
-    myMessage = 0;
-    myRequest = MPI_REQUEST_NULL;
-  }
-
-  virtual ~MPIMessage(){}
-
-  class operationComplete : public unary_function<MPIMessage &, bool> {
-  public:
-    bool operator()( MPIMessage &m ){
-      return m.isComplete();
+    bool isComplete() const {
+        return myMessage == 0;
     }
-  };
 
-  /**
-     A functor for finishing send operations.
-  */
-  class finalizeSend : public unary_function<MPIMessage &, void> {
-  public:
-    void operator()( MPIMessage &m ){
-      if( m.checkForCompletion() ){
-	m.complete();
-      }
+    bool checkForCompletion() const {
+        int mpiCompleteStatus = 0;
+        MPI_Test(&myRequest, &mpiCompleteStatus, &myLastStatus);
+        return bool(mpiCompleteStatus);
     }
-  };
 
-  MPIMessage operator=( const MPIMessage &m ){
-    myMessage = m.myMessage;
-    myRequest = m.myRequest;
-    myLastStatus = m.myLastStatus;
+    void complete() {
+        delete myMessage;
+        myMessage = 0;
+        myRequest = MPI_REQUEST_NULL;
+    }
 
-    return *this;
-  }
+    virtual ~MPIMessage() {}
+
+    class operationComplete : public unary_function<MPIMessage&, bool> {
+    public:
+        bool operator()(MPIMessage& m) {
+            return m.isComplete();
+        }
+    };
+
+    /**
+       A functor for finishing send operations.
+    */
+    class finalizeSend : public unary_function<MPIMessage&, void> {
+    public:
+        void operator()(MPIMessage& m) {
+            if (m.checkForCompletion()) {
+                m.complete();
+            }
+        }
+    };
+
+    MPIMessage operator=(const MPIMessage& m) {
+        myMessage = m.myMessage;
+        myRequest = m.myRequest;
+        myLastStatus = m.myLastStatus;
+
+        return *this;
+    }
 
 protected:
-  /**
-     The buffer to be sent/read.
-  */
-  const SerializedInstance *myMessage;
-  
-  /**
-     The request associated with this message;
-  */
-  mutable MPI_Request myRequest;
+    /**
+       The buffer to be sent/read.
+    */
+    const SerializedInstance* myMessage;
 
-  /**
-     The last status associated with this message.
-  */
-  mutable MPI_Status myLastStatus;
+    /**
+       The request associated with this message;
+    */
+    mutable MPI_Request myRequest;
+
+    /**
+       The last status associated with this message.
+    */
+    mutable MPI_Status myLastStatus;
 };
 
 #endif

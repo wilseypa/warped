@@ -17,42 +17,42 @@ class SimulationObject;
 */
 class CentralizedEventSetSchedulingManager : public SchedulingManager {
 public:
-   /**@name Public Class Methods of SchedulingManager. */
-   //@{
-   
-   /// Virtual Destructor.
-   virtual ~CentralizedEventSetSchedulingManager();
+    /**@name Public Class Methods of SchedulingManager. */
+    //@{
 
-   /** Initialize the scheduler.
+    /// Virtual Destructor.
+    virtual ~CentralizedEventSetSchedulingManager();
 
-       @param eventSet Set of events that constitute the input-queue.
-       @param simObjArray Vector of simulation objects.
-   */
-   virtual void initialize(TimeWarpEventSet *eventSet,
-                           vector<SimulationObject*>* simObjArray);
-  
-   //@} // End of Public Class Methods of SchedulingManager.
+    /** Initialize the scheduler.
+
+        @param eventSet Set of events that constitute the input-queue.
+        @param simObjArray Vector of simulation objects.
+    */
+    virtual void initialize(TimeWarpEventSet* eventSet,
+                            vector<SimulationObject*>* simObjArray);
+
+    //@} // End of Public Class Methods of SchedulingManager.
 protected:
 
-   /**@name Protected Class Methods of SchedulingManager. */
-   //@{
+    /**@name Protected Class Methods of SchedulingManager. */
+    //@{
 
-   /// Default Constructor.
-   CentralizedEventSetSchedulingManager(SimulationManager* simMgr);
+    /// Default Constructor.
+    CentralizedEventSetSchedulingManager(SimulationManager* simMgr);
 
-   /// Handle to my simulation manager.
-   SimulationManager *mySimulationManager;
-  
-   /// Handle to the input queue.
-   TimeWarpCentralizedEventSet *myEventSetHandle;
-  
-   /// The scheduler's list of objects.
-   vector<SimulationObject*>* simulationObjectsArray;
+    /// Handle to my simulation manager.
+    SimulationManager* mySimulationManager;
 
-   /// the timestamp of the last event that was scheduled.
-   const VTime *lastScheduledEventTime;
-  
-   //@} // End Protected Class Attributes of SchedulingManagerImplementationBase.
+    /// Handle to the input queue.
+    TimeWarpCentralizedEventSet* myEventSetHandle;
+
+    /// The scheduler's list of objects.
+    vector<SimulationObject*>* simulationObjectsArray;
+
+    /// the timestamp of the last event that was scheduled.
+    const VTime* lastScheduledEventTime;
+
+    //@} // End Protected Class Attributes of SchedulingManagerImplementationBase.
 
 };
 

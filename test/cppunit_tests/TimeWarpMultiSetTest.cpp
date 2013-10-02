@@ -1,75 +1,75 @@
 #include "TimeWarpMultiSetTest.h"
 #include "TimeWarpMultiSet.h"
 
-void 
-TimeWarpMultiSetTest::setUp(){
-  TimeWarpEventSetTest::setUp();
-  toTest = new TimeWarpMultiSet( getSimManager() );
-}
-
-void 
-TimeWarpMultiSetTest::tearDown(){
-  delete toTest;
-  TimeWarpEventSetTest::tearDown();
-}
-
-void 
-TimeWarpMultiSetTest::testConstructor(){
-  CPPUNIT_ASSERT( toTest != 0 );
-}
-
-void 
-TimeWarpMultiSetTest::testInsert(){
-  TimeWarpEventSetTest::testInsert( toTest );
+void
+TimeWarpMultiSetTest::setUp() {
+    TimeWarpEventSetTest::setUp();
+    toTest = new TimeWarpMultiSet(getSimManager());
 }
 
 void
-TimeWarpMultiSetTest::testGetEvent(){
-  TimeWarpEventSetTest::testGetEvent( toTest );
+TimeWarpMultiSetTest::tearDown() {
+    delete toTest;
+    TimeWarpEventSetTest::tearDown();
 }
 
 void
-TimeWarpMultiSetTest::testGetEventTime(){
-  TimeWarpEventSetTest::testGetEventTime( toTest );
+TimeWarpMultiSetTest::testConstructor() {
+    CPPUNIT_ASSERT(toTest != 0);
 }
 
 void
-TimeWarpMultiSetTest::testPeekEvent(){
-  TimeWarpEventSetTest::testPeekEvent( toTest );
+TimeWarpMultiSetTest::testInsert() {
+    TimeWarpEventSetTest::testInsert(toTest);
 }
 
 void
-TimeWarpMultiSetTest::testPeekEventTime(){
-  TimeWarpEventSetTest::testPeekEventTime( toTest );
+TimeWarpMultiSetTest::testGetEvent() {
+    TimeWarpEventSetTest::testGetEvent(toTest);
 }
 
 void
-TimeWarpMultiSetTest::testHandleAntiMessage(){
-  TimeWarpEventSetTest::testHandleAntiMessage( toTest );
+TimeWarpMultiSetTest::testGetEventTime() {
+    TimeWarpEventSetTest::testGetEventTime(toTest);
 }
 
 void
-TimeWarpMultiSetTest::testHandleOneAntiMessage(){
-  // This test is only required for the one anti-message
-  // event set implementations, do nothing here.
+TimeWarpMultiSetTest::testPeekEvent() {
+    TimeWarpEventSetTest::testPeekEvent(toTest);
 }
 
 void
-TimeWarpMultiSetTest::testRollback(){
-  TimeWarpEventSetTest::testRollback( toTest );
+TimeWarpMultiSetTest::testPeekEventTime() {
+    TimeWarpEventSetTest::testPeekEventTime(toTest);
 }
 
 void
-TimeWarpMultiSetTest::testFossilCollect(){
-  TimeWarpEventSetTest::testFossilCollect( toTest );
+TimeWarpMultiSetTest::testHandleAntiMessage() {
+    TimeWarpEventSetTest::testHandleAntiMessage(toTest);
 }
 
 void
-TimeWarpMultiSetTest::testFossilCollectInt(){
-  TimeWarpEventSetTest::testFossilCollectInt( toTest );
+TimeWarpMultiSetTest::testHandleOneAntiMessage() {
+    // This test is only required for the one anti-message
+    // event set implementations, do nothing here.
 }
 
 void
-TimeWarpMultiSetTest::testOfcPurge(){
-  TimeWarpEventSetTest::testOfcPurge( toTest );
+TimeWarpMultiSetTest::testRollback() {
+    TimeWarpEventSetTest::testRollback(toTest);
+}
+
+void
+TimeWarpMultiSetTest::testFossilCollect() {
+    TimeWarpEventSetTest::testFossilCollect(toTest);
+}
+
+void
+TimeWarpMultiSetTest::testFossilCollectInt() {
+    TimeWarpEventSetTest::testFossilCollectInt(toTest);
+}
+
+void
+TimeWarpMultiSetTest::testOfcPurge() {
+    TimeWarpEventSetTest::testOfcPurge(toTest);
 }

@@ -25,40 +25,40 @@ class OutputManager;
 class OutputManagerFactory : virtual public Configurer {
 public:
 
-  /**@name Public Class Methods of OutputManagerFactory. */
-  //@{
-  
-  /** Constructor.
-      
-      @param SimulationManager Handle to the sim. mgr.
-      @param numObjects Number of simulation objects.
-  */
-  OutputManagerFactory();			
-  
-  /// Destructor.
-  virtual ~OutputManagerFactory();
-  
-  /** Set the configured output manager implementation.
-      
-      Function to attach the particular output manager implementation in
-      the kernel. Will be called by the configuration step to set the
-      appropriate output manager implementation.
+    /**@name Public Class Methods of OutputManagerFactory. */
+    //@{
 
-      @param configurationMap Configuration options.
-  */
-  Configurable *allocate( SimulationConfiguration &configuration,
-			  Configurable *parent ) const;
+    /** Constructor.
 
-  static const OutputManagerFactory *instance();
-   
-  //@} // End of Public Class Methods of OutputManagerFactory.
-  
+        @param SimulationManager Handle to the sim. mgr.
+        @param numObjects Number of simulation objects.
+    */
+    OutputManagerFactory();
+
+    /// Destructor.
+    virtual ~OutputManagerFactory();
+
+    /** Set the configured output manager implementation.
+
+        Function to attach the particular output manager implementation in
+        the kernel. Will be called by the configuration step to set the
+        appropriate output manager implementation.
+
+        @param configurationMap Configuration options.
+    */
+    Configurable* allocate(SimulationConfiguration& configuration,
+                           Configurable* parent) const;
+
+    static const OutputManagerFactory* instance();
+
+    //@} // End of Public Class Methods of OutputManagerFactory.
+
 protected:
-  
-  /**@name Private Class Attributes of OutputManagerFactory. */
-  //@{
 
-  //@} // End of Private Class Attributes of OutputManagerFactory.
+    /**@name Private Class Attributes of OutputManagerFactory. */
+    //@{
+
+    //@} // End of Private Class Attributes of OutputManagerFactory.
 };
 
 #endif

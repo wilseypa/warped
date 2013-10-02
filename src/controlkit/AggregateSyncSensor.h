@@ -12,126 +12,126 @@
     currently sees. Therefore, it is usually always active.
 
 */
-template <class NormalType> 
+template <class NormalType>
 class AggregateSyncSensor : public SensorImplementationBase <NormalType> {
 public:
-   
-   /**@name Public Class Methods of AggregateSyncSensor */
-   //@{
 
-   /** Default Constructor that accepts parameters
+    /**@name Public Class Methods of AggregateSyncSensor */
+    //@{
 
-       The default constructor expects a unique name for this sensor
-       and an initial value for the sensor.
+    /** Default Constructor that accepts parameters
 
-       @param name the unique name for this sensor
-       @param numElements the number of sensors to instantiate
-       @param initVal the initial value for this sensor
-   */
-   AggregateSyncSensor( string name, unsigned int numElements,
-                        NormalType initVal )
-      : SensorImplementationBase<NormalType> (name, SENSOR_ACTIVE,
-                                              AGGREGATE_SENSOR){
-      numberOfElements = numElements;
-      sensorElements =
-         new vector<SyncSensor<NormalType> *>(numElements);
+        The default constructor expects a unique name for this sensor
+        and an initial value for the sensor.
 
-      typename vector<SyncSensor<NormalType> *>::iterator iter_begin =
-         sensorElements->begin();
-      typename vector<SyncSensor<NormalType> *>::iterator iter_end =
-         sensorElements->end();
+        @param name the unique name for this sensor
+        @param numElements the number of sensors to instantiate
+        @param initVal the initial value for this sensor
+    */
+    AggregateSyncSensor(string name, unsigned int numElements,
+                        NormalType initVal)
+        : SensorImplementationBase<NormalType> (name, SENSOR_ACTIVE,
+                                                AGGREGATE_SENSOR) {
+        numberOfElements = numElements;
+        sensorElements =
+            new vector<SyncSensor<NormalType> *>(numElements);
 
-      while(iter_begin != iter_end){
-         (*iter_begin) = new SyncSensor<NormalType>(name, initVal);
-         ++iter_begin;
-      }
-   };
-   
+        typename vector<SyncSensor<NormalType> *>::iterator iter_begin =
+            sensorElements->begin();
+        typename vector<SyncSensor<NormalType> *>::iterator iter_end =
+            sensorElements->end();
 
-   /// Default destructor
-   ~AggregateSyncSensor(){
+        while (iter_begin != iter_end) {
+            (*iter_begin) = new SyncSensor<NormalType>(name, initVal);
+            ++iter_begin;
+        }
+    };
 
-     typename vector<SyncSensor<NormalType> *>::iterator iter_begin =
-         sensorElements->begin();
-     typename vector<SyncSensor<NormalType> *>::iterator iter_end =
-         sensorElements->end();
 
-      while(iter_begin != iter_end){
-         delete (*iter_begin);
-         ++iter_begin;
-      }
-      
-      delete sensorElements;
-   };
+    /// Default destructor
+    ~AggregateSyncSensor() {
 
-   /// get the type of this sensor
-   sensorType getType(){
-      return sensor_type;
-   };
+        typename vector<SyncSensor<NormalType> *>::iterator iter_begin =
+            sensorElements->begin();
+        typename vector<SyncSensor<NormalType> *>::iterator iter_end =
+            sensorElements->end();
 
-   /// return the name of this sensor
-   string& getSensorName(){
-      return sensorName;
-   }
-   
-   /// dump the values of this sensor to the std::ostream
-   void dump(std::ostream &out){
+        while (iter_begin != iter_end) {
+            delete(*iter_begin);
+            ++iter_begin;
+        }
 
-      out << sensorName << ": " << endl;
+        delete sensorElements;
+    };
 
-      typename vector<SyncSensor<NormalType> *>::iterator iter_begin =
-         sensorElements->begin();
-      typename vector<SyncSensor<NormalType> *>::iterator iter_end =
-         sensorElements->end();
+    /// get the type of this sensor
+    sensorType getType() {
+        return sensor_type;
+    };
 
-      int count = 0;
-      while(iter_begin != iter_end){
-         out << "---- Element[" << count << "] value: "
-             <<  (*iter_begin)->getSensorData() << endl;
-         ++iter_begin;
-         count++;
-      }
-   };
-   
-   /// overloaded subscript  operator
-   inline SyncSensor<NormalType>& operator[](unsigned int elem){
-      ASSERT(elem < numberOfElements);
-      return *((*sensorElements)[elem]);
-   }
-   
-   /// Overloaded operator <<
-   friend std::ostream& operator <<(std::ostream &out,
-                               AggregateSyncSensor<NormalType> &sensor){
+    /// return the name of this sensor
+    string& getSensorName() {
+        return sensorName;
+    }
 
-      out << "sensorName: " << sensor.sensorName << endl;
+    /// dump the values of this sensor to the std::ostream
+    void dump(std::ostream& out) {
 
-      typename vector<SyncSensor<NormalType> *>::iterator iter_begin =
-         sensor.sensorElements->begin();
-      typename vector<SyncSensor<NormalType> *>::iterator iter_end =
-	sensor.sensorElements->end();
+        out << sensorName << ": " << endl;
 
-      while(iter_begin != iter_end){
-         out << " value: " <<  (*iter_begin)->getSensorData() << endl;
-         ++iter_begin;
-      }
-      return out;
-   };
-   
-   //@} // End of Public Class Methods of AggregateSyncSensor
+        typename vector<SyncSensor<NormalType> *>::iterator iter_begin =
+            sensorElements->begin();
+        typename vector<SyncSensor<NormalType> *>::iterator iter_end =
+            sensorElements->end();
+
+        int count = 0;
+        while (iter_begin != iter_end) {
+            out << "---- Element[" << count << "] value: "
+                << (*iter_begin)->getSensorData() << endl;
+            ++iter_begin;
+            count++;
+        }
+    };
+
+    /// overloaded subscript  operator
+    inline SyncSensor<NormalType>& operator[](unsigned int elem) {
+        ASSERT(elem < numberOfElements);
+        return *((*sensorElements)[elem]);
+    }
+
+    /// Overloaded operator <<
+    friend std::ostream& operator <<(std::ostream& out,
+                                     AggregateSyncSensor<NormalType>& sensor) {
+
+        out << "sensorName: " << sensor.sensorName << endl;
+
+        typename vector<SyncSensor<NormalType> *>::iterator iter_begin =
+            sensor.sensorElements->begin();
+        typename vector<SyncSensor<NormalType> *>::iterator iter_end =
+            sensor.sensorElements->end();
+
+        while (iter_begin != iter_end) {
+            out << " value: " << (*iter_begin)->getSensorData() << endl;
+            ++iter_begin;
+        }
+        return out;
+    };
+
+    //@} // End of Public Class Methods of AggregateSyncSensor
 
 private:
 
-   /**@name Private Class Attributes of AggregateSyncSensor */
-   //@{
+    /**@name Private Class Attributes of AggregateSyncSensor */
+    //@{
 
-   /// number of elements in this aggregate
-   unsigned int numberOfElements;
-   
-   /// the sensor value element
-   vector<SyncSensor<NormalType> *> *sensorElements;
+    /// number of elements in this aggregate
+    unsigned int numberOfElements;
 
-   //@} // End of Private Class Attributes of AggregateSyncSensor
-   
+    /// the sensor value element
+    vector<SyncSensor<NormalType> *>* sensorElements;
+
+    //@} // End of Private Class Attributes of AggregateSyncSensor
+
 };
 
 #endif

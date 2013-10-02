@@ -10,39 +10,39 @@
     The ActuatorImplementationBase class represents an implementation
     of the abstract Actuator abstract class. User instantiates this
     class.
-    
+
 */
 template <class ElementType>
 class ActuatorImplementationBase : public Actuator {
 public:
 
-   /**@name Public Class Methods of ActuatorImplementationBase */
-   //@{
+    /**@name Public Class Methods of ActuatorImplementationBase */
+    //@{
 
-   /// Constructor
-   ActuatorImplementationBase(){};
+    /// Constructor
+    ActuatorImplementationBase() {};
 
-   ~ActuatorImplementationBase(){};
-   
+    ~ActuatorImplementationBase() {};
 
-   /// Actuate or set the new value of the control element
-   void setValue( ElementType &newValue ){
-      actuatorElement = newValue;
-   }
 
-   //@} // End of Public Class Methods of ActuatorImplementationBase
+    /// Actuate or set the new value of the control element
+    void setValue(ElementType& newValue) {
+        actuatorElement = newValue;
+    }
+
+    //@} // End of Public Class Methods of ActuatorImplementationBase
 
 private:
-   
-   /**@name Private Class Attributes of ActuatorImplementationBase */
-   //@{
 
-   string actuatorName;
-   ElementType actuatorElement;
-   
+    /**@name Private Class Attributes of ActuatorImplementationBase */
+    //@{
 
-   //@} // End of Private Class Attributes of ActuatorImplementationBase
-   
+    string actuatorName;
+    ElementType actuatorElement;
+
+
+    //@} // End of Private Class Attributes of ActuatorImplementationBase
+
 
 };
 

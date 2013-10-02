@@ -2,73 +2,73 @@
 #include "DefaultTimeWarpEventSet.h"
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::setUp(){
-  TimeWarpEventSetTest::setUp();
-  toTest = new DefaultTimeWarpEventSet( getSimManager(), true );
+DefaultTimeWarpEventSetOneAntiMsgTest::setUp() {
+    TimeWarpEventSetTest::setUp();
+    toTest = new DefaultTimeWarpEventSet(getSimManager(), true);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::tearDown(){
-  delete toTest;
-  TimeWarpEventSetTest::tearDown();
+DefaultTimeWarpEventSetOneAntiMsgTest::tearDown() {
+    delete toTest;
+    TimeWarpEventSetTest::tearDown();
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testConstructor(){
-  CPPUNIT_ASSERT( toTest != 0 );
+DefaultTimeWarpEventSetOneAntiMsgTest::testConstructor() {
+    CPPUNIT_ASSERT(toTest != 0);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testInsert(){
-  TimeWarpEventSetTest::testInsert( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testInsert() {
+    TimeWarpEventSetTest::testInsert(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testGetEvent(){
-  TimeWarpEventSetTest::testGetEvent( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testGetEvent() {
+    TimeWarpEventSetTest::testGetEvent(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testGetEventTime(){
-  TimeWarpEventSetTest::testGetEventTime( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testGetEventTime() {
+    TimeWarpEventSetTest::testGetEventTime(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testPeekEvent(){
-  TimeWarpEventSetTest::testPeekEvent( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testPeekEvent() {
+    TimeWarpEventSetTest::testPeekEvent(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testPeekEventTime(){
-  TimeWarpEventSetTest::testPeekEventTime( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testPeekEventTime() {
+    TimeWarpEventSetTest::testPeekEventTime(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testHandleAntiMessage(){
-  TimeWarpEventSetTest::testHandleAntiMessage( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testHandleAntiMessage() {
+    TimeWarpEventSetTest::testHandleAntiMessage(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testHandleOneAntiMessage(){
-  TimeWarpEventSetTest::testHandleOneAntiMessage( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testHandleOneAntiMessage() {
+    TimeWarpEventSetTest::testHandleOneAntiMessage(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testRollback(){
-  TimeWarpEventSetTest::testRollback( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testRollback() {
+    TimeWarpEventSetTest::testRollback(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testFossilCollect(){
-  TimeWarpEventSetTest::testFossilCollect( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testFossilCollect() {
+    TimeWarpEventSetTest::testFossilCollect(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testFossilCollectInt(){
-  TimeWarpEventSetTest::testFossilCollectInt( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testFossilCollectInt() {
+    TimeWarpEventSetTest::testFossilCollectInt(toTest);
 }
 
 void
-DefaultTimeWarpEventSetOneAntiMsgTest::testOfcPurge(){
-  TimeWarpEventSetTest::testOfcPurge( toTest );
+DefaultTimeWarpEventSetOneAntiMsgTest::testOfcPurge() {
+    TimeWarpEventSetTest::testOfcPurge(toTest);
 }

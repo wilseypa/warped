@@ -8,36 +8,36 @@ class TimeWarpEventSet;
 class TimeWarpEventSetTest : public WarpedUnitTest {
 public:
 
-  void setUp();
-  void tearDown();
-  
-  virtual void testInsert( ) = 0;
-  virtual void testGetEvent() = 0;
-  virtual void testGetEventTime() = 0;
-  virtual void testPeekEvent() = 0;
-  virtual void testPeekEventTime() = 0;
-  virtual void testHandleAntiMessage() = 0;
-  virtual void testHandleOneAntiMessage() = 0;
-  virtual void testRollback() = 0;
-  virtual void testFossilCollect() = 0;
-  virtual void testFossilCollectInt() = 0;
-  virtual void testOfcPurge() = 0;
+    void setUp();
+    void tearDown();
 
-protected:  
-  void testInsert( TimeWarpEventSet *toTest );
-  void testGetEvent( TimeWarpEventSet *toTest );
-  void testGetEventTime( TimeWarpEventSet *toTest );
-  void testPeekEvent( TimeWarpEventSet *toTest );
-  void testPeekEventTime( TimeWarpEventSet *toTest );
-  void testHandleAntiMessage( TimeWarpEventSet *toTest );
-  void testHandleOneAntiMessage( TimeWarpEventSet *toTest );
-  void testRollback( TimeWarpEventSet *toTest );
-  void testFossilCollect( TimeWarpEventSet *toTest );
-  void testFossilCollectInt( TimeWarpEventSet *toTest );
-  void testOfcPurge( TimeWarpEventSet *toTest );
+    virtual void testInsert() = 0;
+    virtual void testGetEvent() = 0;
+    virtual void testGetEventTime() = 0;
+    virtual void testPeekEvent() = 0;
+    virtual void testPeekEventTime() = 0;
+    virtual void testHandleAntiMessage() = 0;
+    virtual void testHandleOneAntiMessage() = 0;
+    virtual void testRollback() = 0;
+    virtual void testFossilCollect() = 0;
+    virtual void testFossilCollectInt() = 0;
+    virtual void testOfcPurge() = 0;
+
+protected:
+    void testInsert(TimeWarpEventSet* toTest);
+    void testGetEvent(TimeWarpEventSet* toTest);
+    void testGetEventTime(TimeWarpEventSet* toTest);
+    void testPeekEvent(TimeWarpEventSet* toTest);
+    void testPeekEventTime(TimeWarpEventSet* toTest);
+    void testHandleAntiMessage(TimeWarpEventSet* toTest);
+    void testHandleOneAntiMessage(TimeWarpEventSet* toTest);
+    void testRollback(TimeWarpEventSet* toTest);
+    void testFossilCollect(TimeWarpEventSet* toTest);
+    void testFossilCollectInt(TimeWarpEventSet* toTest);
+    void testOfcPurge(TimeWarpEventSet* toTest);
 
 private:
-  void testHandleAntiMessageInit( TimeWarpEventSet *toTest );
+    void testHandleAntiMessageInit(TimeWarpEventSet* toTest);
 
 };
 

@@ -11,20 +11,20 @@ class TimeWarpSimulationManager;
 /** The DefaultSchedulingManager */
 class DefaultSchedulingManager :  public SchedulingManager {
 public:
-  DefaultSchedulingManager( TimeWarpSimulationManager *initSimulationManager );
-  ~DefaultSchedulingManager();
-  
-  const Event *peekNextEvent();
+    DefaultSchedulingManager(TimeWarpSimulationManager* initSimulationManager);
+    ~DefaultSchedulingManager();
 
-  const VTime &getLastEventScheduledTime();
+    const Event* peekNextEvent();
 
-  void configure(SimulationConfiguration &){}
+    const VTime& getLastEventScheduledTime();
+
+    void configure(SimulationConfiguration&) {}
 
 private:
-  void setLastScheduledEventTime( const VTime &newTime );
+    void setLastScheduledEventTime(const VTime& newTime);
 
-  TimeWarpSimulationManager *mySimulationManager;
-  const VTime *lastScheduledTime;
+    TimeWarpSimulationManager* mySimulationManager;
+    const VTime* lastScheduledTime;
 };
 
 #endif

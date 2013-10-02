@@ -11,10 +11,10 @@
 */
 class DefaultTimeWarpEventContOneAntiMsg : public DefaultTimeWarpEventContainer {
 public:
-   DefaultTimeWarpEventContOneAntiMsg(){}
-   ~DefaultTimeWarpEventContOneAntiMsg(){}
+    DefaultTimeWarpEventContOneAntiMsg() {}
+    ~DefaultTimeWarpEventContOneAntiMsg() {}
 
-   bool handleAntiMessage( SimulationObject *reclaimer, const NegativeEvent *eventToRemove );
+    bool handleAntiMessage(SimulationObject* reclaimer, const NegativeEvent* eventToRemove);
 
 };
 

@@ -19,34 +19,34 @@ class Event;
     event set implemetations in this class interface ( factory
     pattern).  All event set implementations must be derived from the
     TimeWarpEventSet abstract base class.
-    
+
 */
 class TimeWarpEventSetFactory : virtual public Configurer {
-   
+
 public:
-   
-  /**@name Public Class Methods of TimeWarpEventSetFactory. */
-  //@{
 
-  /// Destructor.
-  virtual ~TimeWarpEventSetFactory(){};
+    /**@name Public Class Methods of TimeWarpEventSetFactory. */
+    //@{
 
-  Configurable *allocate( SimulationConfiguration &configuration,
-			  Configurable *parent ) const;
+    /// Destructor.
+    virtual ~TimeWarpEventSetFactory() {};
 
-  static const TimeWarpEventSetFactory *instance();
-      
-  //@} // End of Public Class Methods of TimeWarpEventSetFactory.
-   
+    Configurable* allocate(SimulationConfiguration& configuration,
+                           Configurable* parent) const;
+
+    static const TimeWarpEventSetFactory* instance();
+
+    //@} // End of Public Class Methods of TimeWarpEventSetFactory.
+
 protected:
-   
-  /**@name Protected Class Methods of TimeWarpEventSetFactory. */
-  //@{
-      
-  /// Default Constructor.
-  TimeWarpEventSetFactory(){};
-   
-  //@} // End of Protected Class Methods of TimeWarpEventSetFactory.
+
+    /**@name Protected Class Methods of TimeWarpEventSetFactory. */
+    //@{
+
+    /// Default Constructor.
+    TimeWarpEventSetFactory() {};
+
+    //@} // End of Protected Class Methods of TimeWarpEventSetFactory.
 };
 
 #endif

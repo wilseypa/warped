@@ -5,17 +5,17 @@
 
 class ApplicationAdapter : public Application {
 public:
-  ApplicationAdapter() {}
+    ApplicationAdapter() {}
 
-  const PartitionInfo *getPartitionInfo( unsigned int numProcessorsAvailable ){ return 0; }
-  int getNumberOfSimulationObjects(int mgrId) const { return 0; }
-  virtual int finalize(){ return 0; }
-  ~ApplicationAdapter(){}
-  void configure( SimulationConfiguration &configuration ){}
-  void registerDeserializers(){}
-  const VTime &getPositiveInfinity(){ return IntVTime::getIntVTimePositiveInfinity(); }
-  const VTime &getZero(){ return IntVTime::getIntVTimeZero(); }
-  const VTime &getTime(std::string&){ return IntVTime::getIntVTimeZero(); }
+    const PartitionInfo* getPartitionInfo(unsigned int numProcessorsAvailable) { return 0; }
+    int getNumberOfSimulationObjects(int mgrId) const { return 0; }
+    virtual int finalize() { return 0; }
+    ~ApplicationAdapter() {}
+    void configure(SimulationConfiguration& configuration) {}
+    void registerDeserializers() {}
+    const VTime& getPositiveInfinity() { return IntVTime::getIntVTimePositiveInfinity(); }
+    const VTime& getZero() { return IntVTime::getIntVTimeZero(); }
+    const VTime& getTime(std::string&) { return IntVTime::getIntVTimeZero(); }
 
 protected:
 

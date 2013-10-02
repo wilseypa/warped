@@ -24,117 +24,117 @@ class OutputManager;
 
 */
 class DynamicOutputManager : public LazyOutputManager {
-public:   
+public:
 
-  /**@name Public Class Methods of DynamicOutputManager. */
-  //@{
+    /**@name Public Class Methods of DynamicOutputManager. */
+    //@{
 
-  /** Constructor.
+    /** Constructor.
 
-      @param simMgr Handle to the simulation manager.
-      @param useThirdThreshold Default is false, not used.
-  */
-  DynamicOutputManager( TimeWarpSimulationManager *simMgr, bool useThirdThreshold = false );
+        @param simMgr Handle to the simulation manager.
+        @param useThirdThreshold Default is false, not used.
+    */
+    DynamicOutputManager(TimeWarpSimulationManager* simMgr, bool useThirdThreshold = false);
 
-  // Destructor.
-  ~DynamicOutputManager();
+    // Destructor.
+    ~DynamicOutputManager();
 
-  /** Returns true if the event should be suppressed.
-      Returns false otherwise.
+    /** Returns true if the event should be suppressed.
+        Returns false otherwise.
 
-      When in aggressive cancellation, lazy checks will be performed but
-      events will not be cancelled (they have already been cancelled through
-      aggressive).
+        When in aggressive cancellation, lazy checks will be performed but
+        events will not be cancelled (they have already been cancelled through
+        aggressive).
 
-      When in lazy cancellation, the method will perform the same as the 
-      lazyCancel method.
+        When in lazy cancellation, the method will perform the same as the
+        lazyCancel method.
 
-      @param event The event to be checked.
-  */
-  bool checkDynamicCancel( const Event *event );
+        @param event The event to be checked.
+    */
+    bool checkDynamicCancel(const Event* event);
 
-  /** Returns the current cancellation mode.
-  */
-  cancellationMode getCancelMode(int objID){
-     return curCancelMode[objID];
-  }
+    /** Returns the current cancellation mode.
+    */
+    cancellationMode getCancelMode(int objID) {
+        return curCancelMode[objID];
+    }
 
-  /** Sets the current cancellation mode.
+    /** Sets the current cancellation mode.
 
-      @param mode The cancellation mode to be set.
-  */
-  void setCancelMode(cancellationMode mode, int objID){
-     curCancelMode[objID] = mode;
-  }
+        @param mode The cancellation mode to be set.
+    */
+    void setCancelMode(cancellationMode mode, int objID) {
+        curCancelMode[objID] = mode;
+    }
 
-  /** Rolls back the output queue to rollbackTime.
+    /** Rolls back the output queue to rollbackTime.
 
-      Any events with send time greater than rollbackTime are added to the
-      lazy cancellation queue.
+        Any events with send time greater than rollbackTime are added to the
+        lazy cancellation queue.
 
-      When in aggressive mode, anti-messages are also sent for those events.
+        When in aggressive mode, anti-messages are also sent for those events.
 
-      @param rollbackTime The time to which the object is rolled back.
-      @param object A pointer to the object who experienced rollback.
-  */
-  void rollback( SimulationObject *object,  const VTime &rollbackTime );
+        @param rollbackTime The time to which the object is rolled back.
+        @param object A pointer to the object who experienced rollback.
+    */
+    void rollback(SimulationObject* object,  const VTime& rollbackTime);
 
-  void emptyLazyQueues(const VTime &time);
+    void emptyLazyQueues(const VTime& time);
 
-  void emptyLazyQueue(SimulationObject *object, const VTime &time);
+    void emptyLazyQueue(SimulationObject* object, const VTime& time);
 
-  /**
-     Remove all output events. Used to restore state after
-     a catastrophic rollback while using optimistic fossil collection.
-  */
-  void ofcPurge();
+    /**
+       Remove all output events. Used to restore state after
+       a catastrophic rollback while using optimistic fossil collection.
+    */
+    void ofcPurge();
 
-  //@} // End of Public Class Methods of DynamicOutputManager.
+    //@} // End of Public Class Methods of DynamicOutputManager.
 
 protected:
-  /**@name protected Class Methods of DynamicOutputManager. */
-  //@{
+    /**@name protected Class Methods of DynamicOutputManager. */
+    //@{
 
-  /** Calculates the hit ratio and determines what mode to use.
-      Also returns the cancellation mode that the calculation determined.
+    /** Calculates the hit ratio and determines what mode to use.
+        Also returns the cancellation mode that the calculation determined.
 
-      @param objID The object ID of the object to set.
-  */
-  cancellationMode determineCancellationMode(int objID);
+        @param objID The object ID of the object to set.
+    */
+    cancellationMode determineCancellationMode(int objID);
 
-  /** The current cancellation mode.
-  */ 
-  vector<cancellationMode> curCancelMode;
+    /** The current cancellation mode.
+    */
+    vector<cancellationMode> curCancelMode;
 
-  /** The hit count, how many lazy hits have occured.
-  */
-  vector<int> hitCount;
+    /** The hit count, how many lazy hits have occured.
+    */
+    vector<int> hitCount;
 
-  /** The hit ratio is used to determine the cancellation mode.
-  */
-  vector<float> hitRatio;
+    /** The hit ratio is used to determine the cancellation mode.
+    */
+    vector<float> hitRatio;
 
-  /** The filter depth determines how many comparisons are used.
-  */
-  int filterDepth;
+    /** The filter depth determines how many comparisons are used.
+    */
+    int filterDepth;
 
-  /** Keeps track of the results past comparisons.
-  */
-  vector< vector<int> *> comparisonResults;
+    /** Keeps track of the results past comparisons.
+    */
+    vector< vector<int> *> comparisonResults;
 
-  /** Keeps track of index for comparisonResults.
-  */
-  vector<int> curMeasured;
+    /** Keeps track of index for comparisonResults.
+    */
+    vector<int> curMeasured;
 
-  /** True if permanently in aggressive mode.
-  */
-  vector<bool> permanentlyAggressive;
+    /** True if permanently in aggressive mode.
+    */
+    vector<bool> permanentlyAggressive;
 
-  /** True if using 3 threshold values instead of 2.
-  */
-  bool thirdThreshold;
+    /** True if using 3 threshold values instead of 2.
+    */
+    bool thirdThreshold;
 
-  //@} // End of Protected Class Methods of DynamicOutputManager.
+    //@} // End of Protected Class Methods of DynamicOutputManager.
 };
 
 #endif

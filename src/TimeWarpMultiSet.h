@@ -21,135 +21,137 @@ STL multiset implementation of the event set.
 */
 class TimeWarpMultiSet : public TimeWarpEventSet {
 public:
-   
-  /**@name Public Class Methods of TimeWarpMultiSet. */
-  //@{
 
-  /// Default Constructor.
-  TimeWarpMultiSet( TimeWarpSimulationManager *initSimulationManager );
+    /**@name Public Class Methods of TimeWarpMultiSet. */
+    //@{
 
-  /// Destructor.
-  virtual ~TimeWarpMultiSet();
+    /// Default Constructor.
+    TimeWarpMultiSet(TimeWarpSimulationManager* initSimulationManager);
 
-  /** Insert an event into the event set.
-       
-  @param event The event to be inserted.
-  */
-  virtual bool insert (const Event *event);
+    /// Destructor.
+    virtual ~TimeWarpMultiSet();
 
-  /** Cancel out positive message corresponding to the anti message.
+    /** Insert an event into the event set.
 
-  @param cancelEvent The antimessage.
-  @param object The object who receives the antimessage.
-  */
-  virtual bool handleAntiMessage( SimulationObject *object,
-                                  const NegativeEvent *cancelEvent );
+    @param event The event to be inserted.
+    */
+    virtual bool insert(const Event* event);
 
-  /** Remove and return the next event in the event set.
+    /** Cancel out positive message corresponding to the anti message.
 
-  @return The removed event.
-  */
-  virtual const Event *getEvent(SimulationObject *object);
+    @param cancelEvent The antimessage.
+    @param object The object who receives the antimessage.
+    */
+    virtual bool handleAntiMessage(SimulationObject* object,
+                                   const NegativeEvent* cancelEvent);
 
-  /** Remove and return the next event in the event set.
-       
-  @return The removed event.
-  */
-  virtual const Event *getEvent(SimulationObject *object, const VTime &minimumTime);
+    /** Remove and return the next event in the event set.
 
-  /** Return a reference to the next event in the event set.
+    @return The removed event.
+    */
+    virtual const Event* getEvent(SimulationObject* object);
 
-  @return A reference to the next event in the event set.
-  */
-  virtual const Event *peekEvent(SimulationObject *object);
+    /** Remove and return the next event in the event set.
 
-  /** Return a reference to the next event in the event set.
+    @return The removed event.
+    */
+    virtual const Event* getEvent(SimulationObject* object, const VTime& minimumTime);
 
-  @return A reference to the next event in the event set.
-  */
-  virtual const Event *peekEvent(SimulationObject *object, const VTime &minimumTime);
-      
-  /** Fossil collect the event set upto a given time.
-      @param fossilCollectTime Time upto which to fossil collect.
-      @return the number of events that was fossil collected.
-  */
-  virtual void fossilCollect(SimulationObject *object,
-                             const VTime &fossilCollectTime);
+    /** Return a reference to the next event in the event set.
 
-  /** Fossil collect the event set upto a given time.
-      @param fossilCollectTime Time upto which to fossil collect.
-      @return the number of events that was fossil collected.
-  */
-  virtual void fossilCollect(SimulationObject *object,
-                             int fossilCollectTime);
+    @return A reference to the next event in the event set.
+    */
+    virtual const Event* peekEvent(SimulationObject* object);
 
-  /** Remove and delete an event from the event set.
+    /** Return a reference to the next event in the event set.
 
-  @param Event The event to be removed.
-  */
-  virtual void fossilCollect(const Event *);
+    @return A reference to the next event in the event set.
+    */
+    virtual const Event* peekEvent(SimulationObject* object, const VTime& minimumTime);
 
-  virtual void rollback(SimulationObject *object, const VTime &rollbackTime);
+    /** Fossil collect the event set upto a given time.
+        @param fossilCollectTime Time upto which to fossil collect.
+        @return the number of events that was fossil collected.
+    */
+    virtual void fossilCollect(SimulationObject* object,
+                               const VTime& fossilCollectTime);
 
-  /**
-     Remove all events from the event set. Used to restore state after
-     a catastrophic rollback while using optimistic fossil collection.
-  */
-  virtual void ofcPurge();
+    /** Fossil collect the event set upto a given time.
+        @param fossilCollectTime Time upto which to fossil collect.
+        @return the number of events that was fossil collected.
+    */
+    virtual void fossilCollect(SimulationObject* object,
+                               int fossilCollectTime);
 
-  /** Determines if the event is in the past based on the receive time,
-      then sender and the event id.
-      @return bool True if in the past.
-  */
-  virtual bool inThePast(const Event *);
+    /** Remove and delete an event from the event set.
 
-  /// Print the event set.
-  void print(std::ostream &out);
+    @param Event The event to be removed.
+    */
+    virtual void fossilCollect(const Event*);
 
-  /** Overriden from Configurable */
-  void configure( SimulationConfiguration &configure ){}
+    virtual void rollback(SimulationObject* object, const VTime& rollbackTime);
 
-  virtual double getEfficiency() { return static_cast<double>(myNumCommittedEvents) /
-        myNumExecutedEvents; }
+    /**
+       Remove all events from the event set. Used to restore state after
+       a catastrophic rollback while using optimistic fossil collection.
+    */
+    virtual void ofcPurge();
 
-  virtual unsigned int getNumEventsExecuted() { return myNumExecutedEvents; }
-  virtual unsigned int getNumEventsRolledBack() { return myNumRolledBackEvents; }
-  virtual unsigned int getNumEventsCommitted() { return myNumCommittedEvents; }
+    /** Determines if the event is in the past based on the receive time,
+        then sender and the event id.
+        @return bool True if in the past.
+    */
+    virtual bool inThePast(const Event*);
 
-  //@} // End of Public Class Methods of TimeWarpMultiSet.
+    /// Print the event set.
+    void print(std::ostream& out);
+
+    /** Overriden from Configurable */
+    void configure(SimulationConfiguration& configure) {}
+
+    virtual double getEfficiency() {
+        return static_cast<double>(myNumCommittedEvents) /
+               myNumExecutedEvents;
+    }
+
+    virtual unsigned int getNumEventsExecuted() { return myNumExecutedEvents; }
+    virtual unsigned int getNumEventsRolledBack() { return myNumRolledBackEvents; }
+    virtual unsigned int getNumEventsCommitted() { return myNumCommittedEvents; }
+
+    //@} // End of Public Class Methods of TimeWarpMultiSet.
 
 protected:
 
-  /**@name Protected Class Attributes of TimeWarpMultiSet. */
-  //@{
+    /**@name Protected Class Attributes of TimeWarpMultiSet. */
+    //@{
 
-  /// A sorted queue of the lowest event for each object. Used to determine which
-  /// object and event to process next.
-  multiset<const Event*, receiveTimeLessThanEventIdLessThan> lowestObjEvents;
+    /// A sorted queue of the lowest event for each object. Used to determine which
+    /// object and event to process next.
+    multiset<const Event*, receiveTimeLessThanEventIdLessThan> lowestObjEvents;
 
-  /// Each object has its own sorted queue of event contained here.
-  vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*> unprocessedObjEvents;
+    /// Each object has its own sorted queue of event contained here.
+    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*> unprocessedObjEvents;
 
-  /// The iterator pointing to an object's corresponding event in lowestObjEvents.
-  vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> lowObjPos;
+    /// The iterator pointing to an object's corresponding event in lowestObjEvents.
+    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> lowObjPos;
 
-  /// The iterator to the position of the last insertion for each object.
-  vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> insertObjPos;
+    /// The iterator to the position of the last insertion for each object.
+    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> insertObjPos;
 
-  /// Queues to hold the processed Events for each object.
-  vector<vector<const Event*>*> processedObjEvents;
+    /// Queues to hold the processed Events for each object.
+    vector<vector<const Event*>*> processedObjEvents;
 
-  /// Queues to hold the removed events for each object.
-  vector<vector<const Event*>*> removedEvents;
+    /// Queues to hold the removed events for each object.
+    vector<vector<const Event*>*> removedEvents;
 
-  /// The handle to the simulation manager.
-  TimeWarpSimulationManager *mySimulationManager;
+    /// The handle to the simulation manager.
+    TimeWarpSimulationManager* mySimulationManager;
 
-  unsigned int myNumCommittedEvents;
-  unsigned int myNumRolledBackEvents;
-  unsigned int myNumExecutedEvents;
+    unsigned int myNumCommittedEvents;
+    unsigned int myNumRolledBackEvents;
+    unsigned int myNumExecutedEvents;
 
-  //@} // End of Protected Class Attributes of TimeWarpMultiSet.
+    //@} // End of Protected Class Attributes of TimeWarpMultiSet.
 };
 
 #endif

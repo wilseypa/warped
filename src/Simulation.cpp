@@ -9,25 +9,25 @@
 #include <iostream>
 #include <stdexcept>
 
-Simulation::Simulation( Application *initApplication ) : myApplication( initApplication ){
+Simulation::Simulation(Application* initApplication) : myApplication(initApplication) {
 }
 
 Simulation*
-Simulation::instance( SimulationConfiguration *configuration,
-		      Application *userApplication ){
-  // global access point to this singleton class
-  static Simulation *singleton = 0;
-  if( singleton == 0 ){
-    singleton = new Simulation( userApplication );
-    if( configuration == 0 ){
-       throw std::runtime_error("Must provide a non-null configuration if userApplication is not null");
+Simulation::instance(SimulationConfiguration* configuration,
+                     Application* userApplication) {
+    // global access point to this singleton class
+    static Simulation* singleton = 0;
+    if (singleton == 0) {
+        singleton = new Simulation(userApplication);
+        if (configuration == 0) {
+            throw std::runtime_error("Must provide a non-null configuration if userApplication is not null");
+        }
+        singleton->configure(*configuration);
     }
-    singleton->configure( *configuration );
-  }
-  return singleton;
+    return singleton;
 }
 
-void 
+void
 Simulation::configure(SimulationConfiguration& configuration) {
     // Decide which Simulation manager to use based on the configuraiton
 
@@ -56,66 +56,66 @@ Simulation::getSimulationManager() {
 
 
 // report an error condition depending on the severity level
-void 
-Simulation::reportError(const string& msg, const SEVERITY level){
-  switch(level){
-  case NOTE:
-    std::cout << "Severity Level: NOTE" << std::endl;
-    std::cout << msg << std::endl;
-    break;
-  case WARNING:
-    std::cout << "Severity Level: WARNING" << std::endl;
-    std::cout << msg << std::endl;
-    break;
-  case ERROR:
-    std::cout << "Severity Level: ERROR" << std::endl;
-    std::cout << msg << std::endl;
-    exit(-1);
-    break;
-  case ABORT:
-    std::cout << "Severity Level: ABORT" << std::endl;
-    std::cout << msg << std::endl;
-    abort();
-    break;
-  default:
-    break;
-  };
+void
+Simulation::reportError(const string& msg, const SEVERITY level) {
+    switch (level) {
+    case NOTE:
+        std::cout << "Severity Level: NOTE" << std::endl;
+        std::cout << msg << std::endl;
+        break;
+    case WARNING:
+        std::cout << "Severity Level: WARNING" << std::endl;
+        std::cout << msg << std::endl;
+        break;
+    case ERROR:
+        std::cout << "Severity Level: ERROR" << std::endl;
+        std::cout << msg << std::endl;
+        exit(-1);
+        break;
+    case ABORT:
+        std::cout << "Severity Level: ABORT" << std::endl;
+        std::cout << msg << std::endl;
+        abort();
+        break;
+    default:
+        break;
+    };
 }
 
 void
-Simulation::initialize(){
-  getSimulationManager()->initialize();
+Simulation::initialize() {
+    getSimulationManager()->initialize();
 }
 
 void
-Simulation::simulate( const VTime &simulateUntil ){ 
-  getSimulationManager()->simulate( simulateUntil );
+Simulation::simulate(const VTime& simulateUntil) {
+    getSimulationManager()->simulate(simulateUntil);
 }
 
 void
-Simulation::finalize(){
-  getSimulationManager()->finalize();
-  cleanUp();
+Simulation::finalize() {
+    getSimulationManager()->finalize();
+    cleanUp();
 }
 
-const VTime &
-Simulation::getCommittedTime(){
-  return getSimulationManager()->getCommittedTime();
+const VTime&
+Simulation::getCommittedTime() {
+    return getSimulationManager()->getCommittedTime();
 }
 
-const VTime &
-Simulation::getNextEventTime(){
-  return getSimulationManager()->getNextEventTime();
+const VTime&
+Simulation::getNextEventTime() {
+    return getSimulationManager()->getNextEventTime();
 }
 
 bool
-Simulation::simulationComplete(){
-  return getSimulationManager()->simulationComplete();
+Simulation::simulationComplete() {
+    return getSimulationManager()->simulationComplete();
 }
 
 extern "C" {
-  /**
-     Simply here to have something to search for from configure scripts.
-  */
-  char isWarped(){ return 0; }
+    /**
+       Simply here to have something to search for from configure scripts.
+    */
+    char isWarped() { return 0; }
 }

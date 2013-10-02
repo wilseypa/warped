@@ -1,5 +1,5 @@
 
 #include "Partitioner.h"
 
-Partitioner::~Partitioner(){}
+Partitioner::~Partitioner() {}
 

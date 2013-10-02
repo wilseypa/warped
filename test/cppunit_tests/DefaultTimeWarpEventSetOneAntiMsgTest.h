@@ -7,31 +7,31 @@
 class DefaultTimeWarpEventSet;
 
 class DefaultTimeWarpEventSetOneAntiMsgTest : public TimeWarpEventSetTest {
-  CPPUNIT_TEST_SUITE( DefaultTimeWarpEventSetOneAntiMsgTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST( testHandleOneAntiMessage );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(DefaultTimeWarpEventSetOneAntiMsgTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testHandleOneAntiMessage);
+    CPPUNIT_TEST_SUITE_END();
 
 private:
-  DefaultTimeWarpEventSet *toTest;
+    DefaultTimeWarpEventSet* toTest;
 
 public:
-  // Test interface
-  void setUp();
-  void tearDown();
+    // Test interface
+    void setUp();
+    void tearDown();
 
-  void testConstructor();
-  void testInsert();
-  void testGetEvent();
-  void testGetEventTime();
-  void testPeekEvent();
-  void testPeekEventTime();
-  void testHandleAntiMessage();
-  void testHandleOneAntiMessage();
-  void testRollback();
-  void testFossilCollect();
-  void testFossilCollectInt();
-  void testOfcPurge();
+    void testConstructor();
+    void testInsert();
+    void testGetEvent();
+    void testGetEventTime();
+    void testPeekEvent();
+    void testPeekEventTime();
+    void testHandleAntiMessage();
+    void testHandleOneAntiMessage();
+    void testRollback();
+    void testFossilCollect();
+    void testFossilCollectInt();
+    void testOfcPurge();
 
 };
 

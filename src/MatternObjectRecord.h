@@ -28,128 +28,128 @@ the red messages.
 class MatternObjectRecord {
 public:
 
-  /**@name Public Class Methods of MatternObjectRecord. */
-  //@{
+    /**@name Public Class Methods of MatternObjectRecord. */
+    //@{
 
-  /// Constructor.
-  MatternObjectRecord():
-    color( WHITE ),
-    tokenIterationNumber(0),
-    tMin( NULL ),
-    numberOfWhiteMessages(0){}
+    /// Constructor.
+    MatternObjectRecord():
+        color(WHITE),
+        tokenIterationNumber(0),
+        tMin(NULL),
+        numberOfWhiteMessages(0) {}
 
-  /// Destructor.
-  ~MatternObjectRecord(){};
+    /// Destructor.
+    ~MatternObjectRecord() {};
 
-  /** Set the color
+    /** Set the color
 
-  @param newColor the new color type
-  */
-  virtual void setColor(gVTTokenColor newColor){
-    color = newColor;
-  }
+    @param newColor the new color type
+    */
+    virtual void setColor(gVTTokenColor newColor) {
+        color = newColor;
+    }
 
-  /** Reset the minimal timestamp of red messages
+    /** Reset the minimal timestamp of red messages
 
-  @param newTime the new time to reset it to
-  */
-  virtual void resetMinTimeStamp(const VTime& newTime){
-	  delete tMin;
-	  tMin = newTime.clone();
-  }
+    @param newTime the new time to reset it to
+    */
+    virtual void resetMinTimeStamp(const VTime& newTime) {
+        delete tMin;
+        tMin = newTime.clone();
+    }
 
-  /** Set the minimal timestamp of red messages
+    /** Set the minimal timestamp of red messages
 
-  @param newTime the new time to set it to
-  */
-  virtual void setMinTimeStamp(const VTime& newTime){
-	  if (newTime < *tMin) {
-		 // delete tMin;
-		  tMin = newTime.clone();
-	  }
-  }
+    @param newTime the new time to set it to
+    */
+    virtual void setMinTimeStamp(const VTime& newTime) {
+        if (newTime < *tMin) {
+            // delete tMin;
+            tMin = newTime.clone();
+        }
+    }
 
-  /** Set the number of white messages.
+    /** Set the number of white messages.
 
-  @param newValue the new value for number of white messages
-  */
-  virtual void setNumberOfWhiteMessages(int newValue){
-    numberOfWhiteMessages = newValue;
-  }
+    @param newValue the new value for number of white messages
+    */
+    virtual void setNumberOfWhiteMessages(int newValue) {
+        numberOfWhiteMessages = newValue;
+    }
 
-  /// increment the token iteration number
-  virtual void incrementTokenIterationNumber(){
-    tokenIterationNumber++;
-  }
+    /// increment the token iteration number
+    virtual void incrementTokenIterationNumber() {
+        tokenIterationNumber++;
+    }
 
-  /** return the token iteration number
+    /** return the token iteration number
 
-  @return tokenIterationNumber the token iteration number
-  */
-  virtual unsigned int getTokenIterationNumber(){
-    return tokenIterationNumber;
-  }
+    @return tokenIterationNumber the token iteration number
+    */
+    virtual unsigned int getTokenIterationNumber() {
+        return tokenIterationNumber;
+    }
 
-  /** Set the token iteration number
+    /** Set the token iteration number
 
-  @param value the new value for the token iteration number
-  */
-  virtual void setTokenIterationNumber(unsigned int value){
-    tokenIterationNumber = value;
-  }
+    @param value the new value for the token iteration number
+    */
+    virtual void setTokenIterationNumber(unsigned int value) {
+        tokenIterationNumber = value;
+    }
 
-  /// increment the number of white messages
-  virtual void incrementNumberOfWhiteMessages(){
-    numberOfWhiteMessages++;
-  }
+    /// increment the number of white messages
+    virtual void incrementNumberOfWhiteMessages() {
+        numberOfWhiteMessages++;
+    }
 
-  /// decrement the number of white messages
-  virtual void decrementNumberOfWhiteMessages(){
-    numberOfWhiteMessages--;
-  }
-   
-  /** Get the color of this simulation manager.
+    /// decrement the number of white messages
+    virtual void decrementNumberOfWhiteMessages() {
+        numberOfWhiteMessages--;
+    }
 
-  @return color the color type of this simulation manager
-  */
-  virtual gVTTokenColor getColor(){
-    return color;
-  }
+    /** Get the color of this simulation manager.
 
-  /** Get the number of white messages.
+    @return color the color type of this simulation manager
+    */
+    virtual gVTTokenColor getColor() {
+        return color;
+    }
 
-  @return numberOfWhiteMesssages the number of white messages
-  */
-  virtual int getNumberOfWhiteMessages(){
-    return numberOfWhiteMessages;
-  }
+    /** Get the number of white messages.
 
-  /** Get the minimal timestamp of red messages.
-  @return tMin the minimal timestamp of red messages
-  */
-  virtual const VTime *getMinTimeStamp(){
-    return tMin;
-  }
-  //@} // End of Public Class Methods of MatternObjectRecord.
-   
+    @return numberOfWhiteMesssages the number of white messages
+    */
+    virtual int getNumberOfWhiteMessages() {
+        return numberOfWhiteMessages;
+    }
+
+    /** Get the minimal timestamp of red messages.
+    @return tMin the minimal timestamp of red messages
+    */
+    virtual const VTime* getMinTimeStamp() {
+        return tMin;
+    }
+    //@} // End of Public Class Methods of MatternObjectRecord.
+
 protected:
 
-  /**@name Private Class Attributes of MatternObjectRecord. */
-  //@{
+    /**@name Private Class Attributes of MatternObjectRecord. */
+    //@{
 
-  /// color of this simulation manager
-  gVTTokenColor color;
+    /// color of this simulation manager
+    gVTTokenColor color;
 
-  /// the number of white messages it has sent out
-  int numberOfWhiteMessages;
+    /// the number of white messages it has sent out
+    int numberOfWhiteMessages;
 
-  /// the number of iterations the gvttoken has taken
-  unsigned int tokenIterationNumber;
+    /// the number of iterations the gvttoken has taken
+    unsigned int tokenIterationNumber;
 
-  /// the minimal timestamp of red messages
-  VTime *tMin;
+    /// the minimal timestamp of red messages
+    VTime* tMin;
 
-  //@} // End of Private Class Attributes of MatternObjectRecord.
+    //@} // End of Private Class Attributes of MatternObjectRecord.
 };
 #endif
-   
+

@@ -6,36 +6,36 @@
 #include "ReceiverQueueContainer.h"
 
 class SchedulingData {
- public:
+public:
 
-  SchedulingData() : scheduleList(new vector<ScheduleListContainer*>),
-    popHeapFlag(false),
-    makeHeapFlag(false) {
-  };
+    SchedulingData() : scheduleList(new vector<ScheduleListContainer*>),
+        popHeapFlag(false),
+        makeHeapFlag(false) {
+    };
 
-  ~SchedulingData() {
-    vector<ScheduleListContainer*>::iterator begin_iter = scheduleList->begin();
-    vector<ScheduleListContainer*>::iterator end_iter = scheduleList->end();
-    while(begin_iter != end_iter) {
-      ScheduleListContainer* ptr = *(begin_iter);
-      begin_iter++;
-      delete ptr;
+    ~SchedulingData() {
+        vector<ScheduleListContainer*>::iterator begin_iter = scheduleList->begin();
+        vector<ScheduleListContainer*>::iterator end_iter = scheduleList->end();
+        while (begin_iter != end_iter) {
+            ScheduleListContainer* ptr = *(begin_iter);
+            begin_iter++;
+            delete ptr;
+        }
+        delete scheduleList;
     }
-    delete scheduleList;
-  }
 
-  void PopHeapFlag(bool value) { popHeapFlag = value;}
-  bool PopHeapFlag() { return popHeapFlag;}
+    void PopHeapFlag(bool value) { popHeapFlag = value;}
+    bool PopHeapFlag() { return popHeapFlag;}
 
-  void MakeHeapFlag(bool value) { makeHeapFlag = value;}
-  bool MakeHeapFlag() { return makeHeapFlag;}
+    void MakeHeapFlag(bool value) { makeHeapFlag = value;}
+    bool MakeHeapFlag() { return makeHeapFlag;}
 
-  vector<ScheduleListContainer*>* scheduleList;
+    vector<ScheduleListContainer*>* scheduleList;
 
- private:
+private:
 
-  bool popHeapFlag;
-  bool makeHeapFlag;
+    bool popHeapFlag;
+    bool makeHeapFlag;
 };
 
 #endif

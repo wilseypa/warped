@@ -8,13 +8,13 @@
 class TimeWarpEventSet;
 
 class ReceiverQueueContainer {
- public:
-  ReceiverQueueContainer():eventSet(0), headEventPtr(0){};
-  
-  ~ReceiverQueueContainer() {}
-  
-  TimeWarpEventSet* eventSet;
-  Event* headEventPtr;
+public:
+    ReceiverQueueContainer():eventSet(0), headEventPtr(0) {};
+
+    ~ReceiverQueueContainer() {}
+
+    TimeWarpEventSet* eventSet;
+    Event* headEventPtr;
 };
 
 #endif

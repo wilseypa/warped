@@ -33,157 +33,157 @@ class TimeWarpSimulationManager;
 class CommunicationManager: virtual public Configurable {
 public:
 
-	/**@name Public Class Methods of CommunicationManager. */
-	//@{
+    /**@name Public Class Methods of CommunicationManager. */
+    //@{
 
-	/** Default constructor.
+    /** Default constructor.
 
-	 @param physicalLayer A handle to the physical comm layer.
-	 */
-	CommunicationManager(PhysicalCommunicationLayer *physicalLayer,
-			TimeWarpSimulationManager *initSimulationManager);
+     @param physicalLayer A handle to the physical comm layer.
+     */
+    CommunicationManager(PhysicalCommunicationLayer* physicalLayer,
+                         TimeWarpSimulationManager* initSimulationManager);
 
-	/// Virtual destructor
-	virtual ~CommunicationManager();
+    /// Virtual destructor
+    virtual ~CommunicationManager();
 
-	/// initialize the communication Manager
-	virtual void initializeCommunicationManager() = 0;
+    /// initialize the communication Manager
+    virtual void initializeCommunicationManager() = 0;
 
-	/** Method to request the sending of a KernelMessage to another
-	 SimulationObject.  This is generally housekeeping messages like GVT
-	 updates, or wrapped events.
+    /** Method to request the sending of a KernelMessage to another
+     SimulationObject.  This is generally housekeeping messages like GVT
+     updates, or wrapped events.
 
-	 This is a pure virtual function and has to be overridden by the user.
+     This is a pure virtual function and has to be overridden by the user.
 
-	 @param msg Message to send.
-	 @pararm dest Destination SimulationManager.
+     @param msg Message to send.
+     @pararm dest Destination SimulationManager.
 
-	 Note that the msg will be deleted by the kernel when it's delivered,
-	 so no handle should be retained by the caller.
-	 */
-	virtual void sendMessage(KernelMessage *msg, unsigned int dest) = 0;
+     Note that the msg will be deleted by the kernel when it's delivered,
+     so no handle should be retained by the caller.
+     */
+    virtual void sendMessage(KernelMessage* msg, unsigned int dest) = 0;
 
-	/** Route this message to the right guy.
+    /** Route this message to the right guy.
 
-	 This is a pure virtual function and has to be overridden by the user.
+     This is a pure virtual function and has to be overridden by the user.
 
-	 @param msg Message to be routed.
-	 */
-	virtual void routeMessage(KernelMessage *msg) = 0;
+     @param msg Message to be routed.
+     */
+    virtual void routeMessage(KernelMessage* msg) = 0;
 
-	/** Grab a message from the network layer.
+    /** Grab a message from the network layer.
 
-	 This is a pure virtual function and has to be overridden by the user.
+     This is a pure virtual function and has to be overridden by the user.
 
-	 @return Retrieved message.
-	 */
-	virtual const SerializedInstance *retrieveMessageFromPhysicalLayer() = 0;
+     @return Retrieved message.
+     */
+    virtual const SerializedInstance* retrieveMessageFromPhysicalLayer() = 0;
 
-	/** Poll to see if any messages have arrived.
+    /** Poll to see if any messages have arrived.
 
-	 This is a pure virtual function and has to be overridden by the user.
+     This is a pure virtual function and has to be overridden by the user.
 
-	 @param int Max number of messages to receive (default = 1).
-	 @return Number of received messages.
-	 */
-	virtual unsigned int checkPhysicalLayerForMessages(int = 1) = 0;
+     @param int Max number of messages to receive (default = 1).
+     @return Number of received messages.
+     */
+    virtual unsigned int checkPhysicalLayerForMessages(int = 1) = 0;
 
-	void initializePhysicalCommunicationLayer() {
-		myPhysicalCommunicationLayer->physicalInit();
-	}
+    void initializePhysicalCommunicationLayer() {
+        myPhysicalCommunicationLayer->physicalInit();
+    }
 
-	/** Get the id of this communication manager.
+    /** Get the id of this communication manager.
 
-	 @return Id of communication manager.
-	 */
-	unsigned int getId() {
-		return myPhysicalCommunicationLayer->physicalGetId();
-	}
+     @return Id of communication manager.
+     */
+    unsigned int getId() {
+        return myPhysicalCommunicationLayer->physicalGetId();
+    }
 
-	/** Register all message types the comm manager needs to know about.
+    /** Register all message types the comm manager needs to know about.
 
-	 @param messageType Type of message.
-	 @param entity Entity associated with the message.
-	 */
-	void registerMessageType(const string &messageType,
-			CommunicatingEntity *entity);
+     @param messageType Type of message.
+     @param entity Entity associated with the message.
+     */
+    void registerMessageType(const string& messageType,
+                             CommunicatingEntity* entity);
 
-	/** Wait for init messages to set up the distributed simulation.
+    /** Wait for init messages to set up the distributed simulation.
 
-	 Assume N simulation objects. At initialization, we will
-	 wait for numExpected = N-1 initialization messages.
+     Assume N simulation objects. At initialization, we will
+     wait for numExpected = N-1 initialization messages.
 
-	 This is a pure virtual function and has to be overridden by the user.
+     This is a pure virtual function and has to be overridden by the user.
 
-	 @param numExpected Number of expected init messages.
-	 */
-	virtual void waitForInitialization(unsigned int numExpected) = 0;
+     @param numExpected Number of expected init messages.
+     */
+    virtual void waitForInitialization(unsigned int numExpected) = 0;
 
-	/** send start messages to start the distributed simulation
+    /** send start messages to start the distributed simulation
 
-	 Assume N simulation objects. Simulation Manager 0 sends start
-	 messages to N - 1 simulation manager.
+     Assume N simulation objects. Simulation Manager 0 sends start
+     messages to N - 1 simulation manager.
 
-	 @param myID Id of the sending simulation manager.
-	 @param numManagers Number of simulation managers.
-	 */
-	virtual void sendStartMessage(unsigned int myID) = 0;
+     @param myID Id of the sending simulation manager.
+     @param numManagers Number of simulation managers.
+     */
+    virtual void sendStartMessage(unsigned int myID) = 0;
 
-	/** wait for start message
+    /** wait for start message
 
-	 The starting simulation manager (ID = 0) sends simulation start
-	 messages and only after the receipt of these messages should
-	 the simulation manager start simulation activity.
+     The starting simulation manager (ID = 0) sends simulation start
+     messages and only after the receipt of these messages should
+     the simulation manager start simulation activity.
 
-	 */
-	virtual void waitForStart() = 0;
+     */
+    virtual void waitForStart() = 0;
 
-	/// Set true when recovering from a catastrophic rollback during
-	/// optimimistic fossil collection.
-	void setRecoveringFromCheckpoint(bool inRec) {
-		recoveringFromCkpt = inRec;
-	}
+    /// Set true when recovering from a catastrophic rollback during
+    /// optimimistic fossil collection.
+    void setRecoveringFromCheckpoint(bool inRec) {
+        recoveringFromCkpt = inRec;
+    }
 
-	// Returns true when the Simulation is in recovery from a catastrophic rollback
-	bool getRecoveringFromCheckpoint() {
-		return recoveringFromCkpt;
-	}
+    // Returns true when the Simulation is in recovery from a catastrophic rollback
+    bool getRecoveringFromCheckpoint() {
+        return recoveringFromCkpt;
+    }
 
-	/// Increments the number of recoveries from catastrophic rollbacks.
-	void incrementNumRecoveries() {
-		numCatastrophicRollbacks++;
-	}
+    /// Increments the number of recoveries from catastrophic rollbacks.
+    void incrementNumRecoveries() {
+        numCatastrophicRollbacks++;
+    }
 
-	virtual void finalize();
+    virtual void finalize();
 
     virtual int getSize();
 
-	void configure(SimulationConfiguration &configuration);
+    void configure(SimulationConfiguration& configuration);
 
-	//@} // End of Public Class Methods of CommunicationManager
+    //@} // End of Public Class Methods of CommunicationManager
 
 protected:
 
-	/**@name Protected Class Attributes of CommunicationManager. */
-	//@{
-	/// A list of receivers.
+    /**@name Protected Class Attributes of CommunicationManager. */
+    //@{
+    /// A list of receivers.
 
-	//Define a type typeCommMap with a string key, containing communicatingEntities
-	typedef std::unordered_map<string, CommunicatingEntity *> typeCommMap;
-	typeCommMap listOfReceivers;
+    //Define a type typeCommMap with a string key, containing communicatingEntities
+    typedef std::unordered_map<string, CommunicatingEntity*> typeCommMap;
+    typeCommMap listOfReceivers;
 
-	/// Handle to physical communication layer.
-	PhysicalCommunicationLayer * const myPhysicalCommunicationLayer;
+    /// Handle to physical communication layer.
+    PhysicalCommunicationLayer* const myPhysicalCommunicationLayer;
 
-	/// True when recovering from a catastrophic rollback during
-	/// optimimistic fossil collection.
-	bool recoveringFromCkpt;
+    /// True when recovering from a catastrophic rollback during
+    /// optimimistic fossil collection.
+    bool recoveringFromCkpt;
 
-	/// The number of catastrophic rollbacks that have occurred when
-	/// using optimistic fossil collection.
-	unsigned int numCatastrophicRollbacks;
+    /// The number of catastrophic rollbacks that have occurred when
+    /// using optimistic fossil collection.
+    unsigned int numCatastrophicRollbacks;
 
-	//@} // End of Protected Class Attributes of CommunicationManager.
+    //@} // End of Protected Class Attributes of CommunicationManager.
 
 };
 

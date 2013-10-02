@@ -2,17 +2,17 @@
 #include "ObjectStub.h"
 #include "FactoryImplementationBase.h"
 
-ObjectStub::ObjectStub(FactoryImplementationBase *myFactory) {
-  factory = myFactory;
+ObjectStub::ObjectStub(FactoryImplementationBase* myFactory) {
+    factory = myFactory;
 }
 
-FactoryImplementationBase *
+FactoryImplementationBase*
 ObjectStub::getParentFactory() const {
-   return factory;
+    return factory;
 }
 
 const Kind
 ObjectStub::getKind() const {
-   return STUB;
+    return STUB;
 }
 

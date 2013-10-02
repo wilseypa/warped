@@ -24,65 +24,65 @@
 */
 class TimeWarpConfigurationManager : public ConfigurationManager {
 public:
-   
-  /**@name Public Class Methods of TimeWarpConfigurationManager */
-  //@{
 
-  /** Default constructor 
+    /**@name Public Class Methods of TimeWarpConfigurationManager */
+    //@{
 
-  @param initApplication The application that we are starting with.
+    /** Default constructor
 
-  */
-  TimeWarpConfigurationManager(Application *initApplication);
-   
-  /// Default destructor
-  ~TimeWarpConfigurationManager();
+    @param initApplication The application that we are starting with.
 
-  /** configure the specified simulation manager.
+    */
+    TimeWarpConfigurationManager(Application* initApplication);
 
-  @return returns a configured simulation manager
-  */
-  void configure( SimulationConfiguration &configuration );
-  
-  /**
-     Gets the simulation manager for this configuration.
-     
-     @return The Simulation Manager;
-  */
-  SimulationManager *getSimulationManager();
+    /// Default destructor
+    ~TimeWarpConfigurationManager();
 
-  //@} // End of Public Class Methods of TimeWarpConfigurationManager
+    /** configure the specified simulation manager.
+
+    @return returns a configured simulation manager
+    */
+    void configure(SimulationConfiguration& configuration);
+
+    /**
+       Gets the simulation manager for this configuration.
+
+       @return The Simulation Manager;
+    */
+    SimulationManager* getSimulationManager();
+
+    //@} // End of Public Class Methods of TimeWarpConfigurationManager
 
 protected:
 
-  /**@name Protected Class Attributes of TimeWarpConfigurationManager */
-  //@{
+    /**@name Protected Class Attributes of TimeWarpConfigurationManager */
+    //@{
 
-  /// the handle to the simulation manager
-  TimeWarpSimulationManager *mySimulationManager;
+    /// the handle to the simulation manager
+    TimeWarpSimulationManager* mySimulationManager;
 
-  /// This is the handle to TimeWarp EventSet Factory
-  TimeWarpEventSetFactory *myEventSetFactory;
+    /// This is the handle to TimeWarp EventSet Factory
+    TimeWarpEventSetFactory* myEventSetFactory;
 
-  /// handle to the StateManager Factory
-  StateManagerFactory *myStateFactory;
-   
-  // handle to the GVTManager Factory
-  GVTManagerFactory *myGVTFactory;
-   
-  /// Handle to the communication manager Factory
-  CommunicationManagerFactory *myCommunicationFactory;
+    /// handle to the StateManager Factory
+    StateManagerFactory* myStateFactory;
 
-  /// Handle to the scheduler Factory
-  SchedulingManagerFactory *mySchedulingFactory;
+    // handle to the GVTManager Factory
+    GVTManagerFactory* myGVTFactory;
 
-  /// Handle to the output manager Factory
-  OutputManagerFactory *myOutputFactory;
+    /// Handle to the communication manager Factory
+    CommunicationManagerFactory* myCommunicationFactory;
 
-  /// Handle to the application we're associated with
-  Application *myApplication;
+    /// Handle to the scheduler Factory
+    SchedulingManagerFactory* mySchedulingFactory;
 
-  //@} // End of Protected Class Attributes of TimeWarpConfigurationManager
+    /// Handle to the output manager Factory
+    OutputManagerFactory* myOutputFactory;
+
+    /// Handle to the application we're associated with
+    Application* myApplication;
+
+    //@} // End of Protected Class Attributes of TimeWarpConfigurationManager
 
 private:
 

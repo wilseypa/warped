@@ -13,95 +13,96 @@ class SerializedInstance;
 */
 class RestoreCkptMessage : public KernelMessage {
 public:
-  /**@name Public Class Methods of RestoreCkptMessage. */
-  //@{
+    /**@name Public Class Methods of RestoreCkptMessage. */
+    //@{
 
-  /// Indicates the cycle that the recovery process is in.
-  enum RestoreState{SEND_TO_MASTER,
-                    FIRST_CYCLE,
-		    SECOND_CYCLE,
-		    THIRD_CYCLE};
+    /// Indicates the cycle that the recovery process is in.
+    enum RestoreState {SEND_TO_MASTER,
+                       FIRST_CYCLE,
+                       SECOND_CYCLE,
+                       THIRD_CYCLE
+                      };
 
-  /** Constructor
+    /** Constructor
 
-      @param source The source simulation manager id.
-      @param dest The destination simulation manager id.
-      @param initCkptTime The first time to checkpoint.
-      @param initState Initializes the cycle.
-      @param initConsensus Initializes if consensus has been reached.
-  */
-  inline RestoreCkptMessage(unsigned int source,
-                            unsigned int dest,
-                            int initCkptTime = 0,
-                            RestoreState initState = SEND_TO_MASTER,
-                            bool initConsensus = false) :
-    KernelMessage( source, dest ),
-    checkpointTime(initCkptTime),
-    tokenState(initState),
-    checkpointConsensus(initConsensus){
-  }
-  
-  /// Destructor.
-  ~RestoreCkptMessage(){}
+        @param source The source simulation manager id.
+        @param dest The destination simulation manager id.
+        @param initCkptTime The first time to checkpoint.
+        @param initState Initializes the cycle.
+        @param initConsensus Initializes if consensus has been reached.
+    */
+    inline RestoreCkptMessage(unsigned int source,
+                              unsigned int dest,
+                              int initCkptTime = 0,
+                              RestoreState initState = SEND_TO_MASTER,
+                              bool initConsensus = false) :
+        KernelMessage(source, dest),
+        checkpointTime(initCkptTime),
+        tokenState(initState),
+        checkpointConsensus(initConsensus) {
+    }
 
-  /** Sets the checkpoint time.
-      @param time The checkpoint time.
-  */
-  void setCheckpointTime(int time){ checkpointTime = time; }
+    /// Destructor.
+    ~RestoreCkptMessage() {}
 
-  /** Set the current cycle.
-      @param setState The cycle the recovery process is in.
-  */
-  void setTokenState(RestoreState setState){ tokenState = setState; }
+    /** Sets the checkpoint time.
+        @param time The checkpoint time.
+    */
+    void setCheckpointTime(int time) { checkpointTime = time; }
 
-  /** Set the restore time.
-      @param ckptCon The time to restore.
-  */
-  void setCheckpointConsensus(bool ckptCon){ checkpointConsensus = ckptCon; }
+    /** Set the current cycle.
+        @param setState The cycle the recovery process is in.
+    */
+    void setTokenState(RestoreState setState) { tokenState = setState; }
 
-  /** Returns the checkpoint time.
-      @return int The checkpoint time.
-  */
-  int getCheckpointTime() const { return checkpointTime; }
+    /** Set the restore time.
+        @param ckptCon The time to restore.
+    */
+    void setCheckpointConsensus(bool ckptCon) { checkpointConsensus = ckptCon; }
 
-  /** Returns the current cycle.
-      @return the current cycle.
-  */
-  RestoreState getTokenState()const { return tokenState; }
+    /** Returns the checkpoint time.
+        @return int The checkpoint time.
+    */
+    int getCheckpointTime() const { return checkpointTime; }
 
-  /** Returns the restore time.
-      @return The restore time.
-  */
-  bool getCheckpointConsensus() const { return checkpointConsensus; }
+    /** Returns the current cycle.
+        @return the current cycle.
+    */
+    RestoreState getTokenState()const { return tokenState; }
 
-  void serialize( SerializedInstance * ) const;
-  static Serializable *deserialize( SerializedInstance *data );
+    /** Returns the restore time.
+        @return The restore time.
+    */
+    bool getCheckpointConsensus() const { return checkpointConsensus; }
 
-  static const string &getRestoreCkptMessageType();
+    void serialize(SerializedInstance*) const;
+    static Serializable* deserialize(SerializedInstance* data);
 
-  const string &getDataType() const {
-    return getRestoreCkptMessageType();
-  }
+    static const string& getRestoreCkptMessageType();
 
-  static void registerDeserializer();
+    const string& getDataType() const {
+        return getRestoreCkptMessageType();
+    }
 
-  //@} // End of Public Class Methods of RestoreCkptMessage.
+    static void registerDeserializer();
+
+    //@} // End of Public Class Methods of RestoreCkptMessage.
 
 private:
 
-  /**@name Private Class Methods of RestoreCkptMessage. */
-  //@{
+    /**@name Private Class Methods of RestoreCkptMessage. */
+    //@{
 
-  ///  The estimate of that the LP is sending out
-  int checkpointTime;
+    ///  The estimate of that the LP is sending out
+    int checkpointTime;
 
-  /// The current cycle of the recovery process.
-  RestoreState tokenState;
+    /// The current cycle of the recovery process.
+    RestoreState tokenState;
 
-  /// The time to restore.
-  bool checkpointConsensus;
+    /// The time to restore.
+    bool checkpointConsensus;
 
-  //@} // End of Private Class Methods of RestoreCkptMessage.
+    //@} // End of Private Class Methods of RestoreCkptMessage.
 };
 
 #endif

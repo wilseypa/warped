@@ -5,23 +5,23 @@
 #include "EventMessageBaseTest.h"
 
 class EventMessageTest : public EventMessageBaseTest {
-  CPPUNIT_TEST_SUITE( EventMessageTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST( testSerialization );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(EventMessageTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testSerialization);
+    CPPUNIT_TEST_SUITE_END();
 
 private:
-  EventMessage *testMessage;
+    EventMessage* testMessage;
 
-  static Event *getDefaultEvent();
+    static Event* getDefaultEvent();
 
 public:
-  // Test interface
-  void setUp();
-  void tearDown();
+    // Test interface
+    void setUp();
+    void tearDown();
 
-  void testConstructor();
-  void testSerialization();
+    void testConstructor();
+    void testSerialization();
 };
 
 #endif

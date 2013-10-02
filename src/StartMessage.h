@@ -4,7 +4,7 @@
 
 /**
    This is the class defining the termination token that gets passed
-   around.  Essentially, it has a color and a terminator.  
+   around.  Essentially, it has a color and a terminator.
 
    The color can be WHITE, which means it's on the first cycle,
    RED, which means it's on it's second cycle, or BLACK.
@@ -21,20 +21,20 @@ class SerializedInstance;
 
 class StartMessage : public KernelMessage {
 public:
-  StartMessage( unsigned int source,
-		unsigned int dest ) :
-    KernelMessage( source, dest ){}
-  
-  void serialize( SerializedInstance * ) const;
-  static Serializable *deserialize( SerializedInstance *data );
+    StartMessage(unsigned int source,
+                 unsigned int dest) :
+        KernelMessage(source, dest) {}
 
-  static const string &getStartMessageType();
+    void serialize(SerializedInstance*) const;
+    static Serializable* deserialize(SerializedInstance* data);
 
-  const string &getDataType() const {
-    return getStartMessageType();
-  }
+    static const string& getStartMessageType();
 
-  static void registerDeserializer();
+    const string& getDataType() const {
+        return getStartMessageType();
+    }
+
+    static void registerDeserializer();
 
 private:
 };

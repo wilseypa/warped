@@ -19,30 +19,30 @@ class OutputManager;
 class ThreadedAggressiveOutputManager: public ThreadedOutputManagerImplementationBase {
 public:
 
-	/**@name Public Class Methods of ThreadedAggressiveOutputManager. */
-	//@{
+    /**@name Public Class Methods of ThreadedAggressiveOutputManager. */
+    //@{
 
-	/** Constructor.
+    /** Constructor.
 
-	 @param simMgr Handle to the simulation manager.
-	 */
-	ThreadedAggressiveOutputManager(ThreadedTimeWarpSimulationManager *simMgr);
+     @param simMgr Handle to the simulation manager.
+     */
+    ThreadedAggressiveOutputManager(ThreadedTimeWarpSimulationManager* simMgr);
 
-	/// Destructor.
-	~ThreadedAggressiveOutputManager();
+    /// Destructor.
+    ~ThreadedAggressiveOutputManager();
 
-	/** Send out anti-messages.
+    /** Send out anti-messages.
 
-	 @param rollbackTime Bound for how many antimessages will be sent.
-	 @param object A pointer to the object who experienced rollback.
-	 */
-	void rollback(SimulationObject *object, const VTime &rollbackTime,
-			int threadID);
+     @param rollbackTime Bound for how many antimessages will be sent.
+     @param object A pointer to the object who experienced rollback.
+     */
+    void rollback(SimulationObject* object, const VTime& rollbackTime,
+                  int threadID);
 
-	virtual void configure(SimulationConfiguration &) {
-	}
+    virtual void configure(SimulationConfiguration&) {
+    }
 
-	//@} // End of Public Class Methods of ThreadedAggressiveOutputManager.
+    //@} // End of Public Class Methods of ThreadedAggressiveOutputManager.
 
 };
 

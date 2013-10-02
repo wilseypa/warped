@@ -7,17 +7,17 @@ class SchedulingManager;
 
 class SchedulingManagerTest : public WarpedUnitTest {
 public:
-  SchedulingManagerTest();
+    SchedulingManagerTest();
 
-  void setUp(){ WarpedUnitTest::setUp(); }
-  void tearDown(){ WarpedUnitTest::tearDown(); }
+    void setUp() { WarpedUnitTest::setUp(); }
+    void tearDown() { WarpedUnitTest::tearDown(); }
 
-  virtual void testConstructor() = 0;
-  virtual void testGetNextEvent() = 0;
+    virtual void testConstructor() = 0;
+    virtual void testGetNextEvent() = 0;
 
-protected:  
-  void testConstructor( SchedulingManager *toTest );
-  void testGetNextEvent( SchedulingManager *toTest );
+protected:
+    void testConstructor(SchedulingManager* toTest);
+    void testGetNextEvent(SchedulingManager* toTest);
 };
 
 #endif

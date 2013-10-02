@@ -16,37 +16,37 @@ using std::deque;
 */
 class eclmplReliablePhysicalCommunicationLayer : public PhysicalCommunicationLayer {
 public:
-  /**@name Public Class Methods of eclmplReliablePhysicalCommunicationLayer. */
-  //@{
+    /**@name Public Class Methods of eclmplReliablePhysicalCommunicationLayer. */
+    //@{
 
-  /// Default Constructor.
-  eclmplReliablePhysicalCommunicationLayer();
+    /// Default Constructor.
+    eclmplReliablePhysicalCommunicationLayer();
 
-  /// Destructor.
-  virtual ~eclmplReliablePhysicalCommunicationLayer();
-  
-  /** Init physical layer.
-  */
-  virtual void physicalInit();
+    /// Destructor.
+    virtual ~eclmplReliablePhysicalCommunicationLayer();
 
-  /** Get the Id of the simulation manager.
+    /** Init physical layer.
+    */
+    virtual void physicalInit();
 
-      @return Id of the simulation manager.
-  */
-  int physicalGetId() const;
+    /** Get the Id of the simulation manager.
 
-  /** Send buffer.
+        @return Id of the simulation manager.
+    */
+    int physicalGetId() const;
 
-      @param buffer Char buffer to send.
-      @param size Size of the buffer to send.
-  */
-  virtual void physicalSend( const SerializedInstance *toSend, unsigned int dest );
+    /** Send buffer.
 
-  /** Probe to see if there are messages to retrieve.
+        @param buffer Char buffer to send.
+        @param size Size of the buffer to send.
+    */
+    virtual void physicalSend(const SerializedInstance* toSend, unsigned int dest);
 
-      @return The retrieved message (NULL if no message).
-  */
-  virtual SerializedInstance *physicalProbeRecv();
+    /** Probe to see if there are messages to retrieve.
+
+        @return The retrieved message (NULL if no message).
+    */
+    virtual SerializedInstance* physicalProbeRecv();
 
 //   /** Retrieve message into a buffer.
 
@@ -57,89 +57,89 @@ public:
 //   */
 //   virtual bool physicalProbeRecvBuffer(char *buffer, int size, bool& sizeStatus);
 
-  /// Clean up and call MPI_Finalize.
-  virtual void physicalFinalize();
-  
-  /** Return how many processes are involved in the communicator.
+    /// Clean up and call MPI_Finalize.
+    virtual void physicalFinalize();
 
-      @return The number of processes involved in the communicator.
-  */
-  virtual int physicalGetSize() const;
+    /** Return how many processes are involved in the communicator.
 
-  //@} // End of Public Class Methods of eclmplReliablePhysicalCommunicationLayer.
+        @return The number of processes involved in the communicator.
+    */
+    virtual int physicalGetSize() const;
+
+    //@} // End of Public Class Methods of eclmplReliablePhysicalCommunicationLayer.
 
 protected:
-  /**@name Protected Class Methods of eclmplReliablePhysicalCommunicationLayer. */
-  //@{
-  virtual void send(eclmplUnreliableNetworkMessage * const nwMsg, const unsigned int &dest);
-  virtual void probeNetwork() = 0;
-  virtual bool insertInOrderMessage(eclmplUnreliableNetworkMessage *nwMsg);
-  virtual void processNwMsgInfo(eclmplUnreliableNetworkMessage *nwMsg);
-  virtual void updateOutOfOrderMessageQs(const unsigned int &source, 
-				     const bool &sendRetransmissionReq);
-  virtual unsigned int checkRetransmissionTimeout();
-  virtual SerializedInstance *getNextInOrder();
-  virtual int peekNextInOrderSize();
-  virtual void sendAck(unsigned int dest);
-  virtual void initializeCommunicationLayerAttributes() = 0;
-  //@} // End of Protected Class Attributes of eclmplReliablePhysicalCommunicationLayer.
+    /**@name Protected Class Methods of eclmplReliablePhysicalCommunicationLayer. */
+    //@{
+    virtual void send(eclmplUnreliableNetworkMessage* const nwMsg, const unsigned int& dest);
+    virtual void probeNetwork() = 0;
+    virtual bool insertInOrderMessage(eclmplUnreliableNetworkMessage* nwMsg);
+    virtual void processNwMsgInfo(eclmplUnreliableNetworkMessage* nwMsg);
+    virtual void updateOutOfOrderMessageQs(const unsigned int& source,
+                                           const bool& sendRetransmissionReq);
+    virtual unsigned int checkRetransmissionTimeout();
+    virtual SerializedInstance* getNextInOrder();
+    virtual int peekNextInOrderSize();
+    virtual void sendAck(unsigned int dest);
+    virtual void initializeCommunicationLayerAttributes() = 0;
+    //@} // End of Protected Class Attributes of eclmplReliablePhysicalCommunicationLayer.
 
-  /**@name Protected Class Attributes of eclmplReliablePhysicalCommunicationLayer. */
-  //@{
+    /**@name Protected Class Attributes of eclmplReliablePhysicalCommunicationLayer. */
+    //@{
 
-  // Id of the simulation manager.
-  //int mySimulationManagerID;
+    // Id of the simulation manager.
+    //int mySimulationManagerID;
 
-  /// Id of this communicator.
-  unsigned int physicalId;
+    /// Id of this communicator.
+    unsigned int physicalId;
 
-  /// Number of simulation managers involved in the communicator.
-  unsigned int physicalSize;
+    /// Number of simulation managers involved in the communicator.
+    unsigned int physicalSize;
 
-  /// Simulation manager file descriptors for sends and receives.
-  //eclmplSocket *recvSocket;
-  //eclmplSocket *sendSocket;
-  eclmplConnectionInterface *connInterface;
+    /// Simulation manager file descriptors for sends and receives.
+    //eclmplSocket *recvSocket;
+    //eclmplSocket *sendSocket;
+    eclmplConnectionInterface* connInterface;
 
 
-  /// nextSendSequenceNumber[physicalSize].
-  SequenceNumber *nextSendSequenceNumber;
+    /// nextSendSequenceNumber[physicalSize].
+    SequenceNumber* nextSendSequenceNumber;
 
-  /// acknowledgedSequenceNumberReceived[[hysicalSize].
-  SequenceNumber *acknowledgedSequenceNumberReceived;
-  // i.e. what is the highest sequence number that we have
-  // sent on a link that has been acknowledged.
+    /// acknowledgedSequenceNumberReceived[[hysicalSize].
+    SequenceNumber* acknowledgedSequenceNumberReceived;
+    // i.e. what is the highest sequence number that we have
+    // sent on a link that has been acknowledged.
 
-  /// acknowledgedSequenceNumber[physicalSize].
-  SequenceNumber *acknowledgedSequenceNumberSent;
-  // highest acknowledged sequence number sent.
+    /// acknowledgedSequenceNumber[physicalSize].
+    SequenceNumber* acknowledgedSequenceNumberSent;
+    // highest acknowledged sequence number sent.
 
-  /// highestInSequenceNumberRecived[physicalSize].
-  SequenceNumber *highestInSequenceNumberReceived; 
-  // i.e. highest sequence number that may be acknowlegded.
+    /// highestInSequenceNumberRecived[physicalSize].
+    SequenceNumber* highestInSequenceNumberReceived;
+    // i.e. highest sequence number that may be acknowlegded.
 
-  SequenceNumber *highestInSequenceNumberProcessed;
-  // i.e. highest sequence number given to the application.
+    SequenceNumber* highestInSequenceNumberProcessed;
+    // i.e. highest sequence number given to the application.
 
-  SequenceNumber *endOfHole;
+    SequenceNumber* endOfHole;
 
-  bool outOfOrderMessageQsAreEmpty;
-  // outOfOrderMessageQs[physicalSize]
-  vector<priority_queue<eclmplUnreliableNetworkMessage *, vector<eclmplUnreliableNetworkMessage *>, 
-                        lessPriority<eclmplUnreliableNetworkMessage *> > > outOfOrderMessageQs;
-  deque<eclmplUnreliableNetworkMessage *> inOrderMessageQ;
-  // synchBuffer[physicalSize]
-  vector<deque<eclmplUnreliableNetworkMessage *> > synchBuffer;
-  // sendQs[physicalSize]
-  vector<deque<eclmplUnreliableNetworkMessage *> > sendQs;
+    bool outOfOrderMessageQsAreEmpty;
+    // outOfOrderMessageQs[physicalSize]
+    vector<priority_queue<eclmplUnreliableNetworkMessage*, vector<eclmplUnreliableNetworkMessage*>,
+           lessPriority<eclmplUnreliableNetworkMessage*> > > outOfOrderMessageQs;
+    deque<eclmplUnreliableNetworkMessage*> inOrderMessageQ;
+    // synchBuffer[physicalSize]
+    vector<deque<eclmplUnreliableNetworkMessage*> > synchBuffer;
+    // sendQs[physicalSize]
+    vector<deque<eclmplUnreliableNetworkMessage*> > sendQs;
 
-  //unsigned int windowSize;
+    //unsigned int windowSize;
 
-  unsigned int maxNrUnackedMsgs;
+    unsigned int maxNrUnackedMsgs;
 
-  eclmplTimer *retransmissionTimer;
+    eclmplTimer* retransmissionTimer;
 
-  //@} // End of Protected Class Attributes of eclmplReliablePhysicalCommunicationLayer.
+    //@} // End of Protected Class Attributes of eclmplReliablePhysicalCommunicationLayer.
 };
 
 #endif

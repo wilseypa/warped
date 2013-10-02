@@ -5,24 +5,24 @@
 #include "KernelMessageTest.h"
 
 class InitializationMessageTest : public KernelMessageTest {
-  CPPUNIT_TEST_SUITE( InitializationMessageTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST( testSerialization );
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(InitializationMessageTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testSerialization);
+    CPPUNIT_TEST_SUITE_END();
 
 private:
-  InitializationMessage *testMessage;
+    InitializationMessage* testMessage;
 
-  static const vector<string> getDefaultObjectNames();
-  static unsigned int getDefaultNumSimulationManagers();
+    static const vector<string> getDefaultObjectNames();
+    static unsigned int getDefaultNumSimulationManagers();
 
 public:
-  // Test interface
-  void setUp();
-  void tearDown();
+    // Test interface
+    void setUp();
+    void tearDown();
 
-  void testConstructor();
-  void testSerialization();
+    void testConstructor();
+    void testSerialization();
 };
 
 #endif

@@ -11,20 +11,20 @@ class TimeWarpSimulationManager;
 /** This scheduling manager is to be used with the TimeWarpMultiSet. */
 class TimeWarpMultiSetSchedulingManager :  public SchedulingManager {
 public:
-  TimeWarpMultiSetSchedulingManager( TimeWarpSimulationManager *initSimulationManager );
-  ~TimeWarpMultiSetSchedulingManager();
+    TimeWarpMultiSetSchedulingManager(TimeWarpSimulationManager* initSimulationManager);
+    ~TimeWarpMultiSetSchedulingManager();
 
-  const Event *peekNextEvent();
+    const Event* peekNextEvent();
 
-  const VTime &getLastEventScheduledTime();
+    const VTime& getLastEventScheduledTime();
 
-  void configure(SimulationConfiguration &){}
+    void configure(SimulationConfiguration&) {}
 
 private:
-  void setLastScheduledEventTime( const VTime &newTime );
+    void setLastScheduledEventTime(const VTime& newTime);
 
-  TimeWarpSimulationManager *mySimulationManager;
-  const VTime *lastScheduledTime;
+    TimeWarpSimulationManager* mySimulationManager;
+    const VTime* lastScheduledTime;
 };
 
 #endif

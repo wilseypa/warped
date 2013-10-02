@@ -3,10 +3,10 @@
 #include "SerializedInstance.h"
 #include "EventId.h"
 
-DefaultEvent::~DefaultEvent(){
-  delete sendTime;
-  delete receiveTime;
-  delete sender;
-  delete receiver;
+DefaultEvent::~DefaultEvent() {
+    delete sendTime;
+    delete receiveTime;
+    delete sender;
+    delete receiver;
 }
 

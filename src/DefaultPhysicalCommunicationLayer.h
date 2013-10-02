@@ -15,41 +15,41 @@
  */
 class DefaultPhysicalCommunicationLayer : public PhysicalCommunicationLayer {
 public:
-  /**@name Public Class Methods of DefaultPhysicalCommunicationLayer. */
-  //@{
+    /**@name Public Class Methods of DefaultPhysicalCommunicationLayer. */
+    //@{
 
-  /// Default Constructor.
-  DefaultPhysicalCommunicationLayer();
+    /// Default Constructor.
+    DefaultPhysicalCommunicationLayer();
 
-  /// Destructor.
-  ~DefaultPhysicalCommunicationLayer();
+    /// Destructor.
+    ~DefaultPhysicalCommunicationLayer();
 
-  /** Initialize the physical communication layer.
+    /** Initialize the physical communication layer.
 
-      @param configuration The SimulationConfiguration to use for this run.
-  */
-  void physicalInit();
+        @param configuration The SimulationConfiguration to use for this run.
+    */
+    void physicalInit();
 
-  /** Get the Id of the simulation manager.
+    /** Get the Id of the simulation manager.
 
-      @return Id of the simulation manager.
-  */
-  int physicalGetId() const;
+        @return Id of the simulation manager.
+    */
+    int physicalGetId() const;
 
-  /** Send buffer.
+    /** Send buffer.
 
-      @param buffer Char buffer to send.
-      @param size Size of the buffer to send.
-      @param dest destination simulation manager
-  */
-  void physicalSend( const SerializedInstance *toSend, unsigned int dest);
+        @param buffer Char buffer to send.
+        @param size Size of the buffer to send.
+        @param dest destination simulation manager
+    */
+    void physicalSend(const SerializedInstance* toSend, unsigned int dest);
 
 
-  /** Check the probe to see if there are message to retrieve.
+    /** Check the probe to see if there are message to retrieve.
 
-      @return The retrieved message (NULL if no message).
-  */
-  SerializedInstance *physicalProbeRecv();
+        @return The retrieved message (NULL if no message).
+    */
+    SerializedInstance* physicalProbeRecv();
 
 //   /** Retrieve message into a buffer.
 
@@ -60,16 +60,16 @@ public:
 //   */
 //   bool physicalProbeRecvBuffer(char *buffer, int size, bool& sizeStatus);
 
-  /// Clean up.
-  void physicalFinalize();
+    /// Clean up.
+    void physicalFinalize();
 
-  /** Return how many processes are involved in the communicator.
+    /** Return how many processes are involved in the communicator.
 
-      @return The number of processes involved in the communicator.
-  */
-  virtual int physicalGetSize() const;
+        @return The number of processes involved in the communicator.
+    */
+    virtual int physicalGetSize() const;
 
-  //@} // End of Public Class Methods of DefaultPhysicalCommunicationLayer.
+    //@} // End of Public Class Methods of DefaultPhysicalCommunicationLayer.
 };
 
 #endif

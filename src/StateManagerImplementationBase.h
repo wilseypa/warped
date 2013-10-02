@@ -21,104 +21,104 @@ using std::multiset;
 class StateManagerImplementationBase : public StateManager {
 public:
 
-   friend class OptFossilCollManager;
+    friend class OptFossilCollManager;
 
-   /**@name Public Class Methods of StateManagerImplementationBase. */
-   //@{
-  
-   /** Constructor.
+    /**@name Public Class Methods of StateManagerImplementationBase. */
+    //@{
 
-       @param simMgr a handle to the simulation manager
-       @param period State-saving period.
-   */
-   StateManagerImplementationBase(TimeWarpSimulationManager *simMgr,
-                                  unsigned int period = 0);
+    /** Constructor.
 
-   /// Default Destructor.
-   virtual ~StateManagerImplementationBase();
+        @param simMgr a handle to the simulation manager
+        @param period State-saving period.
+    */
+    StateManagerImplementationBase(TimeWarpSimulationManager* simMgr,
+                                   unsigned int period = 0);
 
-   /** Save the state of the object at the specified time.
-      
-       @param currentTime Time at which the state is saved.
-       @param object The object whose state is saved.
-   */
-   virtual void saveState(const VTime &currentTime, SimulationObject* object);
+    /// Default Destructor.
+    virtual ~StateManagerImplementationBase();
 
-   /// return the state saving period
-   unsigned int getStatePeriod();
+    /** Save the state of the object at the specified time.
 
-   /** Returns the array of object state periods.        
-   */
-   vector<unsigned int> getObjectStatePeriod();
-   
-   /** Rollback and restore the state of the object at the specified time.
+        @param currentTime Time at which the state is saved.
+        @param object The object whose state is saved.
+    */
+    virtual void saveState(const VTime& currentTime, SimulationObject* object);
 
-       @param rollbackTime Rollback to this time and restore state.
-       @param SimulationObject The object whose state should be restored.
-       @return the time of restored state
-   */
-   virtual const VTime &restoreState(const VTime &rollbackTime,
-                                     SimulationObject* object);
+    /// return the state saving period
+    unsigned int getStatePeriod();
 
-   /** Fossil collect up to the specified simulation time.
+    /** Returns the array of object state periods.
+    */
+    vector<unsigned int> getObjectStatePeriod();
 
-       @param fossilCollectTime Fossil collect upto this time.
-       @param object Object whose states are gbg collected.
-       @return lowest time-stamped state in state queue
-   */
-   virtual const VTime &fossilCollect(SimulationObject* object, const VTime &fossilCollectTime);
+    /** Rollback and restore the state of the object at the specified time.
 
-   /** Fossil collect up to the specified simulation time.
+        @param rollbackTime Rollback to this time and restore state.
+        @param SimulationObject The object whose state should be restored.
+        @return the time of restored state
+    */
+    virtual const VTime& restoreState(const VTime& rollbackTime,
+                                      SimulationObject* object);
 
-       @param fossilCollectTime Fossil collect upto this time.
-       @param object Object whose states are gbg collected.
-       @return lowest time-stamped state in state queue
-   */
-   virtual const VTime &fossilCollect(SimulationObject* object, int fossilCollectTime);
-  
-   /** Print state queue.
+    /** Fossil collect up to the specified simulation time.
 
-       @param currentTime Print statequeue upto current time.
-       @param object Object whose statequeue is printed.
-   */
-   virtual void printStateQueue(const VTime &currentTime,
-                                SimulationObject *object, std::ostream &out);
+        @param fossilCollectTime Fossil collect upto this time.
+        @param object Object whose states are gbg collected.
+        @return lowest time-stamped state in state queue
+    */
+    virtual const VTime& fossilCollect(SimulationObject* object, const VTime& fossilCollectTime);
 
-   /**
-      Remove all states from the state queues. Used to restore state after
-      a catastrophic rollback while using optimistic fossil collection.
-   */
-   virtual void ofcPurge();
+    /** Fossil collect up to the specified simulation time.
 
-   /**
-      Remove all states for the specified object. Used to restore state after
-      a catastrophic rollback while using optimistic fossil collection.
-   */
-   virtual void ofcPurge(unsigned int objId);
+        @param fossilCollectTime Fossil collect upto this time.
+        @param object Object whose states are gbg collected.
+        @return lowest time-stamped state in state queue
+    */
+    virtual const VTime& fossilCollect(SimulationObject* object, int fossilCollectTime);
 
-   //@} // End of Public Class Methods of StateManagerImplementationBase.
+    /** Print state queue.
+
+        @param currentTime Print statequeue upto current time.
+        @param object Object whose statequeue is printed.
+    */
+    virtual void printStateQueue(const VTime& currentTime,
+                                 SimulationObject* object, std::ostream& out);
+
+    /**
+       Remove all states from the state queues. Used to restore state after
+       a catastrophic rollback while using optimistic fossil collection.
+    */
+    virtual void ofcPurge();
+
+    /**
+       Remove all states for the specified object. Used to restore state after
+       a catastrophic rollback while using optimistic fossil collection.
+    */
+    virtual void ofcPurge(unsigned int objId);
+
+    //@} // End of Public Class Methods of StateManagerImplementationBase.
 
 protected:
-   
-   /**@name Protected Class Attributes of StateManagerImplementationBase. */
-   //@{
 
-   /// handle to the simulation manager
-   TimeWarpSimulationManager *mySimulationManager;
-   
-   /// The state period - if infrequent, then statePeriod != 0.
-   unsigned int statePeriod;
+    /**@name Protected Class Attributes of StateManagerImplementationBase. */
+    //@{
 
-   /// The state saving period of each object
-   vector<unsigned int> objectStatePeriod;
-   
-   /// Time since the last saved state.
-   vector<int> periodCounter;
+    /// handle to the simulation manager
+    TimeWarpSimulationManager* mySimulationManager;
 
-   /// A state queue for every object on this simulation manager.
-   multiset< SetObject<State> > *myStateQueue;
+    /// The state period - if infrequent, then statePeriod != 0.
+    unsigned int statePeriod;
 
-   //@} // End of Protected Class Attributes of StateManagerImplementationBase.
+    /// The state saving period of each object
+    vector<unsigned int> objectStatePeriod;
+
+    /// Time since the last saved state.
+    vector<int> periodCounter;
+
+    /// A state queue for every object on this simulation manager.
+    multiset< SetObject<State> >* myStateQueue;
+
+    //@} // End of Protected Class Attributes of StateManagerImplementationBase.
 };
 
 #endif

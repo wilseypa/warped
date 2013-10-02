@@ -50,76 +50,76 @@
  */
 class SourceObject : public SimulationObject {
 public:
-  /**@name Public Class Methods of SourceObject. */
-  //@{
+    /**@name Public Class Methods of SourceObject. */
+    //@{
 
-  /** Constructor.
+    /** Constructor.
 
-      @param starttime The time when the simulation object will start.
-   */
-  SourceObject(const VTime& starttime);
+        @param starttime The time when the simulation object will start.
+     */
+    SourceObject(const VTime& starttime);
 
-  /// Destructor
-  virtual ~SourceObject();
+    /// Destructor
+    virtual ~SourceObject();
 
-  /** Tells whether simulation object has finished its simulation.
+    /** Tells whether simulation object has finished its simulation.
 
-      The kernel calls this method to see if the simulation object
-      has finished its simulation.
+        The kernel calls this method to see if the simulation object
+        has finished its simulation.
 
-      @return A boolean that tells whether simulation is finished.
-  */
-  bool amIDone();
+        @return A boolean that tells whether simulation is finished.
+    */
+    bool amIDone();
 
-  /** Tell kernel that simulation has finished.
+    /** Tell kernel that simulation has finished.
 
-      This method is used to tell the kernel that this simulation object
-      has finished its simulation and need not be scheduled anymore. The
-      flag \Ref{sourceFinished} will be set when this method is called.  
-  */
-  void iAmFinished();
+        This method is used to tell the kernel that this simulation object
+        has finished its simulation and need not be scheduled anymore. The
+        flag \Ref{sourceFinished} will be set when this method is called.
+    */
+    void iAmFinished();
 
-  /** Get set of simulation objects that receive events from this
-      simulation object.
+    /** Get set of simulation objects that receive events from this
+        simulation object.
 
-      @return Set of object id's that receive events from this object.  
-  */
-  const int* getFanouts();
+        @return Set of object id's that receive events from this object.
+    */
+    const int* getFanouts();
 
-  //@} // End of Public Class Methods of SourceObject.
+    //@} // End of Public Class Methods of SourceObject.
 
 private:
-  /**@name Private Class Attributes of SourceObject. */
-  //@{
+    /**@name Private Class Attributes of SourceObject. */
+    //@{
 
-  /// Time at which simulation object should start.
-  const VTime& startTime;
-  /// Tells whether this object has finished its simulation.
-  bool sourceFinished;
+    /// Time at which simulation object should start.
+    const VTime& startTime;
+    /// Tells whether this object has finished its simulation.
+    bool sourceFinished;
 
-  //@} // End of Private Class Attributes of SourceObject. */
+    //@} // End of Private Class Attributes of SourceObject. */
 
-  /**@name Private Class Methods of SourceObject. */
-  //@{
+    /**@name Private Class Methods of SourceObject. */
+    //@{
 
-  /** Redefined and hidden method (should not be called).
+    /** Redefined and hidden method (should not be called).
 
-      This method is kept private and is redefined from the inherited
-      SimulationObject::\Ref{SimulationObject::sendEvent}. This is done so
-      that no-one can call this method using a SourceObject. If this
-      method is called from within this class, an error will be flagged.  
-  */
-  void sendEvent(const Event* event);
+        This method is kept private and is redefined from the inherited
+        SimulationObject::\Ref{SimulationObject::sendEvent}. This is done so
+        that no-one can call this method using a SourceObject. If this
+        method is called from within this class, an error will be flagged.
+    */
+    void sendEvent(const Event* event);
 
-  /** Redefined and hidden method (should not be called).
-   */
-  const Event* getEvent();
+    /** Redefined and hidden method (should not be called).
+     */
+    const Event* getEvent();
 
-  /** Redefined and hidden method (should not be called).
-   */
-  bool haveMoreEvents();
+    /** Redefined and hidden method (should not be called).
+     */
+    bool haveMoreEvents();
 
-  //@} // End of Private Class Methods of SourceObject.
+    //@} // End of Private Class Methods of SourceObject.
 };
 
 #endif

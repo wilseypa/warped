@@ -2,10 +2,10 @@
 #include "Serializable.h"
 #include "SerializedInstance.h"
 
-SerializedInstance *
+SerializedInstance*
 Serializable::serialize() const {
-  SerializedInstance *retval = new SerializedInstance( getDataType() );
-  serialize( retval );
-  return retval;
+    SerializedInstance* retval = new SerializedInstance(getDataType());
+    serialize(retval);
+    return retval;
 }
-  
+

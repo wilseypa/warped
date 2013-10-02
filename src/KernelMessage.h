@@ -33,103 +33,103 @@ network.
 */
 class KernelMessage : public Serializable {
 public:
-  /**@name Public Class Methods of KernelMessage. */
-  //@{
+    /**@name Public Class Methods of KernelMessage. */
+    //@{
 
-  /** Constructor.
+    /** Constructor.
 
-  @param myType The type of the message.
-  @param source Source of the message.
-  @param dest Destination of the message.
-  @param serializedData Serialized message data ptr (default = NULL).
-  @param kernelInfo Serialized message kernel data ptr (default = NULL).
+    @param myType The type of the message.
+    @param source Source of the message.
+    @param dest Destination of the message.
+    @param serializedData Serialized message data ptr (default = NULL).
+    @param kernelInfo Serialized message kernel data ptr (default = NULL).
 
-  Memory you pass in here will be deleted at destruction time.
-  (SerializedInstances only, of course.)
-  */
-  KernelMessage( unsigned int source,
-		 unsigned int dest ) :
-    senderSimulationManagerID(source),
-    destSimulationManagerID(dest),
-    incarnationNumber(0){}
+    Memory you pass in here will be deleted at destruction time.
+    (SerializedInstances only, of course.)
+    */
+    KernelMessage(unsigned int source,
+                  unsigned int dest) :
+        senderSimulationManagerID(source),
+        destSimulationManagerID(dest),
+        incarnationNumber(0) {}
 
-   
-  /// Destructor.
-  virtual ~KernelMessage(){}
 
-  /** Get the Id of the sender of the message.
+    /// Destructor.
+    virtual ~KernelMessage() {}
 
-  @return Id of the sender of the message.
-  */
-  unsigned int getSender() const {
-    return senderSimulationManagerID;
-  }
+    /** Get the Id of the sender of the message.
 
-  /** Get the Id of the receiver of the message.
+    @return Id of the sender of the message.
+    */
+    unsigned int getSender() const {
+        return senderSimulationManagerID;
+    }
 
-  @return Id of the receiver of the message.
-  */
-  unsigned int getReceiver() const {
-    return destSimulationManagerID;
-  }
+    /** Get the Id of the receiver of the message.
 
-  /**
-     Unhide Serializable#serialize
-  */
-  SerializedInstance *serialize() const {
-    return Serializable::serialize();
-  }
+    @return Id of the receiver of the message.
+    */
+    unsigned int getReceiver() const {
+        return destSimulationManagerID;
+    }
 
-  void serialize( SerializedInstance * ) const;
+    /**
+       Unhide Serializable#serialize
+    */
+    SerializedInstance* serialize() const {
+        return Serializable::serialize();
+    }
 
-  /**
-     Derived classes call this method to deserialize the KernelMessage
-     bits.     
-  */
-  static void deserialize( SerializedInstance *data,
-			   KernelMessage *instance );
+    void serialize(SerializedInstance*) const;
 
-  /** Sets the number of recoveries that have occurred.
-      Used exclusively for optimistic fossil collection.
+    /**
+       Derived classes call this method to deserialize the KernelMessage
+       bits.
+    */
+    static void deserialize(SerializedInstance* data,
+                            KernelMessage* instance);
 
-      @param unsigned int The number of recoveries that have occurred.
-  */
-  void setIncarnationNumber(unsigned int setIncNum) {
-    incarnationNumber = setIncNum;
-  }
+    /** Sets the number of recoveries that have occurred.
+        Used exclusively for optimistic fossil collection.
 
-  /** Returns the number of recoveries that have occurred before
-      message sending. Used for optimistic fossil collection.
+        @param unsigned int The number of recoveries that have occurred.
+    */
+    void setIncarnationNumber(unsigned int setIncNum) {
+        incarnationNumber = setIncNum;
+    }
 
-      @return The number of recoveries that have occurred.
-  */
-  unsigned int getIncarnationNumber() const {
-    return incarnationNumber;
-  }
+    /** Returns the number of recoveries that have occurred before
+        message sending. Used for optimistic fossil collection.
 
-  //@} // End of Public Class Methods of KernelMessage.
-  
+        @return The number of recoveries that have occurred.
+    */
+    unsigned int getIncarnationNumber() const {
+        return incarnationNumber;
+    }
+
+    //@} // End of Public Class Methods of KernelMessage.
+
 protected:
-  /**@name Protected Class Attributes of KernelMessage. */
-  //@{
+    /**@name Protected Class Attributes of KernelMessage. */
+    //@{
 
-  /**
-     Default constructor - used by some deserializers.
-  */
-  KernelMessage():
-   incarnationNumber(0){}
+    /**
+       Default constructor - used by some deserializers.
+    */
+    KernelMessage():
+        incarnationNumber(0) {}
 
-  /// Id of the sender of the message.
-  unsigned int senderSimulationManagerID;
+    /// Id of the sender of the message.
+    unsigned int senderSimulationManagerID;
 
-  /// Id of the receiver of the message.
-  unsigned int destSimulationManagerID;
+    /// Id of the receiver of the message.
+    unsigned int destSimulationManagerID;
 
-  /// The number of recoveries that have occurred before the
-  /// sending of this message. Only used for optimistic fossil collection.
-  unsigned int incarnationNumber;
+    /// The number of recoveries that have occurred before the
+    /// sending of this message. Only used for optimistic fossil collection.
+    unsigned int incarnationNumber;
 
-  //@} // End of Protected Class Attributes of KernelMessage.
+    //@} // End of Protected Class Attributes of KernelMessage.
 };
 
 #endif

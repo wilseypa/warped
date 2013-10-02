@@ -18,78 +18,78 @@ class SimulationConfiguration;
 
    The intention of this class is that an application does something like
    the following to bootstrap itself:
- 
+
    #include "MyApplication.h"
-  
+
    int main( int argc, char *arv ){
      WarpedMain wm;
      return wm.main( new MyApplication(), argc, argv );
    }
-   
+
 */
 class WarpedMain {
 public:
-  /**
-     Constructor to be called by user's main.
-  */
-    WarpedMain(Application* application, string configurationFileName, 
+    /**
+       Constructor to be called by user's main.
+    */
+    WarpedMain(Application* application, string configurationFileName,
                string simulateUntil = "",  bool debug = false);
-  /**
-     Default Deconstructor
-  */
-  ~WarpedMain();
-  
-  /**
-     This is equivalent to "int main( int argc, char **argv )" for a warped
-     app.
-  */
-  int main(int argc, char **argv);
+    /**
+       Default Deconstructor
+    */
+    ~WarpedMain();
 
-  /**
-     Our call to register serializable types with the system.  Anyone
-     expecting the serializable types to function needs to call this method
-     first.
-  */
-  static void registerKernelDeserializers();
+    /**
+       This is equivalent to "int main( int argc, char **argv )" for a warped
+       app.
+    */
+    int main(int argc, char** argv);
 
-  /**
-     This does everything up until the moment that the simulation is about
-     to start.  The SimulationManager that is returned can be used
-  */
-  void initializeSimulation();
+    /**
+       Our call to register serializable types with the system.  Anyone
+       expecting the serializable types to function needs to call this method
+       first.
+    */
+    static void registerKernelDeserializers();
 
-  /**
-     Tells the simulation to run until the absolute time passed in.
-  */
-  void simulate( const VTime &simulateUntil );
+    /**
+       This does everything up until the moment that the simulation is about
+       to start.  The SimulationManager that is returned can be used
+    */
+    void initializeSimulation();
 
-  /**
-     If the simulation is being run in small time steps, this method
-     provides a mechanism for determining if the simulation has completed.
-  */
-  bool simulationComplete();
+    /**
+       Tells the simulation to run until the absolute time passed in.
+    */
+    void simulate(const VTime& simulateUntil);
 
-  /**
-     Cleans up the simulation.
-  */
-  void finalize();
+    /**
+       If the simulation is being run in small time steps, this method
+       provides a mechanism for determining if the simulation has completed.
+    */
+    bool simulationComplete();
 
-  /**
-     Returns the simulation time that we have advanced to.
-  */
-  const VTime &getCommittedTime();
-  /**
-     Returns the time of the next event that we will execute.
-  */
-  const VTime &getNextEventTime();
+    /**
+       Cleans up the simulation.
+    */
+    void finalize();
+
+    /**
+       Returns the simulation time that we have advanced to.
+    */
+    const VTime& getCommittedTime();
+    /**
+       Returns the time of the next event that we will execute.
+    */
+    const VTime& getNextEventTime();
 
 private:
-  string configurationFileName;
-  bool debugFlag;
-  string simulateUntil;
+    string configurationFileName;
+    bool debugFlag;
+    string simulateUntil;
 
-  Application *myApplication;
-  Simulation *mySimulation;
+    Application* myApplication;
+    Simulation* mySimulation;
 };
 
 #endif

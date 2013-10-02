@@ -7,7 +7,7 @@
 
 using std::string;
 
-/** The Factory abstract base class.  
+/** The Factory abstract base class.
 
     All classes related to the object factory subsystem must be
     derived from this base class.  The base class provides a common
@@ -19,39 +19,39 @@ using std::string;
 **/
 class Factory {
 public:
-   /**@name Public Class Methods of Factory */
-   //@{
-   
-   /// Destructor.
-   virtual ~Factory() {};
-   
-   /** Return the name of this factory object.
+    /**@name Public Class Methods of Factory */
+    //@{
 
-       This is a pure virtual function that has to be overridden.
+    /// Destructor.
+    virtual ~Factory() {};
 
-       @return The name of this factory object.
-   */
-   virtual const string& getName() const = 0;
+    /** Return the name of this factory object.
 
-   /** Return the kind of this factory object.
+        This is a pure virtual function that has to be overridden.
 
-       This is a pure virtual function that has to be overridden.
+        @return The name of this factory object.
+    */
+    virtual const string& getName() const = 0;
 
-       @return The kind of this factory object.
-   */
-   virtual const Kind  getKind() const = 0;
+    /** Return the kind of this factory object.
 
-   //@} // End of Factory Public Class Methods.
+        This is a pure virtual function that has to be overridden.
+
+        @return The kind of this factory object.
+    */
+    virtual const Kind  getKind() const = 0;
+
+    //@} // End of Factory Public Class Methods.
 
 protected:
-   
-   /**@name Protected Class Methods of Factory */
-   //@{
 
-   /// Constructor
-   Factory() {};
+    /**@name Protected Class Methods of Factory */
+    //@{
 
-   //@} // End of Protected Class Methods of Factory.
+    /// Constructor
+    Factory() {};
+
+    //@} // End of Protected Class Methods of Factory.
 };
 
 #endif

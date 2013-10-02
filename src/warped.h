@@ -34,11 +34,11 @@ warped32_t getWarped32Min();
 #include <sstream>
 using std::ostringstream;
 
-// Console I/O operations - we define this stream interface to trap 
-// the I/O produced by different processes and feed the I/O to the 
-// central console 
+// Console I/O operations - we define this stream interface to trap
+// the I/O produced by different processes and feed the I/O to the
+// central console
 
-extern std::ostream *wout, *werr;
+extern std::ostream* wout, *werr;
 
 // include the default definition of VTime
 #include "VTime.h"
@@ -71,7 +71,7 @@ extern std::ostream *wout, *werr;
 // flag DEVELOPER_ASSERTIONS is turned "on"
 #ifndef DEBUG
 #ifndef NO_DEVELOPER_ASSERTIONS
-#define DEBUG(x)  x 
+#define DEBUG(x)  x
 #else
 #define DEBUG(x)
 #endif
@@ -103,7 +103,7 @@ enum MsgSuppression {NO, COASTFORWARD, LAZYCANCEL, ADAPTIVECANCEL};
 //  Need to know which type in order to handle messages differently.
 enum OutputMgrType {AGGRMGR, LAZYMGR, ADAPTIVEMGR};
 
-/// Enumeration for StateManager type. 
+/// Enumeration for StateManager type.
 //  Used so that dynamic casts are not necessary to check type.
 enum StateMgrType {DEFAULTSTATE, STATICSTATE, ADAPTIVESTATE};
 
@@ -115,8 +115,8 @@ enum findMode {LESS, LESSEQUAL, EQUAL, GREATEREQUAL, GREATER};
 template <class type>
 inline const type&
 MIN_FUNC(const type& x, const type& y) {
-  if (x < y) { return x; }
-  return y;
+    if (x < y) { return x; }
+    return y;
 }
 
 // a templatized getMaximum function - returns the object that is the
@@ -124,80 +124,80 @@ MIN_FUNC(const type& x, const type& y) {
 template <class type>
 inline const type&
 MAX_FUNC(const type& x, const type& y) {
-  if (x > y) { return x; }
-  return y;
+    if (x > y) { return x; }
+    return y;
 }
 
-// the following two classes are passed in as function objects 
-// to the hash_map data structure 
+// the following two classes are passed in as function objects
+// to the hash_map data structure
 class EqualID {
 public:
-  size_t operator()(const OBJECT_ID *s1, const OBJECT_ID *s2) const {
-    return (*s1 == *s2);
-  }
+    size_t operator()(const OBJECT_ID* s1, const OBJECT_ID* s2) const {
+        return (*s1 == *s2);
+    }
 };
 
 // hash function for object ids
-struct OIDHash{
-  size_t operator()(const OBJECT_ID& id) const { return size_t(&id); }
+struct OIDHash {
+    size_t operator()(const OBJECT_ID& id) const { return size_t(&id); }
 };
 
 // hash function object for object ids
 class hashID {
 public:
-  size_t operator()(const OBJECT_ID *objectID) const {
-    OIDHash myHashFunction;
-    return (myHashFunction(*objectID));
-  }
+    size_t operator()(const OBJECT_ID* objectID) const {
+        OIDHash myHashFunction;
+        return (myHashFunction(*objectID));
+    }
 };
 
 inline
-std::ostream &operator<<( std::ostream &os, SEVERITY severity ){
-  switch( severity ){
-  case NOTE:
-    os << "NOTE";
-    break;
-  case WARNING:
-    os << "WARNING";
-    break;
-  case ERROR:
-    os << "ERROR";
-    break;
-  case ABORT:
-    os << "ABORT";
-    break;
-  default:
-   //Converts severity from string to int, output is stream.str()
-   ostringstream stream;
-   stream << severity;
-   os << "<Unknown Severity " + stream.str() +" >";
-  }
+std::ostream& operator<<(std::ostream& os, SEVERITY severity) {
+    switch (severity) {
+    case NOTE:
+        os << "NOTE";
+        break;
+    case WARNING:
+        os << "WARNING";
+        break;
+    case ERROR:
+        os << "ERROR";
+        break;
+    case ABORT:
+        os << "ABORT";
+        break;
+    default:
+        //Converts severity from string to int, output is stream.str()
+        ostringstream stream;
+        stream << severity;
+        os << "<Unknown Severity " + stream.str() +" >";
+    }
 
-  return os;
+    return os;
 }
 
 #if defined (__i386) || defined (__x86_64)
 
 // from http://en.wikipedia.org/wiki/Time_Stamp_Counter#C.2B.2B
 extern "C" {
-  __inline__ warped64_t rdtsc(void) {
-    warped32_t lo, hi;
-    __asm__ __volatile__ (
-      #ifdef i386
-          "pushl %%ebx;"
-      #endif
-      "xorl %%eax,%%eax; cpuid; rdtsc;"
-      #ifdef i386
-          "popl %%ebx;"
-      #endif
-      :"=a" (lo), "=d" (hi)
-          ::"%rcx"
-      #ifndef i386
-          ,"%rbx"
-      #endif
-      );
-      return (warped64_t)hi << 32 | lo;
-  }
+    __inline__ warped64_t rdtsc(void) {
+        warped32_t lo, hi;
+        __asm__ __volatile__(
+#ifdef i386
+            "pushl %%ebx;"
+#endif
+            "xorl %%eax,%%eax; cpuid; rdtsc;"
+#ifdef i386
+            "popl %%ebx;"
+#endif
+            :"=a"(lo), "=d"(hi)
+            ::"%rcx"
+#ifndef i386
+            ,"%rbx"
+#endif
+        );
+        return (warped64_t)hi << 32 | lo;
+    }
 }
 #endif
 #endif

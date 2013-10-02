@@ -17,170 +17,170 @@ class AdaptiveStateManagerBase: public StateManagerImplementationBase {
 
 public:
 
-   /**@name Public Class Methods of AdaptiveStateManagerBase. */
-   //@{
-  
-   /** Constructor.
-      
-      @param simMgr Simulation manager.
-   */
-   AdaptiveStateManagerBase(TimeWarpSimulationManager *simMgr);
+    /**@name Public Class Methods of AdaptiveStateManagerBase. */
+    //@{
 
-   /// Destructor.
-   virtual ~AdaptiveStateManagerBase() {};
+    /** Constructor.
 
-   void configure( SimulationConfiguration & ){};
+       @param simMgr Simulation manager.
+    */
+    AdaptiveStateManagerBase(TimeWarpSimulationManager* simMgr);
 
-   /** Start StopWatch to time event execution.
-       @param id The simulation object id of the object.
-   */
-   void startEventTiming(unsigned int id);
+    /// Destructor.
+    virtual ~AdaptiveStateManagerBase() {};
 
-   /** Stop StopWatch.
-       @param id The simulation object id of the object.
-   */
-   bool stopEventTiming(unsigned int id);
+    void configure(SimulationConfiguration&) {};
 
-   /** Pause StopWatch.
-       @param id The simulation object id of the object.
-   */
-   void pauseEventTiming(unsigned int id);
+    /** Start StopWatch to time event execution.
+        @param id The simulation object id of the object.
+    */
+    void startEventTiming(unsigned int id);
 
-   /** Resume StopWatch.
-       @param id The simulation object id of the object.
-   */
-   void resumeEventTiming(unsigned int id);
+    /** Stop StopWatch.
+        @param id The simulation object id of the object.
+    */
+    bool stopEventTiming(unsigned int id);
 
-   /** Start StopWatch to time rollback.
-       @param id The simulation object id of the object.
-   */
-   void startRollbackTiming(unsigned int id);
+    /** Pause StopWatch.
+        @param id The simulation object id of the object.
+    */
+    void pauseEventTiming(unsigned int id);
 
-   /** Stop rollback StopWatch.
-       @param id The simulation object id of the object.
-   */
-   void finishRollbackTiming(unsigned int id);
+    /** Resume StopWatch.
+        @param id The simulation object id of the object.
+    */
+    void resumeEventTiming(unsigned int id);
 
-   /** Start StopWatch to time state saving.
-       @param id The simulation object id of the object.
-   */
-   void startStateTiming(unsigned int id);
+    /** Start StopWatch to time rollback.
+        @param id The simulation object id of the object.
+    */
+    void startRollbackTiming(unsigned int id);
 
-   /** Stop state StopWatch.
-       @param id The simulation object id of the object.
-   */
-   void stopStateTiming(unsigned int id);
+    /** Stop rollback StopWatch.
+        @param id The simulation object id of the object.
+    */
+    void finishRollbackTiming(unsigned int id);
 
-   /** Save the simulation object's state.
-       @param currentTime The time of the state save.
-       @param object The simulation object being saved.
-   */
-   virtual void saveState(const VTime& currentTime, SimulationObject *object);
+    /** Start StopWatch to time state saving.
+        @param id The simulation object id of the object.
+    */
+    void startStateTiming(unsigned int id);
 
-   /** Return time taken for state saving.
-       @param id The simulation object id of the object.
-       @return double The state save time.
-   */
-   double getStateSavingTime(unsigned int id);
+    /** Stop state StopWatch.
+        @param id The simulation object id of the object.
+    */
+    void stopStateTiming(unsigned int id);
 
-   /** Return time taked for event execution.
-       @param id The simulation object id of the object.
-       @return double The event execution time.
-   */
-   double getEventExecutionTime(unsigned int id);
+    /** Save the simulation object's state.
+        @param currentTime The time of the state save.
+        @param object The simulation object being saved.
+    */
+    virtual void saveState(const VTime& currentTime, SimulationObject* object);
 
-   /** Return time taken for coast forwarding.
-       @param id The simulation object id of the object.
-       @return double The coast forward time.
-   */
-   double getCoastForwardTime(unsigned int id);
+    /** Return time taken for state saving.
+        @param id The simulation object id of the object.
+        @return double The state save time.
+    */
+    double getStateSavingTime(unsigned int id);
 
-   //@} // end of Public Class Methods
+    /** Return time taked for event execution.
+        @param id The simulation object id of the object.
+        @return double The event execution time.
+    */
+    double getEventExecutionTime(unsigned int id);
 
-   /**@name Public Class Attributes */
-   //@{
+    /** Return time taken for coast forwarding.
+        @param id The simulation object id of the object.
+        @return double The coast forward time.
+    */
+    double getCoastForwardTime(unsigned int id);
 
-   /// filtered time to save one state.
-   vector< FIRFilter<double> > stateSaveTime;
+    //@} // end of Public Class Methods
 
-   /// Filtered time to execute one event.
-   vector< FIRFilter<double> > eventExecutionTime;
+    /**@name Public Class Attributes */
+    //@{
 
-   /// Summation of the event execution time.
-   vector<double> sumEventTime;
+    /// filtered time to save one state.
+    vector< FIRFilter<double> > stateSaveTime;
 
-   /// Filtered time to coast forward.
-   vector< FIRFilter<double> > coastForwardTime;
+    /// Filtered time to execute one event.
+    vector< FIRFilter<double> > eventExecutionTime;
 
-   /// Filtered rollback length.
-   vector< FIRFilter<int> > rollbackLength;
+    /// Summation of the event execution time.
+    vector<double> sumEventTime;
 
-   /// Weighted filtered time to save one state.
-   vector< IIRFilter<double> > StateSaveTimeWeighted;
+    /// Filtered time to coast forward.
+    vector< FIRFilter<double> > coastForwardTime;
 
-   /// Weighted filtered time to execute one Event.
-   vector< IIRFilter<double> > EventExecutionTimeWeighted;
+    /// Filtered rollback length.
+    vector< FIRFilter<int> > rollbackLength;
 
-   /// Weighted filtered time to coast forward.
-   vector< IIRFilter<double> > CoastForwardTimeWeighted;
+    /// Weighted filtered time to save one state.
+    vector< IIRFilter<double> > StateSaveTimeWeighted;
 
-   /// Weighted filtered rollback length.
-   vector< IIRFilter<int> > rollbackLengthWeighted;
+    /// Weighted filtered time to execute one Event.
+    vector< IIRFilter<double> > EventExecutionTimeWeighted;
 
-   //@} // end of Public Class Attributes
+    /// Weighted filtered time to coast forward.
+    vector< IIRFilter<double> > CoastForwardTimeWeighted;
+
+    /// Weighted filtered rollback length.
+    vector< IIRFilter<int> > rollbackLengthWeighted;
+
+    //@} // end of Public Class Attributes
 
 protected:
 
-   /**@name Protected Class Methods */
-   //@{
+    /**@name Protected Class Methods */
+    //@{
 
-   /** Add execution time to the total time .
-   */
-   bool executionTiming(unsigned int id, double execTime);
+    /** Add execution time to the total time .
+    */
+    bool executionTiming(unsigned int id, double execTime);
 
-   //@}
+    //@}
 
-   /**@name Protected Class Attributes */
-   //@{
+    /**@name Protected Class Attributes */
+    //@{
 
-   /// Variable used to store the starting time of save state operation.
-   vector<double> stateStartTime;
+    /// Variable used to store the starting time of save state operation.
+    vector<double> stateStartTime;
 
-   /// Variable used to store the stop time of save state operation.
-   vector<double> stateStopTime;
+    /// Variable used to store the stop time of save state operation.
+    vector<double> stateStopTime;
 
-   /// Variable used to store the time of event execution.
-   vector<double> eventTime;
+    /// Variable used to store the time of event execution.
+    vector<double> eventTime;
 
-   /// Variable used to store the time of rollback operation.
-   vector<double> rollbackTime;
+    /// Variable used to store the time of rollback operation.
+    vector<double> rollbackTime;
 
-   /// Variable used to store the time of event operation.
-   vector<double> pausedTime;
+    /// Variable used to store the time of event operation.
+    vector<double> pausedTime;
 
-   /// Rollback count of last iteration.
-   vector<int> lastRollbackCount;
+    /// Rollback count of last iteration.
+    vector<int> lastRollbackCount;
 
-   /// Flag that says we are in steady state, so no timings are needed.
-   vector<bool> steadyState;
+    /// Flag that says we are in steady state, so no timings are needed.
+    vector<bool> steadyState;
 
-   //@} // end of Protected Class Attributes.
+    //@} // end of Protected Class Attributes.
 
 private:
 
-   /**@name Private Class Attributes */
-   //@{
+    /**@name Private Class Attributes */
+    //@{
 
-   /// The StopWatch object.
-   vector<StopWatch> stopWatch;
+    /// The StopWatch object.
+    vector<StopWatch> stopWatch;
 
-   /// The event StopWatch object.
-   vector<StopWatch> eventStopWatch;
+    /// The event StopWatch object.
+    vector<StopWatch> eventStopWatch;
 
-   /// The rollback StopWatch object.
-   vector<StopWatch> rollbackStopWatch;
+    /// The rollback StopWatch object.
+    vector<StopWatch> rollbackStopWatch;
 
-   //@} // end of Private Class Attributes
+    //@} // end of Private Class Attributes
 };
 
 #endif

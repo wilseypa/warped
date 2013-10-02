@@ -7,20 +7,20 @@
     The Actuator class represents those elements in the application
     code that manipulate a particular variable depending on
     certain pre-conditions.
-    
+
 */
 class Actuator {
 public:
 
-   /**@name Public Class Methods of Actuator */
-   //@{
+    /**@name Public Class Methods of Actuator */
+    //@{
 
-   /// Constructor
-   Actuator(){};
+    /// Constructor
+    Actuator() {};
 
-   virtual ~Actuator(){};
-   
-   //@} // End of Public Class Methods of Actuator
+    virtual ~Actuator() {};
+
+    //@} // End of Public Class Methods of Actuator
 
 };
 

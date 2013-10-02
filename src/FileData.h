@@ -15,65 +15,65 @@
 */
 class FileData {
 public:
-   
-   /**@name Public Class Methods of FileData.  */
-   //@{
 
-   /// Default constructor
-   FileData(const VTime& currentTime) : time(*(currentTime.clone())), line(NULL){};
+    /**@name Public Class Methods of FileData.  */
+    //@{
 
-   /// Constructor that takes all the arguments
-   FileData(const VTime& currentTime, string *lineString)
-      : time(*(currentTime.clone())), line(lineString){};
+    /// Default constructor
+    FileData(const VTime& currentTime) : time(*(currentTime.clone())), line(NULL) {};
 
-   /// Destructor
-   ~FileData() {
-   };
+    /// Constructor that takes all the arguments
+    FileData(const VTime& currentTime, string* lineString)
+        : time(*(currentTime.clone())), line(lineString) {};
 
-   /// return the time of this entry
-   const VTime &getTime() const {
-      return time;
-   }
+    /// Destructor
+    ~FileData() {
+    };
 
-   /// get the string that is stored in this entry
-   const string *getLine() const {
-      return line;
-   }
+    /// return the time of this entry
+    const VTime& getTime() const {
+        return time;
+    }
 
-   /// Overloaded operator <
-   friend bool operator<(const FileData& a, const FileData& b){
-      return a.time < b.time;
-   }
-  
-   /// Overloaded operator ==
-   friend bool operator==(const FileData& a, const FileData& b){
-      return a.time == b.time;
-   }
-  
-   /// Overloaded operator >
-   friend bool operator>(const FileData& a, const FileData& b){
-      return a.time > b.time;
-   }
-  
-   /// Overloaded operator <<
-   friend std::ostream& operator<<(std::ostream& os, const FileData& a){
-      return os << a.time << " " << *(a.line);
-   }
-   
-   //@} // End of Public Class Methods of FileData.
+    /// get the string that is stored in this entry
+    const string* getLine() const {
+        return line;
+    }
+
+    /// Overloaded operator <
+    friend bool operator<(const FileData& a, const FileData& b) {
+        return a.time < b.time;
+    }
+
+    /// Overloaded operator ==
+    friend bool operator==(const FileData& a, const FileData& b) {
+        return a.time == b.time;
+    }
+
+    /// Overloaded operator >
+    friend bool operator>(const FileData& a, const FileData& b) {
+        return a.time > b.time;
+    }
+
+    /// Overloaded operator <<
+    friend std::ostream& operator<<(std::ostream& os, const FileData& a) {
+        return os << a.time << " " << *(a.line);
+    }
+
+    //@} // End of Public Class Methods of FileData.
 
 protected:
-   
-   /**@name Protected Class Attributes of FileData. */
-   //@{
 
-   /// needed to sort the entries in the FileQueue
-   const VTime &time;
+    /**@name Protected Class Attributes of FileData. */
+    //@{
 
-   /// data for writing
-   const string *line; 
+    /// needed to sort the entries in the FileQueue
+    const VTime& time;
 
-   //@} // End of Protected Class Attributes of FileData.
+    /// data for writing
+    const string* line;
+
+    //@} // End of Protected Class Attributes of FileData.
 };
 
 #endif

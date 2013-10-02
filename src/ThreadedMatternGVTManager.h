@@ -13,26 +13,26 @@ class ThreadedTimeWarpSimulationManager;
  */
 class ThreadedMatternGVTManager: public MatternGVTManager {
 public:
-	/// Default Constructor
-	ThreadedMatternGVTManager(ThreadedTimeWarpSimulationManager *simMgr,
-			unsigned int period);
-	/// Special Constructor for defining objectRecord elsewhere when using this manager as a base class
-	ThreadedMatternGVTManager(ThreadedTimeWarpSimulationManager *simMgr,
-			unsigned int period, bool objectRecordDefined);
-	/// Destructor
-	~ThreadedMatternGVTManager();
+    /// Default Constructor
+    ThreadedMatternGVTManager(ThreadedTimeWarpSimulationManager* simMgr,
+                              unsigned int period);
+    /// Special Constructor for defining objectRecord elsewhere when using this manager as a base class
+    ThreadedMatternGVTManager(ThreadedTimeWarpSimulationManager* simMgr,
+                              unsigned int period, bool objectRecordDefined);
+    /// Destructor
+    ~ThreadedMatternGVTManager();
 
-//	const VTime *getEarliestEventTime(const VTime *lowEventTime);
-	void receiveKernelMessage(KernelMessage *msg);
+//  const VTime *getEarliestEventTime(const VTime *lowEventTime);
+    void receiveKernelMessage(KernelMessage* msg);
 
-	void sendPendingGVTToken();
+    void sendPendingGVTToken();
 private:
-	const MatternGVTMessage* pendingGVTMessage;
+    const MatternGVTMessage* pendingGVTMessage;
 
-	const VTime* GVTMessageLastScheduledEventTime;
+    const VTime* GVTMessageLastScheduledEventTime;
 
-	const VTime* GVTMessageMinimumTimeStamp;
+    const VTime* GVTMessageMinimumTimeStamp;
 
-	ThreadedTimeWarpSimulationManager* mySimulationManager;
+    ThreadedTimeWarpSimulationManager* mySimulationManager;
 };
 #endif /* ThreadedMATTERNGVTMANAGER_H_ */
