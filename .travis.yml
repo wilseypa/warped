@@ -1,0 +1,8 @@
+language: cpp
+compiler:
+  - gcc
+  - clang
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq mpich2 libmpich2-dev libcppunit-1.12-1 libcppunit-dev libtool automake 
+script: autoreconf -i && ./configure --prefix=~/lib/warped --enable-cppunit && make && make install && make check
