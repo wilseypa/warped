@@ -6,7 +6,5 @@ before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq mpich2 libmpich2-dev libcppunit-1.12-1 libcppunit-dev libtool automake 
  - mkdir -p /usr/local/lib
- - ldconfig -p | grep mpi
- - dpkg -s mpich2
- - dpkg -s libmpich2-dev
+ - find / -name mpi.h
 script: autoreconf -i && ./configure --prefix=/usr/local/lib/warped --enable-cppunit && make && make install && make check
