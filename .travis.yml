@@ -6,3 +6,6 @@ before_install:
  - sudo apt-get install -qq mpich2 libmpich2-dev libcppunit-1.12-1 libcppunit-dev libtool automake 
  - mkdir -p $HOME/lib
 script: autoreconf -i && CPPFLAGS="-I/usr/include/mpich2" ./configure --prefix=$HOME/lib/warped --enable-cppunit && make && make install && make check
+branches:
+  only:
+    - master
