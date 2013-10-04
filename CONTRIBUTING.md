@@ -33,7 +33,15 @@ guidelines when writing code.
     * If your changes do affect other contributors, open a pull request
       detailing your changes.  Once other contributors have signed off on your
       request, you can merge your branch into master. See the Scott Schacon
-      article for details on this process.
+      article for details on this process. An additional advantage of using
+      pull requests is that [TravisCI will run a build on your changes
+      ](http://about.travis-ci.org/blog/2012-09-04-pull-requests-just-got-even-more-awesome/) 
+      when you open one. ([See here for instructions on using GitHub pull requests](https://help.github.com/articles/using-pull-requests))
+* Warped uses TravisCI for Integration Testing. Any time a commit is pushed to
+  master, or a pull request is opened, Travis will build and test the changes.
+  A badge in the README displays the status of the most recent build. Use pull
+  requests to avoid merging changes that break the build. Again, **never merge
+  or commit changes to master that break the Travis build.**
 
 ## Testing
 
@@ -89,6 +97,17 @@ You are writing code that dozens of contributors in the future will have to
 read. Comment your code liberally. Especially important are usage comments:
 every file, class, and function that you write needs to have a comment
 describing its usage and purpose.
+
+##Releases
+
+Warped uses [Semantic Versioning](http://semver.org/) to label it's releases. Not every commit to master should become a release, but when you want to create a new release, follow these steps:
+
+* As always, make sure that all code builds and passes all tests. Perform some manual functional testing in addition to the automated unit tests.
+* Increment the version number in the `AC_INIT` macro at the top of `configure.ac`.
+* Configure the source tree as usual, then run `make && make dist && make distcheck`.
+* If distcheck succeeds, create an annotated Git tag with the same version number as the one that now exists in the `AC_INIT` macro. (see [this section of the Git book](http://git-scm.com/book/en/Git-Basics-Tagging) for instructions on Git tags)
+* Push your tag to GitHub,
+* Add the source tarball created by `make dist` to the release on GitHub. ([instructions here](https://github.com/blog/1547-release-your-software))
 
 ## Resources
 * The [Git book](http://git-scm.com/book) is indispensable if you haven't used Git before. 
