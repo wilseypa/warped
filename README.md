@@ -1,4 +1,5 @@
-# WAPRED
+# WAPRED [![Build Status](https://api.travis-ci.org/wilseypa/warped.png)](https://travis-ci.org/wilseypa/warped)
+
 A Parallel & Distributed Discrete Simulation Library
 
 # Building
