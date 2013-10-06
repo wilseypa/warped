@@ -8,15 +8,15 @@ WARPED is built with a C++11 compiler (see [here](http://lektiondestages.blogspo
 
 To build from the git repository, first clone a local copy.
 
-	git clone https://github.com/wilseypa/pdes.git ~/warped
+	git clone https://github.com/wilseypa/pdes.git $HOME/warped
 
 You can run the Autotools build without any options, although specifying a prefix (install location) is recommended.
 
-	autoreconf -i && ./configure --prefix=~/lib/warped && make && make install
+	autoreconf -i && ./configure --prefix=$HOME/lib/warped && make && make install
 
-If you get a linker error telling you that the MPI library couldn't be found, you may need to specify the path to the MPI headers and libraries manually in the confuration step.
+If you get a linker error telling you that the MPI library couldn't be found, you may need to specify the path to the MPI headers and libraries manually in the configuration step. You can specify the path to the library file with the `--with-mpich` configure option, and the header location with the `--with-mpiheader` option.
 
- 	CPPFLAGS="-I/usr/include/mpich" LDFLAGS="-L/usr/lib/mpich2/lib" ./configure
+ 	./configure --with-mpiheader=/usr/include/mpich --with-mpich=/usr/lib/mpich2
 
 Replace the paths in the above example with the locations of the MPI libraries and headers on your machine. 
 

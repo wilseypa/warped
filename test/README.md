@@ -6,11 +6,11 @@ For historical reasons, the WARPED unit tests are written with two different fra
 
 ## Usage
 
-To build the tests written with CppUnit, you must install the CppUnit library separately before building WARPED. To build the tests, pass the `--enable-cppunit` option to `configure` when building WARPED. 
+To build the tests written with CppUnit, you must install the CppUnit library separately before building WARPED, otherwise only the tests written with Catch will be built.
 
 The Catch library is included with the WARPED source, so installing it separately is not required. All tests written with Catch are built automatically.
 
-If CppUnit is installed, the following command builds warped and runs all unit tests if the build was successful:
+The following command builds warped and runs all unit tests if the build was successful:
 
-	autoreconf -i && ./configure --prefix=~/lib/warped --enable-cppunit && make && make check
+	autoreconf -i && ./configure && make && make check
 
