@@ -6,6 +6,8 @@ A Parallel & Distributed Discrete Simulation Library
 
 WARPED is built with a C++11 compiler (see [here](http://lektiondestages.blogspot.de/2013/05/installing-and-switching-gccg-versions.html) for instructions about upgrading and switching GCC versions if you have an old version of GCC that does not support the required features.).  
 
+#### Building from the Git repository
+
 To build from the git repository, first clone a local copy.
 
 	git clone https://github.com/wilseypa/pdes.git $HOME/warped
@@ -13,6 +15,16 @@ To build from the git repository, first clone a local copy.
 You can run the Autotools build without any options, although specifying a prefix (install location) is recommended.
 
 	autoreconf -i && ./configure --prefix=$HOME/lib/warped && make && make install
+
+#### Building from a tarball
+
+To build from a source tarball, first download and extract [the latest release from GitHub](https://github.com/wilseypa/warped/releases). `cd` into the directory you extracted the tarball to, and run the following command:
+
+	./configure --prefix=$HOME/lib/warped && make && make install
+
+This will build and install the warped library to the path specified by the `--prefix` configuration option. If you omit the prefix, the library will be installed to `/usr`.
+
+#### Troubleshooting
 
 If you get a linker error telling you that the MPI library couldn't be found, you may need to specify the path to the MPI headers and libraries manually in the configuration step. You can specify the path to the library file with the `--with-mpich` configure option, and the header location with the `--with-mpiheader` option.
 
@@ -23,7 +35,7 @@ Replace the paths in the above example with the locations of the MPI libraries a
 # Prerequisites
 WARPED depends on an MPI implementation. It has only been tested with [mpich](http://www.mpich.org/), although other implementations may work.
 
-If building from the git repository, you  will also need the GNU Autotools tool-chain, including Automake, Autoconf, and Libtool.
+If building from the git repository instead of a tarball, you  will also need the GNU Autotools tool-chain, including Automake, Autoconf, and Libtool.
 
 
 # License
