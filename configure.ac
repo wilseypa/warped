@@ -22,20 +22,8 @@ AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])
 AC_CHECK_LIB(nsl, gethostent)
 AC_CHECK_LIB(socket,socket)
 
-AH_TEMPLATE([USE_CPPUNIT], [Compile cppunit tests])
-
-havempi=no
-havempich=no
-
-AC_CHECK_HEADER( mpi.h,,
-	AC_MSG_ERROR(Couldn't find mpi.h and you asked to enable mpi.  You probably need to define an include path.) )
-AC_CHECK_LIB( mpi, MPI_Init, havempi=yes,
-	AC_CHECK_LIB( mpich, MPI_Init, havempich=yes,
-	  AC_MSG_ERROR([Could neither find libmpi.a nor libmpich.a and you asked to enable mpi.  You probably need to define a lib path via LDFLAGS and -L]), -lmpl  -lpthread))
-
-AM_CONDITIONAL(HAVE_MPICH, test $havempich = yes)
-AM_CONDITIONAL(HAVE_MPI, test $havempi = yes)
-
+m4_include([m4/check_lib_mpich.m4])
+CHECK_LIB_MPICH
 
 AH_TEMPLATE([SSH_COMMAND],[When spawning remote processes via ssh, use the command specified in SSH_COMMAND])
 AC_ARG_VAR([SSH_COMMAND],[When spawning remote processes via ssh, use the command specified in SSH_COMMAND])
