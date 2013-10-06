@@ -38,6 +38,7 @@ WARPED_H_FILES = \
 	AdaptiveStateManagerBase.h \
 	AggressiveOutputManager.h \
 	Application.h \
+	AtomicState.h \
 	CentralizedEventSetSchedulingManager.h \
 	ChebyFossilCollManager.h \
 	CirculateInitializationMessage.h \
@@ -48,7 +49,6 @@ WARPED_H_FILES = \
 	Configurable.h \
 	ConfigurationManager.h \
 	Configurer.h \
-	ConsoleIO.cpp \
 	ConsoleIO.h \
 	ControlManager.h \
 	CostAdaptiveStateManager.h \
@@ -74,11 +74,8 @@ WARPED_H_FILES = \
 	EventSet.h \
 	EventSetFactory.h \
 	Factory.h \
-	FactoryImplementationBase.cpp \
 	FactoryImplementationBase.h \
-	FactoryManager.cpp \
 	FactoryManager.h \
-	FactorySymbolTable.cpp \
 	FactorySymbolTable.h \
 	FileData.h \
 	FileManager.h \
@@ -94,12 +91,15 @@ WARPED_H_FILES = \
 	InputSetObject.h \
 	IntVTime.h \
 	KernelMessage.h \
+	LadderQ.h \
+	LadderQExtn.h \
 	LazyOutputManager.h \
 	LocalEventMessage.h \
 	LocalFossilCollectMessage.h \
 	LocalKernelMessage.h \
 	LocalNegativeEventMessage.h \
 	LockedQueue.h \
+	LockState.h \
 	MatternGVTManager.h \
 	MatternGVTMessage.h \
 	MatternObjectRecord.h \
@@ -109,7 +109,6 @@ WARPED_H_FILES = \
 	NegativeEventMessage.h \
 	ObjectEventPair.h \
 	ObjectID.h \
-	ObjectStub.cpp \
 	ObjectStub.h \
 	OptFossilCollManager.h \
 	OptFossilCollManagerFactory.h \
@@ -128,9 +127,9 @@ WARPED_H_FILES = \
 	SchedulingManagerFactory.h \
 	SenderQueueContainer.h \
 	SequentialConfigurationManager.h \
+	SequentialFileManager.h \
 	SequentialSimulationManager.h \
 	SequentialSimulationStream.h \
-	Serializable.cpp \
 	Serializable.h \
 	SerializedInstance.h \
 	SetObject.h \
@@ -145,7 +144,6 @@ WARPED_H_FILES = \
 	SingleLinkedList.h \
 	SingleTerminationManager.h \
 	SinkObject.h \
-	Socket.cpp \
 	Socket.h \
 	SourceObject.h \
 	Spinner.h \
@@ -157,7 +155,6 @@ WARPED_H_FILES = \
 	StateManagerFactory.h \
 	StateManagerImplementationBase.h \
 	StateSetObject.h \
-	StopWatch.cpp \
 	StopWatch.h \
 	StragglerEvent.h \
 	TerminateToken.h \
@@ -226,6 +223,7 @@ libwarped_la_SOURCES = \
 	CommunicationManagerImplementationBase.cpp \
 	Configurable.cpp \
 	Configurer.cpp \
+	ConsoleIO.cpp \
 	ControlManager.cpp \
 	CostAdaptiveStateManager.cpp \
 	DefaultCommunicationManager.cpp \
@@ -244,6 +242,9 @@ libwarped_la_SOURCES = \
 	EventMessage.cpp \
 	EventMessageBase.cpp \
 	EventSetFactory.cpp \
+	FactoryImplementationBase.cpp \
+	FactoryManager.cpp \
+	FactorySymbolTable.cpp \
 	FileManager.cpp \
 	FileQueue.cpp \
 	FlatState.cpp \
@@ -261,6 +262,7 @@ libwarped_la_SOURCES = \
 	MsgAggregatingCommunicationManager.cpp \
 	NegativeEvent.cpp \
 	NegativeEventMessage.cpp \
+	ObjectStub.cpp \
 	OptFossilCollManager.cpp \
 	OptFossilCollManagerFactory.cpp \
 	OutputEvents.cpp \
@@ -276,6 +278,7 @@ libwarped_la_SOURCES = \
 	SequentialFileManager.cpp \
 	SequentialSimulationManager.cpp \
 	SequentialSimulationStream.cpp \
+	Serializable.cpp \
 	SerializedInstance.cpp \
 	SharedDVFSManager.cpp \
 	Simulation.cpp \
@@ -287,6 +290,7 @@ libwarped_la_SOURCES = \
 	SimulationStream.cpp \
 	SingleLinkedList.cpp \
 	SinkObject.cpp \
+	Socket.cpp \
 	SourceObject.cpp \
 	Spinner.cpp \
 	SplayTree.cpp \
@@ -294,6 +298,7 @@ libwarped_la_SOURCES = \
 	State.cpp \
 	StateManagerFactory.cpp \
 	StateManagerImplementationBase.cpp \
+	StopWatch.cpp \
 	TerminateToken.cpp \
 	ThreadedCostAdaptiveStateManager.cpp \
 	ThreadedDynamicOutputManager.cpp \
