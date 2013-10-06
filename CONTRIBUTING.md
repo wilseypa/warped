@@ -105,6 +105,8 @@ Warped uses [Semantic Versioning](http://semver.org/) to label it's releases. No
 * As always, make sure that all code builds and passes all tests. Perform some manual functional testing in addition to the automated unit tests.
 * Increment the version number in the `AC_INIT` macro at the top of `configure.ac`.
 * Configure the source tree as usual, then run `make && make dist && make distcheck`.
+	* If you pass any flags to configure when building WARPED, you need to specify these flags with the `DISTCHECK_CONFIGURE_FLAGS` variable.
+	* For example: `make distcheck DISTCHECK_CONFIGURE_FLAGS="--with-mpiheader=/usr/include/mpich --with-mpich=/usr/lib/mpich2"`
 * If distcheck succeeds, create an annotated Git tag with the same version number as the one that now exists in the `AC_INIT` macro. (see [this section of the Git book](http://git-scm.com/book/en/Git-Basics-Tagging) for instructions on Git tags)
 * Push your tag to GitHub,
 * Add the source tarball created by `make dist` to the release on GitHub. ([instructions here](https://github.com/blog/1547-release-your-software))
