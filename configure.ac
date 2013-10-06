@@ -1,12 +1,10 @@
-AC_INIT([warped],[4.0])
+AC_INIT([warped],[4.0.0])
 AC_CONFIG_HEADERS([src/WarpedConfig.h])
 
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/Event.cpp])
 AM_INIT_AUTOMAKE([foreign])
 AC_PREREQ(2.61)
-
-AC_SUBST(WARPED_VERSION, [4.0])
 
 AC_LANG([C++])
 
@@ -67,21 +65,8 @@ dnl Checks for header files.
 AC_CHECK_HEADERS(unistd.h)
 
 dnl Look for cppunit
-dnl Check to see if cppunit was enabled.
-AC_ARG_ENABLE(cppunit,
-AS_HELP_STRING([--enable-cppunit],[build support for cppunit]),
-AC_DEFINE(USE_CPPUNIT)
-[case "${enableval}" in
-  yes) cppunit=true ;;
-  no)  cppunit=false ;;
-  *) AC_MSG_ERROR(bad value ${enableval} for --enable-cppunit) ;;
-esac],[cppunit=false])
-AM_CONDITIONAL(USE_CPPUNIT, test x$cppunit = xtrue)
-
-if test x$cppunit = xtrue; then
 m4_include([m4/check_lib_cppunit.m4])
 CHECK_LIB_CPPUNIT
-fi
 
 AH_TEMPLATE(USE_SOCKLEN_T, [LINUX platforms require "socklen_t" while
 SOLARIS platforms require it to be an "int".  This macro tells use whether
@@ -147,12 +132,6 @@ case $found_sockopt_type2 in
      ;;
 esac
 
-AC_SUBST(CPPFLAGS)
-AC_SUBST(CFLAGS)
-AC_SUBST(CXXFLAGS)
-AC_SUBST(LDFLAGS)
-AC_SUBST(LIBS)
-AC_SUBST(CXX)
-AC_SUBST(MAKEDEPEND)
 AC_CONFIG_FILES([Makefile src/Makefile thirdparty/Makefile thirdparty/json/Makefile test/Makefile test/catch_tests/Makefile test/cppunit_tests/Makefile])
+
 AC_OUTPUT

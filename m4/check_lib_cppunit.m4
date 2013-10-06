@@ -32,21 +32,22 @@ LDFLAGS="$LDFLAGS -L$cl_cv_lib_cppunit/lib"
 CPPFLAGS="$CPPFLAGS -I$cl_cv_lib_cppunit/include"
 fi
 
-dnl We might want to add addition checks for CPPUNIT headers later
-AC_CHECK_HEADER(cppunit/Test.h, ,
+AC_CHECK_HEADER(cppunit/Test.h, AC_CHECK_LIB(cppunit, main, 
+      [AC_SUBST(CPP_UNIT_TEST_DIR,[test]) \
+            LIBS="$LIBS -lcppunit" 
+            cppunit=true], 
+      [AC_SUBST(CPP_UNIT_TEST_DIR, "") \
+      AC_MSG_WARN(Couldn't find cppunit library which is optional but
+        required to run the unit tests in the 'test' directory. This file is
+        part of the cppunit distribution.  You probably need to install it
+        and/or specify the location of it with the --with-cppunit option.) 
+        cppunit=false
+            ]),
   AC_MSG_WARN(Couldn't find cppunit/TestCase.h which is optional but
     required to run the unit tests in the 'test' directory. This file is
     part of the cppunit distribution.  You probably need to install it
     and/or specify the location of it with the --with-cppunit option.))
 
-dnl Check for the CPPUNIT library
-AC_CHECK_LIB(cppunit, main, 
-  [AC_SUBST(CPP_UNIT_TEST_DIR,[test]) \
-        LIBS="$LIBS -lcppunit"], 
-  [AC_SUBST(CPP_UNIT_TEST_DIR, "") \
-  AC_MSG_WARN(Couldn't find cppunit library which is optional but
-    required to run the unit tests in the 'test' directory. This file is
-    part of the cppunit distribution.  You probably need to install it
-    and/or specify the location of it with the --with-cppunit option.)
-        ])
-]) dnl end LIB_WARPED
+AM_CONDITIONAL(USE_CPPUNIT, test x$cppunit = xtrue)
+
+]) dnl end CHECK_LIB_CPPUNIT
