@@ -7,11 +7,11 @@ before_install:
   - mkdir -p $HOME/lib
 script: 
   - autoreconf -i 
-  - ./configure --with-mpiheader=-I/usr/include/mpich2 --prefix=$HOME/lib/warped 
+  - ./configure --with-mpiheader=/usr/include/mpich2 --prefix=$HOME/lib/warped 
   - make 
   - make check 
   - make install 
-  - make distcheck DISTCHECK_CONFIGURE_FLAGS="--with-mpiheader=-I/usr/include/mpich2"
+  - make distcheck DISTCHECK_CONFIGURE_FLAGS="--with-mpiheader=/usr/include/mpich2"
 branches:
   only:
     - master
