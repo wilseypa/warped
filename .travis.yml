@@ -2,10 +2,16 @@ language: cpp
 compiler:
   - gcc
 before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -qq mpich2 libmpich2-dev libcppunit-1.12-1 libcppunit-dev libtool automake 
- - mkdir -p $HOME/lib
-script: autoreconf -i && CPPFLAGS="-I/usr/include/mpich2" ./configure --prefix=$HOME/lib/warped --enable-cppunit && make && make install && make check
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq mpich2 libmpich2-dev libcppunit-1.12-1 libcppunit-dev libtool automake 
+  - mkdir -p $HOME/lib
+script: 
+  - autoreconf -i 
+  - ./configure --with-mpiheader=-I/usr/include/mpich2 --prefix=$HOME/lib/warped 
+  - make 
+  - make check 
+  - make install 
+  - make distcheck DISTCHECK_CONFIGURE_FLAGS="--with-mpiheader=-I/usr/include/mpich2"
 branches:
   only:
     - master
