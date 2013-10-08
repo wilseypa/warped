@@ -46,6 +46,7 @@
 class SimulationConfiguration {
 public:
     SimulationConfiguration(const std::string& config_file_name);
+    SimulationConfiguration(std::istream& input);
     ~SimulationConfiguration();
 
     // These functions raise a std::runtime_error if the given key isn't
@@ -65,6 +66,7 @@ public:
     double get_double(std::initializer_list<std::string> list, double default_value) noexcept;
 
 private:
+    void init(std::istream& input);
     Json::Value get_value(std::initializer_list<std::string> list);
     Json::Value root_;
 };

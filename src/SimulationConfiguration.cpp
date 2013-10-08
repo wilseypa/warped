@@ -10,15 +10,9 @@
 #include "json/json.h"
 #include "WarpedDebug.h"
 
-SimulationConfiguration::SimulationConfiguration(const std::string& config_file_name) {
-    std::ifstream in(config_file_name);
-    if (!in.is_open()) {
-        throw std::runtime_error(std::string("Could not open cofiguration file ") + config_file_name);
-    }
-
+void SimulationConfiguration::init(std::istream& input) {
     Json::Reader reader;
-    auto success = reader.parse(in, root_);
-    in.close();
+    auto success = reader.parse(input, root_);
 
     if (!success) {
         throw std::runtime_error(std::string("Failed to parse configuration\n") +
@@ -30,7 +24,26 @@ SimulationConfiguration::SimulationConfiguration(const std::string& config_file_
     }
 }
 
-SimulationConfiguration::~SimulationConfiguration() {};
+SimulationConfiguration::SimulationConfiguration(const std::string& config_file_name) {
+    std::ifstream input(config_file_name);
+    if (!input.is_open()) {
+        throw std::runtime_error(std::string("Could not open cofiguration file ") + config_file_name);
+    }
+
+    try {
+        init(input);
+    } catch (...) {
+        input.close();
+        throw;
+    }
+    input.close();
+}
+
+SimulationConfiguration::SimulationConfiguration(std::istream& input) {
+    init(input);
+}
+
+SimulationConfiguration::~SimulationConfiguration() {}
 
 Json::Value SimulationConfiguration::get_value(std::initializer_list<std::string> list) {
     Json::Value value = root_;
