@@ -2,6 +2,9 @@
 
 A Parallel & Distributed Discrete Simulation Library
 
+For a collection of Simulation Models that use this library, see 
+[warped-models](https://github.com/wilseypa/warped-models).
+
 # Building
 
 WARPED is built with a C++11 compiler (see [here](http://lektiondestages.blogspot.de/2013/05/installing-and-switching-gccg-versions.html) for instructions about upgrading and switching GCC versions if you have an old version of GCC that does not support the required features.).  
