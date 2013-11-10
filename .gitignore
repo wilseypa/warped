@@ -48,4 +48,4 @@ libtool
 ltmain.*
 
 # ctags
-.tags*
+tags*
