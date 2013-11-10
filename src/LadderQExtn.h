@@ -12,8 +12,8 @@ using namespace std;
 
 /* Macro section */
 #define MAX_RUNG_NUM     8  //ref. sec 2.4 of ladderq paper
-#define MAX_BUCKET_NUM   50 //ref. sec 2.4 of ladderq paper
 #define THRESHOLD        50 //ref. sec 2.3 of ladderq paper
+#define MAX_BUCKET_NUM   THRESHOLD //ref. sec 2.4 of ladderq paper
 #define MIN_BUCKET_WIDTH 1
 #define INVALID          0xFFFF
 
