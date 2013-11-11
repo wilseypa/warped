@@ -49,10 +49,12 @@ CommunicationManagerImplementationBase::routeMessage(KernelMessage* msg) {
     string messageType = msg->getDataType();
 
     if (recoveringFromCkpt) {
-        if (msg->getIncarnationNumber() < numCatastrophicRollbacks) {
-            delete msg;
-            return;
-        }
+		if(messageType != "RestoreCkptMessage"){
+        	if (msg->getIncarnationNumber() < numCatastrophicRollbacks) {
+            	delete msg;
+            	return;
+        	}
+		}
     }
 
     // It's not a CHECK-IDLE MESSAGE.
