@@ -22,6 +22,9 @@ class ThreadedOptFossilCollManager;
 class ThreadedTimeWarpLoadBalancer;
 
 template<class element> class LockedQueue;
+
+extern pthread_key_t threadKey;
+
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
     ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
