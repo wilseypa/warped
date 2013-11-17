@@ -79,6 +79,8 @@ ThreadedOptFossilCollManager::ThreadedOptFossilCollManager(
     } else {
         mkdir(ckptFilePath.c_str(), 0777);
     }
+
+    ofcFlagLock = new LockState();
 }
 
 ThreadedOptFossilCollManager::~ThreadedOptFossilCollManager() {
@@ -451,8 +453,12 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
 
                     // Master receiving a message from another manager.
                     // Start round one of the process.
+                    threadID
+                        = *((unsigned int*) pthread_getspecific(threadKey));
+		    this->getOfcFlagLock(threadID,mySimManager->getSyncMechanism());
                     mySimManager->setRecoveringFromCheckpoint(true);
                     myCommManager->setRecoveringFromCheckpoint(true);
+		    this->releaseOfcFlagLock(threadID,mySimManager->getSyncMechanism());
                     myCommManager->incrementNumRecoveries();
                     recovering = true;
 
@@ -549,7 +555,7 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
                         myCommManager->sendMessage(sendMsg, dest);
                     }
 
-                    //mySimManager->setRecoveringFromCheckpoint(false);
+                   // mySimManager->setRecoveringFromCheckpoint(false);
                     myCommManager->setRecoveringFromCheckpoint(false);
 
                     /*mySimManager->getGVTManager()->ofcReset();*/
@@ -575,8 +581,13 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
                                     << " - FIRST_CYCLE received." << endl;
 
                     // Go into recovery mode.
+	            
+                    threadID
+                        = *((unsigned int*) pthread_getspecific(threadKey));
+		    this->getOfcFlagLock(threadID,mySimManager->getSyncMechanism());
                     mySimManager->setRecoveringFromCheckpoint(true);
                     myCommManager->setRecoveringFromCheckpoint(true);
+		    this->releaseOfcFlagLock(threadID,mySimManager->getSyncMechanism());
                     myCommManager->incrementNumRecoveries();
                     recovering = true;
 
@@ -758,4 +769,14 @@ int ThreadedOptFossilCollManager::getLeastCollectTime() {
         { leastCollectTime = lastCollectTimes[i]; }
     }
     return leastCollectTime;
+}
+
+void ThreadedOptFossilCollManager::getOfcFlagLock(int threadId, const string syncMech ) {
+    while(!ofcFlagLock->setLock(threadId,syncMech));
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));	    
+}
+
+void ThreadedOptFossilCollManager::releaseOfcFlagLock(int threadId, const string syncMech){
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+    ofcFlagLock->releaseLock(threadId,syncMech);
 }

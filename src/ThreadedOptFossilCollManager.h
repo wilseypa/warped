@@ -7,6 +7,7 @@
 #include "Configurable.h"
 #include "StateSetObject.h"
 #include "OutputManager.h"
+#include "LockState.h"
 #include <set>
 #include <fstream>
 #include <map>
@@ -144,6 +145,12 @@ public:
     virtual bool checkFault(SimulationObject* obj);
 
     virtual int getLeastCollectTime();
+    /** Used to lock the optimistic fossil collection flags :  
+     inRecovery and initiatedRecovery. 
+    */
+    void getOfcFlagLock (int threadId, const string syncMech); 
+
+    void releaseOfcFlagLock (int threadId, const string syncMech);
 
     /*// These are not currently used anywhere. It was a potential solution
      // that did not work out as well as was hoped.
@@ -229,6 +236,8 @@ protected:
     // Time to rollback to while starting a recovery
     unsigned int restoreRollbackTime;
 
+    // Lock OFC recovery flags
+    LockState* ofcFlagLock;
     /*// These are not currently used anywhere. It was a potential solution
      // that did not work out as well as was hoped.
      // The state queue from the state manager.

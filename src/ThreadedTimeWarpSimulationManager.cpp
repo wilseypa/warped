@@ -85,6 +85,8 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     initiatedRecovery = false;
     lvtCount = 0;
     numCatastrophicRollbacks = 0;
+    
+    ofcFlagLock = new LockState();
 }
 
 ThreadedTimeWarpSimulationManager::~ThreadedTimeWarpSimulationManager() {
@@ -310,12 +312,14 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
         if (inRecovery) {
             numCatastrophicRollbacks++;
             if (numberOfSimulationManagers > 1) {
-                while (workerStatus[0]->getStillBusyCount() > 0)
-                    debug::debugout << workerStatus[0]->getStillBusyCount()
+               while (workerStatus[0]->getStillBusyCount() > 0)
+                   debug::debugout << workerStatus[0]->getStillBusyCount()
                                     << endl;
                 if (initiatedRecovery) {
                     myrealFossilCollManager->startRecovery();
+	            getOfcFlagLock(threadID,getSyncMechanism());
                     initiatedRecovery = false;
+                    releaseOfcFlagLock(threadID,getSyncMechanism());
                 }
                 while (inRecovery)
                 { getMessages(); }
@@ -547,6 +551,8 @@ void ThreadedTimeWarpSimulationManager::handleRemoteEvent(const Event* event,
                         << endl;
         KernelMessage* msg = new EventMessage(getSimulationManagerID(),
                                               destSimMgrId, event, gVTInfo);
+	ASSERT(msg !=NULL);
+
         sendMessage(msg, destSimMgrId);
     }
 }
@@ -748,9 +754,10 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject* object,
                                     << " - Catastrophic Rollback: Restored State Time: "
                                     << *restoredTime << ", Rollback Time: "
                                     << rollbackTime << ", Starting Recovery." << endl;
-
+	            getOfcFlagLock(threadID,getSyncMechanism());
                     myrealFossilCollManager->setRecovery(objId,
                                                          rollbackTime.getApproximateIntTime());
+                    releaseOfcFlagLock(threadID,getSyncMechanism());
                 } else {
                     restoredTime = &getZero();
                 }
@@ -1579,5 +1586,14 @@ void ThreadedTimeWarpSimulationManager::clearMessageBuffer() {
     while ((tobedeleted = messageBuffer->dequeue(syncMechanism)) != NULL) {
         debug::debugout << "Deleted message from buffer." << endl;
     }
+}
+void ThreadedTimeWarpSimulationManager::getOfcFlagLock(int threadId, const string syncMech ) {
+    while(!ofcFlagLock->setLock(threadId,syncMech));
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+}
+
+void ThreadedTimeWarpSimulationManager::releaseOfcFlagLock(int threadId, const string syncMech){
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+    ofcFlagLock->releaseLock(threadId,syncMech);
 }
 

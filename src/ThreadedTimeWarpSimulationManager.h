@@ -195,6 +195,13 @@ public:
     // Empty the message buffer
     void clearMessageBuffer();
 
+    // Get optimistic fossil collection recovery flags lock
+    void getOfcFlagLock(int threadId, const string syncMech);
+   
+    // Release optimistic fossil collection recovery flags lock
+   
+    void releaseOfcFlagLock(int threadId, const string syncMech); 
+
 protected:
     /**@name Protected Class Methods of ThreadedTimeWarpSimulationManager. */
     //@{
@@ -481,6 +488,10 @@ private:
     unsigned int numberOfLocalAntimessages;
 
     ThreadedTimeWarpLoadBalancer* loadBalancer;
+    
+    // used to lock optimistic fossil collection recovery flags. 
+    LockState* ofcFlagLock;
+
 };
 
 #endif /* ThreadedTIMEWARPSIMULATIONMANAGER_H_ */
