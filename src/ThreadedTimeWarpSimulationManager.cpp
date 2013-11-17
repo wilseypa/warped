@@ -37,7 +37,7 @@
 int WorkerInformation::globalStillBusyCount = 0;
 bool WorkerInformation::workRemaining = true;
 
-extern pthread_key_t threadKey;
+pthread_key_t threadKey;
 
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     unsigned int numberOfWorkerThreads, const string syncMechanism,
