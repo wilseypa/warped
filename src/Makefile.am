@@ -91,8 +91,8 @@ WARPED_H_FILES = \
 	InputSetObject.h \
 	IntVTime.h \
 	KernelMessage.h \
-	LadderQ.h \
-	LadderQExtn.h \
+	LadderQStrict.h \
+	LadderQRelaxed.h \
 	LazyOutputManager.h \
 	LocalEventMessage.h \
 	LocalFossilCollectMessage.h \

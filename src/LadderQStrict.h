@@ -1,6 +1,6 @@
 
-#ifndef LadderQueue_H_
-#define LadderQueue_H_
+#ifndef LadderQueueStrict_H_
+#define LadderQueueStrict_H_
 
 /* Include section */
 #include <iostream>
@@ -21,12 +21,12 @@ using namespace std;
 #define NUM_BUCKETS(x) (((x)==0) ? (numRung0Buckets) : (MAX_BUCKET_NUM))
 
 /* Ladder Queue class */
-class LadderQueue {
+class LadderQueueStrict {
 
 public:
 
     /* Default constructor */
-    inline LadderQueue(const string causalityType) {
+    inline LadderQueueStrict() {
         maxTS = minTS = topStart = nRung = 0;
         numRung0Buckets = 0;
         std::fill_n(bucketWidth, MAX_RUNG_NUM, 0);
@@ -46,7 +46,6 @@ public:
                 rung1_to_n[rungIndex][bucketIndex] = rung_bucket;
             }
         }
-        eventCausality = causalityType;
 
         /* Initialize the mutexes */
         pthread_mutex_init(&topMutex, NULL);
@@ -55,7 +54,7 @@ public:
     }
 
     /* Destructor */
-    inline ~LadderQueue() {
+    inline ~LadderQueueStrict() {
         clear();
 
         /* Destroy the mutexes */
@@ -256,11 +255,7 @@ public:
         const Event* retVal = NULL;
         if (NULL != (retVal = begin())) {
             pthread_mutex_lock(&bottomMutex);
-            if (eventCausality == "RELAXED") {
-                bottom_relaxed.erase(bottom_relaxed.begin());
-            } else {
-                bottom_strict.erase(bottom_strict.begin());
-            }
+            bottom.erase(bottom.begin());
             pthread_mutex_unlock(&bottomMutex);
         }
         return retVal;
@@ -477,69 +472,35 @@ public:
 
             /* Transfer bottom to new rung */
             pthread_mutex_lock(&rungMutex);
-            if (eventCausality == "RELAXED") {
 
-                list<const Event*>::iterator mIterate;
-                for (mIterate = bottom_relaxed.begin(); mIterate != bottom_relaxed.end(); mIterate++) {
+            multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
+            for (mIterate = bottom.begin(); mIterate != bottom.end(); mIterate++) {
 
-                    bucketIndex =
-                        (unsigned int)(((*mIterate)->getReceiveTime().getApproximateIntTime() -
+                bucketIndex =
+                    (unsigned int)(((*mIterate)->getReceiveTime().getApproximateIntTime() -
                                         rStart[nRung-1]) / bucketWidth[nRung-1]);
 
-                    if (NUM_BUCKETS(nRung-1) <= bucketIndex) {
-                        if (nRung > 1) {
-                            cout << "Ran out of bucket space. Need more." << endl;
-                        } else {
-                            cout << "Rung 1 needs more space (available = " << numRung0Buckets
-                                 << ", required = " << bucketIndex+1 << ")" << endl;
-                        }
-                        pthread_mutex_unlock(&rungMutex);
-                        pthread_mutex_unlock(&bottomMutex);
-                        return NULL;
+                if (NUM_BUCKETS(nRung-1) <= bucketIndex) {
+                    if (nRung > 1) {
+                        cout << "Ran out of bucket space. Need more." << endl;
+                    } else {
+                        cout << "Rung 1 needs more space (available = " << numRung0Buckets
+                             << ", required = " << bucketIndex+1 << ")" << endl;
                     }
-
-                    /* Adjust the numBucket and rCur parameters */
-                    if (numBucket[nRung-1] < bucketIndex+1) {
-                        numBucket[nRung-1] = bucketIndex+1;
-                    }
-                    if (mIterate == bottom_relaxed.begin()) {
-                        rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
-                    }
-
-                    RUNG(nRung-1,bucketIndex)->push_front(*mIterate);
+                    pthread_mutex_unlock(&rungMutex);
+                    pthread_mutex_unlock(&bottomMutex);
+                    return NULL;
                 }
 
-            } else {
-
-                multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
-                for (mIterate = bottom_strict.begin(); mIterate != bottom_strict.end(); mIterate++) {
-
-                    bucketIndex =
-                        (unsigned int)(((*mIterate)->getReceiveTime().getApproximateIntTime() -
-                                        rStart[nRung-1]) / bucketWidth[nRung-1]);
-
-                    if (NUM_BUCKETS(nRung-1) <= bucketIndex) {
-                        if (nRung > 1) {
-                            cout << "Ran out of bucket space. Need more." << endl;
-                        } else {
-                            cout << "Rung 1 needs more space (available = " << numRung0Buckets
-                                 << ", required = " << bucketIndex+1 << ")" << endl;
-                        }
-                        pthread_mutex_unlock(&rungMutex);
-                        pthread_mutex_unlock(&bottomMutex);
-                        return NULL;
-                    }
-
-                    /* Adjust the numBucket and rCur parameters */
-                    if (numBucket[nRung-1] < bucketIndex+1) {
-                        numBucket[nRung-1] = bucketIndex+1;
-                    }
-                    if (mIterate == bottom_strict.begin()) {
-                        rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
-                    }
-
-                    RUNG(nRung-1,bucketIndex)->push_front(*mIterate);
+                /* Adjust the numBucket and rCur parameters */
+                if (numBucket[nRung-1] < bucketIndex+1) {
+                    numBucket[nRung-1] = bucketIndex+1;
                 }
+                if (mIterate == bottom.begin()) {
+                    rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
+                }
+
+                RUNG(nRung-1,bucketIndex)->push_front(*mIterate);
             }
             bottomClear();
 
@@ -599,66 +560,39 @@ private:
     pthread_mutex_t     rungMutex;
 
     /* Bottom */
-    string              eventCausality;
-    list<const Event*> bottom_relaxed;
-    multiset<const Event*, receiveTimeLessThanEventIdLessThan> bottom_strict;
+    multiset<const Event*, receiveTimeLessThanEventIdLessThan> bottom;
     pthread_mutex_t     bottomMutex;
 
     /** BOTTOM Functionalities */
     /* Bottom erase */
     void bottomErase(const Event* delEvent) {
-        if (eventCausality == "RELAXED") {
-            bottom_relaxed.remove(delEvent);
-        } else {
-            (void) bottom_strict.erase(delEvent);
-        }
+        (void) bottom.erase(delEvent);
     }
 
     /* Bottom insert */
     void bottomInsert(const Event* newEvent) {
-        if (eventCausality == "RELAXED") {
-            bottom_relaxed.push_back(newEvent);
-        } else {
-            bottom_strict.insert(newEvent);
-        }
+        bottom.insert(newEvent);
     }
 
     /* Bottom empty */
     bool bottomEmpty() {
-        if (eventCausality == "RELAXED") {
-            return bottom_relaxed.empty();
-        } else {
-            return bottom_strict.empty();
-        }
+        return bottom.empty();
     }
 
     /* Bottom begin */
     const Event* bottomBegin() {
-        if (eventCausality == "RELAXED") {
-            return (*bottom_relaxed.begin());
-        } else {
-            return (*bottom_strict.begin());
-        }
+        return (*bottom.begin());
     }
 
     /* Bottom clear */
     void bottomClear() {
-        if (eventCausality == "RELAXED") {
-            bottom_relaxed.clear();
-        } else {
-            bottom_strict.clear();
-        }
+        bottom.clear();
     }
 
     /* Bottom size */
     unsigned int bottomSize() {
         unsigned int val = 0;
-        if (eventCausality == "RELAXED") {
-            val = bottom_relaxed.size();
-        } else {
-            val = bottom_strict.size();
-        }
-        return val;
+        return bottom.size();
     }
 
     /* Create (here implicitly allocate) a new rung */
@@ -821,5 +755,5 @@ private:
     }
 };
 
-#endif /* LadderQueue_H_ */
+#endif /* LadderQueueStrict_H_ */
 
