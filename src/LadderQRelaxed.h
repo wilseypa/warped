@@ -540,7 +540,7 @@ public:
 private:
 
     /* Top variables */
-    list<const Event*> top;
+    list<const Event*>  top;
     unsigned int        maxTS;
     unsigned int        minTS;
     unsigned int        topStart;
@@ -559,7 +559,7 @@ private:
     pthread_mutex_t     rungMutex;
 
     /* Bottom */
-    list<const Event*> bottom;
+    list<const Event*>  bottom;
     pthread_mutex_t     bottomMutex;
 
     /** BOTTOM Functionalities */

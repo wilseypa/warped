@@ -541,7 +541,7 @@ public:
 private:
 
     /* Top variables */
-    list<const Event*> top;
+    list<const Event*>  top;
     unsigned int        maxTS;
     unsigned int        minTS;
     unsigned int        topStart;
