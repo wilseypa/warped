@@ -10,7 +10,8 @@
 #include "NegativeEvent.h"
 #include "EventFunctors.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "LadderQExtn.h"
+#include "LadderQStrict.h"
+#include "LadderQRelaxed.h"
 #include "SplayTree.h"
 
 using std::multiset;
@@ -89,8 +90,9 @@ private:
     //Lowest event position pointer for LadderQ. Also used by Splay Tree.
     vector<const Event*> lowestLadderObjectPosition;
 
-    ///Schedule Queue - LadderQ
-    LadderQueue* ladderQ;
+    ///Schedule Queue - LadderQ (Strict and Relaxed)
+    LadderQueueStrict  *ladderQStrict;
+    LadderQueueRelaxed *ladderQRelaxed;
 
     ///Schedule Queue - SplayTree
     SplayTree* splayTree;
@@ -106,6 +108,9 @@ private:
 
     //Specify the scheduleQ scheme in the config
     string scheduleQScheme;
+
+    //Specify the event causality type
+    string eventCausality;
 
     // Number of LTSF Queues in use
     int LTSFCount;
