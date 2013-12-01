@@ -95,14 +95,13 @@ const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int thread
         this->releaseScheduleQueueLock(threadID);
 
     } else if (scheduleQScheme == "LadderQueue") {
-        /* lock might not be needed later on */
         this->getScheduleQueueLock(threadID);
         if(eventCausality == "RELAXED") {
             if (!ladderQRelaxed->empty()) {
                 ret = &(ladderQRelaxed->begin()->getReceiveTime());
             }
         } else {
-            if (!ladderQStrict->empty()) {
+            if (!ladderQStrict->empty(true)) {
                 ret = &(ladderQStrict->begin()->getReceiveTime());
             }
         }
@@ -152,7 +151,7 @@ bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty() {
         if(eventCausality == "RELAXED") {
             return ladderQRelaxed->empty();
         } else {
-            return ladderQStrict->empty();
+            return ladderQStrict->empty(false);
         }
     } else if (scheduleQScheme == "SplayTree") {
         return (splayTree->size() == 0) ? true : false;
@@ -284,6 +283,7 @@ void ThreadedTimeWarpMultiSetLTSF::insertEvent(int objId, const Event* newEvent)
         if(eventCausality == "RELAXED") {
             lowestLadderObjectPosition[objId] = ladderQRelaxed->insert(newEvent);
         } else {
+            debug::debugout<<"Inserting " << newEvent << "." <<endl;
             lowestLadderObjectPosition[objId] = ladderQStrict->insert(newEvent);
         }
     } else if (scheduleQScheme == "SplayTree") {
@@ -396,13 +396,14 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
                 lowestLadderObjectPosition[objId] = ladderQRelaxed->end();
             }
         } else {
-            if (!ladderQStrict->empty()) {
+            if (!ladderQStrict->empty(true)) {
                 debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
                 ret = ladderQStrict->dequeue();
                 if (ret == NULL) {
                     cout << "dequeue() func returned NULL" << endl;
                     return ret;
                 }
+                debug::debugout<<"Dequeued " << ret << ". "<< endl;
                 unsigned int newMinTime = ret->getReceiveTime().getApproximateIntTime();
                 if (newMinTime < minReceiveTime) { cout << "Event received out of order" << endl; }
                 unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
