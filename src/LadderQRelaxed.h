@@ -27,6 +27,10 @@ public:
 
     /* Default constructor */
     inline LadderQueueRelaxed() {
+
+        syncMechanism = "AtomicLock";
+        isDequeueReq  = false;
+
         maxTS = minTS = topStart = nRung = 0;
         numRung0Buckets = 0;
         std::fill_n(bucketWidth, MAX_RUNG_NUM, 0);
@@ -48,9 +52,9 @@ public:
         }
 
         /* Initialize the mutexes */
-        pthread_mutex_init(&topMutex, NULL);
-        pthread_mutex_init(&rungMutex, NULL);
-        pthread_mutex_init(&bottomMutex, NULL);
+        topLock    = new LockState();
+        rungLock   = new LockState();
+        bottomLock = new LockState();
     }
 
     /* Destructor */
@@ -58,9 +62,9 @@ public:
         clear();
 
         /* Destroy the mutexes */
-        pthread_mutex_destroy(&topMutex);
-        pthread_mutex_destroy(&rungMutex);
-        pthread_mutex_destroy(&bottomMutex);
+        delete topLock;
+        delete rungLock;
+        delete bottomLock;
     }
 
     /* Peek at the event with lowest timestamp */
@@ -71,32 +75,31 @@ public:
         bool isBucketWidthStatic = false;
 
         /* Remove from bottom if not empty */
-        pthread_mutex_lock(&bottomMutex);
         if (!bottomEmpty()) {
             const Event* event = bottomBegin();
-            pthread_mutex_unlock(&bottomMutex);
+            if(!isDequeueReq) {
+                releaseBottomLock();
+            }
             return event;
         }
-        pthread_mutex_unlock(&bottomMutex);
 
         /* If rungs exist, remove from rungs */
-        pthread_mutex_lock(&rungMutex);
+        getRungLock();
         if ((nRung > 0) && (INVALID == (bucketIndex = recurse_rung()))) {
             /* Check whether rungs still exist */
             if (nRung > 0) {
                 cout << "Received invalid Bucket index." << endl;
-                pthread_mutex_unlock(&rungMutex);
+                releaseRungLock();
+                releaseBottomLock();
                 return NULL;
             }
         }
 
         if (nRung > 0) { /* Check required because recurse_rung() can affect nRung value */
-            pthread_mutex_lock(&bottomMutex);
             for (lIterate = RUNG(nRung-1,bucketIndex)->begin();
                     lIterate != RUNG(nRung-1,bucketIndex)->end(); lIterate++) {
                 bottomInsert(*lIterate);
             }
-            pthread_mutex_unlock(&bottomMutex);
             RUNG(nRung-1,bucketIndex)->clear();
 
             /* If bucket returned is the last valid rung of the bucket */
@@ -113,31 +116,34 @@ public:
                     rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
                 } else {
                     cout << "numBucket handling needs improvement." << endl;
-                    pthread_mutex_unlock(&rungMutex);
+                    releaseRungLock();
+                    releaseBottomLock();
                     return NULL;
                 }
             }
 
-            pthread_mutex_lock(&bottomMutex);
-            if (true == bottomEmpty()) {
+            if (bottomEmpty()) {
                 cout << "Bottom empty" << endl;
-                pthread_mutex_unlock(&bottomMutex);
-                pthread_mutex_unlock(&rungMutex);
+                releaseRungLock();
+                releaseBottomLock();
                 return NULL;
             }
 
             const Event* event = bottomBegin();
-            pthread_mutex_unlock(&bottomMutex);
-            pthread_mutex_unlock(&rungMutex);
+            releaseRungLock();
+            if(!isDequeueReq) {
+                releaseBottomLock();
+            }
             return event;
         }
-        pthread_mutex_unlock(&rungMutex);
 
         /* Check if top has any events before proceeding further */
-        pthread_mutex_lock(&topMutex);
+        getTopLock();
         if (true == top.empty()) {
             cout << "LadderQ is empty." << endl;
-            pthread_mutex_unlock(&topMutex);
+            releaseTopLock();
+            releaseRungLock();
+            releaseBottomLock();
             return NULL;
         }
 
@@ -145,12 +151,13 @@ public:
         /* Check if failed to create the first rung */
         if (false == create_new_rung(top.size(), minTS, &isBucketWidthStatic)) {
             cout << "Failed to create the required rung." << endl;
-            pthread_mutex_unlock(&topMutex);
+            releaseTopLock();
+            releaseRungLock();
+            releaseBottomLock();
             return NULL;
         }
 
         /* Transfer events from Top to 1st rung of Ladder */
-        pthread_mutex_lock(&rungMutex);
         rCur[0] = rStart[0] + NUM_BUCKETS(0)*bucketWidth[0];
         for (lIterate = top.begin(); lIterate != top.end();) {
             bucketIndex =
@@ -173,21 +180,20 @@ public:
                 }
             }
         }
-        pthread_mutex_unlock(&topMutex);
+        releaseTopLock();
 
         /* Copy events from bucket_k into Bottom */
         if (INVALID == (bucketIndex = recurse_rung())) {
             cout << "Received invalid Bucket index." << endl;
-            pthread_mutex_unlock(&rungMutex);
+            releaseRungLock();
+            releaseBottomLock();
             return NULL;
         }
 
-        pthread_mutex_lock(&bottomMutex);
         for (lIterate = RUNG(0,bucketIndex)->begin();
                 lIterate != RUNG(0,bucketIndex)->end(); lIterate++) {
             bottomInsert(*lIterate);
         }
-        pthread_mutex_unlock(&bottomMutex);
 
         /* Clear that bucket */
         RUNG(0,bucketIndex)->clear();
@@ -202,21 +208,23 @@ public:
                 rCur[0] = rStart[0] + bucketIndex*bucketWidth[0];
             } else {
                 cout << "rung 1 numBucket handling needs improvement." << endl;
-                pthread_mutex_unlock(&rungMutex);
+                releaseRungLock();
+                releaseBottomLock();
                 return NULL;
             }
         }
-        pthread_mutex_unlock(&rungMutex);
+        releaseRungLock();
 
-        pthread_mutex_lock(&bottomMutex);
-        if (true == bottomEmpty()) {
+        if (bottomEmpty()) {
             cout << "Bottom empty" << endl;
-            pthread_mutex_unlock(&bottomMutex);
+            releaseBottomLock();
             return NULL;
         }
 
         const Event* event = bottomBegin();
-        pthread_mutex_unlock(&bottomMutex);
+        if(!isDequeueReq) {
+            releaseBottomLock();
+        }
         return event;
     }
 
@@ -225,14 +233,15 @@ public:
 
         unsigned int rungIndex = 0, bucketIndex = 0;
 
+        getBottomLock();
+        getRungLock();
+        getTopLock();
+
         /* Top variables */
         maxTS = minTS = topStart = 0;
-        pthread_mutex_lock(&topMutex);
         top.clear();
-        pthread_mutex_unlock(&topMutex);
 
         /* Rungs */
-        pthread_mutex_lock(&rungMutex);
         for (rungIndex = 0; rungIndex < MAX_RUNG_NUM; rungIndex++) {
             bucketWidth[rungIndex] = rStart[rungIndex] = rCur[rungIndex] = numBucket[rungIndex]   = 0;
 
@@ -241,37 +250,40 @@ public:
             }
         }
         nRung = 0;
-        pthread_mutex_unlock(&rungMutex);
 
         /* Purge bottom */
-        pthread_mutex_lock(&bottomMutex);
         bottomClear();
-        pthread_mutex_unlock(&bottomMutex);
+
+        releaseTopLock();
+        releaseRungLock();
+        releaseBottomLock();
     }
 
     /* Dequeue the event with lowest timestamp */
     inline const Event* dequeue() {
 
         const Event* retVal = NULL;
+        isDequeueReq = true;
         if (NULL != (retVal = begin())) {
-            pthread_mutex_lock(&bottomMutex);
-            bottom.erase(bottom.begin());
-            pthread_mutex_unlock(&bottomMutex);
+            bottomErase(bottom.begin());
+            isDequeueReq = false;
+            releaseBottomLock();
         }
         return retVal;
     }
 
     /* Check whether the LadderQ has any events or not */
-    inline bool empty() {
+    inline bool empty(bool isBeginOrDequeueCalled) {
 
-        pthread_mutex_lock(&topMutex);
-        pthread_mutex_lock(&rungMutex);
-        pthread_mutex_lock(&bottomMutex);
+        getBottomLock();
+        getRungLock();
+        getTopLock();
         bool status = ((0==nRung) & top.empty() & bottomEmpty());
-        pthread_mutex_unlock(&bottomMutex);
-        pthread_mutex_unlock(&rungMutex);
-        pthread_mutex_unlock(&topMutex);
-
+        releaseTopLock();
+        releaseRungLock();
+        if( status || (!isBeginOrDequeueCalled) ) {
+            releaseBottomLock();
+        }
         return status;
     }
 
@@ -292,8 +304,11 @@ public:
             return;
         }
 
+        getBottomLock();
+        getRungLock();
+        getTopLock();
+
         /* Check and erase in top, if found */
-        pthread_mutex_lock(&topMutex);
         if ((false == top.empty()) && (topStart < delEvent->getReceiveTime().getApproximateIntTime())) {
             for (lIterate = top.begin(); lIterate != top.end();) {
                 if (((*lIterate)->getReceiveTime().getApproximateIntTime() ==
@@ -306,10 +321,12 @@ public:
                     lIterate++;
                 }
             }
-            pthread_mutex_unlock(&topMutex);
+            releaseTopLock();
+            releaseRungLock();
+            releaseBottomLock();
             return;
         }
-        pthread_mutex_unlock(&topMutex);
+        releaseTopLock();
 
         /* Step through rungs */
         while ((rungIndex < nRung)
@@ -324,18 +341,19 @@ public:
 
             if (NUM_BUCKETS(rungIndex) <= bucketIndex) {
                 cout << "Incorrect calculation of bucket index." << endl;
+                releaseRungLock();
+                releaseBottomLock();
                 return;
             }
 
-            pthread_mutex_lock(&rungMutex);
             rung_bucket = RUNG(rungIndex,bucketIndex);
 
             if (false == rung_bucket->empty()) {
                 for (lIterate = rung_bucket->begin(); lIterate != rung_bucket->end();) {
-                    if (((*lIterate)->getReceiveTime().getApproximateIntTime() ==
+                    if ( ((*lIterate)->getReceiveTime().getApproximateIntTime() ==
                             delEvent->getReceiveTime().getApproximateIntTime()) &&
-                            ((*lIterate)->getEventId() == delEvent->getEventId()) &&
-                            ((*lIterate)->getSender() == delEvent->getSender())) {
+                         ((*lIterate)->getEventId() == delEvent->getEventId()) &&
+                         ((*lIterate)->getSender() == delEvent->getSender())) {
 
                         lIterate = rung_bucket->erase(lIterate);
                     } else {
@@ -364,16 +382,17 @@ public:
                     }
                 }
             }
-            pthread_mutex_unlock(&rungMutex);
+            releaseRungLock();
+            releaseBottomLock();
             return;
         }
+        releaseRungLock();
 
         /* Check and erase from bottom, if present */
-        pthread_mutex_lock(&bottomMutex);
-        if (false == bottomEmpty()) {
-            bottomErase(delEvent);
+        if (!bottomEmpty()) {
+            bottomRemove(delEvent);
         }
-        pthread_mutex_unlock(&bottomMutex);
+        releaseBottomLock();
     }
 
     /* Inserts the specified event into LadderQ (if already not present) */
@@ -389,9 +408,9 @@ public:
         }
 
         /* Insert into top, if valid */
+        getTopLock();
         if (newEvent->getReceiveTime().getApproximateIntTime() >
                 topStart) {  //deviation from APPENDIX of ladderq
-            pthread_mutex_lock(&topMutex);
             if (minTS > newEvent->getReceiveTime().getApproximateIntTime()) {
                 minTS = newEvent->getReceiveTime().getApproximateIntTime();
             }
@@ -400,12 +419,13 @@ public:
             }
 
             top.push_front(newEvent);
-            pthread_mutex_unlock(&topMutex);
-
+            releaseTopLock();
             return newEvent;
         }
+        releaseTopLock();
 
         /* Step through rungs */
+        getRungLock();
         while ((rungIndex < nRung)
                 && (newEvent->getReceiveTime().getApproximateIntTime() < rCur[rungIndex])) {
             rungIndex++;
@@ -422,11 +442,11 @@ public:
                 } else {
                     cout << "Rung 1 ran out of space." << endl;
                 }
+                releaseRungLock();
                 return NULL;
             }
 
             /* Adjust the numBucket and rCur parameters */
-            pthread_mutex_lock(&rungMutex);
             if (numBucket[rungIndex] < bucketIndex+1) {
                 numBucket[rungIndex] = bucketIndex+1;
             }
@@ -435,14 +455,15 @@ public:
             }
 
             RUNG(rungIndex,bucketIndex)->push_front(newEvent);
-            pthread_mutex_unlock(&rungMutex);
-
+            releaseRungLock();
             return newEvent;
         }
+        releaseRungLock();
 
         /* If rung not found */
-        pthread_mutex_lock(&bottomMutex);
+        getBottomLock();
         if (THRESHOLD < bottomSize()) {
+            getRungLock();
             if (MAX_RUNG_NUM <= nRung) {
                 isBucketWidthStatic = true;
 
@@ -457,21 +478,23 @@ public:
                 if ((false == create_new_rung(bottomSize(), uiBucketStartVal, &isBucketWidthStatic)) &&
                         (false == isBucketWidthStatic)) {
                     cout << "Failed to create the required rung." << endl;
-                    pthread_mutex_unlock(&bottomMutex);
+                    releaseRungLock();
+                    releaseBottomLock();
                     return NULL;
                 }
             }
+            releaseRungLock();
 
             /* Intentionally let the bottom continue to overflow */
             //ref sec 2.4 of ladderq + when bucket width becomes static
             if (true == isBucketWidthStatic) {
                 bottomInsert(newEvent);
-                pthread_mutex_unlock(&bottomMutex);
+                releaseBottomLock();
                 return newEvent;
             }
 
             /* Transfer bottom to new rung */
-            pthread_mutex_lock(&rungMutex);
+            getRungLock();
             list<const Event*>::iterator mIterate;
             for (mIterate = bottom.begin(); mIterate != bottom.end(); mIterate++) {
 
@@ -486,8 +509,8 @@ public:
                         cout << "Rung 1 needs more space (available = " << numRung0Buckets
                                  << ", required = " << bucketIndex+1 << ")" << endl;
                     }
-                    pthread_mutex_unlock(&rungMutex);
-                    pthread_mutex_unlock(&bottomMutex);
+                    releaseRungLock();
+                    releaseBottomLock();
                     return NULL;
                 }
 
@@ -513,8 +536,8 @@ public:
                 } else {
                     cout << "Rung 1 needs more space. Always hungry." << endl;
                 }
-                pthread_mutex_unlock(&rungMutex);
-                pthread_mutex_unlock(&bottomMutex);
+                releaseRungLock();
+                releaseBottomLock();
                 return NULL;
             }
 
@@ -526,25 +549,28 @@ public:
             }
 
             RUNG(nRung-1,bucketIndex)->push_front(newEvent);
-            pthread_mutex_unlock(&rungMutex);
-
+            releaseRungLock();
 
         } else { /* If BOTTOM is within threshold */
             bottomInsert(newEvent);
         }
-        pthread_mutex_unlock(&bottomMutex);
+        releaseBottomLock();
 
         return newEvent;
     }
 
 private:
 
+    /* Common variables */
+    string              syncMechanism;
+    bool                isDequeueReq;
+
     /* Top variables */
     list<const Event*>  top;
     unsigned int        maxTS;
     unsigned int        minTS;
     unsigned int        topStart;
-    pthread_mutex_t     topMutex;
+    LockState           *topLock;
 
     /* Rungs */
     vector<list<const Event*> *> rung0;  //first rung. ref. sec 2.4 of ladderq paper
@@ -556,21 +582,32 @@ private:
     unsigned int        numBucket[MAX_RUNG_NUM];
     unsigned int        rStart[MAX_RUNG_NUM];
     unsigned int        rCur[MAX_RUNG_NUM];
-    pthread_mutex_t     rungMutex;
+    LockState           *rungLock;
 
     /* Bottom */
     list<const Event*>  bottom;
-    pthread_mutex_t     bottomMutex;
+    LockState           *bottomLock;
 
     /** BOTTOM Functionalities */
     /* Bottom erase */
-    void bottomErase(const Event* delEvent) {
+    void bottomErase(list<const Event*>::iterator lIterate) {
+        debug::debugout<<"Trying to erase " << *lIterate <<endl;
+        bottom.erase(lIterate);
+        debug::debugout<<"Erased "<< *lIterate << endl;
+    }
+
+    /* Bottom remove */
+    void bottomRemove(const Event* delEvent) {
+        debug::debugout<<"Trying to remove " << delEvent <<endl;
         bottom.remove(delEvent);
+        debug::debugout<<"Removed "<< delEvent << endl;
     }
 
     /* Bottom insert */
     void bottomInsert(const Event* newEvent) {
+        debug::debugout<<"Trying to insert "<< newEvent << endl;
         bottom.push_back(newEvent);
+        debug::debugout<<"Inserted"<< newEvent << endl;
     }
 
     /* Bottom empty */
@@ -752,6 +789,66 @@ private:
 
         return bucketIndex;
     }
+
+    /* Get thread ID */
+    int getTID() {
+        pthread_t pid = pthread_self();
+        int threadId = 0;
+        memcpy(&threadId, &pid, std::min(sizeof(int), sizeof(pthread_t)));
+        return threadId;
+    }
+
+    /* Get top lock */
+    void getTopLock() {
+        int threadId = getTID();
+        debug::debugout<<"( "<< threadId << " T ) Trying Top Lock"<<endl;
+        while (!topLock->setLock(threadId, syncMechanism));
+        ASSERT(topLock->hasLock(threadId, syncMechanism));
+        debug::debugout<<"( "<< threadId << " T ) Got Top Lock"<<endl;
+    }
+
+    /* Release top lock */
+    void releaseTopLock() {
+        int threadId = getTID();
+        ASSERT(topLock->hasLock(threadId, syncMechanism));
+        topLock->releaseLock(threadId, syncMechanism);
+        debug::debugout<<"( "<< threadId << " T ) Released Top Lock"<<endl;
+    }
+
+    /* Get rung lock */
+    void getRungLock() {
+        int threadId = getTID();
+        debug::debugout<<"( "<< threadId << " T ) Trying Rung Lock"<<endl;
+        while (!rungLock->setLock(threadId, syncMechanism));
+        ASSERT(rungLock->hasLock(threadId, syncMechanism));
+        debug::debugout<<"( "<< threadId << " T ) Got Rung Lock"<<endl;
+    }
+
+    /* Release rung lock */
+    void releaseRungLock() {
+        int threadId = getTID();
+        ASSERT(rungLock->hasLock(threadId, syncMechanism));
+        rungLock->releaseLock(threadId, syncMechanism);
+        debug::debugout<<"( "<< threadId << " T ) Released Rung Lock"<<endl;
+    }
+
+    /* Get bottom lock */
+    void getBottomLock() {
+        int threadId = getTID();
+        debug::debugout<<"( "<< threadId << " T ) Trying Bottom Lock"<<endl;
+        while (!bottomLock->setLock(threadId, syncMechanism));
+        ASSERT(bottomLock->hasLock(threadId, syncMechanism));
+        debug::debugout<<"( "<< threadId << " T ) Got Bottom Lock"<<endl;
+    }
+
+    /* Release bottom lock */
+    void releaseBottomLock() {
+        int threadId = getTID();
+        ASSERT(bottomLock->hasLock(threadId, syncMechanism));
+        bottomLock->releaseLock(threadId, syncMechanism);
+        debug::debugout<<"( "<< threadId << " T ) Released Bottom Lock"<<endl;
+    }
+
 };
 
 #endif /* LadderQueueRelaxed_H_ */

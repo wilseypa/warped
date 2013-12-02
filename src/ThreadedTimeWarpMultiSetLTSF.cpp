@@ -97,11 +97,11 @@ const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int thread
     } else if (scheduleQScheme == "LadderQueue") {
         this->getScheduleQueueLock(threadID);
         if(eventCausality == "RELAXED") {
-            if (!ladderQRelaxed->empty()) {
+            if (!ladderQRelaxed->empty(true)) {
                 ret = &(ladderQRelaxed->begin()->getReceiveTime());
             }
         } else {
-            if (!ladderQStrict->empty(true)) {
+            if (!ladderQStrict->empty()) {
                 ret = &(ladderQStrict->begin()->getReceiveTime());
             }
         }
@@ -149,9 +149,9 @@ bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty() {
         return scheduleQueue->empty();
     } else if (scheduleQScheme == "LadderQueue") {
         if(eventCausality == "RELAXED") {
-            return ladderQRelaxed->empty();
+            return ladderQRelaxed->empty(false);
         } else {
-            return ladderQStrict->empty(false);
+            return ladderQStrict->empty();
         }
     } else if (scheduleQScheme == "SplayTree") {
         return (splayTree->size() == 0) ? true : false;
@@ -377,13 +377,14 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
     } else if (scheduleQScheme == "LadderQueue") {
         this->getScheduleQueueLock(threadId);
         if(eventCausality == "RELAXED") {
-            if (!ladderQRelaxed->empty()) {
+            if (!ladderQRelaxed->empty(true)) {
                 debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
                 ret = ladderQRelaxed->dequeue();
                 if (ret == NULL) {
                     cout << "dequeue() func returned NULL" << endl;
                     return ret;
                 }
+                debug::debugout<<"Dequeued " << ret << ". "<< endl;
                 unsigned int newMinTime = ret->getReceiveTime().getApproximateIntTime();
                 if (newMinTime < minReceiveTime) { cout << "Event received out of order" << endl; }
                 unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
@@ -396,7 +397,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
                 lowestLadderObjectPosition[objId] = ladderQRelaxed->end();
             }
         } else {
-            if (!ladderQStrict->empty(true)) {
+            if (!ladderQStrict->empty()) {
                 debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
                 ret = ladderQStrict->dequeue();
                 if (ret == NULL) {
