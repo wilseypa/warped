@@ -20,7 +20,6 @@ using namespace std;
 const char delimiter = '_';
 const string prefixCkptPath = "/tmp/warpedOFCFiles/";
 
-//pthread_key_t threadKey;
 unsigned int threadID;
 
 ThreadedOptFossilCollManager::ThreadedOptFossilCollManager(
@@ -36,7 +35,7 @@ ThreadedOptFossilCollManager::ThreadedOptFossilCollManager(
     fossilPeriod(sim->getNumberOfSimulationObjects(), 0),
     riskFactor(risk), defaultLength(defaultLen),
     minSamples(minimumSamples), maxSamples(maximumSamples),
-    recovering(false), lastRestoreTime(-1) {
+    recovering(false), lastRestoreTime(-1),startCata(false) {
     int simId = sim->getSimulationManagerID();
     if (simId == sim->getNumberOfSimulationManagers() - 1) {
         myPeer = 0;
@@ -74,6 +73,7 @@ ThreadedOptFossilCollManager::ThreadedOptFossilCollManager(
     // Check if the directory to store the checkpoint files already exists.
     // If it does exist, then clear it out. Otherwise, create the directory.
     if (stat(ckptFilePath.c_str(), &st) == 0) {
+        deleteWarpedOFCFiles(ckptFilePath);
         rmdir(ckptFilePath.c_str());
         mkdir(ckptFilePath.c_str(), 0777);
     } else {
@@ -81,6 +81,7 @@ ThreadedOptFossilCollManager::ThreadedOptFossilCollManager(
     }
 
     ofcFlagLock = new LockState();
+    ofcCheckPoint = new LockState();
 }
 
 ThreadedOptFossilCollManager::~ThreadedOptFossilCollManager() {
@@ -105,7 +106,10 @@ ThreadedOptFossilCollManager::~ThreadedOptFossilCollManager() {
             remove(filename.str().c_str());
         }
     }
+    deleteWarpedOFCFiles(ckptFilePath);
     rmdir(ckptFilePath.c_str());
+    delete ofcFlagLock;
+    delete ofcCheckPoint;
 }
 
 void ThreadedOptFossilCollManager::checkpoint(const VTime& checkTime,
@@ -115,9 +119,11 @@ void ThreadedOptFossilCollManager::checkpoint(const VTime& checkTime,
 
     // If the time is less than the last checkpoint time, then save at the last
     // checkpoint time again.
+
     updateCheckpointTime(id, time);
 
     while (time >= nextCheckpointTime[id]) {
+        getOfcCheckPointLock(threadId,mySimManager->getSyncMechanism()); 
         debug::debugout << mySimManager->getSimulationManagerID()
                         << " - Checkpointing object " << id << " at " << time << endl;
         int highestNextCheckpointTime = nextCheckpointTime[0];
@@ -170,11 +176,14 @@ void ThreadedOptFossilCollManager::checkpoint(const VTime& checkTime,
                  << ", aborting simulation." << endl;
             abort();
         }
+        
 
         mySimManager->getOutputManagerNew()->saveOutputCheckpoint(&ckFile,
                                                                   objId, lastCheckpointTime[id], threadId);
         ckFile.close();
+        releaseOfcCheckPointLock(threadId,mySimManager->getSyncMechanism()); 
     }
+
 }
 
 void ThreadedOptFossilCollManager::restoreCheckpoint(unsigned int restoredTime) {
@@ -255,7 +264,7 @@ void ThreadedOptFossilCollManager::restoreCheckpoint(unsigned int restoredTime) 
     mySimManager->setRecoveringFromCheckpoint(false);
     //myCommManager->setRecoveringFromCheckpoint(false);
 
-    debug::debugout << mySimManager->getSimulationManagerID()
+   debug::debugout  << mySimManager->getSimulationManagerID()
                     << " - Done with restore process, " << restoredTime << endl;
 }
 
@@ -286,7 +295,6 @@ void ThreadedOptFossilCollManager::makeInitialCheckpoint() {
                  << ", aborting simulation." << endl;
             abort();
         }
-        //cout << mySimManager->getOutputManagerNew();
         mySimManager->getOutputManagerNew()->saveOutputCheckpoint(&ckptFile,
                                                                   ObjectID(i, simMgrID), lastCheckpointTime[i], 1); // ThreadId hard-coded as 1 as it is the manager
 
@@ -296,6 +304,8 @@ void ThreadedOptFossilCollManager::makeInitialCheckpoint() {
 
 void ThreadedOptFossilCollManager::updateCheckpointTime(unsigned int objId,
                                                         int checkTime) {
+    int threadId = *((int*) pthread_getspecific(threadKey));
+    getOfcCheckPointLock(threadId,mySimManager->getSyncMechanism()); 
     while (checkTime < lastCheckpointTime[objId]) {
         nextCheckpointTime[objId] = lastCheckpointTime[objId];
         lastCheckpointTime[objId] -= checkpointPeriod;
@@ -304,6 +314,7 @@ void ThreadedOptFossilCollManager::updateCheckpointTime(unsigned int objId,
             nextCheckpointTime[objId] = checkpointPeriod + 1;
         }
     }
+   releaseOfcCheckPointLock(threadId,mySimManager->getSyncMechanism()); 
 }
 
 void ThreadedOptFossilCollManager::purgeQueuesAndRecover() {
@@ -378,7 +389,8 @@ void ThreadedOptFossilCollManager::setRecovery(unsigned int objId,
                 && myCommManager->getRecoveringFromCheckpoint() == false) {
             myCommManager->setRecoveringFromCheckpoint(true);
             mySimManager->setRecoveringFromCheckpoint(true);
-
+            startCata = true;     
+            myCommManager->incrementNumRecoveries();
             // Increase the active history length of this object.
             activeHistoryLength[objId] = activeHistoryLength[objId] * 1.3;
             restoreRollbackTime = rollbackTime;
@@ -386,9 +398,10 @@ void ThreadedOptFossilCollManager::setRecovery(unsigned int objId,
         } else {
             myCommManager->setRecoveringFromCheckpoint(true);
             mySimManager->setRecoveringFromCheckpoint(true);
+            startCata == true;
+            myCommManager->incrementNumRecoveries();
         }
     }
-    cout << "Catastrophic Rollback to time " << rollbackTime << endl;
 }
 
 void ThreadedOptFossilCollManager::startRecovery() {
@@ -427,7 +440,6 @@ void ThreadedOptFossilCollManager::startRecovery() {
     } else {
         dest = myPeer;
         recovering = true;
-        myCommManager->incrementNumRecoveries();
         restoreMsg = new RestoreCkptMessage(
             mySimManager->getSimulationManagerID(), dest, checkpt,
             RestoreCkptMessage::FIRST_CYCLE, false);
@@ -441,24 +453,23 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
     RestoreCkptMessage* restoreMsg = dynamic_cast<RestoreCkptMessage*>(msg);
     RestoreCkptMessage* sendMsg = NULL;
     int checkpt;
-
     if (restoreMsg != NULL) {
-        if (mySimManager->getSimulationManagerID() == 0) {
+         if (mySimManager->getSimulationManagerID() == 0) {
 
             switch (restoreMsg->getTokenState()) {
             case RestoreCkptMessage::SEND_TO_MASTER:
                 if (!recovering) {
                     debug::debugout << mySimManager->getSimulationManagerID()
                                     << " - SEND_TO_MASTER received." << endl;
-
                     // Master receiving a message from another manager.
                     // Start round one of the process.
+                  if (true !=startCata){
                     threadID
                         = *((unsigned int*) pthread_getspecific(threadKey));
-		    this->getOfcFlagLock(threadID,mySimManager->getSyncMechanism());
+		            this->getOfcFlagLock(threadID,mySimManager->getSyncMechanism());
                     mySimManager->setRecoveringFromCheckpoint(true);
                     myCommManager->setRecoveringFromCheckpoint(true);
-		    this->releaseOfcFlagLock(threadID,mySimManager->getSyncMechanism());
+		            this->releaseOfcFlagLock(threadID,mySimManager->getSyncMechanism());
                     myCommManager->incrementNumRecoveries();
                     recovering = true;
 
@@ -479,13 +490,13 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
                     myCommManager->sendMessage(sendMsg, myPeer);
                     debug::debugout << mySimManager->getSimulationManagerID()
                                     << " - Sent the FIRST_CYCLE message " << endl;
+                    }
                 }
                 break;
             case RestoreCkptMessage::FIRST_CYCLE:
                 if (recovering) {
                     debug::debugout << mySimManager->getSimulationManagerID()
                                     << " - FIRST_CYCLE received." << endl;
-
                     // Release all the Object and State Queue locks
                     mySimManager->releaseObjectLocksRecovery();
                     mySimManager->getStateManagerNew()->releaseStateLocksRecovery();
@@ -539,7 +550,6 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
                 if (recovering) {
                     debug::debugout << mySimManager->getSimulationManagerID()
                                     << " - SECOND_CYCLE received." << endl;
-
                     // Now send around the message informing the other managers of the
                     // checkpoint to use. This is the third round.
                     for (int dest = 1; dest
@@ -551,18 +561,18 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
 
                         debug::debugout << mySimManager->getSimulationManagerID()
                                         << " - Sent the THIRD_CYCLE message " << endl;
-
                         myCommManager->sendMessage(sendMsg, dest);
                     }
 
-                   // mySimManager->setRecoveringFromCheckpoint(false);
-                    myCommManager->setRecoveringFromCheckpoint(false);
 
                     /*mySimManager->getGVTManager()->ofcReset();*/
                     mySimManager->getTerminationManager()->ofcReset();
-                    recovering = false;
 
                     restoreCheckpoint(restoreMsg->getCheckpointTime());
+                    recovering = false;
+                    startCata = false;
+                   // mySimManager->setRecoveringFromCheckpoint(false);
+                    myCommManager->setRecoveringFromCheckpoint(false);
                 }
                 break;
             default:
@@ -579,16 +589,17 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
                 if (!recovering) {
                     debug::debugout << mySimManager->getSimulationManagerID()
                                     << " - FIRST_CYCLE received." << endl;
-
                     // Go into recovery mode.
 	            
                     threadID
                         = *((unsigned int*) pthread_getspecific(threadKey));
-		    this->getOfcFlagLock(threadID,mySimManager->getSyncMechanism());
+		            this->getOfcFlagLock(threadID,mySimManager->getSyncMechanism());
                     mySimManager->setRecoveringFromCheckpoint(true);
                     myCommManager->setRecoveringFromCheckpoint(true);
-		    this->releaseOfcFlagLock(threadID,mySimManager->getSyncMechanism());
-                    myCommManager->incrementNumRecoveries();
+		            this->releaseOfcFlagLock(threadID,mySimManager->getSyncMechanism());
+                    if(startCata != true){
+                      myCommManager->incrementNumRecoveries();
+                    }
                     recovering = true;
 
                     // Wait for all the worker threads to stop execution
@@ -643,7 +654,6 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
                 if (recovering) {
                     debug::debugout << mySimManager->getSimulationManagerID()
                                     << " - SECOND_CYCLE received." << endl;
-
                     // Clean any received messages
                     while (myCommManager->checkPhysicalLayerForMessages(1000)
                             == 1000)
@@ -668,7 +678,6 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
 
                     debug::debugout << mySimManager->getSimulationManagerID()
                                     << " - Sent the SECOND_CYCLE message " << endl;
-
                     myCommManager->sendMessage(sendMsg, myPeer);
                 }
                 break;
@@ -676,17 +685,16 @@ void ThreadedOptFossilCollManager::receiveKernelMessage(KernelMessage* msg) {
                 if (recovering) {
                     debug::debugout << mySimManager->getSimulationManagerID()
                                     << " - THIRD_CYCLE received." << endl;
-
                     // Exit checkpoint recovery mode.
 
-                    //mySimManager->setRecoveringFromCheckpoint(false);
-                    myCommManager->setRecoveringFromCheckpoint(false);
 
                     /*mySimManager->getGVTManager()->ofcReset();*/
                     mySimManager->getTerminationManager()->ofcReset();
-                    recovering = false;
-
                     restoreCheckpoint(restoreMsg->getCheckpointTime());
+                    recovering = false;
+                    startCata = false;
+                    //mySimManager->setRecoveringFromCheckpoint(false);
+                    myCommManager->setRecoveringFromCheckpoint(false);
                 }
                 break;
             default:
@@ -708,7 +716,7 @@ void ThreadedOptFossilCollManager::fossilCollect(SimulationObject* object,
                                                  const VTime& currentTime, const unsigned int& threadId) {
     unsigned int objId = object->getObjectID()->getSimulationObjectID();
     fossilPeriod[objId]++;
-    if (fossilPeriod[objId] >= 20) {
+    if (fossilPeriod[objId] >= 200) {
         int intCurTime = currentTime.getApproximateIntTime();
         if (intCurTime > activeHistoryLength[objId]) {
             int collectTime = intCurTime - activeHistoryLength[objId];
@@ -721,15 +729,13 @@ void ThreadedOptFossilCollManager::fossilCollect(SimulationObject* object,
                                                                    collectTime, threadId);
                 mySimManager->getEventSetManagerNew()->fossilCollect(object,
                                                                      collectTime, threadId);
-                /*
                  debug::debugout << "Fossil Collecting Obj " << objId
                  << " at time " << collectTime << " now at " << intCurTime << endl;
-                 */
+                 
             }
         }
         fossilPeriod[objId] = 0;
     }
-    mySimManager->setCheckpointing(false);
 }
 
 bool ThreadedOptFossilCollManager::checkFault(SimulationObject* object) {
@@ -744,8 +750,8 @@ bool ThreadedOptFossilCollManager::checkFault(SimulationObject* object) {
         object->getState()->copyState((*states)[objId]);
 
         // Remove the older states from this object's queue.
-        threadID = *((unsigned int*) pthread_getspecific(threadKey));
-        mySimManager->getStateManagerNew()->ofcPurge(objId, threadID);
+        unsigned int threadid = *((unsigned int*) pthread_getspecific(threadKey));
+        mySimManager->getStateManagerNew()->ofcPurge(objId, threadid);
 
         isFault = false;
     }
@@ -779,4 +785,34 @@ void ThreadedOptFossilCollManager::getOfcFlagLock(int threadId, const string syn
 void ThreadedOptFossilCollManager::releaseOfcFlagLock(int threadId, const string syncMech){
     ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
     ofcFlagLock->releaseLock(threadId,syncMech);
+}
+
+void ThreadedOptFossilCollManager::getOfcCheckPointLock(int threadId, const string syncMech ) {
+    while(!ofcFlagLock->setLock(threadId,syncMech));
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));	    
+}
+
+void ThreadedOptFossilCollManager::releaseOfcCheckPointLock(int threadId, const string syncMech){
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+    ofcFlagLock->releaseLock(threadId,syncMech);
+}
+
+void ThreadedOptFossilCollManager:: deleteWarpedOFCFiles(string dirPath){
+  DIR* ofcDir = NULL; 
+  struct dirent* ent = NULL;
+  ofcDir = opendir(dirPath.c_str());
+  if(NULL == ofcDir){
+    cerr<<"Failed to locate the directory in which OFC checkpoint files are !"<<endl;
+  } 
+  while(NULL != (ent=readdir(ofcDir))){
+    if(ent->d_type == DT_REG ){ // regular file DT_REG = 8
+     char* cptFileName = ent->d_name;
+     string fileName = dirPath + cptFileName;
+     if (0!=remove(fileName.c_str()))
+      /*The application doesn't go through this branch when it runs on the Beowulf cluster with multiple nodes*/
+      printf("File %s has been deleted : Redundant Deletion.\n", ent->d_name ); 
+    }
+  }
+  closedir(ofcDir);
+  ofcDir = NULL; 
 }

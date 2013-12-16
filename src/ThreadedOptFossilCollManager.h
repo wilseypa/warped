@@ -11,6 +11,7 @@
 #include <set>
 #include <fstream>
 #include <map>
+#include <dirent.h>
 #include "ThreadedTimeWarpSimulationManager.h"
 
 using namespace std;
@@ -145,12 +146,19 @@ public:
     virtual bool checkFault(SimulationObject* obj);
 
     virtual int getLeastCollectTime();
-    /** Used to lock the optimistic fossil collection flags :  
-     inRecovery and initiatedRecovery. 
-    */
+
+    /** Used to lock/release OFC flags (inRecovery and initiatedRecovery)*/
     void getOfcFlagLock (int threadId, const string syncMech); 
 
     void releaseOfcFlagLock (int threadId, const string syncMech);
+    
+    /* Used to get/release lock of OFC checkpoint function */
+    void getOfcCheckPointLock (int threadId, const string syncMech); 
+
+    void releaseOfcCheckPointLock (int threadId, const string syncMech);
+    
+    /* Delete checkpoint files of OFC*/
+    void deleteWarpedOFCFiles(string dirPath);
 
     /*// These are not currently used anywhere. It was a potential solution
      // that did not work out as well as was hoped.
@@ -238,6 +246,12 @@ protected:
 
     // Lock OFC recovery flags
     LockState* ofcFlagLock;
+
+    // Lock OFC checkpoint function
+    LockState* ofcCheckPoint;
+    
+    // indicate the catastrophic roll back happened in current node
+    bool startCata;
     /*// These are not currently used anywhere. It was a potential solution
      // that did not work out as well as was hoped.
      // The state queue from the state manager.

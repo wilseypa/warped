@@ -97,6 +97,7 @@ ThreadedTimeWarpSimulationManager::~ThreadedTimeWarpSimulationManager() {
     delete mySchedulingManager;
     delete GVTTimePeriodLock;
     delete myrealFossilCollManager;
+    delete ofcFlagLock;
 }
 
 inline void ThreadedTimeWarpSimulationManager::sendMessage(KernelMessage* msg,
@@ -316,10 +317,10 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
                    debug::debugout << workerStatus[0]->getStillBusyCount()
                                     << endl;
                 if (initiatedRecovery) {
-                    myrealFossilCollManager->startRecovery();
-	            getOfcFlagLock(threadID,getSyncMechanism());
-                    initiatedRecovery = false;
-                    releaseOfcFlagLock(threadID,getSyncMechanism());
+                  myrealFossilCollManager->startRecovery();
+	              getOfcFlagLock(threadID,getSyncMechanism());
+                  initiatedRecovery = false;
+                  releaseOfcFlagLock(threadID,getSyncMechanism());
                 }
                 while (inRecovery)
                 { getMessages(); }
@@ -741,9 +742,9 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject* object,
     const VTime* restoredTime = &myStateManager->restoreState(rollbackTime,
                                                               object, threadID);
 
-    if (usingOptFossilCollection) {
+    if (usingOptFossilCollection){ 
         if (!inRecovery) {
-            myrealFossilCollManager->sampleRollback(object, *restoredTime);
+            myrealFossilCollManager->sampleRollback(object, *restoredTime );
             myrealFossilCollManager->updateCheckpointTime(objId,
                                                           rollbackTime.getApproximateIntTime());
             if (*restoredTime > rollbackTime) {
@@ -754,7 +755,8 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject* object,
                                     << " - Catastrophic Rollback: Restored State Time: "
                                     << *restoredTime << ", Rollback Time: "
                                     << rollbackTime << ", Starting Recovery." << endl;
-	            getOfcFlagLock(threadID,getSyncMechanism());
+                
+	                getOfcFlagLock(threadID,getSyncMechanism());
                     myrealFossilCollManager->setRecovery(objId,
                                                          rollbackTime.getApproximateIntTime());
                     releaseOfcFlagLock(threadID,getSyncMechanism());
