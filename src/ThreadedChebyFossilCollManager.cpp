@@ -22,9 +22,11 @@ ThreadedChebyFossilCollManager::ThreadedChebyFossilCollManager(ThreadedTimeWarpS
         total.push_back(0);
         sampleIndex.push_back(0);
     }
+    ofcChebyLock = new LockState();
 }
 
 ThreadedChebyFossilCollManager::~ThreadedChebyFossilCollManager() {
+  delete ofcChebyLock;
 }
 
 void
@@ -32,7 +34,10 @@ ThreadedChebyFossilCollManager::sampleRollback(SimulationObject* object, const V
     int rollbackTime = rollVTime.getApproximateIntTime();
     int rollbackDistance = object->getSimulationTime().getApproximateIntTime() - rollbackTime;
     unsigned int objId = object->getObjectID()->getSimulationObjectID();
-
+    
+    int threadId = *((int*) pthread_getspecific(threadKey)); 
+    getOfcChebyLock(threadId,mySimManager->getSyncMechanism()); 
+    
     if (numSamples[objId] < maxSamples) {
         // Sample the rollback.
         total[objId] = total[objId] - samples[objId][sampleIndex[objId]];
@@ -90,4 +95,17 @@ ThreadedChebyFossilCollManager::sampleRollback(SimulationObject* object, const V
 
         setRecovery(objId, rollbackTime);
     }
+    releaseOfcChebyLock(threadId,mySimManager->getSyncMechanism()); 
 }
+
+
+void ThreadedChebyFossilCollManager::getOfcChebyLock(int threadId, const string syncMech ) {
+    while(!ofcFlagLock->setLock(threadId,syncMech));
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+}
+
+void ThreadedChebyFossilCollManager ::releaseOfcChebyLock(int threadId, const string syncMech){
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+    ofcFlagLock->releaseLock(threadId,syncMech);
+}
+

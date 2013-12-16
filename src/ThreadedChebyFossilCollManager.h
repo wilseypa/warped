@@ -43,6 +43,14 @@ public:
     */
     void sampleRollback(SimulationObject* obj, const VTime& time);
 
+    /** Used to get/release the lock of the data structure used in 
+        chebyshev's inequality
+    */
+    void getOfcChebyLock (int threadId, const string syncMech);
+
+    void releaseOfcChebyLock (int threadId, const string syncMech);
+
+
     //@} // End of Public Class Methods of ChebyFossilCollManager.
 
 protected:
@@ -62,7 +70,9 @@ protected:
 
     /// Used for calculating the active history length.
     double errorTerm;
-
+    
+    /// cheby lock
+    LockState* ofcChebyLock; 
     //@} // End of Protected Class Methods of ChebyFossilCollManager.
 };
 
