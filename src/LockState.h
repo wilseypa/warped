@@ -49,6 +49,9 @@ public:
                     lockOwner = threadNumber;
                     pthread_mutex_unlock(&mutexLock);
                     return true;
+                } else if(lockOwner == threadNumber) {
+                    pthread_mutex_unlock(&mutexLock);
+                    return true;
                 } else {
                     pthread_mutex_unlock(&mutexLock);
                     return false;

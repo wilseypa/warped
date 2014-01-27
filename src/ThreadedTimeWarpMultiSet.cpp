@@ -212,7 +212,7 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
     ASSERT(unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
-    ASSERT(unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    if(!unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
     unprocessedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 }
 void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
