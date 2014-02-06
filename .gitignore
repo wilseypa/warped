@@ -49,3 +49,7 @@ ltmain.*
 
 # ctags
 tags*
+.tags*
+src/tags*
+src/.tags*
+
