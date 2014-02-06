@@ -92,6 +92,8 @@ WARPED_H_FILES = \
 	IntVTime.h \
 	KernelMessage.h \
 	LadderQStrict.h \
+	ListNode.h \
+	LockFreeList.h \
 	LadderQRelaxed.h \
 	LazyOutputManager.h \
 	LocalEventMessage.h \

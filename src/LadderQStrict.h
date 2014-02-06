@@ -591,7 +591,6 @@ private:
 
     /* Bottom size */
     unsigned int bottomSize() {
-        unsigned int val = 0;
         return bottom.size();
     }
 

@@ -7,6 +7,7 @@
 #include <set>
 #include <list>
 #include <pthread.h>
+#include "LockFreeList.h"
 
 using namespace std;
 
@@ -52,7 +53,6 @@ public:
         }
 
         /* Initialize the mutexes */
-        topLock    = new LockState();
         rungLock   = new LockState();
         bottomLock = new LockState();
     }
@@ -62,7 +62,6 @@ public:
         clear();
 
         /* Destroy the mutexes */
-        delete topLock;
         delete rungLock;
         delete bottomLock;
     }
@@ -72,6 +71,7 @@ public:
 
         unsigned int bucketIndex = 0;
         list<const Event*>::iterator lIterate;
+        const Event *event = NULL;
         bool isBucketWidthStatic = false;
 
         /* Remove from bottom if not empty */
@@ -137,21 +137,10 @@ public:
             return event;
         }
 
-        /* Check if top has any events before proceeding further */
-        getTopLock();
-        if (true == top.empty()) {
-            cout << "LadderQ is empty." << endl;
-            releaseTopLock();
-            releaseRungLock();
-            releaseBottomLock();
-            return NULL;
-        }
-
         /* Move from top to top of empty ladder */
         /* Check if failed to create the first rung */
         if (false == create_new_rung(top.size(), minTS, &isBucketWidthStatic)) {
             cout << "Failed to create the required rung." << endl;
-            releaseTopLock();
             releaseRungLock();
             releaseBottomLock();
             return NULL;
@@ -159,17 +148,16 @@ public:
 
         /* Transfer events from Top to 1st rung of Ladder */
         rCur[0] = rStart[0] + NUM_BUCKETS(0)*bucketWidth[0];
-        for (lIterate = top.begin(); lIterate != top.end();) {
+        for (event = top.pop_front(); event != NULL; event = top.pop_front()) {
             bucketIndex =
-                (unsigned int)((*lIterate)->getReceiveTime().getApproximateIntTime() -
+                (unsigned int)(event->getReceiveTime().getApproximateIntTime() -
                                rStart[0]) / bucketWidth[0];
 
             if (numRung0Buckets <= bucketIndex) {
                 cout << "Invalid bucket index." << endl;
-                lIterate++;
+                top.push_front(event);
             } else {
-                RUNG(0,bucketIndex)->push_front(*lIterate);
-                lIterate = top.erase(lIterate);
+                RUNG(0,bucketIndex)->push_front(event);
 
                 /* Update the numBucket and rCur parameter */
                 if (numBucket[0] < bucketIndex+1) {
@@ -180,7 +168,6 @@ public:
                 }
             }
         }
-        releaseTopLock();
 
         /* Copy events from bucket_k into Bottom */
         if (INVALID == (bucketIndex = recurse_rung())) {
@@ -221,7 +208,7 @@ public:
             return NULL;
         }
 
-        const Event* event = bottomBegin();
+        event = bottomBegin();
         if(!isDequeueReq) {
             releaseBottomLock();
         }
@@ -235,7 +222,6 @@ public:
 
         getBottomLock();
         getRungLock();
-        getTopLock();
 
         /* Top variables */
         maxTS = minTS = topStart = 0;
@@ -254,7 +240,6 @@ public:
         /* Purge bottom */
         bottomClear();
 
-        releaseTopLock();
         releaseRungLock();
         releaseBottomLock();
     }
@@ -277,9 +262,7 @@ public:
 
         getBottomLock();
         getRungLock();
-        getTopLock();
         bool status = ((0==nRung) & top.empty() & bottomEmpty());
-        releaseTopLock();
         releaseRungLock();
         if( status || (!isBeginOrDequeueCalled) ) {
             releaseBottomLock();
@@ -306,27 +289,14 @@ public:
 
         getBottomLock();
         getRungLock();
-        getTopLock();
 
         /* Check and erase in top, if found */
-        if ((false == top.empty()) && (topStart < delEvent->getReceiveTime().getApproximateIntTime())) {
-            for (lIterate = top.begin(); lIterate != top.end();) {
-                if (((*lIterate)->getReceiveTime().getApproximateIntTime() ==
-                        delEvent->getReceiveTime().getApproximateIntTime()) &&
-                        ((*lIterate)->getEventId() == delEvent->getEventId()) &&
-                        ((*lIterate)->getSender() == delEvent->getSender())) {
-
-                    lIterate = top.erase(lIterate);
-                } else {
-                    lIterate++;
-                }
-            }
-            releaseTopLock();
+        if( (topStart < delEvent->getReceiveTime().getApproximateIntTime()) && 
+                                                        top.erase(delEvent) ) {
             releaseRungLock();
             releaseBottomLock();
             return;
         }
-        releaseTopLock();
 
         /* Step through rungs */
         while ((rungIndex < nRung)
@@ -408,7 +378,6 @@ public:
         }
 
         /* Insert into top, if valid */
-        getTopLock();
         if (newEvent->getReceiveTime().getApproximateIntTime() >
                 topStart) {  //deviation from APPENDIX of ladderq
             if (minTS > newEvent->getReceiveTime().getApproximateIntTime()) {
@@ -419,10 +388,8 @@ public:
             }
 
             top.push_front(newEvent);
-            releaseTopLock();
             return newEvent;
         }
-        releaseTopLock();
 
         /* Step through rungs */
         getRungLock();
@@ -566,17 +533,16 @@ private:
     bool                isDequeueReq;
 
     /* Top variables */
-    list<const Event*>  top;
+    LockFreeList        top;
     unsigned int        maxTS;
     unsigned int        minTS;
     unsigned int        topStart;
-    LockState           *topLock;
 
     /* Rungs */
     vector<list<const Event*> *> rung0;  //first rung. ref. sec 2.4 of ladderq paper
-    list<const Event*>* rung_bucket;
+    list<const Event*>  *rung_bucket;
     unsigned int        numRung0Buckets;
-    list<const Event*>* rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
+    list<const Event*>  *rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
     unsigned int        nRung;
     unsigned int        bucketWidth[MAX_RUNG_NUM];
     unsigned int        numBucket[MAX_RUNG_NUM];
@@ -627,7 +593,6 @@ private:
 
     /* Bottom size */
     unsigned int bottomSize() {
-        unsigned int val = 0;
         return bottom.size();
     }
 
@@ -638,12 +603,12 @@ private:
         unsigned int bucketIndex = 0;
 
         /* Check the arguements */
-        if (NULL == isBucketWidthStatic) {
-            cout << "Invalid memory address for monitoring change in bucketWidth" << endl;
+        if (0 == numEvents) {
             return false;
         }
-        if (0 == numEvents) {
-            cout << "Rung creation request comes without presence of events." << endl;
+
+        if (NULL == isBucketWidthStatic) {
+            cout << "Invalid memory address for monitoring change in bucketWidth" << endl;
             return false;
         }
 
@@ -796,23 +761,6 @@ private:
         int threadId = 0;
         memcpy(&threadId, &pid, std::min(sizeof(int), sizeof(pthread_t)));
         return threadId;
-    }
-
-    /* Get top lock */
-    void getTopLock() {
-        int threadId = getTID();
-        debug::debugout<<"( "<< threadId << " T ) Trying Top Lock"<<endl;
-        while (!topLock->setLock(threadId, syncMechanism));
-        ASSERT(topLock->hasLock(threadId, syncMechanism));
-        debug::debugout<<"( "<< threadId << " T ) Got Top Lock"<<endl;
-    }
-
-    /* Release top lock */
-    void releaseTopLock() {
-        int threadId = getTID();
-        ASSERT(topLock->hasLock(threadId, syncMechanism));
-        topLock->releaseLock(threadId, syncMechanism);
-        debug::debugout<<"( "<< threadId << " T ) Released Top Lock"<<endl;
     }
 
     /* Get rung lock */
