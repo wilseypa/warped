@@ -212,10 +212,10 @@ public:
 
     \begin{verbatim}
     void executeProcess() {
-    while( haveMoreEvents() == true ){
-    MyEventType *currentEvent = dynamic_cast<MyEventType *>(getEvent());
-    doIt( currentEvent );
-    }
+        while (haveMoreEvents() == true) {
+            MyEventType* currentEvent = dynamic_cast<MyEventType*>(getEvent());
+            doIt(currentEvent);
+        }
     }
     \end{verbatim}
 
