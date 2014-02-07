@@ -6,7 +6,6 @@
 #include <iostream>
 #include <set>
 #include <list>
-#include <pthread.h>
 #include "LockFreeList.h"
 
 using namespace std;
@@ -29,7 +28,6 @@ public:
     /* Default constructor */
     inline LadderQueueRelaxed() {
 
-        syncMechanism = "AtomicLock";
         isDequeueReq  = false;
 
         maxTS = minTS = topStart = nRung = 0;
@@ -44,31 +42,24 @@ public:
         for (rungIndex = 0; rungIndex < MAX_RUNG_NUM-1; rungIndex++) {
             for (bucketIndex = 0; bucketIndex < MAX_BUCKET_NUM; bucketIndex++) {
                 rung_bucket = NULL;
-                if (!(rung_bucket = new list<const Event*>)) {
+                if (!(rung_bucket = new LockFreeList())) {
                     cout << "Failed to allocate memory for Rung "
                          << rungIndex+2 << ", Bucket " << bucketIndex+1 << "." << endl;
                 }
                 rung1_to_n[rungIndex][bucketIndex] = rung_bucket;
             }
         }
-
-        /* Initialize the mutexes */
-        rungLock   = new LockState();
     }
 
     /* Destructor */
     inline ~LadderQueueRelaxed() {
         clear();
-
-        /* Destroy the mutexes */
-        delete rungLock;
     }
 
     /* Peek at the available event */
     inline const Event* begin() {
 
         unsigned int bucketIndex = 0;
-        list<const Event*>::iterator lIterate;
         const Event *event = NULL;
         bool isBucketWidthStatic = false;
 
@@ -81,29 +72,26 @@ public:
         }
 
         /* If rungs exist, remove from rungs */
-        getRungLock();
         if ((nRung > 0) && (INVALID == (bucketIndex = recurse_rung()))) {
             /* Check whether rungs still exist */
             if (nRung > 0) {
                 cout << "Received invalid Bucket index." << endl;
-                releaseRungLock();
                 return NULL;
             }
         }
 
         if (nRung > 0) { /* Check required because recurse_rung() can affect nRung value */
-            for (lIterate = RUNG(nRung-1,bucketIndex)->begin();
-                    lIterate != RUNG(nRung-1,bucketIndex)->end(); lIterate++) {
-                bottom.push_front(*lIterate);
+            for (event = RUNG(nRung-1,bucketIndex)->pop_front();
+                    event != NULL; event = RUNG(nRung-1,bucketIndex)->pop_front()) {
+                bottom.push_front(event);
             }
-            RUNG(nRung-1,bucketIndex)->clear();
 
             /* If bucket returned is the last valid rung of the bucket */
             if (numBucket[nRung-1] == bucketIndex+1) {
                 while (nRung > 0) {
                     numBucket[nRung-1] = rStart[nRung-1] =
                                              rCur[nRung-1] = bucketWidth[nRung-1] = 0;
-                    nRung--;
+                    __sync_sub_and_fetch(&nRung, 1);
                 }
             } else {
                 while ((++bucketIndex < numBucket[nRung-1]) &&
@@ -112,7 +100,6 @@ public:
                     rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
                 } else {
                     cout << "numBucket handling needs improvement." << endl;
-                    releaseRungLock();
                     return NULL;
                 }
             }
@@ -122,7 +109,6 @@ public:
                 if(!isDequeueReq) {
                     bottom.push_front(event);
                 }
-                releaseRungLock();
                 return event;
             }
         }
@@ -131,7 +117,6 @@ public:
         /* Check if failed to create the first rung */
         if (false == create_new_rung(top.size(), minTS, &isBucketWidthStatic)) {
             cout << "Failed to create the required rung." << endl;
-            releaseRungLock();
             return NULL;
         }
 
@@ -165,33 +150,27 @@ public:
         /* Copy events from bucket_k into Bottom */
         if (INVALID == (bucketIndex = recurse_rung())) {
             cout << "Received invalid Bucket index." << endl;
-            releaseRungLock();
             return NULL;
         }
 
-        for (lIterate = RUNG(0,bucketIndex)->begin();
-                lIterate != RUNG(0,bucketIndex)->end(); lIterate++) {
-            bottom.push_front(*lIterate);
+        for ( event = RUNG(0,bucketIndex)->pop_front();
+                event != NULL; event = RUNG(0,bucketIndex)->pop_front() ) {
+            bottom.push_front(event);
         }
-
-        /* Clear that bucket */
-        RUNG(0,bucketIndex)->clear();
 
         /* If bucket returned is the last valid rung of the bucket */
         if (numBucket[0] == bucketIndex+1) {
             numBucket[0] = rStart[0] = rCur[0] = bucketWidth[0] = 0;
-            nRung--;
+            __sync_sub_and_fetch(&nRung, 1);
         } else {
             while ((++bucketIndex < numBucket[0]) && (true == RUNG(0,bucketIndex)->empty()));
             if (bucketIndex < numBucket[0]) {
                 rCur[0] = rStart[0] + bucketIndex*bucketWidth[0];
             } else {
                 cout << "rung 1 numBucket handling needs improvement." << endl;
-                releaseRungLock();
                 return NULL;
             }
         }
-        releaseRungLock();
 
         /* Remove from bottom if not empty */
         event = NULL;
@@ -206,8 +185,6 @@ public:
 
         unsigned int rungIndex = 0, bucketIndex = 0;
 
-        getRungLock();
-
         /* Top variables */
         maxTS = minTS = topStart = 0;
         top.clear();
@@ -220,12 +197,10 @@ public:
                 RUNG(rungIndex,bucketIndex)->clear();
             }
         }
-        nRung = 0;
+        while( !__sync_bool_compare_and_swap(&nRung, nRung, 0) );
 
         /* Purge bottom */
         bottom.clear();
-
-        releaseRungLock();
     }
 
     /* Dequeue the event with lowest timestamp */
@@ -240,10 +215,7 @@ public:
     /* Check whether the LadderQ has any events or not */
     inline bool empty() {
 
-        getRungLock();
-        bool status = ((0==nRung) & top.empty() & bottom.empty());
-        releaseRungLock();
-        return status;
+        return ((0==nRung) & top.empty() & bottom.empty());
     }
 
     /* Refers to the end of LadderQ; always returns NULL */
@@ -254,8 +226,8 @@ public:
     /* Delete the specified event from LadderQ (if found) */
     inline void erase(const Event* delEvent) {
 
-        list<const Event*>::iterator lIterate;
         unsigned int rungIndex = 0, bucketIndex = 0;
+        const Event *event = NULL;
 
         /* Check whether valid event received */
         if (NULL == delEvent) {
@@ -263,12 +235,9 @@ public:
             return;
         }
 
-        getRungLock();
-
         /* Check and erase in top, if found */
         if( (topStart < delEvent->getReceiveTime().getApproximateIntTime()) && 
                                                         top.erase(delEvent) ) {
-            releaseRungLock();
             return;
         }
 
@@ -285,24 +254,26 @@ public:
 
             if (NUM_BUCKETS(rungIndex) <= bucketIndex) {
                 cout << "Incorrect calculation of bucket index." << endl;
-                releaseRungLock();
                 return;
             }
 
             rung_bucket = RUNG(rungIndex,bucketIndex);
 
             if (false == rung_bucket->empty()) {
-                for (lIterate = rung_bucket->begin(); lIterate != rung_bucket->end();) {
-                    if ( ((*lIterate)->getReceiveTime().getApproximateIntTime() ==
-                            delEvent->getReceiveTime().getApproximateIntTime()) &&
-                         ((*lIterate)->getEventId() == delEvent->getEventId()) &&
-                         ((*lIterate)->getSender() == delEvent->getSender())) {
+                LockFreeList *tempList = new LockFreeList();
+                for (event = rung_bucket->pop_front(); event != NULL; event = rung_bucket->pop_front()) {
+                    if ( (event->getReceiveTime().getApproximateIntTime() !=
+                            delEvent->getReceiveTime().getApproximateIntTime()) ||
+                         (event->getEventId() != delEvent->getEventId()) ||
+                         (event->getSender() != delEvent->getSender())) {
 
-                        lIterate = rung_bucket->erase(lIterate);
-                    } else {
-                        lIterate++;
+                        tempList->push_front(event);
                     }
                 }
+                for(event = tempList->pop_front(); event != NULL; event = tempList->pop_front()) {
+                    rung_bucket->push_front(event);
+                }
+                delete tempList;
 
                 /* If bucket is empty after deletion */
                 if (true == rung_bucket->empty()) {
@@ -325,10 +296,8 @@ public:
                     }
                 }
             }
-            releaseRungLock();
             return;
         }
-        releaseRungLock();
 
         /* Check and erase from bottom, if present */
         bottom.erase(delEvent);
@@ -360,7 +329,6 @@ public:
         }
 
         /* Step through rungs */
-        getRungLock();
         while ((rungIndex < nRung)
                 && (newEvent->getReceiveTime().getApproximateIntTime() < rCur[rungIndex])) {
             rungIndex++;
@@ -377,7 +345,6 @@ public:
                 } else {
                     cout << "Rung 1 ran out of space." << endl;
                 }
-                releaseRungLock();
                 return NULL;
             }
 
@@ -390,10 +357,8 @@ public:
             }
 
             RUNG(rungIndex,bucketIndex)->push_front(newEvent);
-            releaseRungLock();
             return newEvent;
         }
-        releaseRungLock();
 
         /* If rung not found */
         /* Note: In regular Ladder Queue, if bottom exceeds 
@@ -409,7 +374,6 @@ public:
 private:
 
     /* Common variables */
-    string              syncMechanism;
     bool                isDequeueReq;
 
     /* Top variables */
@@ -419,16 +383,15 @@ private:
     unsigned int        topStart;
 
     /* Rungs */
-    vector<list<const Event*> *> rung0;  //first rung. ref. sec 2.4 of ladderq paper
-    list<const Event*>  *rung_bucket;
-    unsigned int        numRung0Buckets;
-    list<const Event*>  *rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
-    unsigned int        nRung;
-    unsigned int        bucketWidth[MAX_RUNG_NUM];
-    unsigned int        numBucket[MAX_RUNG_NUM];
-    unsigned int        rStart[MAX_RUNG_NUM];
-    unsigned int        rCur[MAX_RUNG_NUM];
-    LockState           *rungLock;
+    vector<LockFreeList *>  rung0;  //first rung. ref. sec 2.4 of ladderq paper
+    LockFreeList            *rung_bucket;
+    unsigned int            numRung0Buckets;
+    LockFreeList            *rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
+    unsigned int            nRung;
+    unsigned int            bucketWidth[MAX_RUNG_NUM];
+    unsigned int            numBucket[MAX_RUNG_NUM];
+    unsigned int            rStart[MAX_RUNG_NUM];
+    unsigned int            rCur[MAX_RUNG_NUM];
 
     /* Bottom */
     LockFreeList        bottom;
@@ -465,7 +428,7 @@ private:
             topStart = maxTS;
             rStart[0] = rCur[0] = minTS;
             numBucket[0] = 0;
-            nRung++;
+            __sync_add_and_fetch(&nRung, 1);
 
             /* Create the actual rungs */
             //create double of required no of buckets. ref sec 2.4 of ladderq
@@ -473,7 +436,7 @@ private:
 
             for (bucketIndex = numRung0Buckets; bucketIndex < 2*numBucketsReq; bucketIndex++) {
                 rung_bucket = NULL;
-                if (!(rung_bucket = new list<const Event*>)) {
+                if (!(rung_bucket = new LockFreeList())) {
                     cout << "Failed to allocate memory for rung 0 bucket." << endl;
                     return false;
                 }
@@ -499,7 +462,7 @@ private:
             bucketWidth[nRung] = (bucketWidth[nRung-1] + numEvents - 1) / numEvents;
             rStart[nRung] = rCur[nRung] = initStartAndCurVal;
             numBucket[nRung] = 0;
-            nRung++;
+            __sync_add_and_fetch(&nRung, 1);
             return true;
         }
     }
@@ -509,7 +472,7 @@ private:
 
         bool isBucketNotFound = false, isBucketWidthStatic = false, isRungNotEmpty = false;
         unsigned int bucketIndex = 0, newBucketIndex = 0;
-        list<const Event*>::iterator lIterate;
+        const Event *event = NULL;
 
         /* find_bucket label */
         do {
@@ -534,7 +497,7 @@ private:
 
             if (NUM_BUCKETS(nRung-1) == bucketIndex) {
                 rStart[nRung-1] = rCur[nRung-1] = bucketWidth[nRung-1] = numBucket[nRung-1] = 0;
-                nRung--;
+                __sync_sub_and_fetch(&nRung, 1);
                 isBucketNotFound = true;
 
             } else {
@@ -548,16 +511,17 @@ private:
                         break;
                     }
 
-                    for (lIterate = RUNG(nRung-2,bucketIndex)->begin();
-                            lIterate != RUNG(nRung-2,bucketIndex)->end();) {
-                        newBucketIndex = ((*lIterate)->getReceiveTime().getApproximateIntTime() - rStart[nRung-1]) /
+                    for (event = RUNG(nRung-2,bucketIndex)->pop_front();
+                            event != NULL; event = RUNG(nRung-2,bucketIndex)->pop_front()) {
+
+                        newBucketIndex = (event->getReceiveTime().getApproximateIntTime() - rStart[nRung-1]) /
                                          bucketWidth[nRung-1];
                         if (NUM_BUCKETS(nRung-1) <= newBucketIndex) {
                             cout << "Bucket index exceeds max permissible value." << endl;
-                            lIterate++;
+                            RUNG(nRung-2,bucketIndex)->push_front(event);
+
                         } else {
-                            RUNG(nRung-1,newBucketIndex)->push_front(*lIterate);
-                            lIterate = RUNG(nRung-2,bucketIndex)->erase(lIterate);
+                            RUNG(nRung-1,newBucketIndex)->push_front(event);
 
                             /* Calculate numBucket of new rung */
                             if (numBucket[nRung-1] < newBucketIndex+1) {
@@ -591,32 +555,6 @@ private:
 
         return bucketIndex;
     }
-
-    /* Get thread ID */
-    int getTID() {
-        pthread_t pid = pthread_self();
-        int threadId = 0;
-        memcpy(&threadId, &pid, std::min(sizeof(int), sizeof(pthread_t)));
-        return threadId;
-    }
-
-    /* Get rung lock */
-    void getRungLock() {
-        int threadId = getTID();
-        debug::debugout<<"( "<< threadId << " T ) Trying Rung Lock"<<endl;
-        while (!rungLock->setLock(threadId, syncMechanism));
-        ASSERT(rungLock->hasLock(threadId, syncMechanism));
-        debug::debugout<<"( "<< threadId << " T ) Got Rung Lock"<<endl;
-    }
-
-    /* Release rung lock */
-    void releaseRungLock() {
-        int threadId = getTID();
-        ASSERT(rungLock->hasLock(threadId, syncMechanism));
-        rungLock->releaseLock(threadId, syncMechanism);
-        debug::debugout<<"( "<< threadId << " T ) Released Rung Lock"<<endl;
-    }
-
 };
 
 #endif /* LadderQueueRelaxed_H_ */
