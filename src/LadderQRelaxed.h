@@ -54,7 +54,6 @@ public:
 
         /* Initialize the mutexes */
         rungLock   = new LockState();
-        bottomLock = new LockState();
     }
 
     /* Destructor */
@@ -63,10 +62,9 @@ public:
 
         /* Destroy the mutexes */
         delete rungLock;
-        delete bottomLock;
     }
 
-    /* Peek at the event with lowest timestamp */
+    /* Peek at the available event */
     inline const Event* begin() {
 
         unsigned int bucketIndex = 0;
@@ -75,10 +73,9 @@ public:
         bool isBucketWidthStatic = false;
 
         /* Remove from bottom if not empty */
-        if (!bottomEmpty()) {
-            const Event* event = bottomBegin();
+        if ( (event = bottom.pop_front()) != NULL ) {
             if(!isDequeueReq) {
-                releaseBottomLock();
+                bottom.push_front(event);
             }
             return event;
         }
@@ -90,7 +87,6 @@ public:
             if (nRung > 0) {
                 cout << "Received invalid Bucket index." << endl;
                 releaseRungLock();
-                releaseBottomLock();
                 return NULL;
             }
         }
@@ -98,7 +94,7 @@ public:
         if (nRung > 0) { /* Check required because recurse_rung() can affect nRung value */
             for (lIterate = RUNG(nRung-1,bucketIndex)->begin();
                     lIterate != RUNG(nRung-1,bucketIndex)->end(); lIterate++) {
-                bottomInsert(*lIterate);
+                bottom.push_front(*lIterate);
             }
             RUNG(nRung-1,bucketIndex)->clear();
 
@@ -117,24 +113,18 @@ public:
                 } else {
                     cout << "numBucket handling needs improvement." << endl;
                     releaseRungLock();
-                    releaseBottomLock();
                     return NULL;
                 }
             }
 
-            if (bottomEmpty()) {
-                cout << "Bottom empty" << endl;
+            /* Remove from bottom if not empty */
+            if ( (event = bottom.pop_front()) != NULL ) {
+                if(!isDequeueReq) {
+                    bottom.push_front(event);
+                }
                 releaseRungLock();
-                releaseBottomLock();
-                return NULL;
+                return event;
             }
-
-            const Event* event = bottomBegin();
-            releaseRungLock();
-            if(!isDequeueReq) {
-                releaseBottomLock();
-            }
-            return event;
         }
 
         /* Move from top to top of empty ladder */
@@ -142,20 +132,19 @@ public:
         if (false == create_new_rung(top.size(), minTS, &isBucketWidthStatic)) {
             cout << "Failed to create the required rung." << endl;
             releaseRungLock();
-            releaseBottomLock();
             return NULL;
         }
 
         /* Transfer events from Top to 1st rung of Ladder */
         rCur[0] = rStart[0] + NUM_BUCKETS(0)*bucketWidth[0];
+        LockFreeList *tempTopRes = new LockFreeList();
         for (event = top.pop_front(); event != NULL; event = top.pop_front()) {
             bucketIndex =
                 (unsigned int)(event->getReceiveTime().getApproximateIntTime() -
                                rStart[0]) / bucketWidth[0];
 
             if (numRung0Buckets <= bucketIndex) {
-                cout << "Invalid bucket index." << endl;
-                top.push_front(event);
+                tempTopRes->push_front(event);
             } else {
                 RUNG(0,bucketIndex)->push_front(event);
 
@@ -168,18 +157,21 @@ public:
                 }
             }
         }
+        for (event = tempTopRes->pop_front(); event != NULL; event = tempTopRes->pop_front()) {
+            top.push_front(event);
+        }
+        delete tempTopRes;
 
         /* Copy events from bucket_k into Bottom */
         if (INVALID == (bucketIndex = recurse_rung())) {
             cout << "Received invalid Bucket index." << endl;
             releaseRungLock();
-            releaseBottomLock();
             return NULL;
         }
 
         for (lIterate = RUNG(0,bucketIndex)->begin();
                 lIterate != RUNG(0,bucketIndex)->end(); lIterate++) {
-            bottomInsert(*lIterate);
+            bottom.push_front(*lIterate);
         }
 
         /* Clear that bucket */
@@ -196,21 +188,15 @@ public:
             } else {
                 cout << "rung 1 numBucket handling needs improvement." << endl;
                 releaseRungLock();
-                releaseBottomLock();
                 return NULL;
             }
         }
         releaseRungLock();
 
-        if (bottomEmpty()) {
-            cout << "Bottom empty" << endl;
-            releaseBottomLock();
-            return NULL;
-        }
-
-        event = bottomBegin();
-        if(!isDequeueReq) {
-            releaseBottomLock();
+        /* Remove from bottom if not empty */
+        event = NULL;
+        if( (event = bottom.pop_front()) && !isDequeueReq ) {
+            bottom.push_front(event);
         }
         return event;
     }
@@ -220,7 +206,6 @@ public:
 
         unsigned int rungIndex = 0, bucketIndex = 0;
 
-        getBottomLock();
         getRungLock();
 
         /* Top variables */
@@ -238,35 +223,26 @@ public:
         nRung = 0;
 
         /* Purge bottom */
-        bottomClear();
+        bottom.clear();
 
         releaseRungLock();
-        releaseBottomLock();
     }
 
     /* Dequeue the event with lowest timestamp */
     inline const Event* dequeue() {
 
-        const Event* retVal = NULL;
         isDequeueReq = true;
-        if (NULL != (retVal = begin())) {
-            bottomErase(bottom.begin());
-            isDequeueReq = false;
-            releaseBottomLock();
-        }
+        const Event *retVal = begin();
+        isDequeueReq = false;
         return retVal;
     }
 
     /* Check whether the LadderQ has any events or not */
-    inline bool empty(bool isBeginOrDequeueCalled) {
+    inline bool empty() {
 
-        getBottomLock();
         getRungLock();
-        bool status = ((0==nRung) & top.empty() & bottomEmpty());
+        bool status = ((0==nRung) & top.empty() & bottom.empty());
         releaseRungLock();
-        if( status || (!isBeginOrDequeueCalled) ) {
-            releaseBottomLock();
-        }
         return status;
     }
 
@@ -287,14 +263,12 @@ public:
             return;
         }
 
-        getBottomLock();
         getRungLock();
 
         /* Check and erase in top, if found */
         if( (topStart < delEvent->getReceiveTime().getApproximateIntTime()) && 
                                                         top.erase(delEvent) ) {
             releaseRungLock();
-            releaseBottomLock();
             return;
         }
 
@@ -312,7 +286,6 @@ public:
             if (NUM_BUCKETS(rungIndex) <= bucketIndex) {
                 cout << "Incorrect calculation of bucket index." << endl;
                 releaseRungLock();
-                releaseBottomLock();
                 return;
             }
 
@@ -353,22 +326,17 @@ public:
                 }
             }
             releaseRungLock();
-            releaseBottomLock();
             return;
         }
         releaseRungLock();
 
         /* Check and erase from bottom, if present */
-        if (!bottomEmpty()) {
-            bottomRemove(delEvent);
-        }
-        releaseBottomLock();
+        bottom.erase(delEvent);
     }
 
     /* Inserts the specified event into LadderQ (if already not present) */
     inline const Event* insert(const Event* newEvent) {
 
-        bool isBucketWidthStatic = false;
         unsigned int rungIndex = 0, bucketIndex = 0;
 
         /* Check whether valid event received */
@@ -428,100 +396,12 @@ public:
         releaseRungLock();
 
         /* If rung not found */
-        getBottomLock();
-        if (THRESHOLD < bottomSize()) {
-            getRungLock();
-            if (MAX_RUNG_NUM <= nRung) {
-                isBucketWidthStatic = true;
-
-            } else { /* Check if failed to create a rung */
-
-                /* Check if new event to be inserted is smaller than what is present in BOTTOM */
-                unsigned int uiBucketStartVal = bottomBegin()->getReceiveTime().getApproximateIntTime();
-                if (uiBucketStartVal > newEvent->getReceiveTime().getApproximateIntTime()) {
-                    uiBucketStartVal = newEvent->getReceiveTime().getApproximateIntTime();
-                }
-
-                if ((false == create_new_rung(bottomSize(), uiBucketStartVal, &isBucketWidthStatic)) &&
-                        (false == isBucketWidthStatic)) {
-                    cout << "Failed to create the required rung." << endl;
-                    releaseRungLock();
-                    releaseBottomLock();
-                    return NULL;
-                }
-            }
-            releaseRungLock();
-
-            /* Intentionally let the bottom continue to overflow */
-            //ref sec 2.4 of ladderq + when bucket width becomes static
-            if (true == isBucketWidthStatic) {
-                bottomInsert(newEvent);
-                releaseBottomLock();
-                return newEvent;
-            }
-
-            /* Transfer bottom to new rung */
-            getRungLock();
-            list<const Event*>::iterator mIterate;
-            for (mIterate = bottom.begin(); mIterate != bottom.end(); mIterate++) {
-
-                bucketIndex =
-                    (unsigned int)(((*mIterate)->getReceiveTime().getApproximateIntTime() -
-                                        rStart[nRung-1]) / bucketWidth[nRung-1]);
-
-                if (NUM_BUCKETS(nRung-1) <= bucketIndex) {
-                    if (nRung > 1) {
-                        cout << "Ran out of bucket space. Need more." << endl;
-                    } else {
-                        cout << "Rung 1 needs more space (available = " << numRung0Buckets
-                                 << ", required = " << bucketIndex+1 << ")" << endl;
-                    }
-                    releaseRungLock();
-                    releaseBottomLock();
-                    return NULL;
-                }
-
-                /* Adjust the numBucket and rCur parameters */
-                if (numBucket[nRung-1] < bucketIndex+1) {
-                    numBucket[nRung-1] = bucketIndex+1;
-                }
-                if (mIterate == bottom.begin()) {
-                    rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
-                }
-
-                RUNG(nRung-1,bucketIndex)->push_front(*mIterate);
-            }
-            bottomClear();
-
-            /* Insert new element in the new and populated rung */
-            bucketIndex =
-                (unsigned int)((newEvent->getReceiveTime().getApproximateIntTime() -
-                                rStart[nRung-1]) / bucketWidth[nRung-1]);
-            if (NUM_BUCKETS(nRung-1) <= bucketIndex) {
-                if (nRung > 1) {
-                    cout << "Ran out of bucket space. Needs more space." << endl;
-                } else {
-                    cout << "Rung 1 needs more space. Always hungry." << endl;
-                }
-                releaseRungLock();
-                releaseBottomLock();
-                return NULL;
-            }
-
-            if (numBucket[nRung-1] < bucketIndex+1) {
-                numBucket[nRung-1] = bucketIndex+1;
-            }
-            if (rCur[nRung-1] > rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1]) {
-                rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
-            }
-
-            RUNG(nRung-1,bucketIndex)->push_front(newEvent);
-            releaseRungLock();
-
-        } else { /* If BOTTOM is within threshold */
-            bottomInsert(newEvent);
-        }
-        releaseBottomLock();
+        /* Note: In regular Ladder Queue, if bottom exceeds 
+           threshold, it is transferred to the lowest available 
+           rung. Reason discussed in Sec 2.4 of ladder queue 
+           paper. Here, since the bottom is an unsorted queue, 
+           that design is an over-kill.                         */
+        bottom.push_front(newEvent);
 
         return newEvent;
     }
@@ -551,50 +431,7 @@ private:
     LockState           *rungLock;
 
     /* Bottom */
-    list<const Event*>  bottom;
-    LockState           *bottomLock;
-
-    /** BOTTOM Functionalities */
-    /* Bottom erase */
-    void bottomErase(list<const Event*>::iterator lIterate) {
-        debug::debugout<<"Trying to erase " << *lIterate <<endl;
-        bottom.erase(lIterate);
-        debug::debugout<<"Erased "<< *lIterate << endl;
-    }
-
-    /* Bottom remove */
-    void bottomRemove(const Event* delEvent) {
-        debug::debugout<<"Trying to remove " << delEvent <<endl;
-        bottom.remove(delEvent);
-        debug::debugout<<"Removed "<< delEvent << endl;
-    }
-
-    /* Bottom insert */
-    void bottomInsert(const Event* newEvent) {
-        debug::debugout<<"Trying to insert "<< newEvent << endl;
-        bottom.push_back(newEvent);
-        debug::debugout<<"Inserted"<< newEvent << endl;
-    }
-
-    /* Bottom empty */
-    bool bottomEmpty() {
-        return bottom.empty();
-    }
-
-    /* Bottom begin */
-    const Event* bottomBegin() {
-        return (*bottom.begin());
-    }
-
-    /* Bottom clear */
-    void bottomClear() {
-        bottom.clear();
-    }
-
-    /* Bottom size */
-    unsigned int bottomSize() {
-        return bottom.size();
-    }
+    LockFreeList        bottom;
 
     /* Create (here implicitly allocate) a new rung */
     inline bool create_new_rung(unsigned int numEvents, unsigned int initStartAndCurVal,
@@ -778,23 +615,6 @@ private:
         ASSERT(rungLock->hasLock(threadId, syncMechanism));
         rungLock->releaseLock(threadId, syncMechanism);
         debug::debugout<<"( "<< threadId << " T ) Released Rung Lock"<<endl;
-    }
-
-    /* Get bottom lock */
-    void getBottomLock() {
-        int threadId = getTID();
-        debug::debugout<<"( "<< threadId << " T ) Trying Bottom Lock"<<endl;
-        while (!bottomLock->setLock(threadId, syncMechanism));
-        ASSERT(bottomLock->hasLock(threadId, syncMechanism));
-        debug::debugout<<"( "<< threadId << " T ) Got Bottom Lock"<<endl;
-    }
-
-    /* Release bottom lock */
-    void releaseBottomLock() {
-        int threadId = getTID();
-        ASSERT(bottomLock->hasLock(threadId, syncMechanism));
-        bottomLock->releaseLock(threadId, syncMechanism);
-        debug::debugout<<"( "<< threadId << " T ) Released Bottom Lock"<<endl;
     }
 
 };

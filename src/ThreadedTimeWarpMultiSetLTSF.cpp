@@ -97,7 +97,7 @@ const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int thread
     } else if (scheduleQScheme == "LadderQueue") {
         this->getScheduleQueueLock(threadID);
         if(eventCausality == "RELAXED") {
-            if (!ladderQRelaxed->empty(true)) {
+            if (!ladderQRelaxed->empty()) {
                 ret = &(ladderQRelaxed->begin()->getReceiveTime());
             }
         } else {
@@ -149,7 +149,7 @@ bool ThreadedTimeWarpMultiSetLTSF::isScheduleQueueEmpty() {
         return scheduleQueue->empty();
     } else if (scheduleQScheme == "LadderQueue") {
         if(eventCausality == "RELAXED") {
-            return ladderQRelaxed->empty(false);
+            return ladderQRelaxed->empty();
         } else {
             return ladderQStrict->empty();
         }
@@ -377,7 +377,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
     } else if (scheduleQScheme == "LadderQueue") {
         this->getScheduleQueueLock(threadId);
         if(eventCausality == "RELAXED") {
-            if (!ladderQRelaxed->empty(true)) {
+            if (!ladderQRelaxed->empty()) {
                 debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
                 ret = ladderQRelaxed->dequeue();
                 if (ret == NULL) {
