@@ -81,6 +81,7 @@ WARPED_H_FILES = \
 	FileManager.h \
 	FileQueue.h \
 	FlatState.h \
+	GraphStatistics.h \
 	GVTManager.h \
 	GVTManagerFactory.h \
 	GVTManagerImplementationBase.h \
