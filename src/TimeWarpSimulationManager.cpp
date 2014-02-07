@@ -1240,14 +1240,14 @@ void TimeWarpSimulationManager::configure(SimulationConfiguration& configuration
     ASSERT(myEventSet != 0);
     myEventSet->configure(configuration);
 
-    // lets now set up and configure the state manager
+    // set up and configure the state manager
     const StateManagerFactory* myStateFactory = StateManagerFactory::instance();
     myStateManager = dynamic_cast<StateManager*>(myStateFactory->allocate(
                                                      configuration, this));
     ASSERT(myStateManager != 0);
     myStateManager->configure(configuration);
 
-    // lets now set up and configure the scheduler
+    // set up and configure the scheduler
     const SchedulingManagerFactory* mySchedulingFactory =
         SchedulingManagerFactory::instance();
     mySchedulingManager
@@ -1256,7 +1256,7 @@ void TimeWarpSimulationManager::configure(SimulationConfiguration& configuration
     ASSERT(mySchedulingManager != 0);
     mySchedulingManager->configure(configuration);
 
-    // lets now set up and configure the output manager
+    // set up and configure the output manager
     const OutputManagerFactory* myOutputManagerFactory =
         OutputManagerFactory::instance();
     myOutputManager
@@ -1265,14 +1265,14 @@ void TimeWarpSimulationManager::configure(SimulationConfiguration& configuration
     ASSERT(myOutputManager != 0);
     myOutputManager->configure(configuration);
 
-    // lets now set up and configure the gvt manager
+    // set up and configure the gvt manager
     const GVTManagerFactory* myGVTFactory = GVTManagerFactory::instance();
     myGVTManager = dynamic_cast<GVTManager*>(myGVTFactory->allocate(
                                                  configuration, this));
     ASSERT(myGVTFactory != 0);
     myGVTManager->configure(configuration);
 
-    // lets now set up and configure the fossil collection manager
+    // set up and configure the fossil collection manager
     const OptFossilCollManagerFactory* myFossilCollFactory =
         OptFossilCollManagerFactory::instance();
     myFossilCollManager
