@@ -251,6 +251,7 @@ libwarped_la_SOURCES = \
 	FileManager.cpp \
 	FileQueue.cpp \
 	FlatState.cpp \
+	GraphStatistics.cpp \
 	GVTManagerFactory.cpp \
 	GVTManagerImplementationBase.cpp \
 	GVTUpdateMessage.cpp \
