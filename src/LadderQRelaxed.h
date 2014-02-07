@@ -66,7 +66,7 @@ public:
         /* Remove from bottom if not empty */
         if ( (event = bottom.pop_front()) != NULL ) {
             if(!isDequeueReq) {
-                bottom.push_front(event);
+                bottom.insert(event);
             }
             return event;
         }
@@ -83,7 +83,7 @@ public:
         if (nRung > 0) { /* Check required because recurse_rung() can affect nRung value */
             for (event = RUNG(nRung-1,bucketIndex)->pop_front();
                     event != NULL; event = RUNG(nRung-1,bucketIndex)->pop_front()) {
-                bottom.push_front(event);
+                bottom.insert(event);
             }
 
             /* If bucket returned is the last valid rung of the bucket */
@@ -107,7 +107,7 @@ public:
             /* Remove from bottom if not empty */
             if ( (event = bottom.pop_front()) != NULL ) {
                 if(!isDequeueReq) {
-                    bottom.push_front(event);
+                    bottom.insert(event);
                 }
                 return event;
             }
@@ -129,9 +129,9 @@ public:
                                rStart[0]) / bucketWidth[0];
 
             if (numRung0Buckets <= bucketIndex) {
-                tempTopRes->push_front(event);
+                tempTopRes->insert(event);
             } else {
-                RUNG(0,bucketIndex)->push_front(event);
+                RUNG(0,bucketIndex)->insert(event);
 
                 /* Update the numBucket and rCur parameter */
                 if (numBucket[0] < bucketIndex+1) {
@@ -143,7 +143,7 @@ public:
             }
         }
         for (event = tempTopRes->pop_front(); event != NULL; event = tempTopRes->pop_front()) {
-            top.push_front(event);
+            top.insert(event);
         }
         delete tempTopRes;
 
@@ -155,7 +155,7 @@ public:
 
         for ( event = RUNG(0,bucketIndex)->pop_front();
                 event != NULL; event = RUNG(0,bucketIndex)->pop_front() ) {
-            bottom.push_front(event);
+            bottom.insert(event);
         }
 
         /* If bucket returned is the last valid rung of the bucket */
@@ -175,7 +175,7 @@ public:
         /* Remove from bottom if not empty */
         event = NULL;
         if( (event = bottom.pop_front()) && !isDequeueReq ) {
-            bottom.push_front(event);
+            bottom.insert(event);
         }
         return event;
     }
@@ -267,11 +267,11 @@ public:
                          (event->getEventId() != delEvent->getEventId()) ||
                          (event->getSender() != delEvent->getSender())) {
 
-                        tempList->push_front(event);
+                        tempList->insert(event);
                     }
                 }
                 for(event = tempList->pop_front(); event != NULL; event = tempList->pop_front()) {
-                    rung_bucket->push_front(event);
+                    rung_bucket->insert(event);
                 }
                 delete tempList;
 
@@ -324,7 +324,7 @@ public:
                 maxTS = newEvent->getReceiveTime().getApproximateIntTime();
             }
 
-            top.push_front(newEvent);
+            top.insert(newEvent);
             return newEvent;
         }
 
@@ -356,7 +356,7 @@ public:
                 rCur[rungIndex] = rStart[rungIndex] + bucketIndex*bucketWidth[rungIndex];
             }
 
-            RUNG(rungIndex,bucketIndex)->push_front(newEvent);
+            RUNG(rungIndex,bucketIndex)->insert(newEvent);
             return newEvent;
         }
 
@@ -366,7 +366,7 @@ public:
            rung. Reason discussed in Sec 2.4 of ladder queue 
            paper. Here, since the bottom is an unsorted queue, 
            that design is an over-kill.                         */
-        bottom.push_front(newEvent);
+        bottom.insert(newEvent);
 
         return newEvent;
     }
@@ -518,10 +518,10 @@ private:
                                          bucketWidth[nRung-1];
                         if (NUM_BUCKETS(nRung-1) <= newBucketIndex) {
                             cout << "Bucket index exceeds max permissible value." << endl;
-                            RUNG(nRung-2,bucketIndex)->push_front(event);
+                            RUNG(nRung-2,bucketIndex)->insert(event);
 
                         } else {
-                            RUNG(nRung-1,newBucketIndex)->push_front(event);
+                            RUNG(nRung-1,newBucketIndex)->insert(event);
 
                             /* Calculate numBucket of new rung */
                             if (numBucket[nRung-1] < newBucketIndex+1) {
