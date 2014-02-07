@@ -7,6 +7,7 @@
 #include "warped.h"
 #include "PartitionInfo.h"
 #include "Event.h"
+#include "SimulationConfiguration.h"
 
 using std::cerr;
 using std::cout;
@@ -18,7 +19,10 @@ SequentialSimulationManager::SequentialSimulationManager(Application* initApplic
     sequentialWout(cerr.rdbuf(), ios::out),
     sequentialWerr(cerr.rdbuf(), ios::out),
     myApplication(initApplication),
-    totalSimulationTime(0.0) {
+    totalSimulationTime(0.0),
+    trackEventCount(false),
+    statisticsFileFormat(""),
+    statisticsFilePath("") {
     numberOfObjects = initApplication->getNumberOfSimulationObjects(0);
 
     myEventSet = NULL;
@@ -36,14 +40,14 @@ SequentialSimulationManager::~SequentialSimulationManager() {
     // was allocated out of a "non-standard" part of memory.  What it comes down to
     // is we didn't allocate them, so we should not destroy them.
 
-//   // iteratively call delete on each simulation object pointer
-//   for( typeSimMap::iterator iter = localArrayOfSimObjPtrs->begin();
-//        iter != localArrayOfSimObjPtrs->end();
-//        iter++ ){
-//     SimulationObject *toDelete = (*iter).second;
-//     cout << "Deleting " << *toDelete->getObjectID() << endl;
-//     delete toDelete;
-//   }
+    //   // iteratively call delete on each simulation object pointer
+    //   for(typeSimMap::iterator iter = localArrayOfSimObjPtrs->begin();
+    //       iter != localArrayOfSimObjPtrs->end();
+    //       iter++ ){
+    //     SimulationObject *toDelete = (*iter).second;
+    //     cout << "Deleting " << *toDelete->getObjectID() << endl;
+    //     delete toDelete;
+    //   }
 
     delete localArrayOfSimObjPtrs;
 }
@@ -69,6 +73,14 @@ SequentialSimulationManager::handleEvent(const Event* event) {
     ASSERT(event != NULL);
     ASSERT(myEventSet != NULL);
     myEventSet->insert(event);
+
+    if (trackEventCount) {
+        graphStatistics.update_edge_stat(
+            event->getSender().getSimulationObjectID(),
+            event->getReceiver().getSimulationObjectID(),
+            "event_count"
+        );
+    }
 }
 
 void
@@ -98,9 +110,18 @@ SequentialSimulationManager::finalize() {
 
     cout << "Simulation complete (" << numberOfProcessedEvents << " events in "
          << totalSimulationTime << " secs, "
-         << (numberOfProcessedEvents/totalSimulationTime) << " events/sec).\n"
+         << (numberOfProcessedEvents / totalSimulationTime) << " events/sec).\n"
          << "Initalization - " << initializeWatch.elapsed() << " seconds\n"
          << "Finalization - " << finalizeWatch.elapsed() << " seconds\n";
+
+
+    if (trackEventCount) {
+        if (statisticsFileFormat == "dot") {
+            graphStatistics.output_dot_file(statisticsFilePath);
+        } else {
+            cout << "Unsupported statistics filetype: " << statisticsFileFormat << endl;
+        }
+    }
 }
 
 void
@@ -136,6 +157,10 @@ SequentialSimulationManager::configure(SimulationConfiguration& configuration) {
     const EventSetFactory* tempEventSetFactory = EventSetFactory::instance();
     myEventSet = dynamic_cast<EventSet*>(tempEventSetFactory->allocate(configuration,
                                                                        this));
+
+    trackEventCount = configuration.get_bool({"Statistics", "EventCount"}, false);
+    statisticsFileFormat = configuration.get_string({"Statistics", "OutputFormat"}, "dot");
+    statisticsFilePath = configuration.get_string({"Statistics", "OutputFilePath"}, "statistics.dot");
 }
 
 // some tasks this function is responsible for
@@ -185,7 +210,7 @@ SequentialSimulationManager::registerSimulationObjects() {
     }
     delete objects;
 
-};
+}
 
 // this function constructs the map of simulation object names versus
 // simulation object pointers by interacting with the application
@@ -231,7 +256,7 @@ SimulationStream*
 SequentialSimulationManager::getIOFStream(const string& fileName,
                                           SimulationObject* object) {
     SequentialSimulationStream* simStream =
-        new SequentialSimulationStream(fileName, ios::in|ios::app);
+        new SequentialSimulationStream(fileName, ios::in | ios::app);
     return simStream;
 }
 
