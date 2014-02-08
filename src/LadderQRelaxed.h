@@ -64,10 +64,12 @@ public:
         bool isBucketWidthStatic = false;
 
         /* Remove from bottom if not empty */
-        if ( (event = bottom.pop_front()) != NULL ) {
-            if(!isDequeueReq) {
-                bottom.insert(event);
-            }
+        if(!isDequeueReq) {
+            event = bottom.begin();
+        } else {
+            event = bottom.pop_front();
+        }
+        if(event) {
             return event;
         }
 
@@ -105,10 +107,12 @@ public:
             }
 
             /* Remove from bottom if not empty */
-            if ( (event = bottom.pop_front()) != NULL ) {
-                if(!isDequeueReq) {
-                    bottom.insert(event);
-                }
+            if(!isDequeueReq) {
+                event = bottom.begin();
+            } else {
+                event = bottom.pop_front();
+            }
+            if(event) {
                 return event;
             }
         }
@@ -173,9 +177,10 @@ public:
         }
 
         /* Remove from bottom if not empty */
-        event = NULL;
-        if( (event = bottom.pop_front()) && !isDequeueReq ) {
-            bottom.insert(event);
+        if( !isDequeueReq ) {
+            event = bottom.begin();
+        } else {
+            event = bottom.pop_front();
         }
         return event;
     }

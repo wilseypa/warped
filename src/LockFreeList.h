@@ -49,32 +49,32 @@ public:
     }
 
     /* Function to erase a specific node */
+    /* The list is traversed while marking the node (atomic). If node matches, it 
+       is deleted (atomic). If the deleted node is cursor, it is assigned to the 
+       left node (atomic).                                                         */
     bool erase( const Event *delEvent ) {
-        ListNode *delNode = NULL, *leftNode = NULL;
+        ListNode *delNode = head, *leftNode = NULL; 
 
-        while(true) {
-            delNode = head->next;
-            leftNode = head;
-            while( delNode->key != delEvent ) {
-                leftNode = delNode;
-                delNode = delNode->next;
-                if(!delNode) return false;
+        while(delNode->next != tail) {
+            leftNode = delNode;
+            delNode = leftNode->next;
+            if( !__sync_bool_compare_and_swap(&(delNode->bIsMarked), false, true) ) return false; // might be changed to while
+            (void) __sync_bool_compare_and_swap(&(leftNode->bIsMarked), true, false);
+            if(tail == delNode) { // list empty. delNode is tail.
+                tail->bIsMarked = false;
+                return false;
             }
-            if( !__sync_bool_compare_and_swap(&(leftNode->bIsMarked), false, true) ) continue;
-            if( !__sync_bool_compare_and_swap(&(delNode->bIsMarked), false, true) ) {
-                leftNode->bIsMarked = false;
-                continue;
-            }
-            if( __sync_bool_compare_and_swap(&(leftNode->next), delNode, delNode->next) ) {
-                (void) __sync_sub_and_fetch(&listSize, 1);
-                leftNode->bIsMarked = false;
-                delete delNode;
-                return true;
-            } else {
-                leftNode->bIsMarked = false;
+            if(delNode->key != delEvent) continue;
+            if( !__sync_bool_compare_and_swap(&(leftNode->next), delNode, delNode->next) ) {
                 delNode->bIsMarked = false;
+                return false;
             }
+            (void) __sync_bool_compare_and_swap(&cursor, delNode, leftNode);
+            (void) __sync_sub_and_fetch(&listSize, 1);
+            delete delNode;
+            return true;
         }
+        return false;
     }
 
     /* Function for popping from front of list */
@@ -100,6 +100,11 @@ public:
             delete popNode;
             return event;
         }
+    }
+
+    /* Funtion to read the first available key */
+    const Event *begin() {
+        return (head->next)->key;
     }
 
     /* Function to check for empty list */
