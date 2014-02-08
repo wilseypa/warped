@@ -21,10 +21,10 @@ public:
         //If Available and we can set it to Working then return true else return false;
         return __sync_bool_compare_and_swap(&lockOwner, NOBODY, threadNumber);
     }
-    const bool hasLock(const unsigned int& threadNumber) const {
-        return (threadNumber == lockOwner);
+    bool hasLock(const unsigned int& threadNumber) const {
+        return (threadNumber == (unsigned int) lockOwner);
     }
-    const void showStatus() {
+    void showStatus() {
         cout << "Locked By: " << lockOwner << endl;
     }
     bool isLocked() {

@@ -171,14 +171,14 @@ public:
 
     bool processed;
 
-    const unsigned int getEventNumber() const {
+    unsigned int getEventNumber() const {
         return (eventNumber);
     }
 
-    const unsigned int getsenderObjectId() const {
+    unsigned int getsenderObjectId() const {
         return (senderObjectId);
     }
-    const unsigned int getsenderObjectSimId() const {
+    unsigned int getsenderObjectSimId() const {
         return (senderObjectSimId);
     }
     //@} // End of Public Class Methods of SetObject.

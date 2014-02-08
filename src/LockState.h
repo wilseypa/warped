@@ -22,7 +22,7 @@ public:
             return __sync_bool_compare_and_swap(&lockOwner, threadNumber, NOONE);
         } else if (syncMechanism == "Mutex") {
             if (!pthread_mutex_lock(&mutexLock)) {
-                if (threadNumber == lockOwner) {
+                if (threadNumber == (unsigned int) lockOwner) {
                     lockOwner = NOONE;
                     pthread_mutex_unlock(&mutexLock);
                     return true;
@@ -49,7 +49,7 @@ public:
                     lockOwner = threadNumber;
                     pthread_mutex_unlock(&mutexLock);
                     return true;
-                } else if(lockOwner == threadNumber) {
+                } else if(lockOwner == (int) threadNumber) {
                     pthread_mutex_unlock(&mutexLock);
                     return true;
                 } else {
@@ -65,17 +65,17 @@ public:
             return false;
         }
     }
-    const bool hasLock(const unsigned int& threadNumber, const string syncMechanism) const {
+    bool hasLock(const unsigned int& threadNumber, const string syncMechanism) const {
         if (syncMechanism == "AtomicLock") {
-            return (threadNumber == lockOwner);
+            return (threadNumber == (unsigned int) lockOwner);
         } else if (syncMechanism == "Mutex") {
-            return (threadNumber == lockOwner);
+            return (threadNumber == (unsigned int) lockOwner);
         } else {
             cout << "Invalid sync mechanism" << endl;
             return false;
         }
     }
-    const void showStatus() {
+    void showStatus() {
         cout << "Locked By: " << lockOwner << endl;
     }
     bool isLocked() {

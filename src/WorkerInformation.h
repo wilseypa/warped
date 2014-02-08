@@ -13,7 +13,7 @@ static const int MAX_NUMBER_IDLE_LOOPS = 50;
 class WorkerInformation {
 public:
     WorkerInformation(pthread_t* thread) :
-        mypthread(thread), idleCount(0), suspended(false) {
+        mypthread(thread), suspended(false), idleCount(0) {
         //Set the busy flag with the function so the stillBusyCount goes up
         pthread_mutex_init(&suspendMutex, NULL);
         pthread_cond_init(&suspendCondition, NULL);

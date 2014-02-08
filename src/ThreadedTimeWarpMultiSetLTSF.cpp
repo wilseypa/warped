@@ -95,17 +95,17 @@ const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int thread
         this->releaseScheduleQueueLock(threadID);
 
     } else if (scheduleQScheme == "LadderQueue") {
-        this->getScheduleQueueLock(threadID);
         if(eventCausality == "RELAXED") {
             if (!ladderQRelaxed->empty()) {
                 ret = &(ladderQRelaxed->begin()->getReceiveTime());
             }
         } else {
+            this->getScheduleQueueLock(threadID);
             if (!ladderQStrict->empty()) {
                 ret = &(ladderQStrict->begin()->getReceiveTime());
             }
+            this->releaseScheduleQueueLock(threadID);
         }
-        this->releaseScheduleQueueLock(threadID);
 
     } else if (scheduleQScheme == "SplayTree") {
         this->getScheduleQueueLock(threadID);
@@ -375,7 +375,6 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
         this->releaseScheduleQueueLock(threadId);
 
     } else if (scheduleQScheme == "LadderQueue") {
-        this->getScheduleQueueLock(threadId);
         if(eventCausality == "RELAXED") {
             if (!ladderQRelaxed->empty()) {
                 debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
@@ -397,6 +396,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
                 lowestLadderObjectPosition[objId] = ladderQRelaxed->end();
             }
         } else {
+            this->getScheduleQueueLock(threadId);
             if (!ladderQStrict->empty()) {
                 debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
                 ret = ladderQStrict->dequeue();
@@ -416,8 +416,8 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
                 //set the indexer/pointer to NULL
                 lowestLadderObjectPosition[objId] = ladderQStrict->end();
             }
+            this->releaseScheduleQueueLock(threadId);
         }
-        this->releaseScheduleQueueLock(threadId);
 
     } else if (scheduleQScheme == "SplayTree") {
         this->getScheduleQueueLock(threadId);
