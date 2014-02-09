@@ -218,6 +218,7 @@ libwarped_la_SOURCES = \
 	AdaptiveOutputManager.cpp \
 	AdaptiveStateManagerBase.cpp \
 	AggressiveOutputManager.cpp \
+	Application.cpp \
 	CentralizedEventSetSchedulingManager.cpp \
 	ChebyFossilCollManager.cpp \
 	CirculateInitializationMessage.cpp \

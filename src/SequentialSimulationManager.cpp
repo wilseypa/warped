@@ -22,12 +22,9 @@ SequentialSimulationManager::SequentialSimulationManager(Application* initApplic
     totalSimulationTime(0.0),
     trackEventCount(false),
     statisticsFileFormat(""),
-    statisticsFilePath("") {
-    numberOfObjects = initApplication->getNumberOfSimulationObjects(0);
-
-    myEventSet = NULL;
-    numberOfProcessedEvents = 0;
-
+    statisticsFilePath(""),
+    myEventSet(NULL),
+    numberOfProcessedEvents(0) {
     // Initialize wout and werr to suitable sequential simulation streams...
     wout = &sequentialWout;
     werr = &sequentialWerr;
@@ -214,23 +211,18 @@ SequentialSimulationManager::registerSimulationObjects() {
 
 // this function constructs the map of simulation object names versus
 // simulation object pointers by interacting with the application
-
 SimulationManagerImplementationBase::typeSimMap* SequentialSimulationManager::createMapOfObjects() {
     typeSimMap* retval = 0;
 
-    const PartitionInfo* appInfo =  myApplication->getPartitionInfo(1);
+    std::vector<SimulationObject*>* simulationObjects = myApplication->getSimulationObjects(1);
 
-    if (appInfo->getNumberOfPartitions() != 1) {
-        cerr << "Application returned multiple partitions when the kernel requested 1" << endl;
-        abort();
-    }
-
-    retval = partitionVectorToHashMap(appInfo->getObjectSet(0));
+    // Since this is a sequential simulation with only one processor, there's
+    // no reason to partition the objects.
+    retval = partitionVectorToHashMap(simulationObjects);
 
     setNumberOfObjects(retval->size());
 
-    delete appInfo;
-
+    delete simulationObjects;
     return retval;
 }
 

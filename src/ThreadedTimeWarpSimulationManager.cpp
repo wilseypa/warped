@@ -1154,8 +1154,12 @@ SimulationManagerImplementationBase::typeSimMap*
 ThreadedTimeWarpSimulationManager::createMapOfObjects() {
     typeSimMap* retval = 0;
 
+    std::vector<SimulationObject*>* simulationObjects = 
+        myApplication->getSimulationObjects(numberOfSimulationManagers);
+
     const PartitionInfo* appPartitionInfo = myApplication->getPartitionInfo(
-                                                numberOfSimulationManagers);
+                                                numberOfSimulationManagers,
+                                                simulationObjects);
 
     vector<SimulationObject*>* localObjects;
 
@@ -1181,6 +1185,7 @@ ThreadedTimeWarpSimulationManager::createMapOfObjects() {
     setNumberOfObjects(retval->size());
 
     delete appPartitionInfo;
+    delete simulationObjects;
 
     return retval;
 }

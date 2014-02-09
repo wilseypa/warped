@@ -190,8 +190,13 @@ SimulationManagerImplementationBase::typeSimMap*
 TimeWarpSimulationManager::createMapOfObjects() {
     typeSimMap* retval = 0;
 
+    std::vector<SimulationObject*>* simulationObjects =
+        myApplication->getSimulationObjects(numberOfSimulationManagers);
+
     const PartitionInfo* appPartitionInfo = myApplication->getPartitionInfo(
-                                                numberOfSimulationManagers);
+                                                numberOfSimulationManagers,
+                                                simulationObjects);
+
 
     vector<SimulationObject*>* localObjects;
 
@@ -217,6 +222,7 @@ TimeWarpSimulationManager::createMapOfObjects() {
     setNumberOfObjects(retval->size());
 
     delete appPartitionInfo;
+    delete simulationObjects;
 
     return retval;
 }
@@ -591,8 +597,8 @@ void TimeWarpSimulationManager::handleRemoteEvent(const Event* event) {
     }
 }
 
-void TimeWarpSimulationManager::cancelLocalEvents(const vector<
-                                                  const NegativeEvent*> &eventsToCancel) {
+void TimeWarpSimulationManager::cancelLocalEvents(const vector <
+                                                  const NegativeEvent* > &eventsToCancel) {
     const NegativeEvent* curEvent = NULL;
     const VTime* lowTime = &(eventsToCancel[0]->getReceiveTime());
 
@@ -624,8 +630,8 @@ void TimeWarpSimulationManager::cancelLocalEvents(const vector<
     }
 }
 
-void TimeWarpSimulationManager::cancelRemoteEvents(const vector<
-                                                   const NegativeEvent*> &eventsToCancel) {
+void TimeWarpSimulationManager::cancelRemoteEvents(const vector <
+                                                   const NegativeEvent* > &eventsToCancel) {
     ASSERT(eventsToCancel.size() > 0);
     const ObjectID& receiverId = eventsToCancel[0]->getReceiver();
     const SimulationObject* forObject = getObjectHandle(receiverId);
@@ -704,8 +710,8 @@ void TimeWarpSimulationManager::cancelEvents(
     if (usingOneAntiMsg) {
         // Array to determine if anti-message was already added to send.
         std::set<ObjectID> antiMsgAlreadyAdded;
-        vector<const Event*>& eventsToCancelNonConst = const_cast<vector<
-                                                       const Event*>&>(eventsToCancel);
+        vector<const Event*>& eventsToCancelNonConst = const_cast < vector <
+                                                       const Event* > & >(eventsToCancel);
         vector<const NegativeEvent*> negEvents;
 
         // Sort the output events.
@@ -1132,7 +1138,7 @@ void TimeWarpSimulationManager::finalize() {
     cout.flush();
     //  fossilCollect(currentTime);
 
-    if (myEventSet!=NULL) {
+    if (myEventSet != NULL) {
         int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
         int numEventsExecuted = myEventSet->getNumEventsExecuted();
 
@@ -1144,7 +1150,6 @@ void TimeWarpSimulationManager::finalize() {
                  << ',' << numEventsExecuted - numEventsRolledBack
                  << ',' << numEventsExecuted << endl;
     }
-
 }
 
 SimulationStream*
