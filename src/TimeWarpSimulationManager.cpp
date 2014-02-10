@@ -38,7 +38,7 @@ TimeWarpSimulationManager::TimeWarpSimulationManager(Application* initApplicatio
     mySimulationManagerID(0), simulationCompleteFlag(false),
     coastForwardTime(0), messageAggregation(false), myStateManager(0),
     myGVTManager(0), myCommunicationManager(0), mySchedulingManager(0),
-    myOutputManager(0), myEventSet(0),
+    myOutputManager(0), myEventSet(0), myDVFSManager(NULL),
     mySchedulingData(new SchedulingData()), myTerminationManager(0),
     myApplication(initApplication), myFossilCollManager(0),
     usingOneAntiMsg(false), usingOptFossilCollection(false),
