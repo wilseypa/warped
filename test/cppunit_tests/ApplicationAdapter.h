@@ -7,7 +7,7 @@ class ApplicationAdapter : public Application {
 public:
     ApplicationAdapter() {}
 
-    std::vector<SimulationObject*>* getSimulationObjects(unsigned int numProcessorsAvailable) 
+    std::vector<SimulationObject*>* getSimulationObjects()
         { return new std::vector<SimulationObject*>; }
     virtual int finalize() { return 0; }
     ~ApplicationAdapter() {}

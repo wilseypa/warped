@@ -214,7 +214,7 @@ SequentialSimulationManager::registerSimulationObjects() {
 SimulationManagerImplementationBase::typeSimMap* SequentialSimulationManager::createMapOfObjects() {
     typeSimMap* retval = 0;
 
-    std::vector<SimulationObject*>* simulationObjects = myApplication->getSimulationObjects(1);
+    std::vector<SimulationObject*>* simulationObjects = myApplication->getSimulationObjects();
 
     // Since this is a sequential simulation with only one processor, there's
     // no reason to partition the objects.

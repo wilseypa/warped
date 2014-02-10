@@ -1155,7 +1155,7 @@ ThreadedTimeWarpSimulationManager::createMapOfObjects() {
     typeSimMap* retval = 0;
 
     std::vector<SimulationObject*>* simulationObjects = 
-        myApplication->getSimulationObjects(numberOfSimulationManagers);
+            myApplication->getSimulationObjects();
 
     const PartitionInfo* appPartitionInfo = myApplication->getPartitionInfo(
                                                 numberOfSimulationManagers,

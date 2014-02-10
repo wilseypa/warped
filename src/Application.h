@@ -28,10 +28,10 @@ public:
         guaranteed to be preserved, so any infomation necessary for
         partitioning should be stored in the objects.
 
-        @return A poiner to a vector containing all SimulationObjects that will 
+        @return A poiner to a vector containing all SimulationObjects that will
         be used in the simulation.
     */
-    virtual std::vector<SimulationObject*>* getSimulationObjects(unsigned int numProcessorsAvailable) = 0;
+    virtual std::vector<SimulationObject*>* getSimulationObjects() = 0;
 
     /** This is an optional method that partitions the SimulationObjects. If
         not implemented, a default partitioning scheme will be used.
