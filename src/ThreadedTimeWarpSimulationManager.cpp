@@ -43,7 +43,7 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     unsigned int numberOfWorkerThreads, const string syncMechanism,
     bool loadBalancing, const string loadBalancingMetric,
     const string loadBalancingTrigger, double loadBalancingVarianceThresh,
-    unsigned int loadBalancingNormalInterval,unsigned int loadBalancingNormalThresh,
+    unsigned int loadBalancingNormalInterval, unsigned int loadBalancingNormalThresh,
     unsigned int loadBalancingRelaxedInterval, unsigned int loadBalancingRelaxedThresh,
     const string scheduleQScheme, const string causalityType, unsigned int scheduleQCount,
     Application* initApplication) :
@@ -67,7 +67,8 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     numberOfLocalAntimessages(0),
     computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
     rollbackCompleted(new bool[numberOfObjects]), inRecovery(false),
-    GVTTokenPending(false), TimeWarpSimulationManager(initApplication) {
+    GVTTokenPending(false), TimeWarpSimulationManager(initApplication),
+    partitionType("") {
 
     LVT = &getZero();
     LVTArray = new const VTime *[numberOfWorkerThreads + 1];
@@ -85,7 +86,7 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     initiatedRecovery = false;
     lvtCount = 0;
     numCatastrophicRollbacks = 0;
-    
+
     ofcFlagLock = new LockState();
 }
 
@@ -313,14 +314,14 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
         if (inRecovery) {
             numCatastrophicRollbacks++;
             if (numberOfSimulationManagers > 1) {
-               while (workerStatus[0]->getStillBusyCount() > 0)
-                   debug::debugout << workerStatus[0]->getStillBusyCount()
+                while (workerStatus[0]->getStillBusyCount() > 0)
+                    debug::debugout << workerStatus[0]->getStillBusyCount()
                                     << endl;
                 if (initiatedRecovery) {
-                  myrealFossilCollManager->startRecovery();
-	              getOfcFlagLock(threadID,getSyncMechanism());
-                  initiatedRecovery = false;
-                  releaseOfcFlagLock(threadID,getSyncMechanism());
+                    myrealFossilCollManager->startRecovery();
+                    getOfcFlagLock(threadID, getSyncMechanism());
+                    initiatedRecovery = false;
+                    releaseOfcFlagLock(threadID, getSyncMechanism());
                 }
                 while (inRecovery)
                 { getMessages(); }
@@ -373,7 +374,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
                     //cout << "Resuming threads attached to ltsf " << ltsfIndex << endl;
                     for (unsigned int threadIndex = ltsfIndex; threadIndex < numberOfWorkerThreads - 1;
                             threadIndex = threadIndex + scheduleQCount) {
-                        workerStatus[threadIndex+1]->resume();
+                        workerStatus[threadIndex + 1]->resume();
                     }
                 }
             }
@@ -552,7 +553,7 @@ void ThreadedTimeWarpSimulationManager::handleRemoteEvent(const Event* event,
                         << endl;
         KernelMessage* msg = new EventMessage(getSimulationManagerID(),
                                               destSimMgrId, event, gVTInfo);
-	ASSERT(msg !=NULL);
+        ASSERT(msg != NULL);
 
         sendMessage(msg, destSimMgrId);
     }
@@ -742,9 +743,9 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject* object,
     const VTime* restoredTime = &myStateManager->restoreState(rollbackTime,
                                                               object, threadID);
 
-    if (usingOptFossilCollection){ 
+    if (usingOptFossilCollection) {
         if (!inRecovery) {
-            myrealFossilCollManager->sampleRollback(object, *restoredTime );
+            myrealFossilCollManager->sampleRollback(object, *restoredTime);
             myrealFossilCollManager->updateCheckpointTime(objId,
                                                           rollbackTime.getApproximateIntTime());
             if (*restoredTime > rollbackTime) {
@@ -755,11 +756,11 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject* object,
                                     << " - Catastrophic Rollback: Restored State Time: "
                                     << *restoredTime << ", Rollback Time: "
                                     << rollbackTime << ", Starting Recovery." << endl;
-                
-	                getOfcFlagLock(threadID,getSyncMechanism());
+
+                    getOfcFlagLock(threadID, getSyncMechanism());
                     myrealFossilCollManager->setRecovery(objId,
                                                          rollbackTime.getApproximateIntTime());
-                    releaseOfcFlagLock(threadID,getSyncMechanism());
+                    releaseOfcFlagLock(threadID, getSyncMechanism());
                 } else {
                     restoredTime = &getZero();
                 }
@@ -1017,8 +1018,10 @@ void ThreadedTimeWarpSimulationManager::initialize() {
     }
 }
 
-void ThreadedTimeWarpSimulationManager::configure(
-    SimulationConfiguration& configuration) {
+void ThreadedTimeWarpSimulationManager::configure(SimulationConfiguration& configuration) {
+    partitionType = configuration.get_string({"TimeWarp", "Partitioner", "Type"},
+                                             "Default");
+
     const CommunicationManagerFactory* myCommFactory =
         CommunicationManagerFactory::instance();
 
@@ -1154,15 +1157,12 @@ SimulationManagerImplementationBase::typeSimMap*
 ThreadedTimeWarpSimulationManager::createMapOfObjects() {
     typeSimMap* retval = 0;
 
-    std::vector<SimulationObject*>* simulationObjects = 
-            myApplication->getSimulationObjects();
+    std::vector<SimulationObject*>* simulationObjects = myApplication->getSimulationObjects();
 
-    const PartitionInfo* appPartitionInfo = myApplication->getPartitionInfo(
-                                                numberOfSimulationManagers,
-                                                simulationObjects);
+    const PartitionInfo* appPartitionInfo = getPartitionInfo(partitionType,
+                 myApplication, simulationObjects, numberOfSimulationManagers);
 
     vector<SimulationObject*>* localObjects;
-
     for (int n = 0; n < numberOfSimulationManagers; n++) {
         if (n == getSimulationManagerID()) {
             localObjects = appPartitionInfo->getObjectSet(n);
@@ -1473,16 +1473,16 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
             }
             resetComputeLVTStatus();
             break;
-            /*      case 3:
-             if (*LVT > *minimum) {
-             LVT = minimum->clone();
-             }
-             LVTFlag = (numberOfWorkerThreads - 1);
-             for (int i = 1; i < numberOfWorkerThreads; i++) {
-             delete (LVTArray[i]);
-             }
-             resetComputeLVTStatus();
-             break;*/
+        /*      case 3:
+         if (*LVT > *minimum) {
+         LVT = minimum->clone();
+         }
+         LVTFlag = (numberOfWorkerThreads - 1);
+         for (int i = 1; i < numberOfWorkerThreads; i++) {
+         delete (LVTArray[i]);
+         }
+         resetComputeLVTStatus();
+         break;*/
         case 3:
             if (*LVT > *minimum) {
                 LVT = minimum->clone();
@@ -1594,13 +1594,13 @@ void ThreadedTimeWarpSimulationManager::clearMessageBuffer() {
         debug::debugout << "Deleted message from buffer." << endl;
     }
 }
-void ThreadedTimeWarpSimulationManager::getOfcFlagLock(int threadId, const string syncMech ) {
+void ThreadedTimeWarpSimulationManager::getOfcFlagLock(int threadId, const string syncMech) {
     ofcFlagLock->setLock(threadId,syncMech);
-    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+    ASSERT(ofcFlagLock->hasLock(threadId, syncMech));
 }
 
-void ThreadedTimeWarpSimulationManager::releaseOfcFlagLock(int threadId, const string syncMech){
-    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
-    ofcFlagLock->releaseLock(threadId,syncMech);
+void ThreadedTimeWarpSimulationManager::releaseOfcFlagLock(int threadId, const string syncMech) {
+    ASSERT(ofcFlagLock->hasLock(threadId, syncMech));
+    ofcFlagLock->releaseLock(threadId, syncMech);
 }
 

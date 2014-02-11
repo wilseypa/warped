@@ -50,14 +50,10 @@ public:
 
     //@} // End of friend class declarations
 
-    /**@name Public Class Methods of TimeWarpSimulationManager. */
-    //@{
-
     /** Constructor.
 
      @param numProcessors Number of processors requested
      @param initApplication The application that we're going to start up.
-
      */
     TimeWarpSimulationManager(Application* initApplication);
 
@@ -65,8 +61,7 @@ public:
     virtual ~TimeWarpSimulationManager();
 
     /// initialize the simulation objects before starting the simulation.
-    virtual void
-    initialize(); //made it virtual to support the new Dynamic Threaded Simulation(Karthikeyan Muthalagu)
+    virtual void initialize(); 
 
     /** Run the simulation.
 
@@ -348,10 +343,6 @@ public:
         return inRecovery;
     }
 
-    // RK_NOTE: 6/3/2010: This used to be protected, but I changed it
-    //                    to public so that the gvt managers can call it
-    //                    immediately when the new gvt is set.
-
     /** call fossil collect on the state, output, input queue, and file queues.
 
      @param fossilCollectTime time upto which fossil collect is performed.
@@ -384,12 +375,7 @@ public:
     unsigned int getNumEventsExecuted();
     unsigned int getNumEventsRolledBack();
 
-    //@} // End of Public Class Methods of TimeWarpSimulationManager.
-
 protected:
-    /**@name Protected Class Methods of TimeWarpSimulationManager. */
-    //@{
-
     /** Create a map of simulation objects.
 
      @return An STL hash-map of the simulation objects.
@@ -565,13 +551,9 @@ protected:
 
     StopWatch myStopwatch;
 
-    //@} // End of Protected Class Methods of TimeWarpSimulationManager.
-
-    //private:
-    /**@name Private Class Attributes of TimeWarpSimulationManager. */
-    //@{
-    //@} // End of Private Class Attributes of TimeWarpSimulationManager.
-
+private:
+    /// The type of partitioner to use 
+    std::string partitionType;
 };
 
 #endif

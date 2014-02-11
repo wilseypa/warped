@@ -42,8 +42,7 @@ TimeWarpSimulationManager::TimeWarpSimulationManager(Application* initApplicatio
     mySchedulingData(new SchedulingData()), myTerminationManager(0),
     myApplication(initApplication), myFossilCollManager(0),
     usingOneAntiMsg(false), usingOptFossilCollection(false),
-    inRecovery(false), numberOfRollbacks(0) {
-}
+    inRecovery(false), numberOfRollbacks(0), partitionType("") {}
 
 TimeWarpSimulationManager::~TimeWarpSimulationManager() {
     if (myOutputManager != NULL) {// to skip this part of destructor when using Threaded Timewarp
@@ -62,6 +61,7 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
             }
         }
     }
+
     //Clean up the file queues.
     for (unsigned int i = 0; i < outFileQueues.size(); i++) {
         for (unsigned int j = 0; j < outFileQueues[i].size(); j++) {
@@ -158,14 +158,6 @@ void TimeWarpSimulationManager::registerSimulationObjects() {
         // store a handle to our simulation manager in the object
         object->setSimulationManager(this);
 
-        // lets allocate the initial state here
-        // No longer used for optimistic fossil collection.
-        /*if(!usingOptFossilCollection){
-         object->setInitialState(object->allocateState());
-         }
-         else{
-         object->setInitialState(myFossilCollManager->newState(object));
-         }*/
         object->setInitialState(object->allocateState());
 
         // save map of ids to ptrs
@@ -193,10 +185,8 @@ TimeWarpSimulationManager::createMapOfObjects() {
     std::vector<SimulationObject*>* simulationObjects =
         myApplication->getSimulationObjects();
 
-    const PartitionInfo* appPartitionInfo = myApplication->getPartitionInfo(
-                                                numberOfSimulationManagers,
-                                                simulationObjects);
-
+    const PartitionInfo* appPartitionInfo = getPartitionInfo(partitionType,
+                 myApplication, simulationObjects, numberOfSimulationManagers);
 
     vector<SimulationObject*>* localObjects;
 
@@ -282,7 +272,7 @@ void TimeWarpSimulationManager::registerSimulationObjectProxies(
 
 // the TimeWarpSimulationManager must register the following message
 // types with the communication manager:
-
+//
 // InitializationMessage, StartMessage, EventMessage, NegativeEventMessage,
 // CheckIdleMessage, AbortSimulationMessage
 void TimeWarpSimulationManager::registerWithCommunicationManager() {
@@ -1202,6 +1192,9 @@ void TimeWarpSimulationManager::displayGlobalObjectMap(std::ostream& out) {
 }
 
 void TimeWarpSimulationManager::configure(SimulationConfiguration& configuration) {
+    partitionType = configuration.get_string({"TimeWarp", "Partitioner", "Type"},
+                                             "Default");
+
     const CommunicationManagerFactory* myCommFactory =
         CommunicationManagerFactory::instance();
 

@@ -7,6 +7,9 @@
 #include <unordered_map>
 #include "SimulationManager.h"
 
+class SimulationObject;
+class PartitionInfo;
+class Application;
 
 /** The base class that implements a SimulationManager.
 
@@ -19,17 +22,7 @@
 */
 class SimulationManagerImplementationBase : public SimulationManager {
 public:
-
-    /**@name Public Class Methods of SimulationObjectImplementationBase. */
-    //@{
-
-    /** Constructor.
-
-    @param numProcessors Number of processors in the simulation.
-    */
     SimulationManagerImplementationBase();
-
-    /// Destructor.
     virtual ~SimulationManagerImplementationBase();
 
     /** This method is called to start the simulation.
@@ -39,7 +32,6 @@ public:
 
     @param simulateUntil The time till which to simulate
     */
-
     virtual void simulate(const VTime& simulateUntil);
 
     /** Receive an event.
@@ -78,9 +70,6 @@ public:
         return numberOfSimulationManagers;
     }
 
-
-    //@} // End of Public Class Methods of SimulationManagerImplementationBase.
-
 protected:
     /** This method is used to initialize the Simulation Manager before the
         simulation begins.
@@ -102,19 +91,11 @@ protected:
     */
     void finalizeObjects();
 
-    /**@name Protected Class Methods of SimulationManagerImplementationBase. */
-    //@{
-
     /** Display the object name - object pointer map.
 
     @param out Out-stream.
     */
     void displayObjectMap(std::ostream& out);
-
-    //@} // End of Protected Class Methods of SimulationManagerImplementationbase.
-
-    /**@name Protected Class Attributes of SimulationManagerImplementationBase.*/
-    //@{
 
     /// Number of objects registered with this simulation manager.
     unsigned int numberOfObjects;
@@ -152,8 +133,12 @@ protected:
        Turns a vector<SimulationObject *> into a map<string, SimulationObject *>.
     */
     typeSimMap* partitionVectorToHashMap(vector<SimulationObject*>* vector);
-    //@} // End of Protected Class Attributes of SimulationManagerImplementationBase.
 
+    /// Partitions a vector of simualtion objects based on a configuration value
+    const PartitionInfo* getPartitionInfo(string partitionType,
+                                          Application* application,
+                                          const vector<SimulationObject*>* objects,
+                                          unsigned int numLPs);
 };
 
 #endif

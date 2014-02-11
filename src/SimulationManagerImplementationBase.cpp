@@ -1,6 +1,9 @@
-
 #include "SimulationManagerImplementationBase.h"
 #include "Application.h"
+#include "PartitionInfo.h"
+#include "SimulationObject.h"
+#include "RoundRobinPartitioner.h"
+
 #include <functional>
 #include <algorithm>
 
@@ -20,8 +23,8 @@ SimulationManagerImplementationBase::SimulationManagerImplementationBase()
 SimulationManagerImplementationBase::~SimulationManagerImplementationBase() {
 }
 
-class InitObject : public unary_function<SimulationObject*,
-        void> {
+class InitObject : public unary_function < SimulationObject*,
+        void > {
 public:
     void operator()(SimulationObject* toInit) {
         toInit->initialize();
@@ -106,4 +109,16 @@ SimulationManagerImplementationBase::partitionVectorToHashMap(vector<SimulationO
         retval->insert(std::make_pair((*vector)[i]->getName(), (*vector)[i]));
     }
     return retval;
+}
+
+const PartitionInfo*
+SimulationManagerImplementationBase::getPartitionInfo(string partitionType,
+                                                      Application* application,
+                                                      const vector<SimulationObject*>* objects,
+                                                      unsigned int numLPs) {
+    if (partitionType == "RoundRobin") {
+        return RoundRobinPartitioner().partition(objects, numLPs);
+    } else {
+        return application->getPartitionInfo(numberOfSimulationManagers, objects);
+    }
 }

@@ -183,16 +183,12 @@ public:
     const VTime* getMinCurrentExecTime();
 
     // Checks if this is the simulation manager that initiated the recovery process
-    bool getInitiatedRecovery() {
-        return initiatedRecovery;
-    }
+    bool getInitiatedRecovery() { return initiatedRecovery; }
 
     // Sets the flag to indicate that this is the manager that started recovery
-    void setInitiatedRecovery(bool initRec) {
-        initiatedRecovery = initRec;
-    }
+    void setInitiatedRecovery(bool initRec) { initiatedRecovery = initRec; }
 
-    // Releases all the locks that the workers have on the objects  (Called during a catastrophic rollback)
+    // Releases all the locks that the workers have on the objects (Called during a catastrophic rollback)
     void releaseObjectLocksRecovery();
 
     // Empty the message buffer
@@ -205,9 +201,54 @@ public:
    
     void releaseOfcFlagLock(int threadId, const string syncMech); 
 
+        void handleEvent(const Event* event);
+
+    /** call fossil collect on the file queues. This one passes in an integer
+     and should only be used with the optimistic fossil collection manager.
+
+     @param fossilCollectTime time upto which fossil collect is performed.
+     */
+    virtual void fossilCollectFileQueues(SimulationObject* object,
+                                         int fossilCollectTime);
+
+    /// Used in optimistic fossil collection to checkpoint the file queues.
+    void saveFileQueuesCheckpoint(std::ofstream* outFile,
+                                  const ObjectID& objId, unsigned int saveTime);
+
+    void restoreFileQueues(ifstream* inFile, const ObjectID& objId,
+                           unsigned int restoreTime);
+
+    void handleEventReceiver(SimulationObject* currObject, const Event* event,
+                             int threadID);
+
+    /// Return true when recovering from a catastrophic rollback during
+    /// optimimistic fossil collection.
+    bool getRecoveringFromCheckpoint() { return inRecovery; }
+
+    /// Set true when recovering from a catastrophic rollback during
+    /// optimimistic fossil collection.
+    void setRecoveringFromCheckpoint(bool inRec) { inRecovery = inRec; }
+
+    bool initiateLocalGVT();
+
+    bool setGVTTokenPending();
+    bool resetGVTTokenPending();
+
+    /** call fossil collect on the state, output, input queue, and file queues.
+
+     @param fossilCollectTime time upto which fossil collect is performed.
+     */
+    virtual void fossilCollect(const VTime& fossilCollectTime);
+
+    bool isRollbackJustCompleted(int objId);
+    void setRollbackCompletedStatus(int objId);
+    void resetRollbackCompletedStatus(int objId);
+    void setCheckpointing(bool chkpt) { checkpointing = chkpt; }
+
+    ///Holds information each thread needs to operate
+    WorkerInformation** workerStatus;
+
 protected:
-    /**@name Protected Class Methods of ThreadedTimeWarpSimulationManager. */
-    //@{
     //Main simulation function
     void simulate(const VTime& simulateUntil);
 
@@ -234,63 +275,11 @@ protected:
 
     ///Peekevent from ThreadedMultiset
     const Event* peekEvent(SimulationObject* object);
+
     /** Receive an event.
 
      @param event A pointer to the received event.
      */
-public:
-    void handleEvent(const Event* event);
-
-    /** call fossil collect on the file queues. This one passes in an integer
-     and should only be used with the optimistic fossil collection manager.
-
-     @param fossilCollectTime time upto which fossil collect is performed.
-     */
-    virtual void fossilCollectFileQueues(SimulationObject* object,
-                                         int fossilCollectTime);
-
-    /// Used in optimistic fossil collection to checkpoint the file queues.
-    void saveFileQueuesCheckpoint(std::ofstream* outFile,
-                                  const ObjectID& objId, unsigned int saveTime);
-
-    void restoreFileQueues(ifstream* inFile, const ObjectID& objId,
-                           unsigned int restoreTime);
-
-    void handleEventReceiver(SimulationObject* currObject, const Event* event,
-                             int threadID);
-
-    /// Return true when recovering from a catastrophic rollback during
-    /// optimimistic fossil collection.
-    bool getRecoveringFromCheckpoint() {
-        return inRecovery;
-    }
-
-    /// Set true when recovering from a catastrophic rollback during
-    /// optimimistic fossil collection.
-    void setRecoveringFromCheckpoint(bool inRec) {
-        inRecovery = inRec;
-    }
-
-    bool initiateLocalGVT();
-
-    bool setGVTTokenPending();
-    bool resetGVTTokenPending();
-
-    /** call fossil collect on the state, output, input queue, and file queues.
-
-     @param fossilCollectTime time upto which fossil collect is performed.
-     */
-    virtual void fossilCollect(const VTime& fossilCollectTime);
-
-    bool isRollbackJustCompleted(int objId);
-    void setRollbackCompletedStatus(int objId);
-    void resetRollbackCompletedStatus(int objId);
-    void setCheckpointing(bool chkpt) {
-        checkpointing = chkpt;
-    }
-
-protected:
-
     void cancelEventsReceiver(SimulationObject* curObject,
                               vector<const NegativeEvent*>& cancelObjectIt, int threadID);
     /**
@@ -337,8 +326,7 @@ protected:
                  const VTime& rollbackToTime, SimulationObject* object,
                  int threadID);
 
-    /*@param msg The message to receive.
-     */
+    ///@param msg The message to receive.
     virtual void receiveKernelMessage(KernelMessage* msg);
 
     /// initialize the simulation objects before starting the simulation.
@@ -425,10 +413,6 @@ private:
     //Specified in the Scheduler scope of the configuration file
     unsigned int scheduleQCount;
 
-public:
-    ///Holds information each thread needs to operate
-    WorkerInformation** workerStatus;
-private:
     /// Time up to which coast forwarding should be done.
     vector<const VTime*> coastForwardTime;
 
@@ -492,9 +476,11 @@ private:
 
     ThreadedTimeWarpLoadBalancer* loadBalancer;
     
-    // used to lock optimistic fossil collection recovery flags. 
+    /// used to lock optimistic fossil collection recovery flags. 
     LockState* ofcFlagLock;
 
+    /// The type of partitioner to use 
+    std::string partitionType;
 };
 
 #endif /* ThreadedTIMEWARPSIMULATIONMANAGER_H_ */
