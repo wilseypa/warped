@@ -113,11 +113,7 @@ SequentialSimulationManager::finalize() {
 
 
     if (trackEventCount) {
-        if (statisticsFileFormat == "dot") {
-            graphStatistics.output_dot_file(statisticsFilePath);
-        } else {
-            cout << "Unsupported statistics filetype: " << statisticsFileFormat << endl;
-        }
+        graphStatistics.write_to_file(statisticsFileFormat, statisticsFilePath);
     }
 }
 
