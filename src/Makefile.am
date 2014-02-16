@@ -78,7 +78,6 @@ WARPED_H_FILES = \
 	FactoryManager.h \
 	FactorySymbolTable.h \
 	FileData.h \
-	FileManager.h \
 	FileQueue.h \
 	FlatState.h \
 	GraphStatistics.h \
@@ -130,7 +129,6 @@ WARPED_H_FILES = \
 	SchedulingManagerFactory.h \
 	SenderQueueContainer.h \
 	SequentialConfigurationManager.h \
-	SequentialFileManager.h \
 	SequentialSimulationManager.h \
 	SequentialSimulationStream.h \
 	Serializable.h \
@@ -249,7 +247,6 @@ libwarped_la_SOURCES = \
 	FactoryImplementationBase.cpp \
 	FactoryManager.cpp \
 	FactorySymbolTable.cpp \
-	FileManager.cpp \
 	FileQueue.cpp \
 	FlatState.cpp \
 	GraphStatistics.cpp \
@@ -280,7 +277,6 @@ libwarped_la_SOURCES = \
 	RoundRobinPartitioner.cpp \
 	SchedulingManagerFactory.cpp \
 	SequentialConfigurationManager.cpp \
-	SequentialFileManager.cpp \
 	SequentialSimulationManager.cpp \
 	SequentialSimulationStream.cpp \
 	Serializable.cpp \
