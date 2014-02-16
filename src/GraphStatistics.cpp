@@ -67,27 +67,37 @@ void GraphStatistics::output_graphviz_file(std::ofstream& file) {
 void GraphStatistics::output_metis_file(std::ofstream& file) {
     // Metis files require a list of every node, so we have to build a map of
     // edges in both directions.
-    std::map<Edge, std::map<std::string, int>> full_graph(edge_stats);
+    std::map<Edge, std::map<std::string, int>> full_graph;
 
     // Count the vertices and stats.
     std::set<int> vertices;
     std::set<std::string> stats;
     for (auto edges_it : edge_stats) {
+        // Metis doesn't support self-edges
+        if (edges_it.first.first == edges_it.first.second) continue;
         vertices.insert(edges_it.first.first);
         vertices.insert(edges_it.first.second);
         for (auto stats_it : edges_it.second) {
-            full_graph[std::make_pair(edges_it.first.second,
-                                      edges_it.first.first)][stats_it.first] = stats_it.second;
+            full_graph[std::make_pair(edges_it.first.second, edges_it.first.first)
+                ][stats_it.first] = stats_it.second;
+            full_graph[std::make_pair(edges_it.first.first, edges_it.first.second)
+                ][stats_it.first] = stats_it.second;
             stats.insert(stats_it.first);
         }
     }
-    int numEdges = edge_stats.size();
-    int numVertices = vertices.size();
-    int numWeights = stats.size();
 
+    if (stats.size() != 1) {
+        std::cerr << "Metis only supports one weight per edge" << std::endl;
+        return;
+    }
+
+    auto numVertices = vertices.size();
+    auto numEdges = full_graph.size() / 2;
+    std::string stat = *stats.begin();
+    std::cout << numEdges << ' ' << full_graph.size() << ' ' << full_graph.size() / 2 << std::endl;
     file << "%% The first line contains the following information:\n"
-         << "%% <# of vertices> <# of edges> <file format> <# of weights>\n"
-         <<  numVertices << ' ' << numEdges << ' ' << "001 " << numWeights << '\n'
+         << "%% <# of vertices> <# of edges> <file format>\n"
+         <<  numVertices << ' ' << numEdges << ' ' << "001 " << '\n'
          << "%% The remaining lines each describe a vertex and have the following format:\n"
          << "%% <<neighbor>";
     for (auto& stat : stats) {
@@ -98,25 +108,27 @@ void GraphStatistics::output_metis_file(std::ofstream& file) {
     // Metis requires node numbering start at 1 instead of 0, so add one to
     // all indices if node 0 exists
     int offset = vertices.count(0);
+
+    // Metis requires vertex numbering start at 1 and be contiguous, so we
+    // have to remap the numbers in case there are vertexes with no stats etc.
+    std::map<int, int> renumbering;
+    int i = 1;
+    for (int vertex : vertices) {
+        renumbering[vertex] = i++;
+    }
+
     // Keep track of the last vertex, since each vertex is on its own line
     int last_vertex = -1;
     for (auto edges_it : full_graph) {
-        // Metis doesn't accept self-edges
-        if (edges_it.first.first == edges_it.first.second) {
-            continue;
-        }
         if (edges_it.first.first != last_vertex) {
             if (last_vertex >= 0) { file << '\n'; }
             last_vertex = edges_it.first.first;
         }
-        file << edges_it.first.second + offset << ' ';
-        // iterate over stats instead of edges_it.second in case an edge
-        // doesn't have every weight
-        for (auto stat : stats) {
-            // Metis requires weights be non-zero
-            int weight = std::max(1, edges_it.second[stat]);
-            file << weight << ' ';
-        }
+
+        file << renumbering[edges_it.first.second] << ' ';
+        // Metis requires weights be non-zero
+        int weight = std::max(1, edges_it.second[stat]);
+        file << weight << ' ';
     }
     file << '\n';
 }
