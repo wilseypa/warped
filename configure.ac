@@ -121,6 +121,6 @@ case $found_sockopt_type2 in
      ;;
 esac
 
-AC_CONFIG_FILES([Makefile src/Makefile thirdparty/Makefile thirdparty/json/Makefile test/Makefile test/catch_tests/Makefile test/cppunit_tests/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile thirdparty/Makefile thirdparty/json/Makefile thirdparty/metis/Makefile thirdparty/metis/GKlib/Makefile thirdparty/metis/libmetis/Makefile test/Makefile test/catch_tests/Makefile test/cppunit_tests/Makefile])
 
 AC_OUTPUT

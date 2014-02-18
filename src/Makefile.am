@@ -1,4 +1,4 @@
-AM_CPPFLAGS=-I$(top_srcdir)/thirdparty
+AM_CPPFLAGS=-I$(top_srcdir)/thirdparty -I$(top_srcdir)/thirdparty/metis/include
 
 include eclmpl/Makefile.am.stub
 
@@ -15,6 +15,7 @@ endif
 endif
 
 libwarped_la_LIBADD += $(top_builddir)/thirdparty/json/libjsoncpp.la
+libwarped_la_LIBADD += $(top_builddir)/thirdparty/metis/libmetis/libmetis.la
 
 CONTROLKIT_H_FILES = \
 	controlkit/Actuator.h \
