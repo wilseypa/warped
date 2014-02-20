@@ -208,7 +208,7 @@ bool ThreadedTimeWarpMultiSet::threadHasUnprocessedQueueLock(int threadId,
 }
 
 void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
-    while (!unprocessedQueueLockState[objId]->setLock(threadId, syncMechanism));
+    unprocessedQueueLockState[objId]->setLock(threadId, syncMechanism);
     ASSERT(unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
@@ -216,8 +216,7 @@ void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
     unprocessedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 }
 void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
-    while (!processedQueueLockState[objId]->setLock(threadId, syncMechanism))
-        ;
+    processedQueueLockState[objId]->setLock(threadId, syncMechanism);
     ASSERT(processedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSet::releaseProcessedLock(int threadId, int objId) {
@@ -225,8 +224,7 @@ void ThreadedTimeWarpMultiSet::releaseProcessedLock(int threadId, int objId) {
     processedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 }
 void ThreadedTimeWarpMultiSet::getremovedLock(int threadId, int objId) {
-    while (!removedQueueLockState[objId]->setLock(threadId, syncMechanism))
-        ;
+    removedQueueLockState[objId]->setLock(threadId, syncMechanism);
     ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSet::releaseremovedLock(int threadId, int objId) {

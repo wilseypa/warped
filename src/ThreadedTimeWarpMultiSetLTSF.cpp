@@ -78,7 +78,7 @@ ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
 }
 
 void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
-    while (!scheduleQueueLock->setLock(threadId, syncMechanism));
+    scheduleQueueLock->setLock(threadId, syncMechanism);
     ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
 }
 void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
@@ -447,7 +447,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
 }
 
 void ThreadedTimeWarpMultiSetLTSF::getObjectLock(int threadId, int objId) {
-    while (!objectStatusLock[objId]->setLock(threadId, syncMechanism));
+    objectStatusLock[objId]->setLock(threadId, syncMechanism);
     /*  debug::debugout << "( " << mySimulationManager->getSimulationManagerID()
      << " ) Object - " << objId << " is Locked by the thread - "
      << threadId << "\n";*/

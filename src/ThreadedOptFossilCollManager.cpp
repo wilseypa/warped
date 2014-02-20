@@ -778,7 +778,7 @@ int ThreadedOptFossilCollManager::getLeastCollectTime() {
 }
 
 void ThreadedOptFossilCollManager::getOfcFlagLock(int threadId, const string syncMech ) {
-    while(!ofcFlagLock->setLock(threadId,syncMech));
+    ofcFlagLock->setLock(threadId,syncMech);
     ASSERT(ofcFlagLock->hasLock(threadId,syncMech));	    
 }
 
@@ -788,7 +788,7 @@ void ThreadedOptFossilCollManager::releaseOfcFlagLock(int threadId, const string
 }
 
 void ThreadedOptFossilCollManager::getOfcCheckPointLock(int threadId, const string syncMech ) {
-    while(!ofcFlagLock->setLock(threadId,syncMech));
+    ofcFlagLock->setLock(threadId,syncMech);
     ASSERT(ofcFlagLock->hasLock(threadId,syncMech));	    
 }
 

@@ -453,8 +453,7 @@ void ThreadedOutputEvents::ofcPurge(int threadID) {
 }
 
 void ThreadedOutputEvents::acquireLocalLock(int threadId) {
-    while (!localQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism()))
-        ;
+    localQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism());
     ASSERT(localQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
@@ -464,8 +463,7 @@ void ThreadedOutputEvents::releaseLocalLock(int threadId) {
 }
 
 void ThreadedOutputEvents::acquireRemoteLock(int threadId) {
-    while (!remoteQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism()))
-        ;
+    remoteQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism());
     ASSERT(remoteQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
@@ -475,8 +473,7 @@ void ThreadedOutputEvents::releaseRemoteLock(int threadId) {
 }
 
 void ThreadedOutputEvents::acquireRemovedLock(int threadId) {
-    while (!removedListLock->setLock(threadId, mySimulationManager->getSyncMechanism()))
-        ;
+    removedListLock->setLock(threadId, mySimulationManager->getSyncMechanism());
     ASSERT(removedListLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
