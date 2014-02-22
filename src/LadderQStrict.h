@@ -714,7 +714,6 @@ private:
                         newBucketIndex = ((*lIterate)->getReceiveTime().getApproximateIntTime() - rStart[nRung-1]) /
                                          bucketWidth[nRung-1];
                         if (NUM_BUCKETS(nRung-1) <= newBucketIndex) {
-                            cout << "Bucket index exceeds max permissible value." << endl;
                             lIterate++;
                         } else {
                             RUNG(nRung-1,newBucketIndex)->push_front(*lIterate);

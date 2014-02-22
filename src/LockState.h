@@ -87,7 +87,7 @@ public:
                     }
                 } else {
                     cout << "mutex_err_setLock" << endl;
-                    locked = false;
+                    return;
                 }
             }
         } else {

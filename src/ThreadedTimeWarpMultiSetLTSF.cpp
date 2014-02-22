@@ -196,8 +196,11 @@ void ThreadedTimeWarpMultiSetLTSF::setLowestObjectPosition(int threadId, int ind
         if(eventCausality == "RELAXED") {
             lowestLadderObjectPosition[index] = ladderQRelaxed->end();
         } else {
+            this->getScheduleQueueLock(threadId);
             lowestLadderObjectPosition[index] = ladderQStrict->end();
+            this->releaseScheduleQueueLock(threadId);
         }
+
     } else if (scheduleQScheme == "SplayTree") {
         this->getScheduleQueueLock(threadId);
         lowestLadderObjectPosition[index] = splayTree->end();
