@@ -146,7 +146,7 @@ public:
                 }
             }
         }
-        for( int index = 0; index < topResVec.size(); index++ ) {
+        for( int index = 0; index < (int)topResVec.size(); index++ ) {
             top.insert(topResVec[index]);
         }
 
@@ -274,7 +274,7 @@ public:
                         eventVec.push_back(event);
                     }
                 }
-                for( int index = 0; index < eventVec.size(); index++ ) {
+                for( int index = 0; index < (int)eventVec.size(); index++ ) {
                     rung_bucket->insert(eventVec[index]);
                 }
 
@@ -533,7 +533,7 @@ private:
                         }
                     }
 
-                    for( int index = 0; index < rungResVec.size(); index++ ) {
+                    for( int index = 0; index < (int)rungResVec.size(); index++ ) {
                         RUNG(nRung-2,bucketIndex)->insert(rungResVec[index]);
                     }
                     rungResVec.clear();
