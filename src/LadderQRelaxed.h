@@ -62,6 +62,7 @@ public:
         unsigned int bucketIndex = 0;
         const Event *event = NULL;
         bool isBucketWidthStatic = false;
+        vector<const Event*> topResVec;
 
         /* Remove from bottom if not empty */
         if(!isDequeueReq) {
@@ -126,14 +127,13 @@ public:
 
         /* Transfer events from Top to 1st rung of Ladder */
         rCur[0] = rStart[0] + NUM_BUCKETS(0)*bucketWidth[0];
-        LockFreeList *tempTopRes = new LockFreeList();
         for (event = top.pop_front(); event != NULL; event = top.pop_front()) {
             bucketIndex =
                 (unsigned int)(event->getReceiveTime().getApproximateIntTime() -
                                rStart[0]) / bucketWidth[0];
 
             if (numRung0Buckets <= bucketIndex) {
-                tempTopRes->insert(event);
+                topResVec.push_back(event);
             } else {
                 RUNG(0,bucketIndex)->insert(event);
 
@@ -146,10 +146,9 @@ public:
                 }
             }
         }
-        for (event = tempTopRes->pop_front(); event != NULL; event = tempTopRes->pop_front()) {
-            top.insert(event);
+        for( int index = 0; index < topResVec.size(); index++ ) {
+            top.insert(topResVec[index]);
         }
-        delete tempTopRes;
 
         /* Copy events from bucket_k into Bottom */
         if (INVALID == (bucketIndex = recurse_rung())) {
@@ -233,6 +232,7 @@ public:
 
         unsigned int rungIndex = 0, bucketIndex = 0;
         const Event *event = NULL;
+        vector<const Event*> eventVec;
 
         /* Check whether valid event received */
         if (NULL == delEvent) {
@@ -265,20 +265,18 @@ public:
             rung_bucket = RUNG(rungIndex,bucketIndex);
 
             if (false == rung_bucket->empty()) {
-                LockFreeList *tempList = new LockFreeList();
                 for (event = rung_bucket->pop_front(); event != NULL; event = rung_bucket->pop_front()) {
                     if ( (event->getReceiveTime().getApproximateIntTime() !=
                             delEvent->getReceiveTime().getApproximateIntTime()) ||
                          (event->getEventId() != delEvent->getEventId()) ||
                          (event->getSender() != delEvent->getSender())) {
 
-                        tempList->insert(event);
+                        eventVec.push_back(event);
                     }
                 }
-                for(event = tempList->pop_front(); event != NULL; event = tempList->pop_front()) {
-                    rung_bucket->insert(event);
+                for( int index = 0; index < eventVec.size(); index++ ) {
+                    rung_bucket->insert(eventVec[index]);
                 }
-                delete tempList;
 
                 /* If bucket is empty after deletion */
                 if (true == rung_bucket->empty()) {
@@ -478,6 +476,7 @@ private:
         bool isBucketNotFound = false, isBucketWidthStatic = false, isRungNotEmpty = false;
         unsigned int bucketIndex = 0, newBucketIndex = 0;
         const Event *event = NULL;
+        vector<const Event*> rungResVec;
 
         /* find_bucket label */
         do {
@@ -522,8 +521,7 @@ private:
                         newBucketIndex = (event->getReceiveTime().getApproximateIntTime() - rStart[nRung-1]) /
                                          bucketWidth[nRung-1];
                         if (NUM_BUCKETS(nRung-1) <= newBucketIndex) {
-                            cout << "Bucket index exceeds max permissible value." << endl;
-                            RUNG(nRung-2,bucketIndex)->insert(event);
+                            rungResVec.push_back(event);
 
                         } else {
                             RUNG(nRung-1,newBucketIndex)->insert(event);
@@ -534,6 +532,11 @@ private:
                             }
                         }
                     }
+
+                    for( int index = 0; index < rungResVec.size(); index++ ) {
+                        RUNG(nRung-2,bucketIndex)->insert(rungResVec[index]);
+                    }
+                    rungResVec.clear();
 
                     /* Re-calculate rCur and numBucket of old rung */
                     newBucketIndex = bucketIndex+1;
