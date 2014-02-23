@@ -39,34 +39,6 @@ public:
             return false;
         }
     }
-/*
-    bool setLock(const unsigned int& threadNumber, const string syncMechanism) {
-        if (syncMechanism == "AtomicLock") {
-            //If Available and we can set it to Working then return true else return false;
-            return __sync_bool_compare_and_swap(&lockOwner, NOONE, threadNumber);
-        } else if (syncMechanism == "Mutex") {
-            if (!pthread_mutex_lock(&mutexLock)) {
-                if (lockOwner == NOONE) {
-                    lockOwner = threadNumber;
-                    pthread_mutex_unlock(&mutexLock);
-                    return true;
-                } else if(lockOwner == (int) threadNumber) {
-                    pthread_mutex_unlock(&mutexLock);
-                    return true;
-                } else {
-                    pthread_mutex_unlock(&mutexLock);
-                    return false;
-                }
-            } else {
-                cout << "mutex_err_setLock" << endl;
-                return false;
-            }
-        } else {
-            cout << "Invalid sync mechanism" << endl;
-            return false;
-        }
-    }
-*/
     void setLock(const unsigned int& threadNumber, const string syncMechanism) {
         if (syncMechanism == "AtomicLock") {
             //If Available and we can set it to Working then return true else return false;
