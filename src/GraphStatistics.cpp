@@ -94,7 +94,6 @@ void GraphStatistics::output_metis_file(std::ofstream& file) {
     auto numVertices = vertices.size();
     auto numEdges = full_graph.size() / 2;
     std::string stat = *stats.begin();
-    std::cout << numEdges << ' ' << full_graph.size() << ' ' << full_graph.size() / 2 << std::endl;
     file << "%% The first line contains the following information:\n"
          << "%% <# of vertices> <# of edges> <file format>\n"
          <<  numVertices << ' ' << numEdges << ' ' << "001 " << '\n'

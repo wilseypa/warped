@@ -3,7 +3,7 @@
 #include "PartitionInfo.h"
 #include "SimulationObject.h"
 #include "RoundRobinPartitioner.h"
-
+#include "ProfileGuidedPartitioner.h"
 #include <functional>
 #include <algorithm>
 
@@ -118,6 +118,8 @@ SimulationManagerImplementationBase::getPartitionInfo(string partitionType,
                                                       unsigned int numLPs) {
     if (partitionType == "RoundRobin") {
         return RoundRobinPartitioner().partition(objects, numLPs);
+    } else if (partitionType == "ProfileGuided") {
+        return ProfileGuidedPartitioner().partition(objects, numLPs);
     } else {
         return application->getPartitionInfo(numberOfSimulationManagers, objects);
     }

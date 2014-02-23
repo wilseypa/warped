@@ -122,6 +122,7 @@ WARPED_H_FILES = \
 	Partitioner.h \
 	PartitionInfo.h \
 	PeriodicStateManager.h \
+	ProfileGuidedPartitioner.h \
 	ReceiverQueueContainer.h \
 	RestoreCkptMessage.h \
 	RoundRobinPartitioner.h \
@@ -274,6 +275,7 @@ libwarped_la_SOURCES = \
 	Partitioner.cpp \
 	PartitionInfo.cpp \
 	PeriodicStateManager.cpp \
+	ProfileGuidedPartitioner.cpp \
 	RestoreCkptMessage.cpp \
 	RoundRobinPartitioner.cpp \
 	SchedulingManagerFactory.cpp \
