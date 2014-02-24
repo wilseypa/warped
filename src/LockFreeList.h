@@ -9,124 +9,123 @@
 class LockFreeList {
 
 public:
-    LockFreeList() {
-        head = new ListNode();
-        tail = new ListNode();
-        head->next = tail;
-        cursor = head;
-        listSize = 0;
-    }
 
-    ~LockFreeList() {
-        delete head;
-        delete tail;
-    }
+    LockFreeList(): head(NULL), listSize(0) {}
 
-    /* Function for inserting after curser */
-    /* Cursor is marked (atomic). Then new node (pre-marked) is inserted (atomic). 
-       New node becomes the cursor. New cursor unmarked, then old one unmarked    */
-    bool insert( const Event *insEvent ) {
+    ~LockFreeList() {}
 
-        ListNode *rightNode = NULL, *leftNode = NULL;
-        ListNode *newNode = new ListNode(insEvent);
-        newNode->bIsMarked = true;
-
-        while(true) {
-            if( !__sync_bool_compare_and_swap(&(cursor->bIsMarked), false, true) ) continue;
-            leftNode = cursor;
-            rightNode = cursor->next;
-            newNode->next = rightNode;
-            if( !__sync_bool_compare_and_swap(&(cursor->next), rightNode, newNode) ) {
-                cursor->bIsMarked = false;
-                continue;
-            }
-            cursor = newNode;
-            cursor->bIsMarked = false;
-            leftNode->bIsMarked = false;
-            (void) __sync_add_and_fetch(&listSize, 1);
-            return true;
+    bool insert( const Event *k ) {
+        if(!k) return false;
+        ListNode *h = new ListNode(k, INS);
+        enlist(h);
+        bool b = helpInsert(h, k);
+        if(__sync_bool_compare_and_swap( &(h->state), INS, (b ? DAT:INV) )) {
+            helpRemove(h,k);
+            h->state = INV;
         }
+        (void) __sync_add_and_fetch(&listSize, (b ? 1:0));
+        return b;
     }
 
-    /* Function to erase a specific node */
-    /* The list is traversed while marking the node (atomic). If node matches, it 
-       is deleted (atomic). If the deleted node is cursor, it is assigned to the 
-       left node (atomic).                                                         */
-    bool erase( const Event *delEvent ) {
-        ListNode *delNode = head, *leftNode = NULL; 
-
-        while(delNode->next != tail) {
-            leftNode = delNode;
-            delNode = leftNode->next;
-            if( !__sync_bool_compare_and_swap(&(delNode->bIsMarked), false, true) ) return false; // might be changed to while
-            (void) __sync_bool_compare_and_swap(&(leftNode->bIsMarked), true, false);
-            if(tail == delNode) { // list empty. delNode is tail.
-                tail->bIsMarked = false;
-                return false;
-            }
-            if(delNode->key != delEvent) continue;
-            if( !__sync_bool_compare_and_swap(&(leftNode->next), delNode, delNode->next) ) {
-                delNode->bIsMarked = false;
-                return false;
-            }
-            (void) __sync_bool_compare_and_swap(&cursor, delNode, leftNode);
-            (void) __sync_sub_and_fetch(&listSize, 1);
-            delete delNode;
-            return true;
-        }
-        return false;
+    bool erase( const Event *k ) {
+        if(!k) return false;
+        ListNode *h = new ListNode(k, REM);
+        enlist(h);
+        bool b = helpRemove(h, k);
+        h->state = INV;
+        (void) __sync_sub_and_fetch(&listSize, (b ? 1:0));
+        return b;
     }
 
-    /* Function for popping from front of list */
-    /* The node to be popped is marked (atomic). Return NULL if that node is the tail. 
-       Delete that node (atomic). If the popped node is curser, move curser to head (atomic). */
     const Event *pop_front() {
-        ListNode *popNode = NULL;
-
-        while(true) {
-            popNode = head->next;
-            if( !__sync_bool_compare_and_swap(&(popNode->bIsMarked), false, true) ) continue;
-            if(tail->bIsMarked) { // list empty. popNode is tail.
-                tail->bIsMarked = false;
-                return NULL;
-            }
-            if( !__sync_bool_compare_and_swap(&(head->next), popNode, popNode->next) ) {
-                popNode->bIsMarked = false;
-                continue;
-            }
-            (void) __sync_bool_compare_and_swap(&cursor, popNode, head);
-            (void) __sync_sub_and_fetch(&listSize, 1);
-            const Event *event = popNode->key;
-            delete popNode;
-            return event;
-        }
+        const Event *k = begin();
+        if( !erase(k) ) return NULL;
+        return k;
     }
 
-    /* Funtion to read the first available key */
     const Event *begin() {
-        return (head->next)->key;
+        ListNode *curr = head;
+        while( curr != NULL ) {
+            state_t s = curr->state;
+            if( s == DAT) break;
+            curr = curr->next;
+        }
+        return (curr ? curr->key : NULL );
     }
 
-    /* Function to check for empty list */
-    bool empty() { return( (!listSize) ? true : false ); }
+    bool empty() {
+        return( (listSize) ? false : true );
+    }
 
-    /* Function to check list size */
-    int size() { return listSize; }
+    int size() {
+        return listSize;
+    }
 
-    /* Function to clear the list */
-    /* Note: Function leaks memory */
     void clear() {
-        cursor = head;
-        head->next = tail;
+        head = NULL;
         listSize = 0;
     }
 
 private:
 
-    ListNode    *head;
-    ListNode    *tail;
-    ListNode    *cursor;
-    int         listSize;
+    ListNode *head;
+    int      listSize;
+
+    void enlist( ListNode *h ) {
+        ListNode *old = NULL;
+        while(true) {
+            old = head;
+            h->next = old;
+            if(__sync_bool_compare_and_swap(&head, old, h)) return;
+        }
+    }
+
+    bool helpInsert( ListNode *h, const Event *k ) {
+        ListNode *pred = h;
+        ListNode *curr = pred->next;
+
+        while( curr != NULL ) {
+            state_t s = curr->state;
+            if( s == INV ) {
+                ListNode *succ = curr->next;
+                pred->next = succ;
+                curr = succ;
+            } else if( curr->key != k ) {
+                pred = curr;
+                curr = curr->next;
+            } else if( s == REM ) {
+                return true;
+            } else if( (s == INS) || (s == DAT) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool helpRemove( ListNode *h, const Event *k ) {
+        ListNode *pred = h;
+        ListNode *curr = pred->next;
+
+        while( curr != NULL ) {
+            state_t s = curr->state;
+            if( s == INV ) {
+                ListNode *succ = curr->next;
+                pred->next = succ;
+                curr = succ;
+            } else if( curr->key != k ) {
+                pred = curr;
+                curr = curr->next;
+            } else if( s == REM ) {
+                return false;
+            } else if( s == INS ) {
+                if(__sync_bool_compare_and_swap( &(curr->state), INS, REM)) return true;
+            } else if( s == DAT ) {
+                curr->state = INV;
+                return true;
+            }
+        }
+        return false;
+    }
 
 };
 

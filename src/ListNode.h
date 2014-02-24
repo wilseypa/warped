@@ -4,19 +4,27 @@
 /* Include section */
 #include "Event.h"
 
+/* State of node */
+typedef enum state_e {
+    INS = 0,
+    REM,
+    DAT,
+    INV
+} state_t;
+
 /* Node of a lock-free list */
 class ListNode {
 
 public:
-    ListNode(): key(NULL), next(NULL), bIsMarked(false) {}
 
-    ListNode(const Event *keyVal): key(keyVal), next(NULL), bIsMarked(false) {}
+    ListNode(const Event *keyVal, state_t stateVal): 
+                key(keyVal), state(stateVal), next(NULL) {}
 
     ~ListNode() {}
 
     const Event *key;
+    state_t state;
     ListNode *next;
-    bool bIsMarked;
 };
 
 #endif /* ListNode_H_ */
