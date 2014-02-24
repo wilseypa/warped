@@ -1,4 +1,5 @@
 /* Unsorted lock-free singly-linked list */
+/* Please refer to Sec. 3 of "Practical Non-blocking Unordered Lists" by Zhang et al. */
 
 #ifndef LockFreeList_H_
 #define LockFreeList_H_
