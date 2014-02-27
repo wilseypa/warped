@@ -25,7 +25,7 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration& configuration,
 
     std::string antiMessages = configuration.get_string({"TimeWarp", "OutputManager", "AntiMessages"},
                                                         "Default");
-    std::string eventListType = configuration.get_string({"EventList", "Type"}, "Default");
+    std::string eventListType = configuration.get_string({"TimeWarp", "EventList", "Type"}, "Default");
     std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
 
     bool usingOneAntiMessageOpt = false;
@@ -34,7 +34,6 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration& configuration,
     }
 
     if (simulationType == "ThreadedTimeWarp") {
-        eventListType = configuration.get_string({"TimeWarp", "EventList", "Type"}, "Default");
         if (eventListType == "MultiSet") {
             ThreadedTimeWarpEventSet* retvalue = 0;
             retvalue = new ThreadedTimeWarpMultiSet(

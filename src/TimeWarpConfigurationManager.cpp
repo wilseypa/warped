@@ -49,7 +49,7 @@ void TimeWarpConfigurationManager::configure(
     }
 
     mySimulationManager->configure(configuration);
-    if (configuration.get_bool({"SpinBeforeSimulationStart"}, false)) {
+    if (configuration.get_bool({"ParallelDebug", "SpinBeforeSimulationStart"}, false)) {
         Spinner::spinForever();
     }
 }
