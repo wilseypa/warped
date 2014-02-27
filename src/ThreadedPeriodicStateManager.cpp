@@ -38,8 +38,8 @@ void ThreadedPeriodicStateManager::saveState(const VTime& currentTime,
             myStateQueue[simObjectID].end();
         /*cout << "Current Num = " << eventNumber << ":::::  Old Number = "
                 << rollbackEventNumber[simObjectID] << endl;*/
-        if (*(lastRollbackTime[simObjectID]) == currentTime && eventNumber
-                <= rollbackEventNumber[simObjectID]) {
+        if (lastRollbackTime[simObjectID] && *(lastRollbackTime[simObjectID]) == currentTime
+	    && eventNumber <= rollbackEventNumber[simObjectID]) {
             //      cout << " Need to update the Event Number in the state ::::"
             //              << eventNumber << endl;
             ThreadedStateManagerImplementationBase::getStateQueueLock(threadID,
