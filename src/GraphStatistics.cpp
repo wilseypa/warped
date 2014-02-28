@@ -97,16 +97,11 @@ void GraphStatistics::output_metis_file(std::ofstream& file) {
     file << "%% The first line contains the following information:\n"
          << "%% <# of vertices> <# of edges> <file format>\n"
          <<  numVertices << ' ' << numEdges << ' ' << "001 " << '\n'
+         << "%% Lines that start with %: are comments that are ignored by Metis,\n"
+         << "%% but list the WARPED node number of the Metis node described by \n"
+         << "%% the following line.\n"
          << "%% The remaining lines each describe a vertex and have the following format:\n"
-         << "%% <<neighbor>";
-    for (auto& stat : stats) {
-        file << " <" << stat << '>';
-    }
-    file << "> ...\n";
-
-    // Metis requires node numbering start at 1 instead of 0, so add one to
-    // all indices if node 0 exists
-    int offset = vertices.count(0);
+         << "%% <<neighbor> <" << *stats.begin() << "> ...";
 
     // Metis requires vertex numbering start at 1 and be contiguous, so we
     // have to remap the numbers in case there are vertexes with no stats etc.
@@ -120,7 +115,9 @@ void GraphStatistics::output_metis_file(std::ofstream& file) {
     int last_vertex = -1;
     for (auto edges_it : full_graph) {
         if (edges_it.first.first != last_vertex) {
-            if (last_vertex >= 0) { file << '\n'; }
+            // Print the original node numbder as a comment so WARPED can use
+            // the partition info.
+            file << "\n%: " << edges_it.first.first << '\n';
             last_vertex = edges_it.first.first;
         }
 
