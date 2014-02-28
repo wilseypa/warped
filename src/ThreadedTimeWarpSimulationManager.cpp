@@ -66,9 +66,11 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     numberOfRemoteAntimessages(0), numberOfNegativeEventMessage(0),
     numberOfLocalAntimessages(0),
     computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
-    rollbackCompleted(new bool[numberOfObjects]), inRecovery(false),
+    inRecovery(false),
     GVTTokenPending(false), TimeWarpSimulationManager(initApplication) {
 
+    numberOfObjects = 200;
+    rollbackCompleted = new bool[numberOfObjects];
     LVT = &getZero();
     LVTArray = new const VTime *[numberOfWorkerThreads + 1];
     sendMinTimeArray = new const VTime *[numberOfWorkerThreads + 1];
@@ -1228,12 +1230,12 @@ bool ThreadedTimeWarpSimulationManager::simulationComplete(
     bool retval = false;
     if (!usingOptFossilCollection) {
         if (myGVTManager->getGVT() >= simulateUntil) {
-            debug::debugout << "(" << mySimulationManagerID << " ) GVT = "
+	  std::cout << "(" << mySimulationManagerID << " ) GVT = "
                             << myGVTManager->getGVT() << ", >= " << simulateUntil
                             << endl;
             retval = true;
         } else if (myTerminationManager->terminateSimulation()) {
-            debug::debugout << "(" << mySimulationManagerID
+	  std::cout << "(" << mySimulationManagerID
                             << " ) Termination manager says we're complete." << endl;
             simulationCompleteFlag = true;
             retval = true;
