@@ -14,19 +14,19 @@ ProfileGuidedPartitioner::ProfileGuidedPartitioner() {}
 
 const PartitionInfo*
 ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
-                                    const unsigned int numLPs) const {
+                                    const unsigned int numPartitions) const {
 
-    PartitionInfo* partition_info = new PartitionInfo(numLPs);
+    PartitionInfo* partition_info = new PartitionInfo(numPartitions);
 
-    if (numLPs == 1) {
+    if (numPartitions == 1) {
         auto retvec = new vector<SimulationObject*>(*objects);
         partition_info->addPartition(0, retvec);
         return partition_info;
     }
 
-    vector< vector<SimulationObject*>* > partitions(numLPs);
+    vector< vector<SimulationObject*>* > partitions(numPartitions);
 
-    for (unsigned int i = 0; i < numLPs; i++) {
+    for (unsigned int i = 0; i < numPartitions; i++) {
         partitions[i] = new vector<SimulationObject*>;
     }
 
@@ -40,7 +40,7 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
     // idx_t is a METIS typedef
     idx_t nvtxs; // number of verticies
     idx_t ncon = 1; // number of constraints
-    idx_t nparts = numLPs; // number of partitions
+    idx_t nparts = numPartitions; // number of partitions
     std::vector<idx_t> xadj; // part of the edge list
     std::vector<idx_t> adjncy; // part of the edge list
     std::vector<idx_t> adjwgt; // edge weights
@@ -114,11 +114,11 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
 
     // Add any objects that metis didn't partition
     for (auto i : remaining_objects) {
-        partitions[i % numLPs]->push_back((*objects)[i]);
+        partitions[i % numPartitions]->push_back((*objects)[i]);
     }
 
     // Fill the PartitionInfo object
-    for (int i = 0; i < numLPs; i++) {
+    for (int i = 0; i < numPartitions; i++) {
         partition_info->addPartition(i, partitions[i]);
     }
 

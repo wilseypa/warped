@@ -9,7 +9,7 @@ public:
     RoundRobinPartitioner();
 
     const PartitionInfo* partition(const vector<SimulationObject*>* objects,
-                                   const unsigned int numLPs) const;
+                                   const unsigned int numPartitions) const;
 };
 
 #endif
