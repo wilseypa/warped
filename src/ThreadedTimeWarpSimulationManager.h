@@ -118,12 +118,6 @@ public:
         return scheduleQCount;
     }
 
-    /** Create a map of simulation objects.
-
-     @return An STL hash-map of the simulation objects.
-     */
-    typeSimMap* createMapOfObjects();
-
     /** Return a handle to the scheduling manager.
 
      @return A handle to the scheduling manager.

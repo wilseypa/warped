@@ -1150,46 +1150,8 @@ void ThreadedTimeWarpSimulationManager::configure(SimulationConfiguration& confi
         numberOfSimulationManagers - 1);
 }
 
-// this function constructs the map of simulation object names versus
-// simulation object pointers by interacting with the application.
-// It also performs random partitioning of objects.
-SimulationManagerImplementationBase::typeSimMap*
-ThreadedTimeWarpSimulationManager::createMapOfObjects() {
-    typeSimMap* retval = 0;
-
-    const PartitionInfo* partitionInfo = myPartitionManager->getPartitionInfo(
-                                             myApplication, numberOfSimulationManagers);
-
-    vector<SimulationObject*>* localObjects;
-
-    for (int n = 0; n < numberOfSimulationManagers; n++) {
-        if (n == getSimulationManagerID()) {
-            localObjects = partitionInfo->getPartition(n);
-        } else {
-            // Delete the remote objects, they will not be used on this sim manager.
-            vector<SimulationObject*>* remoteObjects =
-                partitionInfo->getPartition(n);
-            for (int d = 0; d < remoteObjects->size(); d++) {
-                delete(*remoteObjects)[d];
-            }
-        }
-    }
-
-    for (vector<SimulationObject*>::iterator i = localObjects->begin(); i
-            != localObjects->end(); i++) {
-        (*i)->setSimulationManager(this);
-    }
-    retval = partitionVectorToHashMap(localObjects);
-
-    setNumberOfObjects(retval->size());
-
-    delete partitionInfo;
-
-    return retval;
-}
 void ThreadedTimeWarpSimulationManager::getGVTTimePeriodLock(int threadId) {
-    while (!GVTTimePeriodLock->setLock(threadId))
-        ;
+    while (!GVTTimePeriodLock->setLock(threadId)) {}
     ASSERT(GVTTimePeriodLock->hasLock(threadId));
 }
 void ThreadedTimeWarpSimulationManager::releaseGVTTimePeriodLock(int threadId) {
@@ -1198,8 +1160,7 @@ void ThreadedTimeWarpSimulationManager::releaseGVTTimePeriodLock(int threadId) {
 }
 
 void ThreadedTimeWarpSimulationManager::getLVTFlagLock(unsigned int threadId) {
-    while (!LVTFlagLock->setLock(threadId))
-        ;
+    while (!LVTFlagLock->setLock(threadId)) {}
     ASSERT(LVTFlagLock->hasLock(threadId));
 }
 void ThreadedTimeWarpSimulationManager::releaseLVTFlagLock(
@@ -1593,7 +1554,7 @@ void ThreadedTimeWarpSimulationManager::clearMessageBuffer() {
     }
 }
 void ThreadedTimeWarpSimulationManager::getOfcFlagLock(int threadId, const string syncMech) {
-    ofcFlagLock->setLock(threadId,syncMech);
+    ofcFlagLock->setLock(threadId, syncMech);
     ASSERT(ofcFlagLock->hasLock(threadId, syncMech));
 }
 
