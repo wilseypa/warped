@@ -27,6 +27,7 @@ class StateManager;
 class TerminationManager;
 class TimeWarpSimulationStream;
 class TimeWarpEventSet;
+class PartitionManager;
 
 /** The TimeWarpSimulationManager class.
 
@@ -480,6 +481,9 @@ protected:
     /// handle to the clock frequency manager
     DVFSManager* myDVFSManager;
 
+    /// handle to the partition manager
+    PartitionManager* myPartitionManager;
+
     /// map of objects where each object can have several output file queues
     vector<vector<TimeWarpSimulationStream*> > outFileQueues;
 
@@ -550,10 +554,6 @@ protected:
     Application* myApplication;
 
     StopWatch myStopwatch;
-
-private:
-    /// The type of partitioner to use 
-    std::string partitionType;
 };
 
 #endif

@@ -33,6 +33,7 @@
 #include "DVFSManager.h"
 #include "DistributedDVFSManager.h"
 #include "DVFSManagerFactory.h"
+#include "PartitionManager.h"
 
 int WorkerInformation::globalStillBusyCount = 0;
 bool WorkerInformation::workRemaining = true;
@@ -67,8 +68,7 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     numberOfLocalAntimessages(0),
     computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
     rollbackCompleted(new bool[numberOfObjects]), inRecovery(false),
-    GVTTokenPending(false), TimeWarpSimulationManager(initApplication),
-    partitionType("") {
+    GVTTokenPending(false), TimeWarpSimulationManager(initApplication) {
 
     LVT = &getZero();
     LVTArray = new const VTime *[numberOfWorkerThreads + 1];
@@ -99,6 +99,7 @@ ThreadedTimeWarpSimulationManager::~ThreadedTimeWarpSimulationManager() {
     delete GVTTimePeriodLock;
     delete myrealFossilCollManager;
     delete ofcFlagLock;
+    delete myPartitionManager;
 }
 
 inline void ThreadedTimeWarpSimulationManager::sendMessage(KernelMessage* msg,
@@ -1019,8 +1020,7 @@ void ThreadedTimeWarpSimulationManager::initialize() {
 }
 
 void ThreadedTimeWarpSimulationManager::configure(SimulationConfiguration& configuration) {
-    partitionType = configuration.get_string({"TimeWarp", "Partitioner", "Type"},
-                                             "Default");
+    myPartitionManager = new PartitionManager(configuration);
 
     const CommunicationManagerFactory* myCommFactory =
         CommunicationManagerFactory::instance();
@@ -1157,19 +1157,18 @@ SimulationManagerImplementationBase::typeSimMap*
 ThreadedTimeWarpSimulationManager::createMapOfObjects() {
     typeSimMap* retval = 0;
 
-    std::vector<SimulationObject*>* simulationObjects = myApplication->getSimulationObjects();
-
-    const PartitionInfo* appPartitionInfo = getPartitionInfo(partitionType,
-                 myApplication, simulationObjects, numberOfSimulationManagers);
+    const PartitionInfo* partitionInfo = myPartitionManager->getPartitionInfo(
+                                             myApplication, numberOfSimulationManagers);
 
     vector<SimulationObject*>* localObjects;
+
     for (int n = 0; n < numberOfSimulationManagers; n++) {
         if (n == getSimulationManagerID()) {
-            localObjects = appPartitionInfo->getPartition(n);
+            localObjects = partitionInfo->getPartition(n);
         } else {
             // Delete the remote objects, they will not be used on this sim manager.
             vector<SimulationObject*>* remoteObjects =
-                appPartitionInfo->getPartition(n);
+                partitionInfo->getPartition(n);
             for (int d = 0; d < remoteObjects->size(); d++) {
                 delete(*remoteObjects)[d];
             }
@@ -1184,8 +1183,7 @@ ThreadedTimeWarpSimulationManager::createMapOfObjects() {
 
     setNumberOfObjects(retval->size());
 
-    delete appPartitionInfo;
-    delete simulationObjects;
+    delete partitionInfo;
 
     return retval;
 }

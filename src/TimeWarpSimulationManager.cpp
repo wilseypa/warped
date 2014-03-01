@@ -28,6 +28,7 @@
 #include "DVFSManagerFactory.h"
 #include "SimulationConfiguration.h"
 #include "WarpedDebug.h"
+#include "PartitionManager.h"
 #include <algorithm>
 #include <sstream>
 #include <time.h>
@@ -38,11 +39,11 @@ TimeWarpSimulationManager::TimeWarpSimulationManager(Application* initApplicatio
     mySimulationManagerID(0), simulationCompleteFlag(false),
     coastForwardTime(0), messageAggregation(false), myStateManager(0),
     myGVTManager(0), myCommunicationManager(0), mySchedulingManager(0),
-    myOutputManager(0), myEventSet(0), myDVFSManager(NULL),
+    myOutputManager(0), myEventSet(0), myDVFSManager(0),
     mySchedulingData(new SchedulingData()), myTerminationManager(0),
     myApplication(initApplication), myFossilCollManager(0),
     usingOneAntiMsg(false), usingOptFossilCollection(false),
-    inRecovery(false), numberOfRollbacks(0), partitionType("") {}
+    inRecovery(false), numberOfRollbacks(0), myPartitionManager(0) {}
 
 TimeWarpSimulationManager::~TimeWarpSimulationManager() {
     if (myOutputManager != NULL) {// to skip this part of destructor when using Threaded Timewarp
@@ -85,17 +86,18 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
 
     // This simulation manager is responsible for the deletion of all
     // its components.
-    if (myFossilCollManager) {delete myFossilCollManager;}
-    if (myTerminationManager) {delete myTerminationManager;}
-    if (mySchedulingData) {delete mySchedulingData;}
-    if (myEventSet) {delete myEventSet;}
-    if (myOutputManager) {delete myOutputManager;}
-    if (mySchedulingManager) {delete mySchedulingManager;}
-    if (myCommunicationManager) {delete myCommunicationManager;}
-    if (myGVTManager) {delete myGVTManager;}
-    if (myStateManager) {delete myStateManager;}
-    if (localArrayOfSimObjPtrs) {delete localArrayOfSimObjPtrs;}
-    if (myDVFSManager) {delete myDVFSManager;}
+    delete myFossilCollManager;
+    delete myTerminationManager;
+    delete mySchedulingData;
+    delete myEventSet;
+    delete myOutputManager;
+    delete mySchedulingManager;
+    delete myCommunicationManager;
+    delete myPartitionManager;
+    delete myGVTManager;
+    delete myStateManager;
+    delete localArrayOfSimObjPtrs;
+    delete myDVFSManager;
 }
 
 const VTime&
@@ -182,21 +184,18 @@ SimulationManagerImplementationBase::typeSimMap*
 TimeWarpSimulationManager::createMapOfObjects() {
     typeSimMap* retval = 0;
 
-    std::vector<SimulationObject*>* simulationObjects =
-        myApplication->getSimulationObjects();
-
-    const PartitionInfo* appPartitionInfo = getPartitionInfo(partitionType,
-                 myApplication, simulationObjects, numberOfSimulationManagers);
+    const PartitionInfo* partitionInfo = myPartitionManager->getPartitionInfo(
+                                             myApplication, numberOfSimulationManagers);
 
     vector<SimulationObject*>* localObjects;
 
     for (int n = 0; n < numberOfSimulationManagers; n++) {
         if (n == getSimulationManagerID()) {
-            localObjects = appPartitionInfo->getPartition(n);
+            localObjects = partitionInfo->getPartition(n);
         } else {
             // Delete the remote objects, they will not be used on this sim manager.
             vector<SimulationObject*>* remoteObjects =
-                appPartitionInfo->getPartition(n);
+                partitionInfo->getPartition(n);
             for (int d = 0; d < remoteObjects->size(); d++) {
                 delete(*remoteObjects)[d];
             }
@@ -211,8 +210,7 @@ TimeWarpSimulationManager::createMapOfObjects() {
 
     setNumberOfObjects(retval->size());
 
-    delete appPartitionInfo;
-    delete simulationObjects;
+    delete partitionInfo;
 
     return retval;
 }
@@ -1192,8 +1190,7 @@ void TimeWarpSimulationManager::displayGlobalObjectMap(std::ostream& out) {
 }
 
 void TimeWarpSimulationManager::configure(SimulationConfiguration& configuration) {
-    partitionType = configuration.get_string({"TimeWarp", "Partitioner", "Type"},
-                                             "Default");
+    myPartitionManager = new PartitionManager(configuration);
 
     const CommunicationManagerFactory* myCommFactory =
         CommunicationManagerFactory::instance();

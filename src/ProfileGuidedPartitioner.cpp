@@ -71,6 +71,9 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
             if (format != 1) {
                 throw std::runtime_error("Graph format must be 001.");
             }
+            if (nvtxs > objects->size()) {
+                throw std::runtime_error("Invalid statistics file for this simulation.");
+            }
         } else {
             int vertex, weight;
             while (iss >> vertex >> weight) {

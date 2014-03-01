@@ -1,6 +1,5 @@
-#ifndef THREADEThreadedIMEWARPSIMULATIONMANAGER_H_
-#define THREADEThreadedIMEWARPSIMULATIONMANAGER_H_
-
+#ifndef THREADED_TIME_WARP_SIMULATION_MANAGER_H
+#define THREADED_TIME_WARP_SIMULATION_MANAGER_H
 
 #include "TimeWarpSimulationManager.h"
 #include "LockedQueue.h"
@@ -12,7 +11,6 @@
 #include "ThreadedTimeWarpLoadBalancer.h"
 
 class Application;
-//class ThreadedSchedulingManager;
 class SimulationObject;
 class LocalKernelMessage;
 class VTime;
@@ -478,9 +476,6 @@ private:
     
     /// used to lock optimistic fossil collection recovery flags. 
     LockState* ofcFlagLock;
-
-    /// The type of partitioner to use 
-    std::string partitionType;
 };
 
-#endif /* ThreadedTIMEWARPSIMULATIONMANAGER_H_ */
+#endif // THREADED_TIME_WARP_SIMULATION_MANAGER_H

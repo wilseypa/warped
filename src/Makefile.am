@@ -121,6 +121,7 @@ WARPED_H_FILES = \
 	OutputManagerImplementationBase.h \
 	Partitioner.h \
 	PartitionInfo.h \
+	PartitionManager.h \
 	PeriodicStateManager.h \
 	ProfileGuidedPartitioner.h \
 	ReceiverQueueContainer.h \
@@ -274,6 +275,7 @@ libwarped_la_SOURCES = \
 	OutputManagerImplementationBase.cpp \
 	Partitioner.cpp \
 	PartitionInfo.cpp \
+	PartitionManager.cpp \
 	PeriodicStateManager.cpp \
 	ProfileGuidedPartitioner.cpp \
 	RestoreCkptMessage.cpp \

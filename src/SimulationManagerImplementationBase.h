@@ -1,15 +1,12 @@
 #ifndef SIMULATION_MANAGER_IMPLEMENTATION_BASE_H
 #define SIMULATION_MANAGER_IMPLEMENTATION_BASE_H
 
-
+#include "SimulationManager.h"
 #include "warped.h"
 #include <fstream>
 #include <unordered_map>
-#include "SimulationManager.h"
 
 class SimulationObject;
-class PartitionInfo;
-class Application;
 
 /** The base class that implements a SimulationManager.
 
@@ -78,7 +75,6 @@ protected:
         required for initialization (examples of what might occur during
         initialization might include opening files, or setting up a
         distributed simulation).
-
     */
     void initializeObjects();
 
@@ -87,7 +83,6 @@ protected:
     This allows the Simulation Manager to ``clean up'', performing
     actions such as closing files, collecting statistics, and producing
     output.
-
     */
     void finalizeObjects();
 
@@ -124,21 +119,12 @@ protected:
     }
 
     typeSimMap* localArrayOfSimObjPtrs;
+
     /// Mapping between simulation object ids to names
     vector<SimulationObject*> localArrayOfSimObjIDs;
 
-
-
-    /**
-       Turns a vector<SimulationObject *> into a map<string, SimulationObject *>.
-    */
+    /// Turns a vector<SimulationObject *> into a map<string, SimulationObject *>.
     typeSimMap* partitionVectorToHashMap(vector<SimulationObject*>* vector);
-
-    /// Partitions a vector of simualtion objects based on a configuration value
-    const PartitionInfo* getPartitionInfo(string partitionType,
-                                          Application* application,
-                                          const vector<SimulationObject*>* objects,
-                                          unsigned int numPartitions);
 };
 
 #endif
