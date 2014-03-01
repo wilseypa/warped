@@ -9,8 +9,8 @@ Edge make_edge(int a, int b) {
 }
 } // namespace
 
-void GraphStatistics::update_edge_stat(int a, int b, const std::string& stat, int x)  {
-    edge_stats[make_edge(a, b)][stat] += x;
+void GraphStatistics::update_edge_stat(int a, int b, const std::string& stat, int value)  {
+    edge_stats[make_edge(a, b)][stat] += value;
 }
 
 int GraphStatistics::get_edge_stat(int a, int b, const std::string& stat) {

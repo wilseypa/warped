@@ -8,7 +8,7 @@ typedef std::pair<int, int> Edge;
 
 class GraphStatistics {
 public:
-    void update_edge_stat(int a, int b, const std::string& stat, int x = 1);
+    void update_edge_stat(int a, int b, const std::string& stat, int value = 1);
     int get_edge_stat(int a, int b, const std::string& stat);
 
     /**
