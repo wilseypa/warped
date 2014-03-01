@@ -1,22 +1,21 @@
-
 #include "PartitionInfo.h"
-#include "DefaultPartitioner.h"
+#include "GreedyPartitioner.h"
 #include "warped.h"
 
-DefaultPartitioner::DefaultPartitioner() {}
+GreedyPartitioner::GreedyPartitioner() {}
 
 const PartitionInfo*
-DefaultPartitioner::partition(const vector<SimulationObject*>* objects,
-                              const unsigned int numLPs) const {
+GreedyPartitioner::partition(const vector<SimulationObject*>* objects,
+                              const unsigned int numPartitions) const {
 
-    PartitionInfo* myPartitionInfo = new PartitionInfo(numLPs);
+    PartitionInfo* myPartitionInfo = new PartitionInfo(numPartitions);
 
     unsigned int numLeft = objects->size();
-    unsigned int numObjectsPerProcessor = objects->size() / numLPs;
-    unsigned int objectsRemaining = objects->size() % numLPs;
+    unsigned int numObjectsPerProcessor = objects->size() / numPartitions;
+    unsigned int objectsRemaining = objects->size() % numPartitions;
     unsigned int numObjectsThisProcessor;
-    for (unsigned int lpNum = 0; lpNum < numLPs; lpNum++) {
-        if (lpNum < objectsRemaining) {
+    for (unsigned int objectNum = 0; objectNum < numPartitions; objectNum++) {
+        if (objectNum < objectsRemaining) {
             numObjectsThisProcessor = numObjectsPerProcessor + 1;
         } else {
             numObjectsThisProcessor = numObjectsPerProcessor;
@@ -27,7 +26,7 @@ DefaultPartitioner::partition(const vector<SimulationObject*>* objects,
             partition->push_back((*objects)[numLeft-1]);
             numLeft--;
         }
-        myPartitionInfo->addPartition(lpNum, partition);
+        myPartitionInfo->addPartition(objectNum, partition);
     }
     ASSERT(numLeft == 0);
 

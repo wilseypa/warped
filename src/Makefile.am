@@ -56,7 +56,6 @@ WARPED_H_FILES = \
 	DefaultCommunicationManager.h \
 	DefaultEvent.h \
 	DefaultObjectID.h \
-	DefaultPartitioner.h \
 	DefaultPhysicalCommunicationLayer.h \
 	DefaultSchedulingManager.h \
 	DefaultTimeWarpEventContainer.h \
@@ -82,6 +81,7 @@ WARPED_H_FILES = \
 	FileQueue.h \
 	FlatState.h \
 	GraphStatistics.h \
+	GreedyPartitioner.h \
 	GVTManager.h \
 	GVTManagerFactory.h \
 	GVTManagerImplementationBase.h \
@@ -232,7 +232,6 @@ libwarped_la_SOURCES = \
 	CostAdaptiveStateManager.cpp \
 	DefaultCommunicationManager.cpp \
 	DefaultEvent.cpp \
-	DefaultPartitioner.cpp \
 	DefaultPhysicalCommunicationLayer.cpp \
 	DefaultSchedulingManager.cpp \
 	DefaultTimeWarpEventContainer.cpp \
@@ -252,6 +251,7 @@ libwarped_la_SOURCES = \
 	FileQueue.cpp \
 	FlatState.cpp \
 	GraphStatistics.cpp \
+	GreedyPartitioner.cpp \
 	GVTManagerFactory.cpp \
 	GVTManagerImplementationBase.cpp \
 	GVTUpdateMessage.cpp \

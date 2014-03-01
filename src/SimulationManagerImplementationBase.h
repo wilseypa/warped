@@ -138,7 +138,7 @@ protected:
     const PartitionInfo* getPartitionInfo(string partitionType,
                                           Application* application,
                                           const vector<SimulationObject*>* objects,
-                                          unsigned int numLPs);
+                                          unsigned int numPartitions);
 };
 
 #endif

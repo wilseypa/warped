@@ -3,6 +3,7 @@
 #include "PartitionInfo.h"
 #include "SimulationObject.h"
 #include "RoundRobinPartitioner.h"
+#include "GreedyPartitioner.h"
 #include "ProfileGuidedPartitioner.h"
 #include <functional>
 #include <algorithm>
@@ -115,11 +116,13 @@ const PartitionInfo*
 SimulationManagerImplementationBase::getPartitionInfo(string partitionType,
                                                       Application* application,
                                                       const vector<SimulationObject*>* objects,
-                                                      unsigned int numLPs) {
+                                                      unsigned int numPartitions) {
     if (partitionType == "RoundRobin") {
-        return RoundRobinPartitioner().partition(objects, numLPs);
+        return RoundRobinPartitioner().partition(objects, numPartitions);
+    } else if (partitionType == "Greedy") {
+        return GreedyPartitioner().partition(objects, numPartitions);
     } else if (partitionType == "ProfileGuided") {
-        return ProfileGuidedPartitioner().partition(objects, numLPs);
+        return ProfileGuidedPartitioner().partition(objects, numPartitions);
     } else {
         return application->getPartitionInfo(numberOfSimulationManagers, objects);
     }
