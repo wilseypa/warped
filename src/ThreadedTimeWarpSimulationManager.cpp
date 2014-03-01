@@ -1165,11 +1165,11 @@ ThreadedTimeWarpSimulationManager::createMapOfObjects() {
     vector<SimulationObject*>* localObjects;
     for (int n = 0; n < numberOfSimulationManagers; n++) {
         if (n == getSimulationManagerID()) {
-            localObjects = appPartitionInfo->getObjectSet(n);
+            localObjects = appPartitionInfo->getPartition(n);
         } else {
             // Delete the remote objects, they will not be used on this sim manager.
             vector<SimulationObject*>* remoteObjects =
-                appPartitionInfo->getObjectSet(n);
+                appPartitionInfo->getPartition(n);
             for (int d = 0; d < remoteObjects->size(); d++) {
                 delete(*remoteObjects)[d];
             }
