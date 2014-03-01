@@ -20,9 +20,7 @@ PartitionInfo::getPartition(unsigned int partitionNumber) const {
 }
 
 void
-PartitionInfo::addPartition(unsigned int partitionNumber,
-                            vector<SimulationObject*>* toAdd) {
-    myPartitions.reserve(partitionNumber + 1);
-    myPartitions.insert(myPartitions.begin() + partitionNumber, toAdd);
+PartitionInfo::addPartition(vector<SimulationObject*>* partition) {
+    myPartitions.push_back(partition);
 }
 

@@ -36,9 +36,7 @@ public:
        Add a partition of SimulationObjects. Every SimulationObject in the
        simulation must be included in exactly one partition.
     */
-    void addPartition(unsigned int partitionNumber,
-                      vector<SimulationObject*>* toAdd);
-
+    void addPartition(vector<SimulationObject*>* partition);
 
 private:
     unsigned int myNumberOfPartitions;

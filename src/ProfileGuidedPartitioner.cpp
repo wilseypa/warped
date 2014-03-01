@@ -20,7 +20,7 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
 
     if (numPartitions == 1) {
         auto retvec = new vector<SimulationObject*>(*objects);
-        partition_info->addPartition(0, retvec);
+        partition_info->addPartition(retvec);
         return partition_info;
     }
 
@@ -119,7 +119,7 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
 
     // Fill the PartitionInfo object
     for (int i = 0; i < numPartitions; i++) {
-        partition_info->addPartition(i, partitions[i]);
+        partition_info->addPartition(partitions[i]);
     }
 
     return partition_info;

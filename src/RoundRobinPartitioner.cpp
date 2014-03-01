@@ -25,7 +25,7 @@ RoundRobinPartitioner::partition(const vector<SimulationObject*>* objects,
     }
 
     for (unsigned int i = 0; i < numPartitions; i++) {
-        myPartitionInfo->addPartition(i, partitions[i]);
+        myPartitionInfo->addPartition(partitions[i]);
     }
 
     return myPartitionInfo;

@@ -6,7 +6,7 @@ GreedyPartitioner::GreedyPartitioner() {}
 
 const PartitionInfo*
 GreedyPartitioner::partition(const vector<SimulationObject*>* objects,
-                              const unsigned int numPartitions) const {
+                             const unsigned int numPartitions) const {
 
     PartitionInfo* myPartitionInfo = new PartitionInfo(numPartitions);
 
@@ -23,10 +23,10 @@ GreedyPartitioner::partition(const vector<SimulationObject*>* objects,
 
         vector <SimulationObject*>* partition = new vector <SimulationObject*>;
         for (unsigned int j = 0; j < numObjectsThisProcessor; j++) {
-            partition->push_back((*objects)[numLeft-1]);
+            partition->push_back((*objects)[numLeft - 1]);
             numLeft--;
         }
-        myPartitionInfo->addPartition(objectNum, partition);
+        myPartitionInfo->addPartition(partition);
     }
     ASSERT(numLeft == 0);
 
