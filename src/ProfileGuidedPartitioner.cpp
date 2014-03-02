@@ -35,7 +35,7 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
     // This is necessary since there may be objects that didn't have any
     // statistics, and so won't be partitioned by Metis. Metis files start
     // counting at 1, so indexes[0] is unused.
-    std::vector<int> indexes(objects->size() + 1);
+    std::vector<int> indexes(objects->size());
 
     // METIS parameters
     // idx_t is a METIS typedef
@@ -60,7 +60,7 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
             if (line[1] != ':') { continue; }
             int x = std::stoi(line.substr(2));
 
-            indexes[i] = x;
+            indexes[i-1] = x;
             continue;
         }
 
@@ -110,7 +110,7 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
     }
 
     // Add the metis output to partitons
-    for (int i = 1; i < nvtxs + 1; i++) {
+    for (int i = 0; i < nvtxs; i++) {
         remaining_objects.erase(indexes[i]);
         partitions[part[i]]->push_back((*objects)[indexes[i]]);
     }
