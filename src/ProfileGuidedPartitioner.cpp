@@ -7,10 +7,11 @@
 #include <set>
 #include <string>
 #include <sstream>
-#include <fstream>
+#include <iostream>
 #include <stdexcept>
 
-ProfileGuidedPartitioner::ProfileGuidedPartitioner() {}
+ProfileGuidedPartitioner::ProfileGuidedPartitioner(std::istream& input)
+    : input(input) {}
 
 const PartitionInfo*
 ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
@@ -47,14 +48,13 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
     idx_t edgecut; // output var for the final communication volume
     std::vector<idx_t> part(objects->size()); // output var for partition list
 
-    std::ifstream infile("statistics.metis");
-    if (!infile) {
-        throw std::runtime_error("Could not open file.");
+    if (!input) {
+        throw std::runtime_error("Could not read file.");
     }
 
     xadj.push_back(0);
     int i = 0;
-    for (std::string line; std::getline(infile, line);) {
+    for (std::string line; std::getline(input, line);) {
         if (line[0] == '%') {
             // Skip comment lines unless they are a map comment
             if (line[1] != ':') { continue; }

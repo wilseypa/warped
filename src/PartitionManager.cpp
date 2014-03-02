@@ -5,7 +5,9 @@
 #include "RoundRobinPartitioner.h"
 #include "GreedyPartitioner.h"
 #include "ProfileGuidedPartitioner.h"
+
 #include <vector>
+#include <fstream>
 
 class PartitionInfo;
 
@@ -27,7 +29,14 @@ const PartitionInfo* PartitionManager::getPartitionInfo(Application* application
     } else if (partitionType == "Greedy") {
         retval = GreedyPartitioner().partition(objects, numPartitions);
     } else if (partitionType == "ProfileGuided") {
-        retval = ProfileGuidedPartitioner().partition(objects, numPartitions);
+        std::ifstream input(statisticsFile);
+        try {
+            retval = ProfileGuidedPartitioner(input).partition(objects, numPartitions);
+        } catch (...) {
+            input.close();
+            throw;
+        }
+        input.close();
     } else {
         retval = application->getPartitionInfo(numPartitions, objects);
     }
