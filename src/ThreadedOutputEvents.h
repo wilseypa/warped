@@ -8,7 +8,6 @@
 #include <vector>                       // for vector, vector<>::iterator
 
 #include "LockState.h"
-#include "SerializedInstance.h"         // for vector
 #include "SetObject.h"
 #include "ThreadedOutputManager.h"      // for ofstream
 #include "ThreadedTimeWarpMultiSetLTSF.h"  // for list

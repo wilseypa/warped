@@ -5,8 +5,6 @@
 #include <string>                       // for string
 #include <vector>                       // for vector
 
-#include "Configurable.h"               // for vector
-
 using std::vector;
 using std::string;
 

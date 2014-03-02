@@ -7,7 +7,6 @@
 #include <string>                       // for string
 #include <vector>                       // for vector
 
-#include "Configurable.h"               // for vector
 #include "DefaultObjectID.h"            // for OBJECT_ID
 #include "TimeWarpEventSet.h"           // for TimeWarpEventSet
 #include "warped.h"

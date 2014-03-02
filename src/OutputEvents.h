@@ -7,7 +7,6 @@
 #include <list>                         // for list
 #include <vector>                       // for vector, vector<>::iterator
 
-#include "SerializedInstance.h"         // for vector
 #include "SetObject.h"
 #include "TimeWarpSimulationManager.h"
 #include "warped.h"

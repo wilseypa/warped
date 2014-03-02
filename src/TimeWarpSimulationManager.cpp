@@ -5,6 +5,7 @@
 #include <map>                          // for allocator
 #include <set>                          // for set
 #include <sstream>
+#include <string>
 
 #include "AdaptiveOutputManager.h"      // for DynamicOutputManager
 #include "Application.h"                // for Application
@@ -114,7 +115,6 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
     delete myOutputManager;
     delete mySchedulingManager;
     delete myCommunicationManager;
-    delete myPartitionManager;
     delete myGVTManager;
     delete myStateManager;
     delete localArrayOfSimObjPtrs;
@@ -161,7 +161,7 @@ void TimeWarpSimulationManager::registerSimulationObjects() {
     globalArrayOfSimObjIDs[mySimulationManagerID].resize(numberOfObjects);
 
     //Obtains all the keys from localArrayOfSimObjPtrs
-    vector < string >* keys = getKeyVector(localArrayOfSimObjPtrs);
+    vector<std::string>* keys = getKeyVector(localArrayOfSimObjPtrs);
     //Obtains all the objects from localArrayOfSimObjPtrs
     vector<SimulationObject*>* objects = getElementVector(
                                              localArrayOfSimObjPtrs);
@@ -239,10 +239,10 @@ TimeWarpSimulationManager::createMapOfObjects() {
 // this function is used by the communication manager to send out the
 // names of objects on this simulation manager in the form of an init
 // message during the start-up of a distributed simulation.
-vector<string>*
+vector<std::string>*
 TimeWarpSimulationManager::getSimulationObjectNames() {
     //Obtains all the keys from localArrayOfSimObjPtrs
-    vector < string >* keys = getKeyVector(localArrayOfSimObjPtrs);
+    vector < std::string >* keys = getKeyVector(localArrayOfSimObjPtrs);
     return keys;
 }
 
@@ -252,7 +252,7 @@ TimeWarpSimulationManager::getSimulationObjectNames() {
 // manager)
 
 void TimeWarpSimulationManager::registerSimulationObjectProxies(
-    const vector<string>* arrayOfObjectProxies,
+    const vector<std::string>* arrayOfObjectProxies,
     unsigned int sourceSimulationManagerID,
     unsigned int destSimulationManagerID) {
     // allocate space of the second dimension of this 2-D array.
@@ -261,7 +261,7 @@ void TimeWarpSimulationManager::registerSimulationObjectProxies(
 
     unsigned int count = 0;
     // iterate through the vector ...
-    for (vector<string>::const_iterator iter = (*arrayOfObjectProxies).begin(); iter
+    for (vector<std::string>::const_iterator iter = (*arrayOfObjectProxies).begin(); iter
             < (*arrayOfObjectProxies).end(); iter++) {
         // create and store in the map
         OBJECT_ID* id = new OBJECT_ID(count, destSimulationManagerID);
@@ -596,7 +596,7 @@ void TimeWarpSimulationManager::handleRemoteEvent(const Event* event) {
 
         unsigned int destSimMgrId = proxyObj->getDestId();
 
-        const string gVTInfo = myGVTManager->getGVTInfo(
+        const std::string gVTInfo = myGVTManager->getGVTInfo(
                                    getSimulationManagerID(), destSimMgrId, event->getSendTime());
 
         KernelMessage* msg = new EventMessage(getSimulationManagerID(),
@@ -673,7 +673,7 @@ void TimeWarpSimulationManager::cancelRemoteEvents(const vector <
                 cur++;
                 s++;
             }
-            const string gVTInfo = myGVTManager->getGVTInfo(
+            const std::string gVTInfo = myGVTManager->getGVTInfo(
                                        getSimulationManagerID(), destId, *min);
 
             vector<const NegativeEvent*> partToCancel(start, cur);
@@ -689,7 +689,7 @@ void TimeWarpSimulationManager::cancelRemoteEvents(const vector <
             }
             cur++;
         }
-        const string gVTInfo = myGVTManager->getGVTInfo(
+        const std::string gVTInfo = myGVTManager->getGVTInfo(
                                    getSimulationManagerID(), destId, *min);
         NegativeEventMessage* newMessage = new NegativeEventMessage(
             getSimulationManagerID(), destId, eventsToCancel, gVTInfo);
@@ -1162,7 +1162,7 @@ void TimeWarpSimulationManager::finalize() {
 }
 
 SimulationStream*
-TimeWarpSimulationManager::getIFStream(const string& fileName,
+TimeWarpSimulationManager::getIFStream(const std::string& fileName,
                                        SimulationObject* object) {
     TimeWarpSimulationStream* simStream = new TimeWarpSimulationStream(
         fileName, ios::in, object);
@@ -1173,7 +1173,7 @@ TimeWarpSimulationManager::getIFStream(const string& fileName,
 }
 
 SimulationStream*
-TimeWarpSimulationManager::getOFStream(const string& fileName,
+TimeWarpSimulationManager::getOFStream(const std::string& fileName,
                                        SimulationObject* object, ios::openmode mode) {
     TimeWarpSimulationStream* simStream = new TimeWarpSimulationStream(
         fileName, mode, object);
@@ -1184,7 +1184,7 @@ TimeWarpSimulationManager::getOFStream(const string& fileName,
 }
 
 SimulationStream*
-TimeWarpSimulationManager::getIOFStream(const string& fileName,
+TimeWarpSimulationManager::getIOFStream(const std::string& fileName,
                                         SimulationObject* object) {
     // this function is currently not implemented fully as I dont
     // see the utility of this function -- ramanan [05/12/00]
@@ -1196,7 +1196,7 @@ TimeWarpSimulationManager::getIOFStream(const string& fileName,
 // print out the name to simulation object ptr map
 void TimeWarpSimulationManager::displayGlobalObjectMap(std::ostream& out) {
     if (!globalArrayOfSimObjPtrs.empty()) {
-        vector < string >* keys = getKeyVector(localArrayOfSimObjPtrs);
+        vector < std::string >* keys = getKeyVector(localArrayOfSimObjPtrs);
         vector<SimulationObject*>* objects = getElementVector(
                                                  localArrayOfSimObjPtrs);
 
@@ -1325,7 +1325,7 @@ void TimeWarpSimulationManager::configure(SimulationConfiguration& configuration
     }
 }
 
-bool TimeWarpSimulationManager::contains(const string& object) const {
+bool TimeWarpSimulationManager::contains(const std::string& object) const {
     SimulationObject* simObject = getObjectHandle(object);
     if (simObject->getObjectID()->getSimulationManagerID()
             == mySimulationManagerID) {
@@ -1349,7 +1349,7 @@ TimeWarpSimulationManager::getZero() const {
     return myApplication->getZero();
 }
 
-void TimeWarpSimulationManager::shutdown(const string& errorMessage) {
+void TimeWarpSimulationManager::shutdown(const std::string& errorMessage) {
     // We SHOULD send out a message and shut things down nicely - for the moment we're
     // essentially going to crash.
     cerr << errorMessage << endl;
