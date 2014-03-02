@@ -1,12 +1,23 @@
 #ifndef TIME_WARP_SENDER_QUEUE_H
 #define TIME_WARP_SENDER_QUEUE_H
 
-#include <unordered_map>
+#include <functional>                   // for equal_to, binary_function
+#include <list>                         // for list
+#include <unordered_map>                // for unordered_map
+#include <vector>                       // for vector
 
-#include "warped.h"
-#include "TimeWarpCentralizedEventSet.h"
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "Event.h"                      // for Event
 #include "InputSetObject.h"
+#include "ObjectID.h"                   // for hashObjectID, ObjectID
 #include "SenderQueueContainer.h"
+#include "TimeWarpCentralizedEventSet.h"
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for findMode
+
+class ScheduleListContainer;
+class SenderQueueContainer;
+class SimulationConfiguration;
 
 
 using std::equal_to;

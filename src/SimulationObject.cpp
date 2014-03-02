@@ -1,10 +1,13 @@
 
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for operator<<, cerr, ostream, etc
+
+#include "Event.h"                      // for Event
+#include "ObjectID.h"                   // for ObjectID
+#include "SetObject.h"                  // for ostream
+#include "SimulationManager.h"          // for SimulationManager
 #include "SimulationObject.h"
-#include "SimulationManager.h"
-#include "SimulationManagerImplementationBase.h"
-#include "TimeWarpSimulationManager.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "Event.h"
+#include "VTime.h"                      // for VTime
 
 using std::ios;
 using std::cerr;

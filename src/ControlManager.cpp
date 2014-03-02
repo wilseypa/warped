@@ -1,9 +1,19 @@
 
+#include <stdlib.h>                     // for abort, NULL
+#include <fstream>                      // for operator<<, basic_ostream, etc
+#include <iostream>                     // for cerr, cout
+#include <utility>                      // for pair, make_pair
+
+#include "CommunicationManager.h"       // for CommunicationManager
 #include "ControlManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "SimulationConfiguration.h"
-#include "CommunicationManager.h"
-#include <fstream>
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "warped.h"                     // for ASSERT
+
+class Actuator;
+class KernelMessage;
+class Sensor;
+class SimulationConfiguration;
+
 using std::ofstream;
 using std::cout;
 using std::cerr;

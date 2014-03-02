@@ -1,21 +1,30 @@
 #ifndef THREADEThreadedTIMEWARPMULTISETLTSF_H_
 #define THREADEThreadedTIMEWARPMULTISETLTSF_H_
 
-// Copy and pasted from ThreadedTimeWarpMultiSet.h - clean out
-#include <set>
-#include <list>
-#include "ThreadedTimeWarpEventSet.h"
+#include <list>                         // for list
+#include <set>                          // for multiset, etc
+#include <string>                       // for string
+#include <vector>                       // for vector
+
 #include "AtomicState.h"
+#include "EventFunctors.h"
+#include "LadderQRelaxed.h"
+#include "LadderQStrict.h"
 #include "LockState.h"
 #include "NegativeEvent.h"
-#include "EventFunctors.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "LadderQStrict.h"
-#include "LadderQRelaxed.h"
 #include "SplayTree.h"
+#include "ThreadedTimeWarpEventSet.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+
+class LadderQueueRelaxed;
+class LadderQueueStrict;
+class LockState;
+class SplayTree;
+class VTime;
 
 using std::multiset;
 using std::list;
+using std::string;
 
 class Event;
 class NegativeEvent;

@@ -1,20 +1,41 @@
 
-#include "ThreadedOptFossilCollManager.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "SimulationObject.h"
-#include "OutputManager.h"
-#include "StateManager.h"
-#include "RestoreCkptMessage.h"
-#include "CommunicationManager.h"
-#include "EventFunctors.h"
-#include "TerminationManager.h"
-#include "IntVTime.h"
-#include <stdio.h>
-#include <sys/stat.h>
-#include <pwd.h>
+#include <dirent.h>                     // for dirent, closedir, opendir, etc
+#include <pthread.h>                    // for pthread_getspecific
+#include <pwd.h>                        // for getpwuid, passwd
+#include <stdio.h>                      // for NULL, remove, printf, EOF
+#include <stdlib.h>                     // for abort
+#include <sys/stat.h>                   // for mkdir, stat
+#include <unistd.h>                     // for rmdir, getuid
+#include <algorithm>                    // for sort
+#include <fstream>                      // for operator<<, basic_ostream, etc
+#include <iostream>                     // for cerr, cout
 #include <sstream>
-#include <fstream>
-#include <unistd.h>
+#include <utility>                      // for pair
+
+#include "CommunicationManager.h"       // for CommunicationManager
+#include "Event.h"                      // for Event
+#include "EventFunctors.h"
+#include "KernelMessage.h"              // for KernelMessage
+#include "LockState.h"                  // for LockState
+#include "OutputManager.h"              // for ofstream
+#include "RestoreCkptMessage.h"         // for RestoreCkptMessage, etc
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "SetObject.h"                  // for ostream
+#include "SimulationObject.h"           // for SimulationObject
+#include "State.h"                      // for State
+#include "TerminationManager.h"         // for TerminationManager
+#include "ThreadedOptFossilCollManager.h"
+#include "ThreadedOutputManager.h"      // for ThreadedOutputManager
+#include "ThreadedStateManager.h"       // for ThreadedStateManager
+#include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
+#include "WorkerInformation.h"          // for WorkerInformation
+#include "warped.h"                     // for ASSERT
+
+class SimulationConfiguration;
+
 using namespace std;
 
 const char delimiter = '_';

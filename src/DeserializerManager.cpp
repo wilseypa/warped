@@ -1,4 +1,7 @@
 
+#include <stddef.h>                     // for NULL
+#include <utility>                      // for pair, make_pair
+
 #include "DeserializerManager.h"
 
 void

@@ -2,19 +2,29 @@
 #define DEFAULT_TIME_WARP_EVENT_SET_H
 
 
-#include "warped.h"
-#include "TimeWarpEventSet.h"
+#include <deque>                        // for deque
+#include <iosfwd>                       // for ostream
+#include <string>                       // for string
+#include <vector>                       // for vector
 
-#include <deque>
+#include "Configurable.h"               // for vector
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "TimeWarpEventSet.h"           // for TimeWarpEventSet
+#include "warped.h"
+
+class Event;
+class NegativeEvent;
+class VTime;
+
 using std::deque;
-#include <vector>
+using std::string;
 using std::vector;
 
+class DefaultTimeWarpEventContainer;
+class SimulationConfiguration;
 class SimulationObject;
 class TimeWarpEventSetFactory;
-class SimulationConfiguration;
 class TimeWarpSimulationManager;
-class DefaultTimeWarpEventContainer;
 
 /** The default implementation of TimeWarpEventSet.  This implementation
     works in the following manner.  Events are kept in two groups,

@@ -1,11 +1,18 @@
 
+#include <stddef.h>                     // for NULL
+#include <algorithm>                    // for find
+
+#include "Event.h"                      // for Event
+#include "EventId.h"                    // for EventId
+#include "ObjectID.h"                   // for ObjectID
+#include "OptFossilCollManager.h"       // for OptFossilCollManager
 #include "OutputEvents.h"
-#include "EventFunctors.h"
-#include "Serializable.h"
-#include "SerializedInstance.h"
-#include "SetObject.h"
-#include "OptFossilCollManager.h"
-#include <algorithm>
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "SetObject.h"                  // for SetObject, ostream
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
 
 OutputEvents::OutputEvents(TimeWarpSimulationManager* simMgr):
     mySimulationManager(simMgr) {

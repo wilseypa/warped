@@ -96,7 +96,7 @@ eclmplUnreliableNetworkMessage::deserialize(char* msg, const int&) {
 
 std::ostream&
 operator<< (std::ostream& os, const eclmplUnreliableNetworkMessage& msg) {
-    string type;
+    std::string type;
     switch (msg.hdr.type) {
     case UNDEFINED:
         type = "UNDEFINED";

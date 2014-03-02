@@ -2,11 +2,20 @@
 #define SPLAY_TREE_H
 
 
-#include "warped.h"
+#include <stddef.h>                     // for NULL
+#include <string>                       // for string
+
+#include "Event.h"                      // for Event
+#include "EventSet.h"                   // for EventSet
+#include "ObjectID.h"                   // for ObjectID
+#include "StackOfPtr.h"                 // for StackOfPtr
 #include "TreeElement.h"
-#include "StackOfPtr.h"
-#include "EventSet.h"
-#include "Event.h"
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
+using std::string;
+
+class SimulationConfiguration;
+class TreeElement;
 
 /** The SplayTree class.
 

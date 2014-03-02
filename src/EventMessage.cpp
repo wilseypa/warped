@@ -1,7 +1,8 @@
 
+#include "DeserializerManager.h"        // for DeserializerManager
+#include "Event.h"                      // for Event
 #include "EventMessage.h"
-#include "Event.h"
-#include "DeserializerManager.h"
+#include "SerializedInstance.h"         // for SerializedInstance
 
 Serializable*
 EventMessage::deserialize(SerializedInstance* data) {

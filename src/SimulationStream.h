@@ -2,9 +2,10 @@
 #define SIMULATION_STREAM_H
 
 
-#include "warped.h"
+#include <fstream>                      // for fstream, ostringstream, etc
 #include <iostream>
-#include <fstream>
+
+#include "warped.h"                     // for ostringstream
 
 using std::fstream;
 

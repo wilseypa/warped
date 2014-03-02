@@ -338,9 +338,9 @@ eclmplSocket::getPortNumber() const {
 } // End of getPortNumber().
 
 void
-eclmplSocket::printError(const int& error, const string fName) const {
-    string defaultError = "Unknown.";
-    string msg;
+eclmplSocket::printError(const int& error, const std::string fName) const {
+    std::string defaultError = "Unknown.";
+    std::string msg;
 
     std::cerr << "ERROR occured for call to \"" << fName << "\" - Cause: ";
     if (fName == "socket") {

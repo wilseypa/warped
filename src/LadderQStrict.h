@@ -8,6 +8,8 @@
 #include <list>
 #include <pthread.h>
 
+#include "EventFunctors.h"
+
 using namespace std;
 
 /* Macro section */

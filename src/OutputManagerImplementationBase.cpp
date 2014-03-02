@@ -1,8 +1,17 @@
 
-#include "OutputEvents.h"
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for cerr, cout
+#include <string>                       // for operator<<
+
+#include "Event.h"                      // for Event
+#include "OutputEvents.h"               // for OutputEvents, ofstream
 #include "OutputManagerImplementationBase.h"
-#include "TimeWarpSimulationManager.h"
-#include "Event.h"
+#include "SetObject.h"                  // for ostream
+#include "SimulationObject.h"           // for SimulationObject
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for operator<<, VTime
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
 
 using std::cout;
 using std::cerr;

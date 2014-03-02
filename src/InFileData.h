@@ -1,8 +1,9 @@
 #ifndef IN_FILE_DATA_H
 #define IN_FILE_DATA_H
 
+#include <ios>
 
-using std::streampos;
+#include "VTime.h"
 
 /** The InFileData class
 
@@ -18,7 +19,7 @@ public:
     //@{
 
     InFileData(const VTime& currentTime) : time(*(currentTime.clone())), pos(0) {};
-    InFileData(const VTime& currentTime, streampos currentPosition) :
+    InFileData(const VTime& currentTime, std::streampos currentPosition) :
         time(*(currentTime.clone())), pos(currentPosition) {};
 
     ~InFileData() {
@@ -28,7 +29,7 @@ public:
         return time;
     }
 
-    streampos getPosition() const {
+    std::streampos getPosition() const {
         return pos;
     }
 
@@ -63,7 +64,7 @@ protected:
     const VTime& time;
 
     /// position of last read in a file
-    streampos pos;
+    std::streampos pos;
 
     //@} // End of Protected Class Attributes of InFileData.
 };

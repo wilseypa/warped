@@ -1,10 +1,10 @@
 
+#include <ostream>                      // for operator<<, ostream, etc
+
+#include "EventId.h"                    // for operator<<, EventId
+#include "ObjectID.h"                   // for operator<<, ObjectID
 #include "StragglerEvent.h"
-#include "Serializable.h"
-#include "SerializedInstance.h"
-#include "ObjectID.h"
-#include "EventId.h"
-#include "DeserializerManager.h"
+#include "VTime.h"                      // for operator<<
 
 /*void StragglerEvent::registerDeserializer() {
     DeserializerManager::instance()->registerDeserializer(

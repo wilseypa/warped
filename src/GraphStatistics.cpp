@@ -1,7 +1,9 @@
-#include "GraphStatistics.h"
+#include <algorithm>                    // for max
+#include <iostream>                     // for cerr
+#include <set>                          // for set
+#include <type_traits>                  // for __decay_and_strip<>::__type
 
-#include <algorithm>
-#include <set>
+#include "GraphStatistics.h"
 
 namespace {
 Edge make_edge(int a, int b) {

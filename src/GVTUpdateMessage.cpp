@@ -1,6 +1,7 @@
 
+#include "DeserializerManager.h"        // for DeserializerManager
 #include "GVTUpdateMessage.h"
-#include "DeserializerManager.h"
+#include "SerializedInstance.h"         // for SerializedInstance
 
 void
 GVTUpdateMessage::serialize(SerializedInstance* addTo) const {

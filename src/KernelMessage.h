@@ -2,10 +2,13 @@
 #define KERNEL_MESSAGE_H
 
 
-#include "warped.h"
-#include "Serializable.h"
+#include <string>                       // for string
+
+#include "Serializable.h"               // for Serializable, string
 #include "SerializedInstance.h"
-#include <string>
+#include "warped.h"
+
+class SerializedInstance;
 
 using std::string;
 

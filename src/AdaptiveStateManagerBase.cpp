@@ -1,8 +1,15 @@
 
+#include <set>                          // for multiset
+
 #include "AdaptiveStateManagerBase.h"
-#include "State.h"
-#include "TimeWarpSimulationManager.h"
-#include "Event.h"
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "ObjectID.h"                   // for ObjectID
+#include "SetObject.h"                  // for SetObject
+#include "SimulationObject.h"           // for SimulationObject
+#include "State.h"                      // for State
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+
+class VTime;
 
 AdaptiveStateManagerBase::AdaptiveStateManagerBase(TimeWarpSimulationManager* simMgr):
     StateManagerImplementationBase(simMgr,0),

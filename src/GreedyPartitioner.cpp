@@ -1,6 +1,8 @@
-#include "PartitionInfo.h"
 #include "GreedyPartitioner.h"
-#include "warped.h"
+#include "PartitionInfo.h"              // for PartitionInfo
+#include "warped.h"                     // for ASSERT
+
+class SimulationObject;
 
 GreedyPartitioner::GreedyPartitioner() {}
 

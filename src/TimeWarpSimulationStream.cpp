@@ -1,7 +1,18 @@
 
+#include <stdlib.h>                     // for NULL, abort
+#include <iostream>                     // for cerr
+#include <set>                          // for _Rb_tree_const_iterator, etc
+#include <vector>                       // for vector
+
+#include "FileData.h"                   // for FileData
+#include "FileQueue.h"                  // for FileQueue, cerr
+#include "InFileData.h"                 // for InFileData
+#include "InFileQueue.h"                // for InFileQueue
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "SimulationManager.h"          // for SimulationManager
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "TimeWarpSimulationStream.h"
-#include "InFileData.h"
-#include <sstream>
+#include "VTime.h"                      // for VTime
 
 using std::stringstream;
 

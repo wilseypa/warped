@@ -1,33 +1,27 @@
 
-#include "warped.h"
-#include "Application.h"
-#include "WarpedMain.h"
-#include "SimulationConfiguration.h"
-#include "Simulation.h"
-#include "Spinner.h"
+#include <cstdlib>                      // for exit, EXIT_FAILURE
+#include <exception>                    // for exception
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <string>                       // for operator==, string, etc
 
-#include <algorithm>
-#include <cstdio>
-#include <cstdlib>
-#include <exception>
-#include <iostream>
-#include <string>
-#include <vector>
-
+#include "Application.h"                // for Application
 // We need these to register their deserializers
 #include "CirculateInitializationMessage.h"
-#include "DeserializerManager.h"
-#include "EventMessage.h"
-#include "GVTUpdateMessage.h"
-#include "InitializationMessage.h"
-#include "UsefulWorkMessage.h"
-#include "IntVTime.h"
-#include "MatternGVTMessage.h"
-#include "NegativeEventMessage.h"
-#include "NegativeEvent.h"
-#include "RestoreCkptMessage.h"
-#include "StartMessage.h"
-#include "TerminateToken.h"
+#include "EventMessage.h"               // for EventMessage
+#include "GVTUpdateMessage.h"           // for GVTUpdateMessage
+#include "InitializationMessage.h"      // for InitializationMessage
+#include "IntVTime.h"                   // for IntVTime
+#include "MatternGVTMessage.h"          // for MatternGVTMessage
+#include "NegativeEvent.h"              // for NegativeEvent
+#include "NegativeEventMessage.h"       // for NegativeEventMessage
+#include "RestoreCkptMessage.h"         // for RestoreCkptMessage
+#include "Simulation.h"                 // for Simulation
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "Spinner.h"                    // for spinForever
+#include "StartMessage.h"               // for StartMessage
+#include "TerminateToken.h"             // for TerminateToken
+#include "UsefulWorkMessage.h"          // for UsefulWorkMessage
+#include "WarpedDebug.h"                // for enableDebug, debugout
 #include "WarpedMain.h"
 
 WarpedMain::WarpedMain(Application* application, std::string configurationFileName,

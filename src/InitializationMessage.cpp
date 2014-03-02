@@ -1,6 +1,7 @@
 
+#include "DeserializerManager.h"        // for DeserializerManager
 #include "InitializationMessage.h"
-#include "DeserializerManager.h"
+#include "SerializedInstance.h"         // for SerializedInstance
 
 void
 InitializationMessage::serialize(SerializedInstance* addTo) const {

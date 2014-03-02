@@ -1,14 +1,16 @@
-#include "PartitionInfo.h"
-#include "ProfileGuidedPartitioner.h"
-#include "warped.h"
-#include "metis.h"
-
-#include <vector>
-#include <set>
-#include <string>
-#include <sstream>
 #include <iostream>
-#include <stdexcept>
+#include <set>                          // for set
+#include <sstream>                      // for istringstream
+#include <stddef.h>                     // for NULL
+#include <stdexcept>                    // for runtime_error
+#include <string>                       // for string, getline, stoi, etc
+#include <vector>                       // for vector
+
+#include "PartitionInfo.h"              // for PartitionInfo
+#include "ProfileGuidedPartitioner.h"
+#include "metis.h"                      // for idx_t, METIS_PartGraphKway
+
+class SimulationObject;
 
 ProfileGuidedPartitioner::ProfileGuidedPartitioner(std::istream& input)
     : input(input) {}
@@ -97,7 +99,7 @@ ProfileGuidedPartitioner::partition(const vector<SimulationObject*>* objects,
                         &nparts,    // nparts
                         NULL,       // tpwgts
                         NULL,       // ubvec
-                        NULL   ,    // options
+                        NULL,        // options
                         &edgecut,   // edgecut
                         &part[0]    // part
                        );

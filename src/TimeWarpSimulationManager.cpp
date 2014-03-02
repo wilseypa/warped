@@ -1,37 +1,58 @@
 
-#include "StopWatch.h"
-#include "ObjectStub.h"
-#include "SimulationObjectProxy.h"
-#include "TimeWarpSimulationManager.h"
-#include "TimeWarpSimulationStream.h"
-#include "SchedulingManager.h"
-#include "CommunicationManager.h"
-#include "TerminationManager.h"
-#include "AggressiveOutputManager.h"
-#include "LazyOutputManager.h"
-#include "AdaptiveOutputManager.h"
-#include "Application.h"
-#include "SchedulingData.h"
-#include "PartitionInfo.h"
-#include "TokenPassingTerminationManager.h"
-#include "SingleTerminationManager.h"
-#include "EventMessage.h"
-#include "InitializationMessage.h"
-#include "NegativeEventMessage.h"
-#include "StartMessage.h"
-#include "CostAdaptiveStateManager.h"
-#include "EventFunctors.h"
-#include "OptFossilCollManager.h"
-#include "OptFossilCollManagerFactory.h"
-#include "DVFSManager.h"
-#include "DistributedDVFSManager.h"
-#include "DVFSManagerFactory.h"
-#include "SimulationConfiguration.h"
-#include "WarpedDebug.h"
-#include "PartitionManager.h"
-#include <algorithm>
+#include <time.h>                       // for NULL
+#include <algorithm>                    // for sort
+#include <fstream>                      // for operator<<, basic_ostream, etc
+#include <map>                          // for allocator
+#include <set>                          // for set
 #include <sstream>
-#include <time.h>
+
+#include "AdaptiveOutputManager.h"      // for DynamicOutputManager
+#include "Application.h"                // for Application
+#include "CommunicationManager.h"       // for CommunicationManager
+#include "CommunicationManagerFactory.h"
+#include "Configurable.h"               // for Configurable
+#include "CostAdaptiveStateManager.h"   // for CostAdaptiveStateManager
+#include "DVFSManager.h"                // for DVFSManager
+#include "DVFSManagerFactory.h"         // for DVFSManagerFactory
+#include "Event.h"                      // for Event
+#include "EventFunctors.h"
+#include "EventId.h"                    // for operator<<
+#include "EventMessage.h"               // for EventMessage
+#include "FileQueue.h"                  // for cerr, cout
+#include "GVTManager.h"                 // for GVTManager
+#include "GVTManagerFactory.h"          // for GVTManagerFactory
+#include "InitializationMessage.h"      // for InitializationMessage
+#include "KernelMessage.h"              // for KernelMessage
+#include "LazyOutputManager.h"          // for LazyOutputManager
+#include "NegativeEvent.h"              // for NegativeEvent, operator<<
+#include "NegativeEventMessage.h"       // for NegativeEventMessage
+#include "OptFossilCollManager.h"       // for OptFossilCollManager
+#include "OptFossilCollManagerFactory.h"
+#include "OutputManager.h"              // for OutputManager
+#include "OutputManagerFactory.h"       // for OutputManagerFactory
+#include "PartitionInfo.h"              // for PartitionInfo
+#include "PartitionManager.h"           // for PartitionManager
+#include "SchedulingData.h"             // for SchedulingData
+#include "SchedulingManager.h"          // for SchedulingManager
+#include "SchedulingManagerFactory.h"   // for SchedulingManagerFactory
+#include "SetObject.h"                  // for ostream
+#include "SimulationObjectProxy.h"      // for SimulationObjectProxy
+#include "SingleTerminationManager.h"   // for SingleTerminationManager
+#include "StartMessage.h"               // for StartMessage
+#include "StateManager.h"               // for StateManager
+#include "StateManagerFactory.h"        // for StateManagerFactory
+#include "StopWatch.h"                  // for StopWatch
+#include "TerminationManager.h"         // for TerminationManager
+#include "TimeWarpEventSet.h"           // for TimeWarpEventSet
+#include "TimeWarpEventSetFactory.h"    // for TimeWarpEventSetFactory
+#include "TimeWarpSimulationManager.h"
+#include "TimeWarpSimulationStream.h"   // for TimeWarpSimulationStream, etc
+#include "TokenPassingTerminationManager.h"
+#include "WarpedDebug.h"                // for debugout
+
+class SimulationConfiguration;
+class SimulationStream;
+
 using std::istringstream;
 
 TimeWarpSimulationManager::TimeWarpSimulationManager(Application* initApplication) :

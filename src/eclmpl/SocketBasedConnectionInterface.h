@@ -39,7 +39,7 @@ protected:
     virtual void establishConnectionsWithPeerSlaves(const eclmplConfigFileTable& connTable);
     virtual void distributeConfigFileTable(const eclmplConfigFileTable& connTable);
 
-    string hostName;
+    std::string hostName;
 };
 
 #endif

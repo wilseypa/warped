@@ -2,11 +2,15 @@
 #define CENTRALIZED_EVENTSET_SCHEDULING_MANAGER_H
 
 
-#include "SchedulingManager.h"
+#include <vector>                       // for vector
+
+#include "SchedulingManager.h"          // for SchedulingManager
 
 class SimulationManager;
-class TimeWarpCentralizedEventSet;
 class SimulationObject;
+class TimeWarpCentralizedEventSet;
+class TimeWarpEventSet;
+class VTime;
 
 /** The SchedulingManager abstract base class.
 

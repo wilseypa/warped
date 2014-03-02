@@ -1,33 +1,49 @@
 #ifndef TIMEWARP_SIMULATION_MANAGER_H
 #define TIMEWARP_SIMULATION_MANAGER_H
 
+#include <stdlib.h>                     // for abort
+#include <time.h>
+#include <fstream>
+#include <iostream>                     // for operator<<, ostream, etc
+#include <map>
+#include <string>                       // for string
+#include <unordered_map>                // for operator==, etc
+#include <utility>                      // for pair
+#include <vector>                       // for vector
 
-#include "StopWatch.h"
-#include "warped.h"
-#include "SimulationStream.h"
-#include "CommunicatingEntity.h"
-#include "TimeWarpConfigurationManager.h"
-#include "SimulationManagerImplementationBase.h"
+#include "CommunicatingEntity.h"        // for CommunicatingEntity
+#include "DefaultObjectID.h"            // for OBJECT_ID
 #include "EventId.h"
 #include "NegativeEvent.h"
-#include <map>
-#include <fstream>
-#include <time.h>
+#include "ObjectID.h"                   // for ObjectID
+#include "SimulationManagerImplementationBase.h"
+#include "SimulationObject.h"           // for SimulationObject, ios
+#include "SimulationStream.h"
+#include "StopWatch.h"                  // for StopWatch
+#include "TimeWarpConfigurationManager.h"
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for OutputMgrType, StateMgrType, etc
+using std::string;
 
 class Application;
 class CommunicationManager;
-class GVTManager;
-class OptFossilCollManager;
 class DVFSManager;
+class Event;
+class GVTManager;
+class KernelMessage;
+class NegativeEvent;
+class OptFossilCollManager;
 class OutputManager;
+class PartitionManager;
 class SchedulingData;
 class SchedulingManager;
+class SimulationConfiguration;
 class SimulationObjectProxy;
+class SimulationStream;
 class StateManager;
 class TerminationManager;
-class TimeWarpSimulationStream;
 class TimeWarpEventSet;
-class PartitionManager;
+class TimeWarpSimulationStream;
 
 /** The TimeWarpSimulationManager class.
 

@@ -1,5 +1,11 @@
 
+#include <stdlib.h>                     // for abort, NULL
+#include <iostream>                     // for operator<<, basic_ostream, etc
+
 #include "DefaultPhysicalCommunicationLayer.h"
+
+class SerializedInstance;
+
 using std::cerr;
 using std::endl;
 

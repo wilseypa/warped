@@ -1,8 +1,18 @@
 
+#include <stddef.h>                     // for NULL
+#include <algorithm>                    // for sort
+#include <fstream>                      // for operator<<, etc
+
+#include "Event.h"                      // for Event
+#include "EventFunctors.h"              // for receiveTimeLessThan
 #include "LazyOutputManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "Event.h"
-#include "EventFunctors.h"
+#include "ObjectID.h"                   // for ObjectID, operator<<
+#include "OutputEvents.h"               // for OutputEvents
+#include "SetObject.h"                  // for ostream
+#include "SimulationObject.h"           // for SimulationObject
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
 
 LazyOutputManager::LazyOutputManager(TimeWarpSimulationManager* simMgr) :
     OutputManagerImplementationBase(simMgr) {

@@ -1,8 +1,13 @@
+#include <math.h>                       // for sqrt
+#include <iostream>                     // for operator<<, etc
 
 #include "ChebyFossilCollManager.h"
-#include "Event.h"
-#include "TimeWarpSimulationManager.h"
-#include <math.h>
+#include "ObjectID.h"                   // for ObjectID
+#include "SetObject.h"                  // for ostream
+#include "SimulationObject.h"           // for SimulationObject
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
 
 using std::cout;
 

@@ -2,12 +2,18 @@
 #define THREADEThreadedIMEWARPMULTISETSCHEDULINGMANAGER_H_
 
 
-#include "warped.h"
-#include "SchedulingManager.h"
-#include "ThreadedTimeWarpMultiSet.h"
+#include <vector>                       // for vector, vector<>::iterator
 
+#include "SchedulingManager.h"          // for SchedulingManager
+#include "ThreadedTimeWarpMultiSet.h"
+#include "warped.h"
+
+class AtomicState;
+class Event;
+class SimulationConfiguration;
 class SimulationObject;
 class ThreadedTimeWarpSimulationManager;
+class VTime;
 
 /** This scheduling manager is to be used with the TimeWarpMultiSet. */
 class ThreadedTimeWarpMultiSetSchedulingManager: public SchedulingManager {

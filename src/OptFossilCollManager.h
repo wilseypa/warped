@@ -2,23 +2,31 @@
 #define OPTFOSSILCOLLMANAGER_H_
 
 
-#include "warped.h"
-#include "CommunicatingEntity.h"
-#include "Configurable.h"
-#include "StateSetObject.h"
-#include <set>
 #include <fstream>
-#include <map>
+#include <map>                          // for map
+#include <set>
+#include <string>                       // for string
+#include <vector>                       // for vector
+
+#include "CommunicatingEntity.h"        // for CommunicatingEntity
+#include "Configurable.h"               // for Configurable
+#include "ObjectID.h"                   // for ObjectID
+#include "StateSetObject.h"
+#include "warped.h"
+
+class KernelMessage;
+class SimulationConfiguration;
+
 using namespace std;
 
-class TimeWarpSimulationManager;
-class SimulationObject;
-class VTime;
 class CommunicationManager;
 class Event;
 class NegativeEvent;
 class RestoreCkptMessage;
+class SimulationObject;
 class State;
+class TimeWarpSimulationManager;
+class VTime;
 
 /** The Optimistic Fossil Collection Manager class.
 

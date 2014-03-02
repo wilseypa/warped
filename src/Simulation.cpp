@@ -1,13 +1,17 @@
 
-#include "Simulation.h"
-#include "SequentialConfigurationManager.h"
-#include "TimeWarpConfigurationManager.h"
-#include "SimulationConfiguration.h"
-#include "Application.h"
-#include "WarpedDebug.h"
+#include <stdlib.h>                     // for exit, abort
+#include <fstream>                      // for operator<<, endl, etc
+#include <iostream>                     // for cout, cerr
+#include <stdexcept>                    // for runtime_error
 
-#include <iostream>
-#include <stdexcept>
+#include "SequentialConfigurationManager.h"
+#include "Simulation.h"
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "SimulationManager.h"          // for SimulationManager
+#include "TimeWarpConfigurationManager.h"
+#include "WarpedDebug.h"                // for debugout
+
+class VTime;
 
 Simulation::Simulation(Application* initApplication) : myApplication(initApplication) {
 }

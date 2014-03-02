@@ -1,14 +1,11 @@
 
+#include <stdlib.h>                     // for abort, NULL
+#include <fstream>                      // for operator<<, basic_ostream, etc
+#include <iostream>                     // for cerr
+
 #include "SimulationObjectProxy.h"
-#include "OutputManager.h"
-#include "KernelMessage.h"
-#include "Event.h"
-#include "EventMessage.h"
-#include "NegativeEventMessage.h"
-#include "SerializedInstance.h"
-#include "CommunicationManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "WarpedDebug.h"
+
+class State;
 
 using std::cerr;
 using std::endl;

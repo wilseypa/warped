@@ -1,9 +1,13 @@
 
+#include <vector>                       // for vector
+
+#include "SimulationObject.h"           // for SimulationObject
 #include "ThreadedAggressiveOutputManager.h"
-#include "ThreadedOutputEvents.h"
-#include "ThreadedAggressiveOutputManager.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "Event.h"
+#include "ThreadedOutputEvents.h"       // for ThreadedOutputEvents
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+
+class ThreadedTimeWarpSimulationManager;
+class VTime;
 
 ThreadedAggressiveOutputManager::ThreadedAggressiveOutputManager(
     ThreadedTimeWarpSimulationManager* simMgr) :

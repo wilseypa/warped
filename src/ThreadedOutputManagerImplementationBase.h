@@ -2,11 +2,23 @@
 #define THREADEDOUTPUTMANAGERIMPLEMENTATIONBASE_H_
 
 
-#include <fstream>
-#include <set>
-#include "warped.h"
+#include <fstream>                      // for ofstream
+#include <set>                          // for multiset
+#include <vector>                       // for vector
+
+#include "ObjectID.h"                   // for ObjectID
 #include "ThreadedOutputEvents.h"
-#include "ThreadedOutputManager.h"
+#include "ThreadedOutputManager.h"      // for ofstream, etc
+#include "ThreadedTimeWarpMultiSetLTSF.h"  // for multiset
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "warped.h"
+
+class Event;
+class SimulationObject;
+class ThreadedOutputEvents;
+class TimeWarpSimulationManager;
+class VTime;
+
 using std::ofstream;
 
 class ThreadedTimeWarpSimulationManager;

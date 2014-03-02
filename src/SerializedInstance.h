@@ -1,11 +1,15 @@
 #ifndef SERIALIZED_INSTANCE_H
 #define SERIALIZED_INSTANCE_H
 
+#include <cstring>                      // for memcpy
+#include <ostream>                      // for operator<<, ostream, etc
+#include <string>                       // for string
+#include <vector>                       // for vector, vector<>::iterator
 
-#include "warped.h"
-#include <vector>
+#include "warped.h"                     // for warped64_t
+
+using std::string;
 using std::vector;
-#include <cstring>
 
 class Serializable;
 

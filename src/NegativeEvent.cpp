@@ -1,10 +1,12 @@
 
-#include "Serializable.h"
-#include "SerializedInstance.h"
-#include "ObjectID.h"
-#include "EventId.h"
-#include "DeserializerManager.h"
+#include <ostream>                      // for operator<<, ostream, etc
+
+#include "DeserializerManager.h"        // for DeserializerManager
+#include "EventId.h"                    // for EventId, operator<<
 #include "NegativeEvent.h"
+#include "ObjectID.h"                   // for ObjectID, operator<<
+#include "Serializable.h"               // for Serializable
+#include "SerializedInstance.h"         // for SerializedInstance
 //#include "OptFossilCollManager.h"
 
 void

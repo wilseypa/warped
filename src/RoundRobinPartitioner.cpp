@@ -1,7 +1,8 @@
 
-#include "PartitionInfo.h"
+#include "PartitionInfo.h"              // for PartitionInfo
 #include "RoundRobinPartitioner.h"
-#include "warped.h"
+
+class SimulationObject;
 
 RoundRobinPartitioner::RoundRobinPartitioner() {}
 

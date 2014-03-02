@@ -1,16 +1,26 @@
 
-#include "TimeWarpConfigurationManager.h"
+#include <iostream>                     // for operator<<, cout, ostream
+#include <stdexcept>                    // for runtime_error
+#include <string>                       // for operator==, basic_string, etc
 
-#include <iostream>
-#include <stdexcept>
-
-#include "TimeWarpCentralizedEventSetFactory.h"
-#include "TimeWarpSimulationManagerFactory.h"
-#include "SchedulingData.h"
-#include "Application.h"
-#include "SimulationConfiguration.h"
-#include "Spinner.h"
+#include "Application.h"                // for Application
+#include "CommunicationManagerFactory.h"
+#include "Configurable.h"               // for Configurable
+#include "GVTManagerFactory.h"          // for GVTManagerFactory
+#include "OutputManagerFactory.h"       // for OutputManagerFactory
+#include "SchedulingManagerFactory.h"   // for SchedulingManagerFactory
+#include "SetObject.h"                  // for ostream
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "Spinner.h"                    // for spinForever
+#include "StateManagerFactory.h"        // for StateManagerFactory
 #include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpConfigurationManager.h"
+#include "TimeWarpEventSetFactory.h"    // for TimeWarpEventSetFactory
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "TimeWarpSimulationManagerFactory.h"
+using std::string;
+
+class SimulationManager;
 
 TimeWarpConfigurationManager::TimeWarpConfigurationManager(Application* initApplication) :
     mySimulationManager(0), myEventSetFactory(0), myStateFactory(0), myGVTFactory(0),

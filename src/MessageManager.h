@@ -2,11 +2,18 @@
 #define MESSAGE_MANAGER_H
 
 
-#include "warped.h"
-#include "Transceiver.h"
-#include "KernelMessage.h"
-#include "CommunicationManager.h"
+#include <iosfwd>                       // for ostream
+#include <vector>                       // for vector
 
+#include "CommunicationManager.h"
+#include "KernelMessage.h"
+#include "Transceiver.h"                // for Transceiver
+#include "warped.h"
+
+class CommunicationManager;
+class KernelMessage;
+class PhysicalCommunicationLayer;
+class SerializedInstance;
 class SimulationManager;
 
 enum AggregationReceiveCriteria { RECEIVE, NO_NEED_TO_RECEIVE};

@@ -1,5 +1,9 @@
 
+#include <stdlib.h>                     // for exit
+#include <iostream>                     // for cerr
+
 #include "SequentialSimulationStream.h"
+
 using std::cerr;
 using std::endl;
 

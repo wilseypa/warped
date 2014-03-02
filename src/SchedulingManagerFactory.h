@@ -2,14 +2,16 @@
 #define SCHEDULING_MANAGER_FACTORY_H
 
 
+#include "Configurer.h"                 // for Configurer
 #include "warped.h"
-#include "Configurer.h"
 
+class Configurable;
 class Event;
-class TimeWarpSimulationManager;
-class SimulationObject;
 class SchedulingManager;
+class SimulationConfiguration;
+class SimulationObject;
 class TimeWarpEventSetFactory;
+class TimeWarpSimulationManager;
 
 /** The SchedulingManagerFactory class.
 

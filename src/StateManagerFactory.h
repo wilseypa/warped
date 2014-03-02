@@ -2,14 +2,17 @@
 #define STATE_MANAGER_FACTORY_H
 
 
-#include "warped.h"
 #include <fstream>
-#include "StateManager.h"
-#include "SimulationManager.h"
-#include "Configurer.h"
 
-class State;
+#include "Configurer.h"                 // for Configurer
+#include "SimulationManager.h"
+#include "StateManager.h"
+#include "warped.h"
+
+class Configurable;
+class SimulationConfiguration;
 class SimulationObject;
+class State;
 
 /** The StateManagerFactory class.
 

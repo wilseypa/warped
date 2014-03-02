@@ -1,7 +1,12 @@
 
+#include <vector>                       // for vector
+
 #include "AggressiveOutputManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "Event.h"
+#include "OutputEvents.h"               // for OutputEvents
+#include "SimulationObject.h"           // for SimulationObject
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+
+class VTime;
 
 AggressiveOutputManager::AggressiveOutputManager(TimeWarpSimulationManager* simMgr) :
     OutputManagerImplementationBase(simMgr) {

@@ -10,14 +10,14 @@ public:
     eclmplConfigFileTable() {}
     ~eclmplConfigFileTable() {}
 
-    inline void addEntry(const std::vector<string>& entry) { configTable.push_back(entry); }
+    inline void addEntry(const std::vector<std::string>& entry) { configTable.push_back(entry); }
 
-    inline std::vector<string> getEntry(const unsigned int& entryNr) const {
+    inline std::vector<std::string> getEntry(const unsigned int& entryNr) const {
         ASSERT(entryNr <= (configTable.size()-1));
         return configTable[entryNr];
     }
 
-    inline void addToEntry(const string& add, const int& entryNr) {
+    inline void addToEntry(const std::string& add, const int& entryNr) {
         configTable[entryNr].push_back(add);
     }
 
@@ -28,13 +28,13 @@ public:
 
     friend std::ostream& operator<< (std::ostream& os, const eclmplConfigFileTable& in) {
         for (unsigned int i = 0; i < in.configTable.size(); i++) {
-            copy(in.configTable[i].begin(), in.configTable[i].end(), std::ostream_iterator<string>(os, " "));
+            copy(in.configTable[i].begin(), in.configTable[i].end(), std::ostream_iterator<std::string>(os, " "));
             os << std::endl;
         }
         return os;
     }
 private:
-    std::vector<std::vector<string>> configTable;
+    std::vector<std::vector<std::string>> configTable;
 };
 
 #endif

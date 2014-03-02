@@ -1,8 +1,16 @@
 
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for operator<<, cerr, endl, etc
+#include <queue>                        // for make_heap, pop_heap, etc
+#include <utility>                      // for pair
+
+#include "Event.h"                      // for Event
+#include "SenderQueueContainer.h"
+#include "SetObject.h"                  // for ostream
+#include "SimulationObject.h"           // for SimulationObject
 #include "TimeWarpSenderQueue.h"
-#include "TimeWarpSimulationManager.h"
-#include "Event.h"
-#include "SimulationObject.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+
 using std::cerr;
 using std::endl;
 

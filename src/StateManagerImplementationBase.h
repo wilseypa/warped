@@ -2,12 +2,20 @@
 #define STATE_MANAGER_IMPLEMENTATION_BASE_H
 
 
-#include "warped.h"
-#include "SetObject.h"
-#include "StateManager.h"
-#include "TimeWarpSimulationManager.h"
+#include <iosfwd>                       // for ostream
+#include <set>                          // for multiset
+#include <vector>                       // for vector
 
-#include <set>
+#include "SetObject.h"                  // for SetObject (ptr only), etc
+#include "StateManager.h"               // for StateManager
+#include "TimeWarpSimulationManager.h"
+#include "warped.h"
+
+class SimulationObject;
+class State;
+class TimeWarpSimulationManager;
+class VTime;
+
 using std::multiset;
 
 /** The StateManagerImplementationBase class.

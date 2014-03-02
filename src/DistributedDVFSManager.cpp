@@ -1,13 +1,15 @@
+#include <unistd.h>                     // for gethostname
+#include <fstream>                      // for operator<<, basic_ostream, etc
+#include <iostream>                     // for cout
+#include <vector>                       // for vector
 
-#include "WarpedDebug.h"
-#include "warped.h"
+#include "CommunicationManager.h"       // for CommunicationManager
 #include "DistributedDVFSManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "UsefulWorkMessage.h"
-#include "CommunicationManager.h"
-#include <cmath>
-#include <ctime>
-#include <unistd.h>
+#include "KernelMessage.h"              // for KernelMessage
+#include "UsefulWorkMessage.h"          // for UsefulWorkMessage, etc
+#include "warped.h"                     // for ASSERT
+
+class SimulationConfiguration;
 
 DistributedDVFSManager::DistributedDVFSManager(TimeWarpSimulationManager* simMgr,
                                                int measurementPeriod,

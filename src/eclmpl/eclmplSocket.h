@@ -56,7 +56,7 @@ protected:
     /// Remote address length.
     int remoteAddrLen; //*remoteAddrLen;
 
-    void printError(const int& error, const string fName) const;
+    void printError(const int& error, const std::string fName) const;
     struct hostent* wGethostbyname(const char* const name) const;
     int wFcntl(const int& fd, const int& cmd, const long& arg);
 private:

@@ -2,10 +2,17 @@
 #define ADAPTIVESTATEMANAGERBASE_HH
 
 
+#include <vector>                       // for vector
+
 #include "StateManagerImplementationBase.h"
-#include "controlkit/FIRFilter.h"
-#include "controlkit/IIRFilter.h"
-#include "StopWatch.h"
+#include "StopWatch.h"                  // for StopWatch
+#include "controlkit/FIRFilter.h"       // for FIRFilter
+#include "controlkit/IIRFilter.h"       // for IIRFilter
+
+class SimulationConfiguration;
+class SimulationObject;
+class TimeWarpSimulationManager;
+class VTime;
 
 /** The AdaptiveStateManagerBase class.
 

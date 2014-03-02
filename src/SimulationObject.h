@@ -2,17 +2,22 @@
 #define SIMULATION_OBJECT_H
 
 
-#include "warped.h"
-#include <string>
+#include <iosfwd>                       // for ios
+#include <string>                       // for string
+
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "warped.h"                     // for SEVERITY
+
+class VTime;
 
 using std::string;
 using std::ios;
 
-class SimulationManager;
 class Event;
-class State;
 class SerializedInstance;
+class SimulationManager;
 class SimulationStream;
+class State;
 
 /** The abstract base class SimulationObject.
 

@@ -1,14 +1,11 @@
+#include <cstdint>                      // for int64_t
+#include <fstream>                      // for operator<<, basic_ostream, etc
+#include <sstream>                      // for stringstream
+#include <stdexcept>                    // for runtime_error
+
 #include "SimulationConfiguration.h"
-
-#include <cstdint>
-
-#include <fstream>
-#include <iostream>
-#include <stdexcept>
-#include <sstream>
-
-#include "json/json.h"
-#include "WarpedDebug.h"
+#include "WarpedDebug.h"                // for debugout
+#include "json/json.h"                  // for Value, Reader
 
 void SimulationConfiguration::init(std::istream& input) {
     Json::Reader reader;

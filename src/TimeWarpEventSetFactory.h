@@ -2,13 +2,15 @@
 #define TIME_WARP_EVENT_SET_FACTORY_H
 
 
-#include "warped.h"
-#include "TimeWarpEventSet.h"
-#include "SimulationObject.h"
+#include "Configurer.h"                 // for Configurer
 #include "SimulationManager.h"
-#include "Configurer.h"
+#include "SimulationObject.h"
+#include "TimeWarpEventSet.h"
+#include "warped.h"
 
+class Configurable;
 class Event;
+class SimulationConfiguration;
 
 /** The TimeWarpEventSetFactory class.
 

@@ -2,8 +2,10 @@
 #define DEFAULT_PHYSICAL_COMMUNICATION_LAYER_H
 
 
-#include "warped.h"
 #include "eclmpl/PhysicalCommunicationLayer.h"
+#include "warped.h"
+
+class SerializedInstance;
 
 /** The DefaultPhysicalCommunicationLayer class.
 

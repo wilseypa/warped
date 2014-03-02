@@ -1,11 +1,19 @@
 
-#include "ThreadedOutputEvents.h"
-#include "EventFunctors.h"
-#include "Serializable.h"
-#include "SerializedInstance.h"
-#include "SetObject.h"
+#include <stddef.h>                     // for NULL
+#include <algorithm>                    // for find
+
+#include "Event.h"                      // for Event
+#include "EventId.h"                    // for EventId
+#include "LockState.h"                  // for LockState
+#include "ObjectID.h"                   // for ObjectID
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "SetObject.h"                  // for SetObject, ostream
 #include "ThreadedOptFossilCollManager.h"
-#include <algorithm>
+#include "ThreadedOutputEvents.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
 
 ThreadedOutputEvents::ThreadedOutputEvents(ThreadedTimeWarpSimulationManager* simMgr) :
     mySimulationManager(simMgr) {

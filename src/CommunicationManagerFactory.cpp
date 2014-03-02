@@ -1,14 +1,21 @@
-#include <WarpedConfig.h>
-#include "DefaultPhysicalCommunicationLayer.h"
-#include "CommunicationManagerFactory.h"
-#include "DefaultCommunicationManager.h"
-#include "MsgAggregatingCommunicationManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "SimulationConfiguration.h"
-#include "WarpedDebug.h"
+#include <string.h>                     // for strcasecmp, NULL
+#include <ostream>                      // for operator<<, basic_ostream, etc
 
-#include "eclmpl/eclmpl.h"
+#include "CommunicationManagerFactory.h"
+#include "Configurable.h"               // for Configurable
+#include "DefaultCommunicationManager.h"
+#include "DefaultPhysicalCommunicationLayer.h"
+#include "MsgAggregatingCommunicationManager.h"
+#include "SetObject.h"                  // for ostream
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "WarpedDebug.h"                // for debugout
+#include "eclmpl/MPIPhysicalCommunicationLayer.h"
+#include "eclmpl/PhysicalCommunicationLayer.h"
+#include "eclmpl/TCPSelectPhysicalCommunicationLayer.h"
+#include "eclmpl/UDPSelectPhysicalCommunicationLayer.h"
+#include "warped.h"                     // for ASSERT
 
 CommunicationManagerFactory::CommunicationManagerFactory() {}
 

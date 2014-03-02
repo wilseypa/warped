@@ -2,6 +2,8 @@
 #ifndef ThreadedLazyOutputManager_H_
 #define ThreadedLazyOutputManager_H_
 
+#include <vector>                       // for vector
+
 /*
  #include <set>
  #include <list>
@@ -9,12 +11,16 @@
 #include "EventFunctors.h"
 #include "ThreadedOutputManagerImplementationBase.h"
 
+class SimulationConfiguration;
+class ThreadedTimeWarpSimulationManager;
+class VTime;
+
 /*using std::multiset;
  using std::list;*/
 
 class Event;
-class SimulationObject;
 class OutputManager;
+class SimulationObject;
 
 /** The ThreadedLazyOutputManager class.
 

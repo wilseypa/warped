@@ -1,6 +1,7 @@
 
+#include "DeserializerManager.h"        // for DeserializerManager
+#include "SerializedInstance.h"         // for SerializedInstance
 #include "TerminateToken.h"
-#include "DeserializerManager.h"
 
 TerminateToken::TerminateToken(unsigned int source,
                                unsigned int dest,

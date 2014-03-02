@@ -1,6 +1,7 @@
 
+#include "DeserializerManager.h"        // for DeserializerManager
 #include "RestoreCkptMessage.h"
-#include "DeserializerManager.h"
+#include "SerializedInstance.h"         // for SerializedInstance
 
 const string&
 RestoreCkptMessage::getRestoreCkptMessageType() {

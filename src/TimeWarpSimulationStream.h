@@ -2,16 +2,26 @@
 #define TIMEWARP_SIMULATION_STREAM_H
 
 
-#include "warped.h"
-#include "SimulationStream.h"
-#include "TimeWarpSimulationManager.h"
+#include <fstream>                      // for ostringstream, ios, etc
+#include <sstream>
+#include <string>                       // for string
+
 #include "FileQueue.h"
 #include "InFileQueue.h"
-#include <fstream>
-#include <sstream>
+#include "SimulationObject.h"           // for ios, etc
+#include "SimulationStream.h"           // for SimulationStream, fstream
+#include "TimeWarpSimulationManager.h"
+#include "warped.h"                     // for ostringstream
+
+class FileQueue;
+class InFileQueue;
+class TimeWarpSimulationManager;
+class VTime;
+
 using std::ostringstream;
 using std::ofstream;
 using std::ifstream;
+using std::string;
 
 class TimeWarpSimulationStream : public SimulationStream {
     friend class TimeWarpSimulationManager;

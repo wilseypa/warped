@@ -1,8 +1,9 @@
 #ifndef FILE_DATA_H
 #define FILE_DATA_H
 
-
 #include <string>
+
+#include "VTime.h"
 
 /** The FileData class.
 
@@ -23,7 +24,7 @@ public:
     FileData(const VTime& currentTime) : time(*(currentTime.clone())), line(NULL) {};
 
     /// Constructor that takes all the arguments
-    FileData(const VTime& currentTime, string* lineString)
+    FileData(const VTime& currentTime, std::string* lineString)
         : time(*(currentTime.clone())), line(lineString) {};
 
     /// Destructor
@@ -36,7 +37,7 @@ public:
     }
 
     /// get the string that is stored in this entry
-    const string* getLine() const {
+    const std::string* getLine() const {
         return line;
     }
 
@@ -71,7 +72,7 @@ protected:
     const VTime& time;
 
     /// data for writing
-    const string* line;
+    const std::string* line;
 
     //@} // End of Protected Class Attributes of FileData.
 };

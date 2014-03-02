@@ -1,8 +1,19 @@
 
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for operator<<, ostream, cerr, etc
+#include <string>                       // for operator==, basic_string, etc
+
+#include "CommunicationManager.h"       // for CommunicationManager
+#include "KernelMessage.h"              // for KernelMessage
 #include "MessageManager.h"
-#include "TimeWarpSimulationManager.h"
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+
+class PhysicalCommunicationLayer;
+
 using std::cerr;
 using std::endl;
+using std::string;
 
 MessageManager::MessageManager(unsigned int numLPs,
                                CommunicationManager* commManager,

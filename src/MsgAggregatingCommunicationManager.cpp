@@ -1,6 +1,13 @@
 
-#include "TimeWarpSimulationManager.h"
+#include <stddef.h>                     // for NULL
+
+#include "KernelMessage.h"              // for KernelMessage
 #include "MsgAggregatingCommunicationManager.h"
+#include "Serializable.h"               // for Serializable
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+
+class PhysicalCommunicationLayer;
 
 MsgAggregatingCommunicationManager::MsgAggregatingCommunicationManager(
     PhysicalCommunicationLayer* physicalLayer,

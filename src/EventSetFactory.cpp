@@ -1,11 +1,17 @@
 
+#include <ostream>                      // for operator<<, basic_ostream, etc
+#include <string>                       // for allocator, basic_string, etc
+
+#include "Configurable.h"               // for Configurable
+#include "EventSet.h"                   // for EventSet
 #include "EventSetFactory.h"
-#include "EventSet.h"
-#include "SplayTree.h"
-#include "SingleLinkedList.h"
-#include "SimulationConfiguration.h"
-#include "TimeWarpSimulationManager.h"
-#include "WarpedDebug.h"
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "SimulationManager.h"          // for SimulationManager
+#include "SingleLinkedList.h"           // for SingleLinkedList
+#include "SplayTree.h"                  // for SplayTree
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
+using std::string;
 
 EventSetFactory::EventSetFactory() {}
 

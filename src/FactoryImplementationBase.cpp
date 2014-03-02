@@ -1,6 +1,10 @@
 
-#include "ObjectStub.h"
+#include <stddef.h>                     // for NULL
+
 #include "FactoryImplementationBase.h"
+#include "FactorySymbolTable.h"         // for FactorySymbolTable
+#include "ObjectStub.h"                 // for ObjectStub
+#include "Types.h"                      // for Kind::STUB, Kind::ANY
 
 FactoryImplementationBase::FactoryImplementationBase(FactoryImplementationBase* parent) {
     parentFactory = parent;

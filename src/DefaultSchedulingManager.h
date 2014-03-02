@@ -2,11 +2,14 @@
 #define DEFAULT_SCHEDULING_MANAGER_H
 
 
+#include "SchedulingManager.h"          // for SchedulingManager
 #include "warped.h"
-#include "SchedulingManager.h"
 
+class Event;
+class SimulationConfiguration;
 class SimulationObject;
 class TimeWarpSimulationManager;
+class VTime;
 
 /** The DefaultSchedulingManager */
 class DefaultSchedulingManager :  public SchedulingManager {

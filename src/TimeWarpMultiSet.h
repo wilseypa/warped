@@ -2,11 +2,18 @@
 #define TIME_WARP_MULTI_SET_H
 
 
-#include <set>
-#include <list>
-#include "TimeWarpEventSet.h"
-#include "NegativeEvent.h"
+#include <iosfwd>                       // for ostream
+#include <list>                         // for list
+#include <set>                          // for multiset, etc
+#include <vector>                       // for vector
+
 #include "EventFunctors.h"
+#include "NegativeEvent.h"
+#include "TimeWarpEventSet.h"           // for TimeWarpEventSet
+
+class SimulationConfiguration;
+class SimulationObject;
+class VTime;
 
 using std::multiset;
 using std::list;

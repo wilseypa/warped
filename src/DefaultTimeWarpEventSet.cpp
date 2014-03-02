@@ -1,11 +1,18 @@
 
-#include "DefaultTimeWarpEventSet.h"
-#include "DefaultTimeWarpEventContainer.h"
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for operator<<, basic_ostream, etc
+
 #include "DefaultTimeWarpEventContOneAntiMsg.h"
-#include "Event.h"
-#include "NegativeEvent.h"
-#include "SimulationObject.h"
-#include "TimeWarpSimulationManager.h"
+#include "DefaultTimeWarpEventContainer.h"
+#include "DefaultTimeWarpEventSet.h"
+#include "Event.h"                      // for Event
+#include "ObjectID.h"                   // for ObjectID
+#include "SimulationObject.h"           // for SimulationObject
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
+
+class NegativeEvent;
 
 using std::cerr;
 using std::endl;

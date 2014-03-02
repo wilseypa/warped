@@ -1,12 +1,19 @@
 #ifndef SIMULATION_MANAGER_IMPLEMENTATION_BASE_H
 #define SIMULATION_MANAGER_IMPLEMENTATION_BASE_H
 
-#include "SimulationManager.h"
-#include "warped.h"
-#include <fstream>
-#include <unordered_map>
+#include <fstream>                      // for ostream
+#include <string>                       // for string, hash
+#include <unordered_map>                // for _Hashtable<>::iterator, etc
+#include <utility>                      // for pair
+#include <vector>                       // for vector
 
+#include "SimulationManager.h"          // for SimulationManager
+#include "warped.h"
+using std::string;
+
+class Event;
 class SimulationObject;
+class VTime;
 
 /** The base class that implements a SimulationManager.
 

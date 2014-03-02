@@ -2,13 +2,16 @@
 #define APPLICATION_H
 
 
-#include "warped.h"
-#include "Configurable.h"
-#include <vector>
-#include <string>
+#include <string>                       // for string
+#include <vector>                       // for vector
 
-class SimulationObject;
+#include "Configurable.h"               // for Configurable
+#include "warped.h"
+
 class PartitionInfo;
+class SimulationConfiguration;
+class SimulationObject;
+class VTime;
 
 /** The Application abstract class.
 

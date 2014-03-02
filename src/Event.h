@@ -2,11 +2,16 @@
 #define EVENT_H
 
 
-#include "warped.h"
-#include <Serializable.h>
+#include <Serializable.h>               // for Serializable
+#include <stddef.h>                     // for size_t
+#include <iosfwd>                       // for ostream
 
-class VTime;
+#include "warped.h"
+
 class EventId;
+class ObjectID;
+class SerializedInstance;
+class VTime;
 //class OptFossilCollManager;
 
 /** The abstract base class Event.

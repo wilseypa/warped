@@ -2,8 +2,11 @@
 #define DVFS_MANAGER_FACTORY_H
 
 
+#include "Configurer.h"                 // for Configurer
 #include "warped.h"
-#include "Configurer.h"
+
+class Configurable;
+class SimulationConfiguration;
 
 
 /** The DVFSManagerFactory class.

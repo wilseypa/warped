@@ -1,14 +1,15 @@
-#include "PartitionManager.h"
-
-#include "SimulationConfiguration.h"
-#include "Application.h"
-#include "RoundRobinPartitioner.h"
-#include "GreedyPartitioner.h"
-#include "ProfileGuidedPartitioner.h"
-
-#include <vector>
 #include <fstream>
+#include <vector>                       // for vector
+#include <string>
 
+#include "Application.h"                // for Application
+#include "GreedyPartitioner.h"          // for GreedyPartitioner
+#include "PartitionManager.h"
+#include "ProfileGuidedPartitioner.h"   // for ProfileGuidedPartitioner
+#include "RoundRobinPartitioner.h"      // for RoundRobinPartitioner
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+
+class SimulationObject;
 class PartitionInfo;
 
 PartitionManager::PartitionManager(SimulationConfiguration& configuration) {

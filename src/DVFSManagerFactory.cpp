@@ -1,12 +1,16 @@
 
-#include "WarpedDebug.h"
-#include "DVFSManagerFactory.h"
-#include "SharedDVFSManager.h"
-#include "DistributedDVFSManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "SimulationConfiguration.h"
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <string>                       // for operator==, operator<<, etc
 
-#include <string>
+#include "Configurable.h"               // for Configurable
+#include "DVFSManager.h"                // for DVFSManager, etc
+#include "DVFSManagerFactory.h"
+#include "DistributedDVFSManager.h"     // for DistributedDVFSManager
+#include "SharedDVFSManager.h"          // for SharedDVFSManager
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "warped.h"                     // for ASSERT
 
 using std::cout;
 using std::cerr;

@@ -1,5 +1,12 @@
 
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for operator<<, cerr, ostream, etc
+
 #include "SinkObject.h"
+
+class Event;
+class VTime;
+
 using std::cerr;
 using std::endl;
 

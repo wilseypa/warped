@@ -2,13 +2,18 @@
 #define CLOCK_FREQUENCY_MANAGER_IMPLEMENTATION_BASE_H
 
 
-#include "warped.h"
-#include "DVFSManager.h"
-#include "controlkit/FIRFilter.h"
-#include "StopWatch.h"
+#include <string>                       // for string
+#include <vector>                       // for vector
 
-class TimeWarpSimulationManager;
+#include "DVFSManager.h"                // for DVFSManager::Algorithm, etc
+#include "StopWatch.h"                  // for StopWatch
+#include "controlkit/FIRFilter.h"       // for FIRFilter
+#include "warped.h"
+using std::string;
+
 class CommunicationManager;
+class SimulationConfiguration;
+class TimeWarpSimulationManager;
 
 /** The DVFSManagerImplementationBase implementation base class.
 

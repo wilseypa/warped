@@ -2,29 +2,37 @@
 #ifndef THREADEDOPTFOSSILCOLLMANAGER_H_
 #define THREADEDOPTFOSSILCOLLMANAGER_H_
 
-#include "warped.h"
-#include "CommunicatingEntity.h"
-#include "Configurable.h"
-#include "StateSetObject.h"
-#include "OutputManager.h"
-#include "LockState.h"
-#include <set>
-#include <fstream>
-#include <map>
 #include <dirent.h>
+#include <fstream>
+#include <map>                          // for map
+#include <set>
+#include <string>                       // for string
+#include <vector>                       // for vector
+
+#include "CommunicatingEntity.h"        // for CommunicatingEntity
+#include "Configurable.h"               // for Configurable
+#include "LockState.h"
+#include "ObjectID.h"                   // for ObjectID
+#include "OutputManager.h"
+#include "StateSetObject.h"
 #include "ThreadedTimeWarpSimulationManager.h"
+#include "warped.h"
+
+class KernelMessage;
+class LockState;
+class SimulationConfiguration;
 
 using namespace std;
 
-class ThreadedTimeWarpSimulationManager;
-class TimeWarpSimulationManager;
-class SimulationObject;
-class VTime;
 class CommunicationManager;
 class Event;
 class NegativeEvent;
 class RestoreCkptMessage;
+class SimulationObject;
 class State;
+class ThreadedTimeWarpSimulationManager;
+class TimeWarpSimulationManager;
+class VTime;
 
 /** The Optimistic Fossil Collection Manager class.
 

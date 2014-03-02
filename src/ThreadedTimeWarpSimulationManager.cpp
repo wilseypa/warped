@@ -1,39 +1,63 @@
+#include <stdlib.h>                     // for NULL, abort
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <sstream>
+#include <unordered_map>                // for unordered_map, etc
+#include <utility>                      // for pair, make_pair
 
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "DefaultSchedulingManager.h"
-#include "ThreadedLazyOutputManager.h"
-#include "ThreadedDynamicOutputManager.h"
-#include "ThreadedAggressiveOutputManager.h"
-#include "StopWatch.h"
-#include "ObjectStub.h"
-#include "SimulationObjectProxy.h"
-#include "TimeWarpSimulationManager.h"
-#include "TimeWarpSimulationStream.h"
-#include "CommunicationManager.h"
-#include "TerminationManager.h"
-#include "EventMessage.h"
-#include "NegativeEvent.h"
-#include "NegativeEventMessage.h"
-#include "SingleTerminationManager.h"
-#include "ThreadedCostAdaptiveStateManager.h"
-#include "ThreadedOptFossilCollManager.h"
-#include "ThreadedTimeWarpMultiSet.h"
-#include "InitializationMessage.h"
-#include "StartMessage.h"
-#include "Application.h"
-#include "TokenPassingTerminationManager.h"
+#include "Application.h"                // for Application
+#include "AtomicState.h"                // for AtomicState
+#include "CommunicationManager.h"       // for CommunicationManager
+#include "CommunicationManagerFactory.h"
+#include "Configurable.h"               // for Configurable
+#include "DVFSManager.h"                // for DVFSManager
+#include "DVFSManagerFactory.h"         // for DVFSManagerFactory
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "Event.h"                      // for Event
+#include "EventId.h"                    // for EventId, operator<<
+#include "EventMessage.h"               // for EventMessage
+#include "FileQueue.h"                  // for cout, cerr
+#include "GVTManager.h"                 // for GVTManager
+#include "GVTManagerFactory.h"          // for GVTManagerFactory
+#include "InitializationMessage.h"      // for InitializationMessage
+#include "KernelMessage.h"              // for KernelMessage
+#include "LockState.h"                  // for LockState
+#include "LockedQueue.h"                // for LockedQueue
+#include "NegativeEvent.h"              // for NegativeEvent
+#include "NegativeEventMessage.h"       // for NegativeEventMessage
 #include "OptFossilCollManagerFactory.h"
-#include "ThreadedTimeWarpEventSet.h"
-#include "ThreadedTimeWarpMultiSetSchedulingManager.h"
-#include "PartitionInfo.h"
-#include "StragglerEvent.h"
-#include "ThreadedMatternGVTManager.h"
-#include "SimulationConfiguration.h"
+#include "OutputManagerFactory.h"       // for OutputManagerFactory
+#include "PartitionManager.h"           // for PartitionManager
+#include "SchedulingManager.h"          // for SchedulingManager
+#include "SchedulingManagerFactory.h"   // for SchedulingManagerFactory
+#include "SetObject.h"                  // for ostream
+#include "SimulationManagerImplementationBase.h"
+#include "SimulationObject.h"           // for SimulationObject
+#include "SimulationObjectProxy.h"      // for SimulationObjectProxy
+#include "SingleTerminationManager.h"   // for SingleTerminationManager
+#include "StartMessage.h"               // for StartMessage
+#include "StateManagerFactory.h"        // for StateManagerFactory
+#include "StopWatch.h"                  // for StopWatch
+#include "StragglerEvent.h"             // for StragglerEvent
+#include "TerminationManager.h"         // for TerminationManager
+#include "ThreadedCostAdaptiveStateManager.h"
+#include "ThreadedDynamicOutputManager.h"
+#include "ThreadedLazyOutputManager.h"  // for ThreadedLazyOutputManager
+#include "ThreadedMatternGVTManager.h"  // for ThreadedMatternGVTManager
+#include "ThreadedOptFossilCollManager.h"
+#include "ThreadedStateManager.h"       // for ThreadedStateManager
+#include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
 #include "ThreadedTimeWarpLoadBalancer.h"
-#include "DVFSManager.h"
-#include "DistributedDVFSManager.h"
-#include "DVFSManagerFactory.h"
-#include "PartitionManager.h"
+#include "ThreadedTimeWarpMultiSet.h"   // for ThreadedTimeWarpMultiSet
+#include "ThreadedTimeWarpMultiSetSchedulingManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpEventSetFactory.h"    // for TimeWarpEventSetFactory
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "TimeWarpSimulationStream.h"   // for TimeWarpSimulationStream, etc
+#include "TokenPassingTerminationManager.h"
+#include "WarpedDebug.h"                // for debugout
+#include "WorkerInformation.h"          // for WorkerInformation, etc
+
+class SimulationConfiguration;
 
 int WorkerInformation::globalStillBusyCount = 0;
 bool WorkerInformation::workRemaining = true;

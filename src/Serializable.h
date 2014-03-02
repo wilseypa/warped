@@ -1,10 +1,9 @@
 #ifndef SERIALIZABLE_H
 #define SERIALIZABLE_H
 
-
 class SerializedInstance;
+
 #include <string>
-using std::string;
 
 /**
    Serialization interface.  Serializable classes should derive from this
@@ -16,7 +15,7 @@ public:
     /**
        This class' unique data type string.
     */
-    virtual const string& getDataType() const = 0;
+    virtual const std::string& getDataType() const = 0;
 
     /**
        Serialize this object.  Serialization happens in two phases, following

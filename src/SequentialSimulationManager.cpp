@@ -1,13 +1,18 @@
 
-#include "WarpedDebug.h"
-#include "EventSetFactory.h"
-#include "ObjectStub.h"
+#include <stdlib.h>                     // for NULL, exit
+#include <iostream>                     // for operator<<, ostream, etc
+
+#include "Application.h"                // for Application
+#include "Configurable.h"               // for Configurable
+#include "Event.h"                      // for Event
+#include "EventSet.h"                   // for EventSet
+#include "EventSetFactory.h"            // for EventSetFactory
 #include "SequentialSimulationManager.h"
-#include "Application.h"
-#include "warped.h"
-#include "PartitionInfo.h"
-#include "Event.h"
-#include "SimulationConfiguration.h"
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT, werr, wout
+
+class SimulationStream;
 
 using std::cerr;
 using std::cout;

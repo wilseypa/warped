@@ -2,12 +2,19 @@
 #define STRAGGLEREVENT_H_
 
 
-#include "warped.h"
-#include "Event.h"
-#include "EventId.h"
-#include <vector>
+#include <iosfwd>                       // for ostream
+#include <string>                       // for string
+#include <vector>                       // for vector, allocator
 
+#include "Event.h"                      // for Event
+#include "EventId.h"
+#include "warped.h"
+
+class EventId;
 class NegativeEvent;
+class ObjectID;
+class VTime;
+
 using namespace std;
 
 class StragglerEvent: public Event {

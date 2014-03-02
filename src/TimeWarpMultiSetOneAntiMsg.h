@@ -2,7 +2,11 @@
 #define TIME_WARP_MULTI_SET_ONE_ANTI_MSG_H
 
 
-#include "TimeWarpMultiSet.h"
+#include "TimeWarpMultiSet.h"           // for TimeWarpMultiSet
+
+class NegativeEvent;
+class SimulationObject;
+class TimeWarpSimulationManager;
 
 /** The TimeWarpMultiSetOneAntiMsg class.
 

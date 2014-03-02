@@ -1,5 +1,11 @@
 
+#include <stddef.h>                     // for NULL
+
 #include "CentralizedEventSetSchedulingManager.h"
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
+
+class TimeWarpEventSet;
 
 CentralizedEventSetSchedulingManager::CentralizedEventSetSchedulingManager(
     SimulationManager* simMgr)

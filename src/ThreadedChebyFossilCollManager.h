@@ -3,7 +3,16 @@
 #ifndef THREADEDCHEBYFOSSILCOLLMANAGER_H_
 #define THREADEDCHEBYFOSSILCOLLMANAGER_H_
 
+#include <string>                       // for string
+#include <vector>                       // for vector
+
 #include "ThreadedOptFossilCollManager.h"
+using std::string;
+
+class LockState;
+class SimulationObject;
+class ThreadedTimeWarpSimulationManager;
+class VTime;
 
 /** The ChebyFossilCollManager class.
 

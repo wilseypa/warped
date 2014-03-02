@@ -2,14 +2,18 @@
 #define OBJECT_STUB_H
 
 
-#include "warped.h"
-#include "Factory.h"
-#include <sstream>
+#include <sstream>                      // for ostringstream
+#include <string>                       // for string
+
+#include "Factory.h"                    // for Factory
+#include "Types.h"                      // for Kind
+#include "warped.h"                     // for ostringstream
+using std::string;
 
 using std::ostringstream;
 
-class SimulationObject;
 class FactoryImplementationBase;
+class SimulationObject;
 
 /** The ObjectStub abstract base class.
 

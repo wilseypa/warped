@@ -1,11 +1,15 @@
+#include <sched.h>                      // for sched_getcpu
+#include <stdlib.h>                     // for abort
+#include <algorithm>                    // for sort
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <sstream>
 
-#include "warped.h"
 #include "DVFSManagerImplementationBase.h"
-#include "TimeWarpSimulationManager.h"
-#include <set>
-#include <sched.h>
-#include <cstdio>
-#include "WarpedDebug.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "WarpedConfig.h"               // for HAVE_SCHED_GETCPU
+#include "warped.h"                     // for ostringstream
+
+class SimulationConfiguration;
 
 using namespace std;
 

@@ -1,11 +1,16 @@
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for ostream, operator<<, endl, etc
 
-#include <fstream>
-#include <algorithm>
-#include "Event.h"
-#include "NegativeEvent.h"
+#include "Event.h"                      // for Event, operator<<, etc
+#include "EventId.h"                    // for EventId
+#include "NegativeEvent.h"              // for NegativeEvent
+#include "ObjectID.h"                   // for ObjectID, operator<<
+#include "SimulationObject.h"           // for SimulationObject
 #include "TimeWarpMultiSet.h"
-#include "SimulationObject.h"
-#include "TimeWarpSimulationManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
+
 using std::cout;
 using std::cerr;
 using std::endl;

@@ -2,15 +2,16 @@
 #define IN_FILE_QUEUE_H
 
 
-#include <fstream>
-#include "warped.h"
-#include "InFileData.h"
-#include <set>
-#include <string>
+#include <fstream>                      // for fstream
+#include <set>                          // for multiset
+#include <string>                       // for string
+#include <ios>                          // for streampos
 
+#include "InFileData.h"                 // for InFileData
+#include "warped.h"
 using std::string;
-using std::multiset;
-using std::fstream;
+
+class VTime;
 
 /** The InFileQueue class.
 
@@ -20,20 +21,20 @@ using std::fstream;
     reading.
 
 */
-class InFileQueue : public multiset< InFileData > {
+class InFileQueue : public std::multiset< InFileData > {
 public:
 
     /**@name Public Class Methods of InFileQueue. */
     //@{
 
     /// Default Constructor that takes a file name
-    InFileQueue(const string& fileName);
+    InFileQueue(const std::string& fileName);
 
     /// Destructor
     ~InFileQueue();
 
     /// Open a particular file
-    void open(const string& fileName);
+    void open(const std::string& fileName);
 
     /// fossil collect everything earlier than fossil collect time
     void fossilCollect(const VTime& fossilCollectTime);
@@ -50,13 +51,13 @@ public:
 
     // sets the position of the file during the last fossil
     // collection or the optimistic fossil collection restore.
-    void restoreFilePosition(streampos newPos);
+    void restoreFilePosition(std::streampos newPos);
 
     /// close the file queue
     void close();
 
     /// get a handle to the file stream
-    fstream* access() {
+    std::fstream* access() {
         return &inFile;
     };
 
@@ -68,13 +69,13 @@ private:
     //@{
 
     /// name of the file
-    string inFileName;
+    std::string inFileName;
 
     /// the file stream
-    fstream inFile;
+    std::fstream inFile;
 
     /// the position in the file at the last rollback.
-    streampos lastFossilCollPos;
+    std::streampos lastFossilCollPos;
 
     //@} // End of Private Class Attributes of InFileQueue.
 };

@@ -1,6 +1,15 @@
 
+#include <deque>                        // for _Deque_iterator, deque, etc
+#include <vector>                       // for vector
+
 #include "DefaultTimeWarpEventContOneAntiMsg.h"
-#include "NegativeEvent.h"
+#include "Event.h"                      // for Event
+#include "NegativeEvent.h"              // for NegativeEvent
+#include "ObjectID.h"                   // for ObjectID
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
+
+class SimulationObject;
 
 bool
 DefaultTimeWarpEventContOneAntiMsg::handleAntiMessage(SimulationObject* reclaimer,

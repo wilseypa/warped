@@ -3,8 +3,13 @@
 
 
 #include <fstream>
+#include <vector>                       // for vector
+
+#include "LazyOutputManager.h"          // for LazyOutputManager
 #include "warped.h"
-#include "LazyOutputManager.h"
+
+class TimeWarpSimulationManager;
+class VTime;
 
 #define FILTER_DEPTH 16
 #define AGGRESSIVE_TO_LAZY 0.5
@@ -14,8 +19,8 @@
 enum cancellationMode {AGGRESSIVE, LAZY};
 
 class Event;
-class SimulationObject;
 class OutputManager;
+class SimulationObject;
 
 /** The DynamicOutputManager class.
 

@@ -1,12 +1,25 @@
 
-#include "ThreadedTimeWarpMultiSet.h"
-#include "SimulationObject.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "ThreadedTimeWarpMultiSetSchedulingManager.h"
-#include "StragglerEvent.h"
-#include "ThreadedTimeWarpMultiSetLTSF.h"
+#include <string.h>                     // for NULL, memset
+#include <iostream>                     // for operator<<, basic_ostream, etc
 
-class NegativeEvent;
+#include "Event.h"                      // for Event, operator<<
+#include "EventId.h"                    // for EventId
+#include "LockState.h"                  // for LockState
+#include "NegativeEvent.h"              // for NegativeEvent
+#include "ObjectID.h"                   // for ObjectID
+#include "SetObject.h"                  // for ostream
+#include "SimulationObject.h"           // for SimulationObject
+#include "StragglerEvent.h"             // for StragglerEvent
+#include "ThreadedStateManager.h"       // for ThreadedStateManager
+#include "ThreadedTimeWarpLoadBalancer.h"
+#include "ThreadedTimeWarpMultiSet.h"
+#include "ThreadedTimeWarpMultiSetLTSF.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
+#include "WorkerInformation.h"          // for __sync_fetch_and_add_4
+#include "warped.h"                     // for ASSERT
+
 using std::cout;
 using std::cerr;
 using std::endl;

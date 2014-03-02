@@ -1,6 +1,13 @@
 
+#include <stdlib.h>                     // for abort, NULL
+#include <iostream>                     // for operator<<, basic_ostream, etc
+
 #include "GVTManagerImplementationBase.h"
-#include "TimeWarpSimulationManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
+
+class SimulationConfiguration;
 
 using std::cerr;
 using std::endl;

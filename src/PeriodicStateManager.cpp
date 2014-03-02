@@ -1,11 +1,16 @@
 
-#include "SimulationObject.h"
+#include <set>                          // for multiset
+#include <vector>                       // for vector
+
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "ObjectID.h"                   // for ObjectID
 #include "PeriodicStateManager.h"
-#include "State.h"
-#include "TimeWarpSimulationManager.h"
-#include "SchedulingManager.h"
-#include "Event.h"
-#include "OptFossilCollManager.h"
+#include "SetObject.h"                  // for SetObject
+#include "SimulationObject.h"           // for SimulationObject
+#include "State.h"                      // for State
+
+class TimeWarpSimulationManager;
+class VTime;
 
 PeriodicStateManager::PeriodicStateManager(TimeWarpSimulationManager* simMgr,
                                            unsigned int period) :

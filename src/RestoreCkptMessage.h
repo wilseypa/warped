@@ -2,7 +2,11 @@
 #define RESTORECKPTMESSAGE_H
 
 
-#include "KernelMessage.h"
+#include <string>                       // for string
+
+#include "KernelMessage.h"              // for KernelMessage
+#include "Serializable.h"               // for string, etc
+using std::string;
 
 class SerializedInstance;
 

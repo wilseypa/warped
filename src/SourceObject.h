@@ -2,8 +2,11 @@
 #define SOURCE_OBJECT_H
 
 
+#include "SimulationObject.h"           // for SimulationObject
 #include "warped.h"
-#include "SimulationObject.h"
+
+class Event;
+class VTime;
 
 /** The class SourceObject.
 

@@ -1,12 +1,15 @@
 
+#include <iostream>                     // for ostringstream, etc
+#include <string>                       // for string
+
+#include "DeserializerManager.h"        // for DeserializerManager
 #include "IntVTime.h"
-#include "Serializable.h"
-#include "SerializedInstance.h"
-#include "DeserializerManager.h"
-#include <string>
-#include <typeinfo>
-#include <iostream>
-#include <sstream>
+#include "Serializable.h"               // for Serializable (ptr only), etc
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "warped.h"                     // for ostringstream, etc
+
+class VTime;
+
 using std::ostringstream;
 using std::cerr;
 using std::endl;

@@ -2,8 +2,15 @@
 #define COMMUNICATION_MANAGER_IMPLEMENTATION_BASE_H
 
 
+#include <string>                       // for string
+
+#include "CommunicationManager.h"       // for CommunicationManager
+#include "SerializedInstance.h"         // for SerializedInstance
 #include "warped.h"
-#include "CommunicationManager.h"
+using std::string;
+
+class KernelMessage;
+class PhysicalCommunicationLayer;
 class TimeWarpSimulationManager;
 
 /** The CommunicationManagerImplementationBase class.

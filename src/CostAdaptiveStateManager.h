@@ -2,7 +2,13 @@
 #define COSTADAPTIVESTATEMANAGER_HH
 
 
-#include "AdaptiveStateManagerBase.h"
+#include <vector>                       // for vector
+
+#include "AdaptiveStateManagerBase.h"   // for AdaptiveStateManagerBase
+
+class SimulationObject;
+class TimeWarpSimulationManager;
+class VTime;
 
 // The maximum period.
 const unsigned int maxDefaultInterval = 30;

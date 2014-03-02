@@ -3,9 +3,11 @@
 
 
 #include "SimulationManager.h"
-#include "TimeWarpEventSetFactory.h"
+#include "TimeWarpEventSetFactory.h"    // for TimeWarpEventSetFactory
 
+class Configurable;
 class Event;
+class SimulationConfiguration;
 class TimeWarpCentralizedEventSet;
 
 /** The TimeWarpCentralizedEventSetFactory class.

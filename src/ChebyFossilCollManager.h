@@ -2,7 +2,13 @@
 #define CHEBYFOSSILCOLLMANAGER_H_
 
 
-#include "OptFossilCollManager.h"
+#include <vector>                       // for vector
+
+#include "OptFossilCollManager.h"       // for OptFossilCollManager
+
+class SimulationObject;
+class TimeWarpSimulationManager;
+class VTime;
 
 /** The ChebyFossilCollManager class.
 

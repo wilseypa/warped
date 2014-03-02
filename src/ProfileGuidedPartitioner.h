@@ -1,9 +1,14 @@
 #ifndef PROFILE_GUIDED_PARTITIONER_H
 #define PROFILE_GUIDED_PARTITIONER_H
 
-#include "Partitioner.h"
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>                       // for vector
+
+#include "Partitioner.h"                // for Partitioner
+
+class PartitionInfo;
+class SimulationObject;
 
 class ProfileGuidedPartitioner : public Partitioner {
 public:

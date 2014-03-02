@@ -2,10 +2,19 @@
 #define SIMULATION_MANAGER_H
 
 
-#include "warped.h"
-#include "SimulationObject.h"
+#include <iosfwd>                       // for ios
+#include <string>                       // for string
+#include <vector>                       // for vector
+
+#include "Configurable.h"               // for Configurable
+#include "SimulationObject.h"           // for SimulationObject (ptr only), etc
 #include "SimulationStream.h"
-#include "Configurable.h"
+#include "warped.h"                     // for SEVERITY
+using std::string;
+
+class Event;
+class SimulationStream;
+class VTime;
 
 /** The abstract base class SimulationManager.
 

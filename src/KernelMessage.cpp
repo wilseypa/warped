@@ -1,5 +1,6 @@
 
 #include "KernelMessage.h"
+#include "SerializedInstance.h"         // for SerializedInstance
 
 void
 KernelMessage::serialize(SerializedInstance* addTo) const {

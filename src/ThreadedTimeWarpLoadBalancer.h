@@ -2,13 +2,13 @@
 #define THREADEDTIMEWARPLOADBALANCER_H_
 
 
-#include "ThreadedTimeWarpSimulationManager.h"
+#include "StopWatch.h"                  // for StopWatch
 #include "ThreadedTimeWarpMultiSet.h"
-#include "StopWatch.h"
+#include "ThreadedTimeWarpSimulationManager.h"
 
+class ThreadedTimeWarpMultiSet;
 // Why is this needed?
 class ThreadedTimeWarpSimulationManager;
-class ThreadedTimeWarpMultiSet;
 
 class ThreadedTimeWarpLoadBalancer {
 public:

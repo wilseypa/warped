@@ -1,8 +1,8 @@
+#include <fstream>                      // for ofstream
 #include <iostream>
-#include <map>
-#include <string>
-#include <utility>
-#include <fstream>
+#include <map>                          // for map
+#include <string>                       // for string
+#include <utility>                      // for pair
 
 typedef std::pair<int, int> Edge;
 

@@ -1,6 +1,5 @@
 
 #include "ObjectStub.h"
-#include "FactoryImplementationBase.h"
 
 ObjectStub::ObjectStub(FactoryImplementationBase* myFactory) {
     factory = myFactory;

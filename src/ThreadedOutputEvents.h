@@ -2,14 +2,23 @@
 #ifndef THREADEDOUTPUTEVENTS_H_
 #define THREADEDOUTPUTEVENTS_H_
 
-#include "LockState.h"
-#include "warped.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include <vector>
 #include <algorithm>
-#include <list>
-#include <fstream>
+#include <fstream>                      // for ofstream
+#include <list>                         // for list
+#include <vector>                       // for vector, vector<>::iterator
+
+#include "LockState.h"
+#include "SerializedInstance.h"         // for vector
 #include "SetObject.h"
+#include "ThreadedOutputManager.h"      // for ofstream
+#include "ThreadedTimeWarpMultiSetLTSF.h"  // for list
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "warped.h"
+
+class LockState;
+class ThreadedTimeWarpSimulationManager;
+template <class Element> class SetObject;
+
 using std::vector;
 using std::list;
 using std::ofstream;

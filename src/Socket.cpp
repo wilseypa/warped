@@ -1,21 +1,21 @@
 #ifndef SOCKET_CC
 #define SOCKET_CC
 
-
-#include <WarpedConfig.h>
 #include "Socket.h"
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <errno.h>
-#include <strings.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <netdb.h>
-#include <fcntl.h>
-#include <iostream>
-#include <cstring>
+
+#include <WarpedConfig.h>               // for USE_SOCKLEN_T
+#include <arpa/inet.h>                  // for inet_addr
+#include <errno.h>                      // for errno, EACCES, EBADF, etc
+#include <fcntl.h>                      // for fcntl, F_SETFL, O_NONBLOCK
+#include <netdb.h>                      // for gethostbyname, hostent
+#include <netinet/in.h>                 // for sockaddr_in, htons, htonl, etc
+#include <stdlib.h>                     // for atoi
+#include <sys/socket.h>                 // for AF_INET, socket, bind, etc
+#include <unistd.h>                     // for close, write
+#include <cstring>                      // for bzero, NULL, strchr
+#include <iostream>                     // for operator<<, basic_ostream, etc
+
+
 using std::cerr;
 using std::endl;
 

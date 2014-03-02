@@ -1,8 +1,17 @@
+#include <stddef.h>                     // for NULL
+#include <set>                          // for multiset, etc
+#include <vector>                       // for vector
 
-#include "NegativeEvent.h"
-#include "SimulationObject.h"
+#include "Event.h"                      // for Event, operator==
+#include "EventFunctors.h"
+#include "NegativeEvent.h"              // for NegativeEvent
+#include "ObjectID.h"                   // for ObjectID
+#include "SimulationObject.h"           // for SimulationObject
 #include "TimeWarpMultiSetOneAntiMsg.h"
-#include "TimeWarpSimulationManager.h"
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
+
+class TimeWarpSimulationManager;
 
 TimeWarpMultiSetOneAntiMsg::TimeWarpMultiSetOneAntiMsg(TimeWarpSimulationManager*
                                                        initSimulationManager):

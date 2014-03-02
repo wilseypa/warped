@@ -2,11 +2,17 @@
 #define COMMUNICATION_MANAGER_FACTORY_H
 
 
+#include <string>                       // for string
+
+#include "Configurer.h"                 // for Configurer
 #include "warped.h"
-#include "Configurer.h"
+
+using std::string;
 
 class CommunicationManager;
+class Configurable;
 class PhysicalCommunicationLayer;
+class SimulationConfiguration;
 class TimeWarpSimulationManager;
 
 /** The CommunicationManagerFactory class.

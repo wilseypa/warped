@@ -1,16 +1,29 @@
 #ifndef SEQUENTIAL_SIMULATION_MANAGER_H
 #define SEQUENTIAL_SIMULATION_MANAGER_H
 
-#include <string>
+#include <iosfwd>                       // for ios
+#include <string>                       // for string
+#include <unordered_map>
+#include <utility>                      // for pair
+#include <vector>                       // for vector
 
-#include "warped.h"
-#include "SimulationManagerImplementationBase.h"
-#include "SequentialSimulationStream.h"
+#include "DefaultObjectID.h"            // for OBJECT_ID
 #include "EventSet.h"
-#include "StopWatch.h"
-#include "GraphStatistics.h"
+#include "GraphStatistics.h"            // for GraphStatistics
+#include "ObjectID.h"                   // for ObjectID
+#include "SequentialSimulationStream.h"  // for SequentialSimulationStream
+#include "SimulationManagerImplementationBase.h"
+#include "SimulationObject.h"           // for SimulationObject (ptr only), etc
+#include "StopWatch.h"                  // for StopWatch
+#include "VTime.h"                      // for VTime
+#include "warped.h"
+using std::string;
 
 class Application;
+class Event;
+class EventSet;
+class SimulationConfiguration;
+class SimulationStream;
 
 /** The SequentialSimulationManager class.
 

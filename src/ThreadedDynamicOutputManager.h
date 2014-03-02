@@ -2,9 +2,14 @@
 #ifndef THREADEDADAPTIVEOUTPUTMANAGER_H_
 #define THREADEDADAPTIVEOUTPUTMANAGER_H_
 
-#include "warped.h"
-#include "ThreadedLazyOutputManager.h"
+#include <vector>                       // for vector
+
 #include "EventFunctors.h"
+#include "ThreadedLazyOutputManager.h"  // for ThreadedLazyOutputManager
+#include "warped.h"
+
+class ThreadedTimeWarpSimulationManager;
+class VTime;
 
 //#define FILTER_DEPTH 16
 //#define AGGRESSIVE_TO_LAZY 0.5
@@ -16,8 +21,8 @@ enum cancellationModes {
 };
 
 class Event;
-class SimulationObject;
 class OutputManager;
+class SimulationObject;
 
 /** The Threaded DynamicOutputManager class.
 

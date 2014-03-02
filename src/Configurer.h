@@ -1,16 +1,18 @@
 #ifndef CONFIGURER_H
 #define CONFIGURER_H
 
+#include <string>                       // for string, hash
+#include <unordered_map>                // for unordered_map
+
 #include "warped.h"
-#include <unordered_map>
-#include <string>
+
 using std::string;
 
 
+class Application;
+class Configurable;
 class SimulationConfiguration;
 class SimulationManager;
-class Configurable;
-class Application;
 
 /**
    This class implements an interface that allows confiuration of a series

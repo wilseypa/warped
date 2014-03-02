@@ -1,11 +1,12 @@
 #ifndef SIMULATION_CONFIGURATION_H
 #define SIMULATION_CONFIGURATION_H
 
-#include <cstdint>
-#include <string>
-#include <initializer_list>
+#include <cstdint>                      // for int64_t
+#include <initializer_list>             // for initializer_list
+#include <iosfwd>                       // for istream
+#include <string>                       // for string
 
-#include "json/json.h"
+#include "json/json.h"                  // for Value
 
 // This class holds configuration settings read in from a configuration file
 //

@@ -1,24 +1,41 @@
 #ifndef THREADED_TIME_WARP_SIMULATION_MANAGER_H
 #define THREADED_TIME_WARP_SIMULATION_MANAGER_H
 
-#include "TimeWarpSimulationManager.h"
+#include <pthread.h>                    // for pthread_key_t
+#include <iosfwd>                       // for ifstream, ofstream
+#include <string>                       // for string
+#include <vector>                       // for vector
+
 #include "LockedQueue.h"
-#include "WorkerInformation.h"
+#include "ObjectID.h"                   // for ObjectID
+#include "ThreadedOptFossilCollManager.h"
 #include "ThreadedOutputManager.h"
 #include "ThreadedStateManager.h"
 #include "ThreadedTimeWarpEventSet.h"
-#include "ThreadedOptFossilCollManager.h"
 #include "ThreadedTimeWarpLoadBalancer.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "WorkerInformation.h"
+#include "warped.h"                     // for ASSERT
+using std::string;
 
 class Application;
-class SimulationObject;
+class AtomicState;
+class Event;
+class KernelMessage;
 class LocalKernelMessage;
+class LockState;
+class NegativeEvent;
+class OptFossilCollManager;
+class SchedulingManager;
+class SimulationConfiguration;
+class SimulationObject;
+class ThreadedOptFossilCollManager;
+class ThreadedStateManager;
+class ThreadedTimeWarpEventSet;
+class ThreadedTimeWarpLoadBalancer;
 class VTime;
 class WorkerInformation;
-class AtomicState;
-class ThreadedOptFossilCollManager;
-class ThreadedTimeWarpLoadBalancer;
-
 template<class element> class LockedQueue;
 
 extern pthread_key_t threadKey;

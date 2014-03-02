@@ -2,14 +2,27 @@
 #define THREADEDSTATEMANAGERIMPLEMENTATIONBASE_H_
 
 
-#include "warped.h"
-#include "SetObject.h"
-#include "ThreadedStateManager.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "LockState.h"
+#include <iosfwd>                       // for ostream
+#include <set>                          // for multiset
+#include <string>                       // for string
+#include <vector>                       // for vector
 
-#include <set>
+#include "LockState.h"
+#include "ObjectID.h"                   // for ObjectID
+#include "SetObject.h"                  // for SetObject (ptr only), etc
+#include "ThreadedStateManager.h"       // for ThreadedStateManager
+#include "ThreadedTimeWarpMultiSetLTSF.h"  // for multiset
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "warped.h"
+
+class LockState;
+class SimulationObject;
+class State;
+class ThreadedTimeWarpSimulationManager;
+class VTime;
+
 using std::multiset;
+using std::string;
 
 /** The ThreadedStateManagerImplementationBase class.
 

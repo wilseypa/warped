@@ -1,7 +1,8 @@
 
+#include "DeserializerManager.h"        // for DeserializerManager
+#include "NegativeEvent.h"              // for NegativeEvent
 #include "NegativeEventMessage.h"
-#include "Event.h"
-#include "DeserializerManager.h"
+#include "SerializedInstance.h"         // for SerializedInstance
 
 NegativeEventMessage::~NegativeEventMessage() {
     vector<const NegativeEvent*>::const_iterator it(myEvents.begin());

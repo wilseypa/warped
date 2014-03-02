@@ -1,7 +1,8 @@
 
-#include <iostream>
-#include "Event.h"
+#include <iostream>                     // for operator<<, basic_ostream, etc
+
 #include "SplayTree.h"
+#include "TreeElement.h"                // for TreeElement
 
 using namespace std;
 

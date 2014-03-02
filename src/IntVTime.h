@@ -2,11 +2,14 @@
 #define INTVTIME_H
 
 
-#include <warped.h>
+#include <Serializable.h>               // for string, Serializable
+#include <VTime.h>                      // for VTime
+#include <warped.h>                     // for warped64_t
 #include <iostream>
-#include <string>
-#include <Serializable.h>
-#include <VTime.h>
+#include <string>                       // for string
+using std::string;
+
+class SerializedInstance;
 
 class IntVTime : public VTime {
 

@@ -1,6 +1,13 @@
 
+#include <stdlib.h>                     // for abort
+#include <string.h>                     // for memcpy
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <vector>                       // for vector
+
+#include "SerializedInstance.h"         // for SerializedInstance
 #include "Transceiver.h"
-#include "MsgAggregatingCommunicationManager.h"
+#include "eclmpl/PhysicalCommunicationLayer.h"
+
 using std::cerr;
 using std::endl;
 

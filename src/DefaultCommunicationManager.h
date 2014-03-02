@@ -2,11 +2,15 @@
 #define DEFAULT_COMMUNICATION_MANAGER_H
 
 
-#include "warped.h"
-#include "SimulationManager.h"
-#include "CommunicationManagerImplementationBase.h"
-
 #include <vector>
+
+#include "CommunicationManagerImplementationBase.h"
+#include "SimulationManager.h"
+#include "warped.h"
+
+class PhysicalCommunicationLayer;
+class SimulationConfiguration;
+class TimeWarpSimulationManager;
 
 /** The DefaultCommunicationManager class.
 

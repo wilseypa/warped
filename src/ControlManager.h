@@ -2,14 +2,24 @@
 #define CONTROL_MANAGER_H
 
 
-#include <fstream>
-#include "warped.h"
-#include "controlkit/Sensor.h"
-#include "controlkit/Actuator.h"
+#include <fstream>                      // for ostream
+#include <string>                       // for string
+#include <unordered_map>                // for unordered_map
+
+#include "CommunicatingEntity.h"        // for CommunicatingEntity
+#include "Configurable.h"               // for Configurable
 #include "SimulationManager.h"
 #include "TimeWarpSimulationManager.h"
-#include "CommunicatingEntity.h"
-#include "Configurable.h"
+#include "controlkit/Actuator.h"
+#include "controlkit/Sensor.h"
+#include "warped.h"
+using std::string;
+
+class Actuator;
+class KernelMessage;
+class Sensor;
+class SimulationConfiguration;
+class TimeWarpSimulationManager;
 
 /** The ControlManager class.
 

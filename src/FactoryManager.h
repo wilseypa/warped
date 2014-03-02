@@ -2,7 +2,8 @@
 #define FACTORY_MANAGER_H
 
 
-#include "FactoryImplementationBase.h"
+#include "FactoryImplementationBase.h"  // for FactoryImplementationBase
+#include "Types.h"                      // for Kind, Kind::SUB_FACTORY
 
 /** The FactoryManager base class.
 

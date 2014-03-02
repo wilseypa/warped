@@ -2,10 +2,13 @@
 #define TIME_WARP_SIMULATION_MANAGER_FACTORY_H
 
 
-#include "warped.h"
-#include "TimeWarpSimulationManager.h"
+#include "Configurer.h"                 // for Configurer
 #include "SimulationManager.h"
-#include "Configurer.h"
+#include "TimeWarpSimulationManager.h"
+#include "warped.h"
+
+class Configurable;
+class SimulationConfiguration;
 
 /** The TimeWarpSimulationManagerFactory class.
 

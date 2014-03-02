@@ -2,16 +2,18 @@
 #define WARPED_MAIN_H
 
 
-#include <vector>
-#include <string>
+#include <string>                       // for string
+#include <vector>                       // for vector
+
+#include "Configurable.h"               // for vector
 
 using std::vector;
 using std::string;
 
-class VTime;
 class Application;
 class Simulation;
 class SimulationConfiguration;
+class VTime;
 
 /**
    This class implements the main function for warped.

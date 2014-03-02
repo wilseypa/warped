@@ -1,6 +1,7 @@
 
+#include "DeserializerManager.h"        // for DeserializerManager
 #include "MatternGVTMessage.h"
-#include "DeserializerManager.h"
+#include "SerializedInstance.h"         // for SerializedInstance
 
 const string&
 MatternGVTMessage::getMatternGVTMessageType() {

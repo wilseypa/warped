@@ -2,19 +2,27 @@
 #define TIMEWARP_CONFIGURATION_MANAGER_H
 
 
-#include "warped.h"
-#include "ConfigurationManager.h"
-
-#include "TimeWarpSimulationManager.h"
-
-
-// components of a basic TimeWarp system
-#include "TimeWarpEventSetFactory.h"
-#include "StateManagerFactory.h"
+#include "CommunicationManagerFactory.h"
+#include "ConfigurationManager.h"       // for ConfigurationManager
+#include "GVTManagerFactory.h"
 #include "OutputManagerFactory.h"
 #include "SchedulingManagerFactory.h"
-#include "CommunicationManagerFactory.h"
-#include "GVTManagerFactory.h"
+#include "StateManagerFactory.h"
+// components of a basic TimeWarp system
+#include "TimeWarpEventSetFactory.h"
+#include "TimeWarpSimulationManager.h"
+#include "warped.h"
+
+class Application;
+class CommunicationManagerFactory;
+class GVTManagerFactory;
+class OutputManagerFactory;
+class SchedulingManagerFactory;
+class SimulationConfiguration;
+class SimulationManager;
+class StateManagerFactory;
+class TimeWarpEventSetFactory;
+class TimeWarpSimulationManager;
 
 /** The TimeWarpConfigurationManager class.
 

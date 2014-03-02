@@ -1,9 +1,14 @@
 
-#include "TimeWarpEventSet.h"
-#include "TimeWarpCentralizedEventSetFactory.h"
+#include <stdlib.h>                     // for exit
+#include <iostream>                     // for operator<<, cerr, endl, etc
+
+#include "SetObject.h"                  // for ostream
 #include "TimeWarpCentralizedEventSet.h"
-#include "TimeWarpSenderQueue.h"
-#include "SimulationConfiguration.h"
+#include "TimeWarpCentralizedEventSetFactory.h"
+
+class Configurable;
+class SimulationConfiguration;
+
 using std::cerr;
 using std::endl;
 

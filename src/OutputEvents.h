@@ -2,13 +2,19 @@
 #define OUTPUT_EVENTS_H
 
 
-#include "warped.h"
-#include "TimeWarpSimulationManager.h"
-#include <vector>
 #include <algorithm>
-#include <list>
-#include <fstream>
+#include <fstream>                      // for ofstream
+#include <list>                         // for list
+#include <vector>                       // for vector, vector<>::iterator
+
+#include "SerializedInstance.h"         // for vector
 #include "SetObject.h"
+#include "TimeWarpSimulationManager.h"
+#include "warped.h"
+
+class TimeWarpSimulationManager;
+template <class Element> class SetObject;
+
 using std::vector;
 using std::list;
 using std::ofstream;

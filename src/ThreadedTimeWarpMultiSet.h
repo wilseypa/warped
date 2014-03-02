@@ -2,23 +2,32 @@
 #define THREADEThreadedIMEWARPMULTISET_H_
 
 
-#include <set>
-#include <list>
-#include "ThreadedTimeWarpEventSet.h"
+#include <list>                         // for list
+#include <set>                          // for multiset, etc
+#include <string>                       // for string
+#include <vector>                       // for vector, vector<>::iterator
+
+#include "EventFunctors.h"
 #include "LockState.h"
 #include "NegativeEvent.h"
-#include "EventFunctors.h"
-#include "ThreadedTimeWarpSimulationManager.h"
+#include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
 #include "ThreadedTimeWarpMultiSetLTSF.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+
+class LockState;
+class SimulationConfiguration;
+class SimulationObject;
+class VTime;
 
 using std::multiset;
 using std::list;
+using std::string;
 
 class Event;
 class NegativeEvent;
-class ThreadedTimeWarpSimulationManager;
-class ThreadedTimeWarpMultiSetLTSF;
 class ThreadedTimeWarpLoadBalancer;
+class ThreadedTimeWarpMultiSetLTSF;
+class ThreadedTimeWarpSimulationManager;
 //class ThreadedTimeWarpMultiSetSchedulingManager;
 //class SimulationObject;
 

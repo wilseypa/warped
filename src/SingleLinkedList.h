@@ -2,9 +2,17 @@
 #define SINGLE_LINKED_LIST_H
 
 
-#include <queue>
-#include "Event.h"
-#include "EventSet.h"
+#include <queue>                        // for priority_queue
+#include <string>                       // for string
+#include <vector>                       // for vector
+
+#include "Event.h"                      // for Event
+#include "EventSet.h"                   // for EventSet
+#include "ObjectID.h"                   // for ObjectID
+#include "VTime.h"                      // for VTime
+using std::string;
+
+class SimulationConfiguration;
 
 using std::priority_queue;
 

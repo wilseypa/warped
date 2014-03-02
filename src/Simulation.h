@@ -3,12 +3,18 @@
 
 
 #include <fstream>
-#include "warped.h"
+#include <string>                       // for string
+
+#include "Configurable.h"               // for Configurable
+#include "ConfigurationManager.h"       // for ConfigurationManager
 #include "SimulationManager.h"
-#include "ConfigurationManager.h"
-#include "Configurable.h"
+#include "warped.h"                     // for SEVERITY
+using std::string;
 
 class Application;
+class SimulationConfiguration;
+class SimulationManager;
+class VTime;
 
 /** The Simulation class.
 

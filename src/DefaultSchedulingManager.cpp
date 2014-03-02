@@ -1,7 +1,12 @@
 
 #include "DefaultSchedulingManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "Event.h"
+#include "Event.h"                      // for Event
+#include "EventId.h"                    // for EventId
+#include "ObjectID.h"                   // for ObjectID
+#include "TimeWarpEventSet.h"           // for TimeWarpEventSet
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
 
 DefaultSchedulingManager::DefaultSchedulingManager(TimeWarpSimulationManager* initSimulationManager)
     : mySimulationManager(initSimulationManager),

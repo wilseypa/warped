@@ -2,7 +2,14 @@
 #define THREADEDPERIODICSTATEMANAGER_H_
 
 
+#include "ObjectID.h"                   // for ObjectID
 #include "ThreadedStateManagerImplementationBase.h"
+
+class SimulationConfiguration;
+class SimulationObject;
+class ThreadedTimeWarpSimulationManager;
+class VTime;
+
 class ThreadedPeriodicStateManager: public ThreadedStateManagerImplementationBase {
 public:
     /**@name Public Class Methods of PeriodicStateManager. */

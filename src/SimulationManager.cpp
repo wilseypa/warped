@@ -1,4 +1,6 @@
 
+#include <iostream>                     // for operator<<, ostream, etc
+
 #include "SimulationManager.h"
 
 SimulationManager::SimulationManager() {}

@@ -2,9 +2,14 @@
 #define FACTORY_SYMBOL_TABLE_H
 
 
-#include "warped.h"
-#include "Factory.h"
+#include <string>                       // for string
 
+#include "Factory.h"
+#include "Types.h"                      // for Kind
+#include "warped.h"
+using std::string;
+
+class Factory;
 class FactorySymbolTable;
 
 class ContainerClass {

@@ -1,8 +1,14 @@
 
-#include "ThreadedOutputEvents.h"
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for cerr, cout
+
+#include "Event.h"                      // for Event
+#include "SimulationObject.h"           // for SimulationObject
+#include "ThreadedOutputEvents.h"       // for ThreadedOutputEvents
 #include "ThreadedOutputManagerImplementationBase.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "Event.h"
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
 
 using std::cout;
 using std::cerr;

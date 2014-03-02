@@ -2,13 +2,17 @@
 #define SIMULATION_OBJECT_PROXY_H
 
 
-#include "warped.h"
 #include <fstream>
-#include "SimulationObject.h"
+#include <string>                       // for string
 
-class Event;
+#include "SimulationObject.h"           // for SimulationObject
+#include "warped.h"                     // for DEBUG, SEVERITY
+using std::string;
+
 class CommunicationManager;
+class Event;
 class SimulationConfiguration;
+class State;
 
 /** The SimulationObjectProxy Class.
 

@@ -1,9 +1,17 @@
 
+#include <stddef.h>                     // for NULL
+#include <ostream>                      // for operator<<, basic_ostream, etc
+
+#include "AtomicState.h"                // for AtomicState
+#include "SetObject.h"                  // for ostream
+#include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
 #include "ThreadedTimeWarpMultiSetSchedulingManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "Event.h"
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
 
-class ThreadedTimeWarpEventSet;
+class Event;
 
 ThreadedTimeWarpMultiSetSchedulingManager::ThreadedTimeWarpMultiSetSchedulingManager(
     ThreadedTimeWarpSimulationManager* initSimulationManager) :

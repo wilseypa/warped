@@ -1,7 +1,12 @@
+#include <algorithm>                    // for for_each
+#include <functional>                   // for unary_function
+#include <iostream>                     // for cerr
+
 #include "SimulationManagerImplementationBase.h"
-#include "SimulationObject.h"
-#include <functional>
-#include <algorithm>
+#include "SimulationObject.h"           // for SimulationObject
+
+class Event;
+class VTime;
 
 using std::unary_function;
 using std::for_each;

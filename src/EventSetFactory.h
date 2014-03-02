@@ -2,11 +2,13 @@
 #define EVENT_SET_FACTORY_H
 
 
-#include "warped.h"
+#include "Configurer.h"                 // for Configurer
 #include "EventSet.h"
-#include "Configurer.h"
+#include "warped.h"
 
+class Configurable;
 class Event;
+class SimulationConfiguration;
 
 /** The EventSetFactory class.
 

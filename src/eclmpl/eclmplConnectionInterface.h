@@ -200,7 +200,7 @@ protected:
     bool connected;
 
     /// Full-path name of remote shell command.
-    string rshCmd;
+    std::string rshCmd;
 
 //@} // End of Protected Class Attributes of eclmplConnectionInterface.
 };

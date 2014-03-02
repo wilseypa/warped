@@ -3,10 +3,12 @@
 #define SEQUENTIAL_SIMULATION_STREAM_H
 
 
-#include <fstream>
-#include <string>
-#include "warped.h"
-#include "SimulationStream.h"
+#include <fstream>                      // for ios, ostringstream, fstream, etc
+#include <string>                       // for string
+
+#include "SimulationStream.h"           // for fstream, SimulationStream
+#include "warped.h"                     // for ostringstream
+
 using std::string;
 using std::streambuf;
 using std::ios;

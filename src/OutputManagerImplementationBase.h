@@ -2,11 +2,19 @@
 #define OUTPUT_MANAGER_IMPLEMENTATION_BASE_H
 
 
-#include <fstream>
-#include <set>
+#include <fstream>                      // for ofstream
+#include <set>                          // for multiset
+#include <vector>                       // for vector
+
+#include "ObjectID.h"                   // for ObjectID
+#include "OutputEvents.h"               // for ofstream, etc
+#include "OutputManager.h"              // for OutputManager
 #include "warped.h"
-#include "OutputEvents.h"
-#include "OutputManager.h"
+
+class Event;
+class SimulationObject;
+class VTime;
+
 using std::ofstream;
 
 class TimeWarpSimulationManager;

@@ -2,7 +2,11 @@
 #define ROUNDROBINPARTITIONER_H
 
 
-#include <Partitioner.h>
+#include <Partitioner.h>                // for Partitioner
+#include <vector>                       // for vector
+
+class PartitionInfo;
+class SimulationObject;
 
 class RoundRobinPartitioner : public Partitioner {
 public:

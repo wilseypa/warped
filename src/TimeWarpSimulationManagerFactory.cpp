@@ -1,10 +1,13 @@
 
-#include "TimeWarpSimulationManagerFactory.h"
-#include "TimeWarpSimulationManager.h"
-#include "SimulationConfiguration.h"
-#include "ThreadedTimeWarpSimulationManager.h"
+#include <string>                       // for string, operator==, etc
 
-#include <string>
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "TimeWarpSimulationManagerFactory.h"
+
+class Application;
+class Configurable;
 
 TimeWarpSimulationManagerFactory::TimeWarpSimulationManagerFactory() {}
 
