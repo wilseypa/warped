@@ -36,7 +36,6 @@
 #include "SchedulingData.h"             // for SchedulingData
 #include "SchedulingManager.h"          // for SchedulingManager
 #include "SchedulingManagerFactory.h"   // for SchedulingManagerFactory
-#include "SetObject.h"                  // for ostream
 #include "SimulationObjectProxy.h"      // for SimulationObjectProxy
 #include "SingleTerminationManager.h"   // for SingleTerminationManager
 #include "StartMessage.h"               // for StartMessage

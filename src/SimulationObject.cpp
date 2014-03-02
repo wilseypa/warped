@@ -4,7 +4,6 @@
 
 #include "Event.h"                      // for Event
 #include "ObjectID.h"                   // for ObjectID
-#include "SetObject.h"                  // for ostream
 #include "SimulationManager.h"          // for SimulationManager
 #include "SimulationObject.h"
 #include "VTime.h"                      // for VTime

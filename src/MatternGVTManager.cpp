@@ -11,7 +11,6 @@
 #include "MatternGVTMessage.h"          // for MatternGVTMessage
 #include "MatternObjectRecord.h"        // for MatternObjectRecord, etc
 #include "SchedulingManager.h"          // for SchedulingManager
-#include "SetObject.h"                  // for ostream
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "VTime.h"                      // for VTime, operator<<
 #include "warped.h"                     // for ASSERT, MIN_FUNC, etc

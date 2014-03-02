@@ -6,7 +6,6 @@
 #include "Event.h"                      // for Event
 #include "OutputEvents.h"               // for OutputEvents, ofstream
 #include "OutputManagerImplementationBase.h"
-#include "SetObject.h"                  // for ostream
 #include "SimulationObject.h"           // for SimulationObject
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "VTime.h"                      // for operator<<, VTime

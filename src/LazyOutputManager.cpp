@@ -8,7 +8,6 @@
 #include "LazyOutputManager.h"
 #include "ObjectID.h"                   // for ObjectID, operator<<
 #include "OutputEvents.h"               // for OutputEvents
-#include "SetObject.h"                  // for ostream
 #include "SimulationObject.h"           // for SimulationObject
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "VTime.h"                      // for VTime

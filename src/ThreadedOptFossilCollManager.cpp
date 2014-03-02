@@ -20,7 +20,6 @@
 #include "OutputManager.h"              // for ofstream
 #include "RestoreCkptMessage.h"         // for RestoreCkptMessage, etc
 #include "SerializedInstance.h"         // for SerializedInstance
-#include "SetObject.h"                  // for ostream
 #include "SimulationObject.h"           // for SimulationObject
 #include "State.h"                      // for State
 #include "TerminationManager.h"         // for TerminationManager

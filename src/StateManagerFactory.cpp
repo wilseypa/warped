@@ -4,7 +4,6 @@
 #include "Configurable.h"               // for Configurable
 #include "CostAdaptiveStateManager.h"   // for CostAdaptiveStateManager
 #include "PeriodicStateManager.h"       // for PeriodicStateManager
-#include "SetObject.h"                  // for ostream
 #include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "StateManager.h"               // for StateManager
 #include "StateManagerFactory.h"

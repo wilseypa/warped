@@ -19,7 +19,6 @@
 #include "OutputManager.h"              // for ofstream, OutputManager
 #include "RestoreCkptMessage.h"         // for RestoreCkptMessage, etc
 #include "SerializedInstance.h"         // for SerializedInstance
-#include "SetObject.h"                  // for ostream
 #include "SimulationObject.h"           // for SimulationObject
 #include "State.h"                      // for State
 #include "StateManager.h"               // for StateManager

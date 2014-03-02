@@ -11,7 +11,6 @@
 #include "InitializationMessage.h"      // for InitializationMessage
 #include "KernelMessage.h"              // for KernelMessage
 #include "SerializedInstance.h"         // for SerializedInstance
-#include "SetObject.h"                  // for ostream
 #include "StartMessage.h"               // for StartMessage
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "eclmpl/PhysicalCommunicationLayer.h"

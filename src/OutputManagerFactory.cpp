@@ -7,7 +7,6 @@
 #include "Configurable.h"               // for Configurable
 #include "LazyOutputManager.h"          // for LazyOutputManager
 #include "OutputManagerFactory.h"
-#include "SetObject.h"                  // for ostream
 #include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "ThreadedAggressiveOutputManager.h"
 #include "ThreadedDynamicOutputManager.h"

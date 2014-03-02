@@ -5,7 +5,6 @@
 #include "Configurable.h"               // for Configurable
 #include "SchedulingManager.h"          // for SchedulingManager
 #include "SchedulingManagerFactory.h"
-#include "SetObject.h"                  // for ostream
 #include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "ThreadedTimeWarpMultiSetSchedulingManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"

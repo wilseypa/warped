@@ -2,7 +2,6 @@
 #include <stdlib.h>                     // for exit
 #include <iostream>                     // for operator<<, cerr, endl, etc
 
-#include "SetObject.h"                  // for ostream
 #include "TimeWarpCentralizedEventSet.h"
 #include "TimeWarpCentralizedEventSetFactory.h"
 

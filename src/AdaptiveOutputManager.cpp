@@ -8,7 +8,6 @@
 #include "ObjectID.h"                   // for ObjectID
 #include "OutputEvents.h"               // for OutputEvents
 #include "OutputManagerImplementationBase.h"
-#include "SetObject.h"                  // for ostream
 #include "SimulationObject.h"           // for SimulationObject
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "VTime.h"                      // for VTime

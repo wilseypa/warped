@@ -8,7 +8,6 @@
 #include "MatternGVTMessage.h"          // for MatternGVTMessage
 #include "MatternObjectRecord.h"        // for MatternObjectRecord, etc
 #include "SchedulingManager.h"          // for SchedulingManager
-#include "SetObject.h"                  // for ostream
 #include "ThreadedMatternGVTManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "VTime.h"                      // for VTime, operator<<

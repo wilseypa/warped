@@ -29,7 +29,6 @@
 #include "PartitionManager.h"           // for PartitionManager
 #include "SchedulingManager.h"          // for SchedulingManager
 #include "SchedulingManagerFactory.h"   // for SchedulingManagerFactory
-#include "SetObject.h"                  // for ostream
 #include "SimulationManagerImplementationBase.h"
 #include "SimulationObject.h"           // for SimulationObject
 #include "SimulationObjectProxy.h"      // for SimulationObjectProxy

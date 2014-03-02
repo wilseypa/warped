@@ -9,7 +9,6 @@
 #include "GVTManagerFactory.h"          // for GVTManagerFactory
 #include "OutputManagerFactory.h"       // for OutputManagerFactory
 #include "SchedulingManagerFactory.h"   // for SchedulingManagerFactory
-#include "SetObject.h"                  // for ostream
 #include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "Spinner.h"                    // for spinForever
 #include "StateManagerFactory.h"        // for StateManagerFactory

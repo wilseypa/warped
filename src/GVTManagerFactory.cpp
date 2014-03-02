@@ -6,7 +6,6 @@
 #include "Configurable.h"               // for Configurable
 #include "GVTManagerFactory.h"
 #include "MatternGVTManager.h"          // for MatternGVTManager
-#include "SetObject.h"                  // for ostream
 #include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "ThreadedMatternGVTManager.h"  // for ThreadedMatternGVTManager
 #include "ThreadedTimeWarpSimulationManager.h"

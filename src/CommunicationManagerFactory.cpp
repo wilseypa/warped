@@ -6,7 +6,6 @@
 #include "DefaultCommunicationManager.h"
 #include "DefaultPhysicalCommunicationLayer.h"
 #include "MsgAggregatingCommunicationManager.h"
-#include "SetObject.h"                  // for ostream
 #include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager

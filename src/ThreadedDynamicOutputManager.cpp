@@ -5,7 +5,6 @@
 #include "Event.h"                      // for Event
 #include "EventFunctors.h"              // for sendTimeLessThan
 #include "ObjectID.h"                   // for ObjectID
-#include "SetObject.h"                  // for ostream
 #include "SimulationObject.h"           // for SimulationObject
 #include "ThreadedDynamicOutputManager.h"
 #include "ThreadedOutputEvents.h"       // for ThreadedOutputEvents

@@ -7,7 +7,6 @@
 #include "LockState.h"                  // for LockState
 #include "NegativeEvent.h"              // for NegativeEvent
 #include "ObjectID.h"                   // for ObjectID
-#include "SetObject.h"                  // for ostream
 #include "SimulationObject.h"           // for SimulationObject
 #include "StragglerEvent.h"             // for StragglerEvent
 #include "ThreadedStateManager.h"       // for ThreadedStateManager

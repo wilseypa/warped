@@ -3,7 +3,6 @@
 
 #include "Configurable.h"               // for Configurable
 #include "DefaultTimeWarpEventSet.h"    // for DefaultTimeWarpEventSet
-#include "SetObject.h"                  // for ostream
 #include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
 #include "ThreadedTimeWarpMultiSet.h"   // for ThreadedTimeWarpMultiSet

@@ -5,7 +5,6 @@
 #include "EventId.h"                    // for EventId, operator<<
 #include "ObjectID.h"                   // for ObjectID, operator<<
 #include "SerializedInstance.h"         // for SerializedInstance
-#include "SetObject.h"                  // for ostream
 #include "VTime.h"                      // for VTime, operator<<
 
 // No longer using these for optimistic fossil collection.

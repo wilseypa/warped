@@ -6,7 +6,6 @@
 
 #include "Event.h"                      // for Event
 #include "SenderQueueContainer.h"
-#include "SetObject.h"                  // for ostream
 #include "SimulationObject.h"           // for SimulationObject
 #include "TimeWarpSenderQueue.h"
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager

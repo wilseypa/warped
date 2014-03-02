@@ -6,7 +6,6 @@
 #include "ChebyFossilCollManager.h"     // for ChebyFossilCollManager
 #include "Configurable.h"               // for Configurable
 #include "OptFossilCollManagerFactory.h"
-#include "SetObject.h"                  // for ostream
 #include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "ThreadedChebyFossilCollManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"

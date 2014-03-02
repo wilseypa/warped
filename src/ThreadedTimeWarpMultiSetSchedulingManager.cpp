@@ -3,7 +3,6 @@
 #include <ostream>                      // for operator<<, basic_ostream, etc
 
 #include "AtomicState.h"                // for AtomicState
-#include "SetObject.h"                  // for ostream
 #include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
 #include "ThreadedTimeWarpMultiSetSchedulingManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"

@@ -4,7 +4,6 @@
 #include "CostAdaptiveStateManager.h"
 #include "DefaultObjectID.h"            // for OBJECT_ID
 #include "ObjectID.h"                   // for ObjectID
-#include "SetObject.h"                  // for ostream
 #include "SimulationObject.h"           // for SimulationObject
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "WarpedDebug.h"                // for debugout
