@@ -176,7 +176,7 @@ TokenPassingTerminationManager::handleTerminateToken(const TerminateToken* token
             // We're the master, the token came back the second time.
             if (idleSinceLastToken()) {
                 // OK, the simulation is complete.
-                simulationComplete();
+                //simulationComplete();
             } else {
                 // We became active while that token was circulating.  Let's cancel
                 // the cycle again.
