@@ -2,6 +2,7 @@
 #include <stddef.h>                     // for NULL
 #include <iostream>                     // for operator<<, basic_ostream, etc
 #include <string>                       // for operator==, operator<<, etc
+#include <sstream>
 
 #include "Configurable.h"               // for Configurable
 #include "DVFSManager.h"                // for DVFSManager, etc
@@ -50,7 +51,7 @@ DVFSManagerFactory::allocate(SimulationConfiguration& configuration,
     else if (metric == "RollbackFraction")
     { uwm = DVFSManager::ROLLBACK_FRACTION; }
     else {
-        stringstream err;
+        std::stringstream err;
         err << "DVFSManager: UsefulWorkMetric " << metric << " is invalid. "
             << "Valid metrics are Rollbacks | RollbackFraction. Aborting simulation."
             << endl;
@@ -67,7 +68,7 @@ DVFSManagerFactory::allocate(SimulationConfiguration& configuration,
     else if (al == "Hybrid")
     { alg = DVFSManager::HYBRID; }
     else {
-        stringstream err;
+        std::stringstream err;
         err << "DVFSManager: Algorithm " << al << " is invalid. "
             << "Valid options are Fixed | Performance | Power | Hybrid. "
             << "Aborting simulation." << endl;
@@ -103,7 +104,7 @@ DVFSManagerFactory::allocate(SimulationConfiguration& configuration,
                                           uwm,
                                           threshold);
     }
-    stringstream err;
+    std::stringstream err;
     cerr << "DVFSManager: invalid type '" << dvfsManagerType << "'." << endl
          << "Valid types are None | Shared | Distributed. Aborting simulation.";
     mySimulationManager->shutdown(err.str());

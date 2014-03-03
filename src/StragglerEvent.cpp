@@ -1,15 +1,11 @@
 
 #include <ostream>                      // for operator<<, ostream, etc
+#include <vector>
 
 #include "EventId.h"                    // for operator<<, EventId
 #include "ObjectID.h"                   // for operator<<, ObjectID
 #include "StragglerEvent.h"
 #include "VTime.h"                      // for operator<<
-
-/*void StragglerEvent::registerDeserializer() {
-    DeserializerManager::instance()->registerDeserializer(
-            getStragglerEventDataType(), &StragglerEvent::deserialize);
-}*/
 
 std::ostream&
 operator<<(std::ostream& os, const StragglerEvent& event) {
@@ -43,7 +39,7 @@ void StragglerEvent::setStragglerType(bool stragglerType) {
     this->stragglerType = stragglerType;
 }
 
-const vector<const NegativeEvent*> StragglerEvent::getEventsToCancel() const {
+const std::vector<const NegativeEvent*> StragglerEvent::getEventsToCancel() const {
     return eventsToCancel;
 }
 

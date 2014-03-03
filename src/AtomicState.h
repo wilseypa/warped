@@ -3,7 +3,6 @@
 #define AtomicState_H_
 
 #include <iostream>
-using namespace std;
 
 static const int NOBODY = -1;
 class AtomicState {
@@ -25,7 +24,7 @@ public:
         return (threadNumber == (unsigned int) lockOwner);
     }
     void showStatus() {
-        cout << "Locked By: " << lockOwner << endl;
+        std::cout << "Locked By: " << lockOwner << std::endl;
     }
     bool isLocked() {
         if (this->lockOwner == -1)

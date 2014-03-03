@@ -15,15 +15,13 @@ class NegativeEvent;
 class ObjectID;
 class VTime;
 
-using namespace std;
-
 class StragglerEvent: public Event {
 public:
     StragglerEvent(const Event* receivedEvent, bool stragglerType) :
         positiveEvent(receivedEvent), stragglerType(stragglerType) {
     }
     StragglerEvent(const Event* receivedEvent, bool stragglerType,
-                   const vector<const NegativeEvent*>& events) :
+                   const std::vector<const NegativeEvent*>& events) :
         positiveEvent(receivedEvent), stragglerType(stragglerType),
         eventsToCancel(events) {
     }
@@ -54,12 +52,12 @@ public:
         return sizeof(StragglerEvent);
     }
 
-    const string& getDataType() const {
+    const std::string& getDataType() const {
         return getStragglerEventDataType();
     }
 
-    static const string& getStragglerEventDataType() {
-        static string stragglerEventDataType = "StragglerEvent";
+    static const std::string& getStragglerEventDataType() {
+        static std::string stragglerEventDataType = "StragglerEvent";
         return stragglerEventDataType;
     }
 
@@ -68,11 +66,11 @@ public:
     const Event* getPositiveEvent() const;
     bool getStragglerType() const;
     void setStragglerType(bool stragglerType);
-    const vector<const NegativeEvent*> getEventsToCancel() const;
+    const std::vector<const NegativeEvent*> getEventsToCancel() const;
 private:
     const EventId* id;
     const Event* positiveEvent;
     bool stragglerType;
-    const vector<const NegativeEvent*> eventsToCancel;
+    const std::vector<const NegativeEvent*> eventsToCancel;
 };
 #endif /* STRAGGLEREVENT_H_ */

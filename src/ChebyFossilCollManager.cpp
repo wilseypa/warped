@@ -9,6 +9,7 @@
 #include "WarpedDebug.h"                // for debugout
 
 using std::cout;
+using std::endl;
 
 ChebyFossilCollManager::ChebyFossilCollManager(TimeWarpSimulationManager* sim,
                                                int checkPeriod,

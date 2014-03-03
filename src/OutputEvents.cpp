@@ -1,6 +1,7 @@
 
 #include <stddef.h>                     // for NULL
 #include <algorithm>                    // for find
+#include <list>
 
 #include "Event.h"                      // for Event
 #include "EventId.h"                    // for EventId
@@ -152,7 +153,7 @@ OutputEvents::fossilCollect(const VTime& gCollectTime) {
     }
     outputEventsLocal.erase(outputEventsLocal.begin(), outLoc);
 
-    list<const Event*>::iterator rmRt = removedEventsRemote.begin();
+    std::list<const Event*>::iterator rmRt = removedEventsRemote.begin();
     while (rmRt != removedEventsRemote.end()) {
         if ((*rmRt)->getSendTime() < gCollectTime) {
             delete *rmRt;
@@ -184,7 +185,7 @@ OutputEvents::fossilCollect(int gCollectTime) {
     }
     outputEventsLocal.erase(outputEventsLocal.begin(), outLoc);
 
-    list<const Event*>::iterator rmRt = removedEventsRemote.begin();
+    std::list<const Event*>::iterator rmRt = removedEventsRemote.begin();
     while (rmRt != removedEventsRemote.end()) {
         if ((*rmRt)->getSendTime().getApproximateIntTime() < gCollectTime) {
             delete *rmRt;
@@ -227,7 +228,7 @@ OutputEvents::insert(const Event* newEvent) {
                                                          newEvent->getReceiver().getSimulationObjectID(),
                                                          newEvent));
     } else {
-        list<const Event*>::iterator it;
+        std::list<const Event*>::iterator it;
         it = std::find(removedEventsRemote.begin(), removedEventsRemote.end(), newEvent);
         if (it != removedEventsRemote.end()) {
             removedEventsRemote.erase(it);
@@ -300,7 +301,7 @@ OutputEvents::remove(const vector<const Event*>& toRemove) {
 }
 
 void
-OutputEvents::saveOutputCheckpoint(ofstream* outFile, unsigned int saveTime) {
+OutputEvents::saveOutputCheckpoint(std::ofstream* outFile, unsigned int saveTime) {
     vector<const Event*>::iterator outRem = outputEventsRemote.begin();
     char del = '_';
     unsigned int eveSize = 0;
@@ -375,7 +376,7 @@ OutputEvents::ofcPurge() {
     }
     outputEventsLocal.clear();
 
-    list<const Event*>::iterator rmRt = removedEventsRemote.begin();
+    std::list<const Event*>::iterator rmRt = removedEventsRemote.begin();
     while (rmRt != removedEventsRemote.end()) {
         delete *rmRt;
         rmRt = removedEventsRemote.erase(rmRt);

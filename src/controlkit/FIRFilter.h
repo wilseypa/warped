@@ -1,10 +1,8 @@
 #ifndef FIR_FILTER_H
 #define FIR_FILTER_H
 
-
 #include <iostream>
 #include "Filter.h"
-using namespace std;
 
 /** The FIRFilter class.
 
@@ -77,7 +75,7 @@ private:
 template <class Type>
 inline FIRFilter<Type>::FIRFilter(int n) {
     if (n <= 1) {
-        cerr << "A window size of " << n <<" makes NO sense!" << endl;
+        std::cerr << "A window size of " << n <<" makes NO sense!" << std::endl;
     }
 
     size = n;

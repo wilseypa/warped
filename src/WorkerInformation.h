@@ -4,8 +4,6 @@
 
 #include <pthread.h>
 #include "VTime.h"
-#include <iostream>
-using namespace std;
 
 static const int MAX_NUMBER_IDLE_LOOPS = 50;
 //static int threadCounter = 0;
@@ -61,10 +59,8 @@ public:
             //decrement the global counter (when it hits 0, everyone is suspended)
             __sync_fetch_and_sub(&globalStillBusyCount, 1);
             //*******************************************************
-            debug::debugout << "Worker is sleeping!!!" << endl;
             //Suspend here until the suspendCondition is met, (also auto-releases the mutex lock we just got)
             pthread_cond_wait(&suspendCondition, &suspendMutex);
-            debug::debugout << "Worker is back!!!" << endl;
             //*******************************************************
             //Upon the condition being met, the suspendMutex lock is also reset for us to undo
             pthread_mutex_unlock(&suspendMutex);

@@ -2,8 +2,8 @@
 #define THREADED_TIME_WARP_SIMULATION_MANAGER_H
 
 #include <pthread.h>                    // for pthread_key_t
-#include <iosfwd>                       // for ifstream, ofstream
-#include <string>                       // for string
+#include <iosfwd>                       // for std::ifstream, ofstream
+#include <string>                       // for std::string
 #include <vector>                       // for vector
 
 #include "LockedQueue.h"
@@ -19,10 +19,6 @@
 #include "WorkerInformation.h"
 #include "warped.h"                     // for ASSERT
 
-class ThreadedOutputManager;
-
-using std::string;
-
 class Application;
 class AtomicState;
 class Event;
@@ -35,6 +31,7 @@ class SchedulingManager;
 class SimulationConfiguration;
 class SimulationObject;
 class ThreadedOptFossilCollManager;
+class ThreadedOutputManager;
 class ThreadedStateManager;
 class ThreadedTimeWarpEventSet;
 class ThreadedTimeWarpLoadBalancer;
@@ -47,12 +44,12 @@ extern pthread_key_t threadKey;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
     ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
-                                      const string syncMechanism, bool loadBalancing,
-                                      const string loadBalancingMetric, const string loadBalancingTrigger,
+                                      const std::string syncMechanism, bool loadBalancing,
+                                      const std::string loadBalancingMetric, const std::string loadBalancingTrigger,
                                       double loadBalancingVarianceThresh, unsigned int loadBalancingNormalInterval,
                                       unsigned int loadBalancingNormalThresh, unsigned int loadBalancingRelaxedInterval,
-                                      unsigned int loadBalancingRelaxedThresh, const string scheduleQScheme,
-                                      const string causalityType, unsigned int scheduleQCount, Application* initApplication);
+                                      unsigned int loadBalancingRelaxedThresh, const std::string scheduleQScheme,
+                                      const std::string causalityType, unsigned int scheduleQCount, Application* initApplication);
 
     virtual ~ThreadedTimeWarpSimulationManager();
     /** Return a handle to the state manager.
@@ -91,7 +88,7 @@ public:
         return numberOfWorkerThreads;
     }
 
-    const string getSyncMechanism() {
+    const std::string getSyncMechanism() {
         return syncMechanism;
     }
 
@@ -99,11 +96,11 @@ public:
         return loadBalancing;
     }
 
-    const string getLoadBalancingMetric() {
+    const std::string getLoadBalancingMetric() {
         return loadBalancingMetric;
     }
 
-    const string getLoadBalancingTrigger() {
+    const std::string getLoadBalancingTrigger() {
         return loadBalancingTrigger;
     }
 
@@ -127,11 +124,11 @@ public:
         return loadBalancingRelaxedThresh;
     }
 
-    const string getScheduleQScheme() {
+    const std::string getScheduleQScheme() {
         return scheduleQScheme;
     }
 
-    const string getCausalityType() {
+    const std::string getCausalityType() {
         return causalityType;
     }
 
@@ -208,11 +205,11 @@ public:
     void clearMessageBuffer();
 
     // Get optimistic fossil collection recovery flags lock
-    void getOfcFlagLock(int threadId, const string syncMech);
+    void getOfcFlagLock(int threadId, const std::string syncMech);
    
     // Release optimistic fossil collection recovery flags lock
    
-    void releaseOfcFlagLock(int threadId, const string syncMech); 
+    void releaseOfcFlagLock(int threadId, const std::string syncMech); 
 
         void handleEvent(const Event* event);
 
@@ -228,7 +225,7 @@ public:
     void saveFileQueuesCheckpoint(std::ofstream* outFile,
                                   const ObjectID& objId, unsigned int saveTime);
 
-    void restoreFileQueues(ifstream* inFile, const ObjectID& objId,
+    void restoreFileQueues(std::ifstream* inFile, const ObjectID& objId,
                            unsigned int restoreTime);
 
     void handleEventReceiver(SimulationObject* currObject, const Event* event,
@@ -391,16 +388,16 @@ private:
     unsigned int numberOfWorkerThreads;
 
     //Specfied in the ThreadControl scope the configuraion file
-    const string syncMechanism;
+    const std::string syncMechanism;
 
     //Specfied in the ThreadControl scope the configuraion file
     bool loadBalancing;
 
     //Specfied in the ThreadControl scope the configuraion file
-    const string loadBalancingMetric;
+    const std::string loadBalancingMetric;
 
     //Specfied in the ThreadControl scope the configuraion file
-    const string loadBalancingTrigger;
+    const std::string loadBalancingTrigger;
 
     //Specified in the ThreadControl scope of the configuration file
     double loadBalancingVarianceThresh;
@@ -418,10 +415,10 @@ private:
     unsigned int loadBalancingRelaxedThresh;
 
     //Specfiy the Scheduler scope of the configuraion file
-    const string scheduleQScheme;
+    const std::string scheduleQScheme;
 
     //Specfiy the Scheduler causality type of the configuraion file
-    const string causalityType;
+    const std::string causalityType;
 
     //Specified in the Scheduler scope of the configuration file
     unsigned int scheduleQCount;
