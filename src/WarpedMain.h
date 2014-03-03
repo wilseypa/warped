@@ -3,10 +3,6 @@
 
 
 #include <string>                       // for string
-#include <vector>                       // for vector
-
-using std::vector;
-using std::string;
 
 class Application;
 class Simulation;
@@ -32,8 +28,8 @@ public:
     /**
        Constructor to be called by user's main.
     */
-    WarpedMain(Application* application, string configurationFileName,
-               string simulateUntil = "",  bool debug = false);
+    WarpedMain(Application* application, std::string configurationFileName,
+               std::string simulateUntil = "",  bool debug = false);
     /**
        Default Deconstructor
     */
@@ -84,9 +80,9 @@ public:
     const VTime& getNextEventTime();
 
 private:
-    string configurationFileName;
+    std::string configurationFileName;
     bool debugFlag;
-    string simulateUntil;
+    std::string simulateUntil;
 
     Application* myApplication;
     Simulation* mySimulation;

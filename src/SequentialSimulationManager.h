@@ -7,16 +7,20 @@
 #include <utility>                      // for pair
 #include <vector>                       // for vector
 
+#include "Configurer.h"                 // for string
 #include "DefaultObjectID.h"            // for OBJECT_ID
 #include "EventSet.h"
 #include "GraphStatistics.h"            // for GraphStatistics
 #include "ObjectID.h"                   // for ObjectID
-#include "SequentialSimulationStream.h"  // for SequentialSimulationStream
+#include "SequentialSimulationStream.h"  // for ios, etc
 #include "SimulationManagerImplementationBase.h"
 #include "SimulationObject.h"           // for SimulationObject (ptr only), etc
 #include "StopWatch.h"                  // for StopWatch
 #include "VTime.h"                      // for VTime
 #include "warped.h"
+
+class SimulationObject;
+
 using std::string;
 
 class Application;

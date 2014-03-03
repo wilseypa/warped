@@ -1,5 +1,8 @@
-#include "eclmplCommonInclude.h"
+#include <string.h>                     // for memcpy, NULL, strlen
+#include <ostream>                      // for operator<<, ostream, etc
+
 #include "NetworkMessage.h"
+#include "eclmplCommonInclude.h"        // for ECLMPL_ASSERT
 
 const unsigned int userDataSizeSerializedLen = 6;
 

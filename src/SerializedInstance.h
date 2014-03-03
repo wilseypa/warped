@@ -6,10 +6,8 @@
 #include <string>                       // for string
 #include <vector>                       // for vector, vector<>::iterator
 
+#include "DeserializerManager.h"        // for string
 #include "warped.h"                     // for warped64_t
-
-using std::string;
-using std::vector;
 
 class Serializable;
 
@@ -36,7 +34,7 @@ public:
 
         @param newSize Size of the new data.
     */
-    SerializedInstance(const vector<char>& initData);
+    SerializedInstance(const std::vector<char>& initData);
 
     /**
        Use the chunk of data passed in as our serialized instance.  You had
@@ -49,7 +47,7 @@ public:
        Starts an empty SerializedInstance that will contain the data type
        passed in.
     */
-    SerializedInstance(const string& dataType);
+    SerializedInstance(const std::string& dataType);
 
 
     /// Destructor.
@@ -60,7 +58,7 @@ public:
        We can use this to find the Inflater for this object and to
        deserialize it.
     */
-    const string getDataType() const;
+    const std::string getDataType() const;
 
     /** Get a representation of the data.
 
@@ -69,7 +67,7 @@ public:
 
         @return A pointer to the data.
     */
-    const vector<char>& getData() const;
+    const std::vector<char>& getData() const;
 
     /** Return size of the data.
 
@@ -87,7 +85,7 @@ public:
         @param newData The new data to be set.
         @param newSize Size of the new data.
     */
-    void setData(const vector<char>& newData);
+    void setData(const std::vector<char>& newData);
 
     /**
        Deserialize this object into a "Serializable".  This can only happen
@@ -119,19 +117,19 @@ public:
     /**
        Adds the referenced vector to our SerializedInstance.
     */
-    void addCharVector(const vector<char>& toAdd);
+    void addCharVector(const std::vector<char>& toAdd);
 
     /**
        Returns a vector of characters.
     */
-    vector<char> getVectorChar();
+    std::vector<char> getVectorChar();
 
     /**
        Add a C++ string to this serialized instance.
     */
-    void addString(const string& toAdd);
+    void addString(const std::string& toAdd);
 
-    const string getString();
+    const std::string getString();
 
     /**
        Add an unsigned int to this serialized instance.
@@ -234,7 +232,7 @@ private:
     */
     static void readBytes(char* buffer,
                           unsigned int numBytes,
-                          vector<char>::iterator& iter) {
+                          std::vector<char>::iterator& iter) {
         memcpy(buffer, &(*iter), numBytes);
         iter += numBytes;
     }
@@ -242,13 +240,13 @@ private:
     /**
        "Raw" read of an int - no metadata processed.
     */
-    static int readInt(vector<char>::iterator& iter) {
+    static int readInt(std::vector<char>::iterator& iter) {
         int retval;
         readBytes(reinterpret_cast<char*>(&retval), sizeof(int), iter);
         return retval;
     }
 
-    static unsigned int readUnsigned(vector<char>::iterator& iter) {
+    static unsigned int readUnsigned(std::vector<char>::iterator& iter) {
         unsigned int retval;
         readBytes(reinterpret_cast<char*>(&retval),
                   sizeof(unsigned int),
@@ -256,7 +254,7 @@ private:
         return retval;
     }
 
-    static warped64_t readLongLong(vector<char>::iterator& iter) {
+    static warped64_t readLongLong(std::vector<char>::iterator& iter) {
         warped64_t retval;
         readBytes(reinterpret_cast<char*>(&retval),
                   sizeof(warped64_t),
@@ -264,7 +262,7 @@ private:
         return retval;
     }
 
-    static double readDouble(vector<char>::iterator& iter) {
+    static double readDouble(std::vector<char>::iterator& iter) {
         double retval;
         readBytes(reinterpret_cast<char*>(&retval),
                   sizeof(double),
@@ -279,7 +277,7 @@ private:
     void initExtract();
 
     /// A pointer to the data.
-    vector<char> data;
+    std::vector<char> data;
 
     /// Size of the data.
     unsigned int size;
@@ -310,7 +308,7 @@ private:
     /**
        The iterator that keeps track of where we are in extraction.
     */
-    vector<char>::iterator extractIterator;
+    std::vector<char>::iterator extractIterator;
     /**
        Flag telling us if the extractIterator has been initialized.
     */

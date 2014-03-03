@@ -1,12 +1,14 @@
 #ifndef UDP_SELECT_PHYSICAL_COMMUNICATION_LAYER_H
 #define UDP_SELECT_PHYSICAL_COMMUNICATION_LAYER_H
 
-#include "eclmplSocket.h"
-#include "eclmplCommonInclude.h"
-#include "eclmplUnreliableNetworkMessage.h"
-#include "eclmplReliablePhysicalCommunicationLayer.h"
-#include "eclmplTimer.h"
+#include <sys/select.h>                 // for fd_set
+
 #include "UDPConnectionInterface.h"
+#include "eclmplCommonInclude.h"
+#include "eclmplReliablePhysicalCommunicationLayer.h"
+#include "eclmplSocket.h"
+#include "eclmplTimer.h"
+#include "eclmplUnreliableNetworkMessage.h"
 
 /** The UDPSelectPhysicalCommunicationLayer class.
 

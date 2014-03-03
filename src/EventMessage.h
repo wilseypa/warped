@@ -12,8 +12,12 @@
 
 #include <string>                       // for string
 
+#include "DeserializerManager.h"        // for string
 #include "EventMessageBase.h"           // for EventMessageBase
 #include "Serializable.h"               // for string, etc
+
+class Serializable;
+
 using std::string;
 
 class Event;

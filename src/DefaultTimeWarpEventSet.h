@@ -8,7 +8,8 @@
 #include <vector>                       // for vector
 
 #include "DefaultObjectID.h"            // for OBJECT_ID
-#include "TimeWarpEventSet.h"           // for TimeWarpEventSet
+#include "DefaultTimeWarpEventContainer.h"
+#include "TimeWarpEventSet.h"           // for string, TimeWarpEventSet
 #include "warped.h"
 
 class Event;

@@ -14,6 +14,9 @@
 
 #include "KernelMessage.h"              // for KernelMessage
 #include "Serializable.h"               // for string, etc
+
+class Serializable;
+
 using std::string;
 
 class Event;

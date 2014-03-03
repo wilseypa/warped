@@ -10,6 +10,7 @@
 #include "LockState.h"
 #include "ObjectID.h"                   // for ObjectID
 #include "SetObject.h"                  // for SetObject (ptr only), etc
+#include "SimulationObject.h"           // for SimulationObject (ptr only), etc
 #include "ThreadedStateManager.h"       // for ThreadedStateManager
 #include "ThreadedTimeWarpMultiSetLTSF.h"  // for multiset
 #include "ThreadedTimeWarpSimulationManager.h"

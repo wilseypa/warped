@@ -3,12 +3,13 @@
 
 
 #include <fstream>                      // for fstream
+#include <ios>                          // for fstream
 #include <set>                          // for multiset
-#include <string>                       // for string
-#include <ios>                          // for streampos
+#include <string>                       // for string, streampos
 
 #include "InFileData.h"                 // for InFileData
 #include "warped.h"
+
 using std::string;
 
 class VTime;

@@ -1,5 +1,5 @@
 #include <stddef.h>                     // for NULL
-#include <iostream>                     // for ostream, operator<<, endl, etc
+#include <iostream>                     // for operator<<, endl, etc
 
 #include "Event.h"                      // for Event, operator<<, etc
 #include "EventId.h"                    // for EventId

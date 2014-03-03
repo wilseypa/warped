@@ -18,6 +18,7 @@
 #include "OptFossilCollManager.h"
 #include "OutputManager.h"              // for ofstream, OutputManager
 #include "RestoreCkptMessage.h"         // for RestoreCkptMessage, etc
+#include "Serializable.h"               // for Serializable
 #include "SerializedInstance.h"         // for SerializedInstance
 #include "SimulationObject.h"           // for SimulationObject
 #include "State.h"                      // for State

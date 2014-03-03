@@ -1,6 +1,8 @@
 #ifndef MPI_PHYSICAL_COMMUNICATION_LAYER_H
 #define MPI_PHYSICAL_COMMUNICATION_LAYER_H
 
+#include <vector>
+
 #include "warped.h"
 #include "eclmplCommonInclude.h"
 #include "PhysicalCommunicationLayer.h"
@@ -92,8 +94,8 @@ private:
     void startMPI();
 
 
-    vector<MPIMessage> pendingSends;
-    vector<MPIMessage> pendingReceives;
+    std::vector<MPIMessage> pendingSends;
+    std::vector<MPIMessage> pendingReceives;
 };
 
 #endif

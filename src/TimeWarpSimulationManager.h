@@ -23,6 +23,7 @@
 #include "TimeWarpConfigurationManager.h"
 #include "VTime.h"                      // for VTime
 #include "warped.h"                     // for OutputMgrType, StateMgrType, etc
+
 using std::string;
 
 class Application;

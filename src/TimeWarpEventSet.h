@@ -8,6 +8,7 @@
 #include "Configurable.h"               // for Configurable
 #include "EventId.h"
 #include "warped.h"
+
 using std::string;
 
 class Event;

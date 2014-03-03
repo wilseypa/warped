@@ -9,6 +9,7 @@
 #include "ObjectID.h"                   // for ObjectID
 #include "ThreadedOutputEvents.h"
 #include "ThreadedOutputManager.h"      // for ofstream, etc
+#include "ThreadedTimeWarpMultiSet.h"   // for multiset
 #include "ThreadedTimeWarpMultiSetLTSF.h"  // for multiset
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "warped.h"

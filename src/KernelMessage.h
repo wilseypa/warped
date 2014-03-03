@@ -4,7 +4,7 @@
 
 #include <string>                       // for string
 
-#include "Serializable.h"               // for Serializable, string
+#include "Serializable.h"               // for Serializable
 #include "SerializedInstance.h"
 #include "warped.h"
 

@@ -8,6 +8,7 @@
 
 #include "DVFSManager.h"                // for DVFSManager::Algorithm, etc
 #include "DVFSManagerImplementationBase.h"
+
 using std::string;
 
 class KernelMessage;

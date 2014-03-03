@@ -4,7 +4,7 @@
 
 #include <string>                       // for string
 
-#include "Configurer.h"                 // for Configurer
+#include "Configurer.h"                 // for string, Configurer
 #include "warped.h"
 
 using std::string;

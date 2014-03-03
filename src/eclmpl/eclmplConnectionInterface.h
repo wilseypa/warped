@@ -1,6 +1,8 @@
 #ifndef ECLMPL_CONNECTION_INTERFACE
 #define ECLMPL_CONNECTION_INTERFACE
 
+#include <string>                       // for string
+
 #include "eclmplCommonInclude.h"
 
 /** The eclmplConnectionInterface class.

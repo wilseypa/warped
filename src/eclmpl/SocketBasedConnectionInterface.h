@@ -1,11 +1,14 @@
 #ifndef SOCKET_BASED_CONNECTION_INTERFACE
 #define SOCKET_BASED_CONNECTION_INTERFACE
 
-#include <vector>
+#include <string>                       // for string
+#include <vector>                       // for vector
 
 #include "eclmplCommonInclude.h"
-#include "eclmplSocket.h"
 #include "eclmplConnectionInterfaceImplementationBase.h"
+#include "eclmplSocket.h"               // for eclmplSocket
+
+class eclmplConfigFileTable;
 
 class SocketBasedConnectionInterface : public eclmplConnectionInterfaceImplementationBase,
     public eclmplSocket {

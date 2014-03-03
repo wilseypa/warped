@@ -6,6 +6,7 @@
 #include "Application.h"                // for Application
 #include "CommunicationManagerFactory.h"
 #include "Configurable.h"               // for Configurable
+#include "Configurer.h"                 // for string
 #include "GVTManagerFactory.h"          // for GVTManagerFactory
 #include "OutputManagerFactory.h"       // for OutputManagerFactory
 #include "SchedulingManagerFactory.h"   // for SchedulingManagerFactory
@@ -17,6 +18,7 @@
 #include "TimeWarpEventSetFactory.h"    // for TimeWarpEventSetFactory
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "TimeWarpSimulationManagerFactory.h"
+
 using std::string;
 
 class SimulationManager;

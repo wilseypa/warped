@@ -13,8 +13,12 @@
 #include <string>                       // for string, allocator
 #include <vector>                       // for vector
 
+#include "DeserializerManager.h"        // for string
 #include "KernelMessage.h"              // for KernelMessage
 #include "Serializable.h"               // for string, etc
+
+class Serializable;
+
 using std::string;
 
 class SerializedInstance;
@@ -28,7 +32,7 @@ class InitializationMessage : public KernelMessage {
 public:
     InitializationMessage(unsigned int source,
                           unsigned int dest,
-                          const vector<string>& initObjectNames,
+                          const std::vector<string>& initObjectNames,
                           unsigned int initNumSimulationManagers) :
         KernelMessage(source, dest),
         objectNames(initObjectNames),
@@ -45,13 +49,13 @@ public:
 
     static void registerDeserializer();
 
-    const vector<string>& getObjectNames() const { return objectNames; }
+    const std::vector<string>& getObjectNames() const { return objectNames; }
     const unsigned& getNumSimulationManagers() const { return numSimulationManagers; }
 
 private:
-    static const vector<string> deserializeStringVector(SerializedInstance* data);
+    static const std::vector<string> deserializeStringVector(SerializedInstance* data);
 
-    const vector<string> objectNames;
+    const std::vector<string> objectNames;
     const unsigned numSimulationManagers;
 
 };

@@ -1,8 +1,12 @@
 #ifndef ECLMPL_UNRELIABLE_NETWORK_MESSAGE_H
 #define ECLMPL_UNRELIABLE_NETWORK_MESSAGE_H
 
-#include "eclmplCommonInclude.h"
-#include "NetworkMessage.h"
+#include <stddef.h>                     // for NULL
+#include <sys/time.h>                   // for timeval, gettimeofday
+#include <iosfwd>                       // for ostream
+
+#include "NetworkMessage.h"             // for NetworkMessage
+#include "eclmplCommonInclude.h"        // for SequenceNumber
 
 enum eclmplUnreliableNetworkMessageType {UNDEFINED, INITIALIZE, START, APPLICATION, CONTROL, FINALIZE, SYNCH};
 

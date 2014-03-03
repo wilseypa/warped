@@ -1,4 +1,15 @@
+#include <string.h>                     // for NULL, memcpy
+#include <sys/time.h>                   // for timeval
+#include <deque>                        // for deque
+#include <iostream>                     // for cerr, endl
+#include <vector>                       // for vector
+
 #include "TCPSelectPhysicalCommunicationLayer.h"
+#include "eclmpl/NetworkMessage.h"      // for NetworkMessage
+#include "eclmpl/TCPConnectionInterface.h"  // for TCPConnectionInterface
+#include "eclmpl/eclmplCommonInclude.h"  // for ECLMPL_MTU
+#include "eclmpl/eclmplConnectionInterface.h"
+#include "eclmpl/eclmplSocket.h"        // for eclmplSocket
 
 using std::cerr;
 using std::endl;

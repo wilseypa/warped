@@ -1,6 +1,6 @@
 
 #include <stdlib.h>                     // for NULL, exit
-#include <iostream>                     // for operator<<, ostream, etc
+#include <iostream>                     // for operator<<, basic_ostream, etc
 
 #include "Application.h"                // for Application
 #include "Configurable.h"               // for Configurable
@@ -9,6 +9,7 @@
 #include "EventSetFactory.h"            // for EventSetFactory
 #include "SequentialSimulationManager.h"
 #include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "SimulationObject.h"           // for SimulationObject
 #include "WarpedDebug.h"                // for debugout
 #include "warped.h"                     // for ASSERT, werr, wout
 

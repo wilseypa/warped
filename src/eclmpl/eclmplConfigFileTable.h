@@ -1,9 +1,14 @@
 #ifndef ECLMPL_CONFIG_FILE_TABLE_H
 #define ECLMPL_CONFIG_FILE_TABLE_H
 
-#include "eclmplCommonInclude.h"
+#include <algorithm>                    // for copy
+#include <iterator>                     // for ostream_iterator
+#include <ostream>                      // for ostream, endl
+#include <string>                       // for string
+#include <vector>                       // for vector, allocator
 
-#include <vector>
+#include "eclmplCommonInclude.h"
+#include "warped.h"                     // for ASSERT
 
 class eclmplConfigFileTable {
 public:

@@ -1,8 +1,6 @@
 #ifndef SOCKET_CC
 #define SOCKET_CC
 
-#include "Socket.h"
-
 #include <WarpedConfig.h>               // for USE_SOCKLEN_T
 #include <arpa/inet.h>                  // for inet_addr
 #include <errno.h>                      // for errno, EACCES, EBADF, etc
@@ -14,6 +12,8 @@
 #include <unistd.h>                     // for close, write
 #include <cstring>                      // for bzero, NULL, strchr
 #include <iostream>                     // for operator<<, basic_ostream, etc
+
+#include "Socket.h"
 
 
 using std::cerr;

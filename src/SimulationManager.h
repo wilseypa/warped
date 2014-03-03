@@ -10,6 +10,7 @@
 #include "SimulationObject.h"           // for SimulationObject (ptr only), etc
 #include "SimulationStream.h"
 #include "warped.h"                     // for SEVERITY
+
 using std::string;
 
 class Event;

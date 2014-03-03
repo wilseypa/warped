@@ -15,6 +15,7 @@
 #include "KernelMessage.h"              // for KernelMessage
 #include "Serializable.h"
 
+class Serializable;
 class SerializedInstance;
 
 using std::string;

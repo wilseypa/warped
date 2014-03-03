@@ -7,7 +7,7 @@
 #include "LadderQStrict.h"              // for LadderQueueStrict
 #include "LockState.h"                  // for LockState
 #include "ObjectID.h"                   // for ObjectID
-#include "SplayTree.h"                  // for SplayTree
+#include "SplayTree.h"                  // for SplayTree, string
 #include "ThreadedTimeWarpMultiSetLTSF.h"
 #include "VTime.h"                      // for VTime
 #include "WarpedDebug.h"                // for debugout

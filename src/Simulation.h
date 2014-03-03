@@ -7,8 +7,10 @@
 
 #include "Configurable.h"               // for Configurable
 #include "ConfigurationManager.h"       // for ConfigurationManager
+#include "Configurer.h"                 // for string
 #include "SimulationManager.h"
 #include "warped.h"                     // for SEVERITY
+
 using std::string;
 
 class Application;

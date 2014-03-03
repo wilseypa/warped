@@ -6,7 +6,7 @@
 #include <sstream>
 #include <string>                       // for string
 
-#include "FileQueue.h"
+#include "FileQueue.h"                  // for ios, string, etc
 #include "InFileQueue.h"
 #include "SimulationObject.h"           // for ios, etc
 #include "SimulationStream.h"           // for SimulationStream, fstream
@@ -15,6 +15,7 @@
 
 class FileQueue;
 class InFileQueue;
+class SimulationObject;
 class TimeWarpSimulationManager;
 class VTime;
 

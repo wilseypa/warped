@@ -4,7 +4,7 @@
 
 #include "LockState.h"                  // for LockState
 #include "ObjectID.h"                   // for ObjectID
-#include "SimulationObject.h"           // for SimulationObject
+#include "SimulationObject.h"           // for SimulationObject, string
 #include "ThreadedChebyFossilCollManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "VTime.h"                      // for VTime

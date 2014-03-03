@@ -108,7 +108,7 @@ Transceiver::receiveMessage() {
             abort();
         } else {
             unsigned int msgSize = newMsg->getSize();
-            const vector<char>& data = newMsg->getData();
+            const std::vector<char>& data = newMsg->getData();
             unsigned int* temp = (unsigned int*)(&data[0]);
             numberOfMsgs = *temp;
 

@@ -4,8 +4,9 @@
 
 #include <string>                       // for string
 
-#include "Factory.h"                    // for Factory
+#include "Factory.h"                    // for string, Factory
 #include "FactorySymbolTable.h"
+
 using std::string;
 
 class FactorySymbolTable;

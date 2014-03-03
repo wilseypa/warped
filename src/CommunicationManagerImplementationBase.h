@@ -7,6 +7,7 @@
 #include "CommunicationManager.h"       // for CommunicationManager
 #include "SerializedInstance.h"         // for SerializedInstance
 #include "warped.h"
+
 using std::string;
 
 class KernelMessage;

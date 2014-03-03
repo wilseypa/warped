@@ -6,6 +6,7 @@
 
 #include "GVTManagerImplementationBase.h"
 #include "MatternObjectRecord.h"
+
 using std::string;
 
 class CommunicationManager;

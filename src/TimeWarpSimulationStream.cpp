@@ -5,11 +5,13 @@
 #include <vector>                       // for vector
 
 #include "FileData.h"                   // for FileData
-#include "FileQueue.h"                  // for FileQueue, cerr
+#include "FileQueue.h"                  // for FileQueue, string, ios, etc
 #include "InFileData.h"                 // for InFileData
 #include "InFileQueue.h"                // for InFileQueue
+#include "Serializable.h"               // for Serializable
 #include "SerializedInstance.h"         // for SerializedInstance
 #include "SimulationManager.h"          // for SimulationManager
+#include "SimulationObject.h"           // for SimulationObject
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "TimeWarpSimulationStream.h"
 #include "VTime.h"                      // for VTime

@@ -6,6 +6,7 @@
 
 #include "GVTManager.h"                 // for GVTManager
 #include "warped.h"
+
 using std::string;
 
 class ObjectID;

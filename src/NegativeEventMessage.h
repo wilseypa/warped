@@ -13,12 +13,13 @@
 #include <string>                       // for string, allocator
 #include <vector>                       // for vector
 
+#include "DeserializerManager.h"        // for string
 #include "EventId.h"
 #include "KernelMessage.h"              // for KernelMessage
 #include "NegativeEvent.h"
 #include "Serializable.h"               // for string, etc
-using std::string;
 
+class Serializable;
 class NegativeEvent;
 class SerializedInstance;
 
@@ -33,8 +34,8 @@ class NegativeEventMessage : public KernelMessage {
 public:
     NegativeEventMessage(unsigned int source,
                          unsigned int dest,
-                         const vector<const NegativeEvent*>& events,
-                         const string& initGVTInfo):
+                         const std::vector<const NegativeEvent*>& events,
+                         const std::string& initGVTInfo):
         KernelMessage(source, dest),
         myEvents(events),
         gVTInfo(initGVTInfo) {}
@@ -42,25 +43,25 @@ public:
     ~NegativeEventMessage();
 
     static Serializable* deserialize(SerializedInstance* data);
-    static const string& getNegativeEventMessageType();
+    static const std::string& getNegativeEventMessageType();
 
     void serialize(SerializedInstance*) const;
 
-    const string& getDataType() const {
+    const std::string& getDataType() const {
         return getNegativeEventMessageType();
     }
 
     static void registerDeserializer();
 
-    const vector<const NegativeEvent*>& getEvents() { return myEvents; }
+    const std::vector<const NegativeEvent*>& getEvents() { return myEvents; }
 
-    const string getGVTInfo() {
+    const std::string getGVTInfo() {
         return gVTInfo;
     }
 
 private:
-    vector<const NegativeEvent*> myEvents;
-    const string gVTInfo;
+    std::vector<const NegativeEvent*> myEvents;
+    const std::string gVTInfo;
 };
 
 #endif

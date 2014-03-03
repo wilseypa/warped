@@ -6,7 +6,9 @@
 #include <string>                       // for string
 #include <vector>                       // for vector
 
+#include "SimulationObject.h"           // for string, etc
 #include "ThreadedOptFossilCollManager.h"
+
 using std::string;
 
 class LockState;

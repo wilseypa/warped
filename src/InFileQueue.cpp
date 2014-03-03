@@ -1,8 +1,9 @@
 
 #include <cstdio>                       // for perror
+#include <fstream>                      // for basic_istream::tellg, etc
+#include <ios>                          // for fstream, ios
 #include <iostream>                     // for cerr, cout
 #include <iterator>                     // for operator!=, etc
-#include <ios>                          // for streampos
 
 #include "InFileQueue.h"
 #include "VTime.h"                      // for VTime

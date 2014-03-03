@@ -9,6 +9,7 @@
 #include "StopWatch.h"                  // for StopWatch
 #include "controlkit/FIRFilter.h"       // for FIRFilter
 #include "warped.h"
+
 using std::string;
 
 class CommunicationManager;

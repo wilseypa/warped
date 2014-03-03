@@ -2,7 +2,7 @@
 #define WARPED_H
 
 
-#include <stddef.h>                     // for size_t
+#include <stddef.h>                     // for size_t, NULL
 /** This header file defines some of the default data types and
     enumerations used in the system. */
 #include <stdlib.h>                     // for NULL
@@ -14,7 +14,7 @@
 #include "WarpedConfig.h"               // for HAVE_STDINT_H, etc
 #ifdef HAVE_STDINT_H
 // The following is a C-99ism...
-#include <stdint.h>
+#include <stdint.h>                     // for int32_t, int64_t
 
 typedef int64_t warped64_t;
 typedef int32_t warped32_t;

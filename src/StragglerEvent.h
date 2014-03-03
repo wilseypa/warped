@@ -3,8 +3,8 @@
 
 
 #include <iosfwd>                       // for ostream
-#include <string>                       // for string
-#include <vector>                       // for vector, allocator
+#include <string>                       // for string, allocator
+#include <vector>                       // for vector
 
 #include "Event.h"                      // for Event
 #include "EventId.h"

@@ -4,9 +4,10 @@
 
 #include <string>                       // for string
 
-#include "Factory.h"
+#include "Factory.h"                    // for Factory (ptr only), string
 #include "Types.h"                      // for Kind
 #include "warped.h"
+
 using std::string;
 
 class Factory;

@@ -8,7 +8,9 @@
 #include <vector>                       // for vector
 
 #include "SimulationManager.h"          // for SimulationManager
+#include "SimulationObject.h"           // for string, etc
 #include "warped.h"
+
 using std::string;
 
 class Event;

@@ -1,8 +1,9 @@
-#include "eclmplConfigFileTable.h"
+#include <string.h>                     // for memcpy, NULL
+#include <sstream>                      // for operator<<, ostringstream, etc
+#include <string>                       // for string, operator<<, etc
+#include <vector>                       // for vector, allocator
 
-#include <sstream>
-#include <vector>
-#include <string>
+#include "eclmplConfigFileTable.h"
 
 void
 eclmplConfigFileTable::serialize(char* buf, unsigned int& bufSize) const {

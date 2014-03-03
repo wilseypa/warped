@@ -1,8 +1,11 @@
 #ifndef ECLMPL_TIMER_H
 #define ECLMPL_TIMER_H
 
-#include "warped.h"
+#include <stddef.h>                     // for NULL
+#include <sys/time.h>                   // for gettimeofday, timeval
+
 #include "eclmplCommonInclude.h"
+#include "warped.h"
 
 class eclmplTimer {
 public:

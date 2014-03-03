@@ -1,14 +1,16 @@
 
 #include <stdlib.h>                     // for abort
-#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <iostream>                     // for cerr
+#include <vector>
 
-#include "DeserializerManager.h"        // for DeserializerManager, etc
+#include "DeserializerManager.h"        // for string, DeserializerManager, etc
+#include "Serializable.h"               // for Serializable
 #include "SerializedInstance.h"
 
 using std::cerr;
 using std::endl;
 
-SerializedInstance::SerializedInstance(const vector<char>& initData) :
+SerializedInstance::SerializedInstance(const std::vector<char>& initData) :
     data(initData),
     extractIteratorInitialized(false) {}
 
@@ -29,7 +31,7 @@ const string
 SerializedInstance::getDataType() const {
     string retval;
 
-    vector<char>::iterator iter(const_cast<char*>(&data[0]));
+    std::vector<char>::iterator iter(const_cast<char*>(&data[0]));
 
     checkType(DATA_TYPE(readInt(iter)), CHAR_BLOB);
     unsigned int numChars = readUnsigned(iter);
@@ -44,7 +46,7 @@ SerializedInstance::getDataType() const {
 }
 
 
-const vector<char>&
+const std::vector<char>&
 SerializedInstance::getData() const {
     return data;
 }
@@ -55,7 +57,7 @@ SerializedInstance::getSize() const {
 }
 
 void
-SerializedInstance::setData(const vector<char>& newData) {
+SerializedInstance::setData(const std::vector<char>& newData) {
     data = newData;
 }
 
@@ -76,13 +78,13 @@ SerializedInstance::getBytes(char* buffer, unsigned int numBytes) {
 
 
 void
-SerializedInstance::addCharVector(const vector<char>& toAdd) {
+SerializedInstance::addCharVector(const std::vector<char>& toAdd) {
     addBytes(&(*toAdd.begin()), toAdd.size());
 }
 
-vector<char>
+std::vector<char>
 SerializedInstance::getVectorChar() {
-    vector<char> retval;
+    std::vector<char> retval;
     initExtract();
     checkType(DATA_TYPE(readInt(extractIterator)), CHAR_BLOB);
     unsigned int numChars = readUnsigned(extractIterator);

@@ -10,6 +10,7 @@
 #include "CommunicationManagerImplementationBase.h"
 #include "InitializationMessage.h"      // for InitializationMessage
 #include "KernelMessage.h"              // for KernelMessage
+#include "Serializable.h"               // for Serializable
 #include "SerializedInstance.h"         // for SerializedInstance
 #include "StartMessage.h"               // for StartMessage
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager

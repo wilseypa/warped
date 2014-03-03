@@ -1,6 +1,10 @@
 #ifndef ECLMPL_SOCKET_H
 #define ECLMPL_SOCKET_H
 
+#include <netinet/in.h>                 // for sockaddr_in
+#include <sys/select.h>                 // for fd_set
+#include <string>                       // for string
+
 #include "eclmplCommonInclude.h"
 
 /** The eclmplSocket class.

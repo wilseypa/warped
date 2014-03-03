@@ -5,8 +5,9 @@
 #include <fstream>
 #include <string>                       // for string
 
-#include "SimulationObject.h"           // for SimulationObject
+#include "SimulationObject.h"           // for string, SimulationObject
 #include "warped.h"                     // for DEBUG, SEVERITY
+
 using std::string;
 
 class CommunicationManager;

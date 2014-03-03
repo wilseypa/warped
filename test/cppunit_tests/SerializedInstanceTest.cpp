@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "SerializedInstanceTest.h"
 #include "IntVTime.h"
 
@@ -34,10 +36,10 @@ SerializedInstanceTest::testBytes() {
 void
 SerializedInstanceTest::testVectorChar() {
     char* testString = "Foo bar baz";
-    vector<char> testVector;
+    std::vector<char> testVector;
     testVector.insert(testVector.end(), testString, testString + strlen(testString));
     toTest->addCharVector(testVector);
-    vector<char> returnVector = toTest->getVectorChar();
+    std::vector<char> returnVector = toTest->getVectorChar();
     CPPUNIT_ASSERT(testVector == returnVector);
 }
 

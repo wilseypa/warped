@@ -43,6 +43,7 @@
 #include "ThreadedLazyOutputManager.h"  // for ThreadedLazyOutputManager
 #include "ThreadedMatternGVTManager.h"  // for ThreadedMatternGVTManager
 #include "ThreadedOptFossilCollManager.h"
+#include "ThreadedOutputManager.h"      // for ThreadedOutputManager
 #include "ThreadedStateManager.h"       // for ThreadedStateManager
 #include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
 #include "ThreadedTimeWarpLoadBalancer.h"

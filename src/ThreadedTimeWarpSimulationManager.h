@@ -8,6 +8,7 @@
 
 #include "LockedQueue.h"
 #include "ObjectID.h"                   // for ObjectID
+#include "OutputManager.h"              // for ofstream
 #include "ThreadedOptFossilCollManager.h"
 #include "ThreadedOutputManager.h"
 #include "ThreadedStateManager.h"
@@ -17,6 +18,9 @@
 #include "VTime.h"                      // for VTime
 #include "WorkerInformation.h"
 #include "warped.h"                     // for ASSERT
+
+class ThreadedOutputManager;
+
 using std::string;
 
 class Application;

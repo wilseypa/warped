@@ -12,7 +12,7 @@
 #include "LadderQStrict.h"
 #include "LockState.h"
 #include "NegativeEvent.h"
-#include "SplayTree.h"
+#include "SplayTree.h"                  // for string, etc
 #include "ThreadedTimeWarpEventSet.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 

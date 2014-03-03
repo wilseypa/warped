@@ -1,6 +1,7 @@
 
-#include "DeserializerManager.h"        // for DeserializerManager
+#include "DeserializerManager.h"        // for string, DeserializerManager
 #include "GVTUpdateMessage.h"
+#include "Serializable.h"               // for Serializable
 #include "SerializedInstance.h"         // for SerializedInstance
 
 void

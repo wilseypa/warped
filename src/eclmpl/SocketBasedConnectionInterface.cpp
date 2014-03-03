@@ -1,7 +1,21 @@
-#include "SocketBasedConnectionInterface.h"
+#include <netdb.h>                      // for gethostbyname, hostent
+#include <netinet/in.h>                 // for sockaddr_in, in_addr
+#include <signal.h>                     // for signal, SIGPIPE, SIG_IGN
+#include <stdlib.h>                     // for atoi, rand, srand
+#include <string.h>                     // for strlen, strcpy, NULL
+#include <sys/socket.h>                 // for linger, SOL_SOCKET, etc
+#include <sys/uio.h>                    // for iovec, writev
+#include <iostream>                     // for operator<<, ostream, cerr, etc
+#include <string>                       // for string, to_string, stoi
+#include <vector>                       // for vector, allocator
 
-#include <vector>
-#include <string>
+#include "SocketBasedConnectionInterface.h"
+#include "WarpedDebug.h"                // for debugout
+#include "eclmpl/eclmplConfigFileTable.h"  // for eclmplConfigFileTable
+#include "eclmpl/eclmplConnectionInterfaceImplementationBase.h"
+#include "eclmpl/eclmplContactInfo.h"   // for eclmplContactInfo
+#include "eclmpl/eclmplSocket.h"        // for eclmplSocket
+#include "warped.h"                     // for ASSERT
 
 // Only here for debugging... remove when done.
 void __eclmpl__printCharStr(const char* const str, const unsigned int& strLen) {

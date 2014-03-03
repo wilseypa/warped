@@ -9,7 +9,7 @@
 
 #include "EventFunctors.h"
 #include "LockState.h"
-#include "NegativeEvent.h"
+#include "NegativeEvent.h"              // for string, etc
 #include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
 #include "ThreadedTimeWarpMultiSetLTSF.h"
 #include "ThreadedTimeWarpSimulationManager.h"

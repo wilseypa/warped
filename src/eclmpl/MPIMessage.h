@@ -1,10 +1,11 @@
 #ifndef MPI_MESSAGE_H
 #define MPI_MESSAGE_H
 
-#include <mpi.h>
-#include "SerializedInstance.h"
+#include <mpi.h>                        // for MPI_REQUEST_NULL, etc
 #include <algorithm>
-#include <functional>
+#include <functional>                   // for unary_function
+
+#include "SerializedInstance.h"         // for SerializedInstance
 
 using std::unary_function;
 

@@ -5,12 +5,16 @@
 #include <iosfwd>                       // for ostream
 #include <string>                       // for string
 
+#include "DeserializerManager.h"        // for string
 #include "Event.h"                      // for Event
 #include "EventId.h"                    // for EventId
 #include "ObjectID.h"                   // for ObjectID
 #include "Serializable.h"               // for string, etc
 #include "VTime.h"                      // for VTime
 #include "warped.h"
+
+class Serializable;
+
 using std::string;
 
 class SerializedInstance;

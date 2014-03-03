@@ -4,8 +4,12 @@
 #include <string>                       // for string
 #include <vector>                       // for vector
 
+#include "DeserializerManager.h"        // for string
 #include "KernelMessage.h"              // for KernelMessage
 #include "Serializable.h"               // for string, etc
+
+class Serializable;
+
 using std::string;
 
 class SerializedInstance;

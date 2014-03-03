@@ -1,10 +1,16 @@
 #ifndef ECLMPL_PHYSICAL_COMMUNICATION_LAYER_H
 #define ECLMPL_PHYSICAL_COMMUNICATION_LAYER_H
 
-#include "eclmplCommonInclude.h"
+#include <deque>                        // for deque
+
 #include "NetworkMessage.h"
-#include "PhysicalCommunicationLayer.h"
+#include "PhysicalCommunicationLayer.h"  // for PhysicalCommunicationLayer
+#include "eclmplCommonInclude.h"
 #include "eclmplConnectionInterface.h"
+
+class NetworkMessage;
+class SerializedInstance;
+class eclmplConnectionInterface;
 
 using std::deque;
 

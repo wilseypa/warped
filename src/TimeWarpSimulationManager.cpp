@@ -1,11 +1,9 @@
 
-#include <time.h>                       // for NULL
 #include <algorithm>                    // for sort
 #include <fstream>                      // for operator<<, basic_ostream, etc
-#include <map>                          // for allocator
 #include <set>                          // for set
 #include <sstream>
-#include <string>
+#include <string>                       // for string, operator<<, etc
 
 #include "AdaptiveOutputManager.h"      // for DynamicOutputManager
 #include "Application.h"                // for Application
@@ -29,6 +27,7 @@
 #include "NegativeEventMessage.h"       // for NegativeEventMessage
 #include "OptFossilCollManager.h"       // for OptFossilCollManager
 #include "OptFossilCollManagerFactory.h"
+#include "OutputEvents.h"               // for ofstream
 #include "OutputManager.h"              // for OutputManager
 #include "OutputManagerFactory.h"       // for OutputManagerFactory
 #include "PartitionInfo.h"              // for PartitionInfo

@@ -1,7 +1,9 @@
 
 #include "CirculateInitializationMessage.h"
 #include "DeserializerManager.h"        // for DeserializerManager
-#include "SerializedInstance.h"         // for SerializedInstance
+#include "SerializedInstance.h"         // for SerializedInstance, string
+
+class Serializable;
 
 void
 CirculateInitializationMessage::serialize(SerializedInstance* addTo) const {

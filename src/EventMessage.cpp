@@ -1,7 +1,8 @@
 
-#include "DeserializerManager.h"        // for DeserializerManager
+#include "DeserializerManager.h"        // for string, DeserializerManager
 #include "Event.h"                      // for Event
 #include "EventMessage.h"
+#include "Serializable.h"               // for Serializable
 #include "SerializedInstance.h"         // for SerializedInstance
 
 Serializable*
