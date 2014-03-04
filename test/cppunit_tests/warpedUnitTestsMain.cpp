@@ -9,7 +9,6 @@
 #include "AggressiveOutputManagerTest.h"
 #include "CirculateInitializationMessageTest.h"
 #include "CostAdaptiveStateManagerTest.h"
-#include "DefaultSchedulingManagerTest.h"
 #include "DefaultTimeWarpEventSetTest.h"
 #include "DefaultTimeWarpEventSetOneAntiMsgTest.h"
 #include "EventMessageTest.h"
@@ -35,7 +34,6 @@ CPPUNIT_TEST_SUITE_REGISTRATION(AdaptiveStateManagerBaseTest);
 CPPUNIT_TEST_SUITE_REGISTRATION(AggressiveOutputManagerTest);
 CPPUNIT_TEST_SUITE_REGISTRATION(CirculateInitializationMessageTest);
 CPPUNIT_TEST_SUITE_REGISTRATION(CostAdaptiveStateManagerTest);
-CPPUNIT_TEST_SUITE_REGISTRATION(DefaultSchedulingManagerTest);
 CPPUNIT_TEST_SUITE_REGISTRATION(DefaultTimeWarpEventSetTest);
 CPPUNIT_TEST_SUITE_REGISTRATION(DefaultTimeWarpEventSetOneAntiMsgTest);
 CPPUNIT_TEST_SUITE_REGISTRATION(EventMessageTest);
