@@ -7,7 +7,8 @@ LIBMETIS_H_FILES = \
     proto.h \
     rename.h \
     stdheaders.h \
-    struct.h 
+    struct.h \
+    ../include/metis.h
 
 LIBMETIS_C_FILES = \
     auxapi.c \
@@ -48,7 +49,7 @@ LIBMETIS_C_FILES = \
 
 noinst_LTLIBRARIES = libmetis.la
 
-libmetis_la_CPPFLAGS = -I$(top_builddir)/thirdparty/metis/include -I$(top_builddir)/thirdparty/metis/GKlib
+libmetis_la_CPPFLAGS = -I$(top_srcdir)/thirdparty/metis/include -I$(top_srcdir)/thirdparty/metis/GKlib
 libmetis_la_LIBADD = $(top_builddir)/thirdparty/metis/GKlib/libgk.la
 
 libmetis_la_SOURCES = \
