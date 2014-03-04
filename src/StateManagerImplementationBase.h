@@ -4,7 +4,7 @@
 
 #include <iosfwd>                       // for ostream
 #include <set>                          // for multiset
-#include <vector>                       // for std::vector
+#include <vector>                       // for vector
 
 #include "SetObject.h"                  // for SetObject (ptr only), etc
 #include "StateManager.h"               // for StateManager

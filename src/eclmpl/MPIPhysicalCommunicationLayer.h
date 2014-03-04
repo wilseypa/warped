@@ -1,12 +1,14 @@
 #ifndef MPI_PHYSICAL_COMMUNICATION_LAYER_H
 #define MPI_PHYSICAL_COMMUNICATION_LAYER_H
 
-#include <vector>
+#include <vector>                       // for vector
 
-#include "warped.h"
+#include "MPIMessage.h"                 // for MPIMessage
+#include "PhysicalCommunicationLayer.h"  // for PhysicalCommunicationLayer
 #include "eclmplCommonInclude.h"
-#include "PhysicalCommunicationLayer.h"
-#include "MPIMessage.h"
+#include "warped.h"
+
+class SerializedInstance;
 
 /** The MPIPhysicalCommunicationLayer class.
 

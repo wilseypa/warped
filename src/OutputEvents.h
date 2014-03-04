@@ -5,17 +5,16 @@
 #include <algorithm>
 #include <fstream>                      // for ofstream
 #include <list>                         // for list
-#include <vector>                       // for vector
+#include <vector>                       // for vector, vector<>::iterator
 
 #include "SetObject.h"
 #include "TimeWarpSimulationManager.h"
 #include "warped.h"
 
-class TimeWarpSimulationManager;
-template <class Element> class SetObject;
-
 class Event;
+class TimeWarpSimulationManager;
 class VTime;
+template <class Element> class SetObject;
 
 /** The OutputEvents class.
 

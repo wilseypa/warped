@@ -1,7 +1,7 @@
 
 #include <stdlib.h>                     // for NULL, abort
 #include <iostream>                     // for cerr
-#include <set>                          // for multiset, etc
+#include <set>                          // for _Rb_tree_const_iterator, etc
 #include <vector>                       // for vector
 
 #include "FileData.h"                   // for FileData
@@ -15,6 +15,7 @@
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "TimeWarpSimulationStream.h"
 #include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
 
 using std::stringstream;
 

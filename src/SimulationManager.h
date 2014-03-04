@@ -12,6 +12,7 @@
 #include "warped.h"                     // for SEVERITY
 
 class Event;
+class SimulationObject;
 class SimulationStream;
 class VTime;
 

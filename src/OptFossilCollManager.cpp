@@ -5,8 +5,7 @@
 #include <sys/stat.h>                   // for mkdir, stat
 #include <unistd.h>                     // for rmdir, getuid
 #include <algorithm>                    // for sort
-#include <fstream>                      // for operator<<, basic_ostream, etc
-#include <iostream>                     // for cerr
+#include <iostream>                     // for operator<<, basic_ostream, etc
 #include <sstream>
 #include <utility>                      // for pair
 
@@ -16,7 +15,7 @@
 #include "GVTManager.h"                 // for GVTManager
 #include "KernelMessage.h"              // for KernelMessage
 #include "OptFossilCollManager.h"
-#include "OutputManager.h"              // for ofstream, OutputManager
+#include "OutputManager.h"              // for OutputManager
 #include "RestoreCkptMessage.h"         // for RestoreCkptMessage, etc
 #include "Serializable.h"               // for Serializable
 #include "SerializedInstance.h"         // for SerializedInstance

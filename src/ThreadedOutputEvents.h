@@ -13,12 +13,11 @@
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "warped.h"
 
+class Event;
 class LockState;
 class ThreadedTimeWarpSimulationManager;
-template <class Element> class SetObject;
-
-class Event;
 class VTime;
+template <class Element> class SetObject;
 
 /** The ThreadedOutputEvents class.
 

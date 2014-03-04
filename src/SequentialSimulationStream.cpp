@@ -1,8 +1,7 @@
 
 #include <stdlib.h>                     // for exit
+#include <fstream>                      // for ostringstream, etc
 #include <iostream>                     // for cerr
-#include <sstream>
-#include <fstream>
 
 #include "SequentialSimulationStream.h"
 

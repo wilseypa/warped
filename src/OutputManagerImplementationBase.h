@@ -12,6 +12,7 @@
 #include "warped.h"
 
 class Event;
+class OutputEvents;
 class SimulationObject;
 class TimeWarpSimulationManager;
 class VTime;

@@ -2,9 +2,9 @@
 #define SIMULATION_STREAM_H
 
 
-#include <fstream>                      // for fstream
-#include <sstream>
+#include <fstream>                      // for ostringstream, fstream, etc
 #include <iostream>
+#include <sstream>
 
 class SimulationStream : public std::fstream {
 public:

@@ -2,14 +2,14 @@
 #define TIMEWARP_SIMULATION_STREAM_H
 
 
-#include <fstream>                      // for ios, etc
+#include <fstream>                      // for ostringstream, ios, fstream, etc
 #include <sstream>
 #include <string>                       // for string
 
-#include "FileQueue.h"
+#include "FileQueue.h"                  // for ios, FileQueue (ptr only), etc
 #include "InFileQueue.h"
 #include "SimulationObject.h"           // for ios, etc
-#include "SimulationStream.h"           // for SimulationStream, fstream
+#include "SimulationStream.h"           // for SimulationStream
 #include "TimeWarpSimulationManager.h"
 
 class FileQueue;

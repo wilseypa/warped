@@ -17,7 +17,7 @@
 #include "EventFunctors.h"
 #include "EventId.h"                    // for operator<<
 #include "EventMessage.h"               // for EventMessage
-#include "FileQueue.h"                  // for cerr, cout
+#include "FileQueue.h"                  // for cerr, cout, ios
 #include "GVTManager.h"                 // for GVTManager
 #include "GVTManagerFactory.h"          // for GVTManagerFactory
 #include "InitializationMessage.h"      // for InitializationMessage
@@ -27,10 +27,9 @@
 #include "NegativeEventMessage.h"       // for NegativeEventMessage
 #include "OptFossilCollManager.h"       // for OptFossilCollManager
 #include "OptFossilCollManagerFactory.h"
-#include "OutputEvents.h"               // for ofstream
 #include "OutputManager.h"              // for OutputManager
 #include "OutputManagerFactory.h"       // for OutputManagerFactory
-#include "PartitionInfo.h"              // for PartitionInfo
+#include "PartitionInfo.h"              // for PartitionInfo, vector
 #include "PartitionManager.h"           // for PartitionManager
 #include "SchedulingData.h"             // for SchedulingData
 #include "SchedulingManager.h"          // for SchedulingManager
@@ -45,7 +44,7 @@
 #include "TimeWarpEventSet.h"           // for TimeWarpEventSet
 #include "TimeWarpEventSetFactory.h"    // for TimeWarpEventSetFactory
 #include "TimeWarpSimulationManager.h"
-#include "TimeWarpSimulationStream.h"   // for TimeWarpSimulationStream, etc
+#include "TimeWarpSimulationStream.h"   // for TimeWarpSimulationStream
 #include "TokenPassingTerminationManager.h"
 #include "WarpedDebug.h"                // for debugout
 

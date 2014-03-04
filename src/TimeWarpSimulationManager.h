@@ -17,7 +17,7 @@
 #include "NegativeEvent.h"
 #include "ObjectID.h"                   // for ObjectID
 #include "SimulationManagerImplementationBase.h"
-#include "SimulationObject.h"           // for SimulationObject, ios
+#include "SimulationObject.h"           // for SimulationObject
 #include "SimulationStream.h"
 #include "StopWatch.h"                  // for StopWatch
 #include "TimeWarpConfigurationManager.h"

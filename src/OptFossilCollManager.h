@@ -12,13 +12,12 @@
 #include "StateSetObject.h"
 #include "warped.h"
 
-class KernelMessage;
-class SimulationConfiguration;
-
 class CommunicationManager;
 class Event;
+class KernelMessage;
 class NegativeEvent;
 class RestoreCkptMessage;
+class SimulationConfiguration;
 class SimulationObject;
 class State;
 class TimeWarpSimulationManager;

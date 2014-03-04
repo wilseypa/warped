@@ -7,8 +7,8 @@
 #include <sstream>
 #include <string>                       // for operator<<, string
 
-#include "warped.h"
 #include "Serializable.h"               // for Serializable
+#include "warped.h"
 
 class VTime : public Serializable {
 public:

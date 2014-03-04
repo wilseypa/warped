@@ -1,7 +1,7 @@
 #ifndef PROFILE_GUIDED_PARTITIONER_H
 #define PROFILE_GUIDED_PARTITIONER_H
 
-#include <iostream>
+#include <iostream>                     // for istream
 #include <string>
 #include <vector>                       // for vector
 

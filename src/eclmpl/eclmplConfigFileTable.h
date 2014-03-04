@@ -4,8 +4,8 @@
 #include <algorithm>                    // for copy
 #include <iterator>                     // for ostream_iterator
 #include <ostream>                      // for ostream, endl
-#include <string>                       // for string
-#include <vector>                       // for vector, allocator
+#include <string>                       // for string, allocator
+#include <vector>                       // for vector
 
 #include "eclmplCommonInclude.h"
 #include "warped.h"                     // for ASSERT

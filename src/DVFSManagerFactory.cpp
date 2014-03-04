@@ -2,7 +2,6 @@
 #include <stddef.h>                     // for NULL
 #include <iostream>                     // for operator<<, basic_ostream, etc
 #include <string>                       // for operator==, operator<<, etc
-#include <sstream>
 
 #include "Configurable.h"               // for Configurable
 #include "DVFSManager.h"                // for DVFSManager, etc

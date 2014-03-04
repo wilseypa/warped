@@ -19,8 +19,8 @@
 #include "NegativeEvent.h"
 #include "Serializable.h"               // for string, etc
 
-class Serializable;
 class NegativeEvent;
+class Serializable;
 class SerializedInstance;
 
 /**
