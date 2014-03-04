@@ -15,12 +15,12 @@
 #include "StartMessage.h"               // for StartMessage
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "eclmpl/PhysicalCommunicationLayer.h"
-#include "warped.h"                     // for ASSERT, ostringstream
+#include "warped.h"                     // for ASSERT
 
 using std::istringstream;
-using std::ostringstream;
 using std::cerr;
 using std::endl;
+using std::vector;
 
 CommunicationManagerImplementationBase::CommunicationManagerImplementationBase(
     PhysicalCommunicationLayer* physicalLayer,

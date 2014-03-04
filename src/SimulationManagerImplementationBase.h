@@ -11,8 +11,6 @@
 #include "SimulationObject.h"           // for string, etc
 #include "warped.h"
 
-using std::string;
-
 class Event;
 class SimulationObject;
 class VTime;
@@ -63,7 +61,7 @@ public:
 
         @param list The vector of simulation object pointers to unregister
     */
-    void unregisterSimulationObjects(vector<SimulationObject*>* list);
+    void unregisterSimulationObjects(std::vector<SimulationObject*>* list);
 
     /// returns the number of simulation objects
     unsigned int getNumberOfSimulationObjects() const { return numberOfObjects; }
@@ -107,10 +105,10 @@ protected:
     /// Number of simulation managers.
     unsigned int numberOfSimulationManagers;
 
-    typedef std::unordered_map<string, SimulationObject*> typeSimMap;
+    typedef std::unordered_map<std::string, SimulationObject*> typeSimMap;
 
-    vector<SimulationObject*>* getElementVector(typeSimMap* elementMap) {
-        vector<SimulationObject*>* objects = new vector<SimulationObject*>;
+    std::vector<SimulationObject*>* getElementVector(typeSimMap* elementMap) {
+        std::vector<SimulationObject*>* objects = new std::vector<SimulationObject*>;
         //Obtains all the objects from elementMap
         for (typeSimMap::iterator i = elementMap->begin(); i != elementMap->end(); i++) {
             objects->push_back(i->second);
@@ -118,8 +116,8 @@ protected:
         return objects;
     }
 
-    vector<string>* getKeyVector(typeSimMap* elementMap) {
-        vector<string>* keys = new vector<string>;
+    std::vector<std::string>* getKeyVector(typeSimMap* elementMap) {
+        std::vector<std::string>* keys = new std::vector<std::string>;
         //Obtains all the objects from elementMap
         for (typeSimMap::iterator i = elementMap->begin(); i != elementMap->end(); i++) {
             keys->push_back(i->first);
@@ -130,10 +128,10 @@ protected:
     typeSimMap* localArrayOfSimObjPtrs;
 
     /// Mapping between simulation object ids to names
-    vector<SimulationObject*> localArrayOfSimObjIDs;
+    std::vector<SimulationObject*> localArrayOfSimObjIDs;
 
     /// Turns a vector<SimulationObject *> into a map<string, SimulationObject *>.
-    typeSimMap* partitionVectorToHashMap(vector<SimulationObject*>* vector);
+    typeSimMap* partitionVectorToHashMap(std::vector<SimulationObject*>* vector);
 };
 
 #endif

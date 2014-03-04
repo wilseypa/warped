@@ -53,6 +53,7 @@ class SimulationConfiguration;
 class SimulationStream;
 
 using std::istringstream;
+using std::vector;
 
 TimeWarpSimulationManager::TimeWarpSimulationManager(Application* initApplication) :
     SimulationManagerImplementationBase(),
@@ -487,8 +488,8 @@ void TimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
     // to provide a quick and easy way to do large amounts of tests. Make sure to change the
     // filename to a proper one. The 'analyzer' program can then be run to format the results.
     /*
-     ofstream outFile;
-     ostringstream filename;
+     std::ofstream outFile;
+     std::ostringstream filename;
      filename << "/home/kingr8/results/Results.LP." << mySimulationManagerID;
      outFile.open(filename.str().c_str(), ios_base::app);
      outFile << stopwatch.elapsed() << " " << numberOfRollbacks << endl;
@@ -595,7 +596,7 @@ void TimeWarpSimulationManager::handleRemoteEvent(const Event* event) {
         unsigned int destSimMgrId = proxyObj->getDestId();
 
         const std::string gVTInfo = myGVTManager->getGVTInfo(
-                                   getSimulationManagerID(), destSimMgrId, event->getSendTime());
+                                        getSimulationManagerID(), destSimMgrId, event->getSendTime());
 
         KernelMessage* msg = new EventMessage(getSimulationManagerID(),
                                               destSimMgrId, event, gVTInfo);
@@ -672,7 +673,7 @@ void TimeWarpSimulationManager::cancelRemoteEvents(const vector <
                 s++;
             }
             const std::string gVTInfo = myGVTManager->getGVTInfo(
-                                       getSimulationManagerID(), destId, *min);
+                                            getSimulationManagerID(), destId, *min);
 
             vector<const NegativeEvent*> partToCancel(start, cur);
             NegativeEventMessage* newMessage = new NegativeEventMessage(
@@ -688,7 +689,7 @@ void TimeWarpSimulationManager::cancelRemoteEvents(const vector <
             cur++;
         }
         const std::string gVTInfo = myGVTManager->getGVTInfo(
-                                   getSimulationManagerID(), destId, *min);
+                                        getSimulationManagerID(), destId, *min);
         NegativeEventMessage* newMessage = new NegativeEventMessage(
             getSimulationManagerID(), destId, eventsToCancel, gVTInfo);
         sendMessage(newMessage, destId);
@@ -1149,9 +1150,9 @@ void TimeWarpSimulationManager::finalize() {
         int numEventsRolledBack = myEventSet->getNumEventsRolledBack();
         int numEventsExecuted = myEventSet->getNumEventsExecuted();
 
-        ostringstream oss;
+        std::ostringstream oss;
         oss << "lp" << mySimulationManagerID << ".csv";
-        ofstream file(oss.str().c_str(), ios_base::app);
+        std::ofstream file(oss.str().c_str(), ios_base::app);
         if (file)
             file << myStopwatch.elapsed() << ',' << numberOfRollbacks
                  << ',' << numEventsExecuted - numEventsRolledBack

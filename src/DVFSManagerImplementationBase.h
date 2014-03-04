@@ -10,8 +10,6 @@
 #include "controlkit/FIRFilter.h"       // for FIRFilter
 #include "warped.h"
 
-using std::string;
-
 class CommunicationManager;
 class SimulationConfiguration;
 class TimeWarpSimulationManager;
@@ -43,7 +41,7 @@ public:
 
     virtual void delay(int) {}
 
-    virtual string toString();
+    virtual std::string toString();
 
     //@} // End of Public Class Methods of DVFSManagerImplementationBase.
 
@@ -59,7 +57,7 @@ protected:
     void populateAvailableFrequencies();
     void setCPUFrequency(int cpu_idx, int freq);
     bool updateFrequencyIdxs();
-    void fillUsefulWork(vector<double>&);
+    void fillUsefulWork(std::vector<double>&);
     void initializeFrequencyIdxs(int maxfreq);
     bool isDummy() const { return myAlg == FIXED; }
     bool debugPrint() const { return myDebugPrint; }
@@ -81,7 +79,7 @@ protected:
 
     // begin() == fastest, end() == slowest
     std::vector<int> myAvailableFreqs;
-    vector<int> myFrequencyIdxs;
+    std::vector<int> myFrequencyIdxs;
 
 private:
 

@@ -137,19 +137,19 @@ protected:
     multiset<const Event*, receiveTimeLessThanEventIdLessThan> lowestObjEvents;
 
     /// Each object has its own sorted queue of event contained here.
-    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*> unprocessedObjEvents;
+    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*> unprocessedObjEvents;
 
     /// The iterator pointing to an object's corresponding event in lowestObjEvents.
-    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> lowObjPos;
+    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> lowObjPos;
 
     /// The iterator to the position of the last insertion for each object.
-    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> insertObjPos;
+    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> insertObjPos;
 
     /// Queues to hold the processed Events for each object.
-    vector<vector<const Event*>*> processedObjEvents;
+    std::vector<std::vector<const Event*>*> processedObjEvents;
 
     /// Queues to hold the removed events for each object.
-    vector<vector<const Event*>*> removedEvents;
+    std::vector<std::vector<const Event*>*> removedEvents;
 
     /// The handle to the simulation manager.
     TimeWarpSimulationManager* mySimulationManager;

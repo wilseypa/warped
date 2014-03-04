@@ -39,7 +39,7 @@ public:
     */
     void configure(SimulationConfiguration& configuration);
 
-    vector<Configurer*>& getConfigurers() const;
+    std::vector<Configurer*>& getConfigurers() const;
 
     /**
        Gets the simulation manager for this configuration.

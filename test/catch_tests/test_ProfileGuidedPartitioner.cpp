@@ -12,6 +12,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <string>
 
 class MockObject : public SimulationObject {
 public:
@@ -24,7 +25,7 @@ public:
     State* allocateState() {return 0;}
     void deallocateState(const State* state) { delete state; }
     void reclaimEvent(const Event* event) { delete event; }
-    const string& getName() const { return ""; }
+    const std::string& getName() const { return ""; }
 };
 
 TEST_CASE("ProfileGuidedPartitioner partitions fully connected graph", "[partitioning]") {

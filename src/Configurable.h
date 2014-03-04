@@ -3,7 +3,6 @@
 
 
 #include <vector>
-using std::vector;
 
 class Configurer;
 class SimulationConfiguration;
@@ -19,7 +18,7 @@ public:
        This is a default implementation that returns an empty vector of
        configurers.
     */
-    static vector<Configurer*>& getConfigurersEmpty();
+    static std::vector<Configurer*>& getConfigurersEmpty();
 
 protected:
     Configurable() {}

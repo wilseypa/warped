@@ -15,7 +15,6 @@
 #include "Event.h"                      // for Event
 #include "EventId.h"                    // for EventId, operator<<
 #include "EventMessage.h"               // for EventMessage
-#include "FileQueue.h"                  // for cout, cerr
 #include "GVTManager.h"                 // for GVTManager
 #include "GVTManagerFactory.h"          // for GVTManagerFactory
 #include "InitializationMessage.h"      // for InitializationMessage
@@ -63,6 +62,11 @@ int WorkerInformation::globalStillBusyCount = 0;
 bool WorkerInformation::workRemaining = true;
 
 pthread_key_t threadKey;
+
+using std::cout;
+using std::endl;
+using std::cerr;
+using std::vector;
 
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     unsigned int numberOfWorkerThreads, const string syncMechanism,
@@ -418,7 +422,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
     }
     sendPendingMessages();
     stopwatch.stop();
-    ostringstream oss;
+    std::ostringstream oss;
     oss << "lp" << mySimulationManagerID << ".csv";
     ofstream file(oss.str().c_str(), ios_base::app);
     if (file)

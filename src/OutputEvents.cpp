@@ -15,6 +15,8 @@
 #include "WarpedDebug.h"                // for debugout
 #include "warped.h"                     // for ASSERT
 
+using std::vector;
+
 OutputEvents::OutputEvents(TimeWarpSimulationManager* simMgr):
     mySimulationManager(simMgr) {
 }

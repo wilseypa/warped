@@ -291,7 +291,7 @@ protected:
      @param event A pointer to the received event.
      */
     void cancelEventsReceiver(SimulationObject* curObject,
-                              vector<const NegativeEvent*>& cancelObjectIt, int threadID);
+                              std::vector<const NegativeEvent*>& cancelObjectIt, int threadID);
     /**
      Used to route local events.
      */
@@ -305,19 +305,19 @@ protected:
     /**
      Used to cancel local events.
      */
-    void cancelLocalEvents(const vector<const NegativeEvent*>& eventsToCancel,
+    void cancelLocalEvents(const std::vector<const NegativeEvent*>& eventsToCancel,
                            int threadID);
 
     /**
      Used to cancel remote events.
      */
     void
-    cancelRemoteEvents(const vector<const NegativeEvent*>& eventsToCancel,
+    cancelRemoteEvents(const std::vector<const NegativeEvent*>& eventsToCancel,
                        int threadID);
     /**
      Used to deal with negative events that we've been informed about.
      */
-    void handleNegativeEvents(const vector<const Event*>& negativeEvents,
+    void handleNegativeEvents(const std::vector<const Event*>& negativeEvents,
                               int threadID);
 
     /**
@@ -325,7 +325,7 @@ protected:
      rolled back.
      */
     void
-    cancelEvents(const vector<const Event*>& eventsToCancel);
+    cancelEvents(const std::vector<const Event*>& eventsToCancel);
 
     void rollback(SimulationObject* object, const VTime& rollbackTime,
                   int threadID);
@@ -424,7 +424,7 @@ private:
     unsigned int scheduleQCount;
 
     /// Time up to which coast forwarding should be done.
-    vector<const VTime*> coastForwardTime;
+    std::vector<const VTime*> coastForwardTime;
 
     /// Used to determine when the optimistic fossil collection manager is
     /// recovery from a catastrophic rollback.

@@ -2,6 +2,8 @@
 #define FIR_FILTER_H
 
 #include <iostream>
+#include <vector>
+
 #include "Filter.h"
 
 /** The FIRFilter class.
@@ -64,7 +66,7 @@ private:
     Type current_sum;
 
     /// the filter buffer/array
-    vector<Type> fir_array;
+    std::vector<Type> fir_array;
 
     //@} // End of Private Class Attributed of FIRFilter
 };

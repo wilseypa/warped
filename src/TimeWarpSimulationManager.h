@@ -24,8 +24,6 @@
 #include "VTime.h"                      // for VTime
 #include "warped.h"                     // for OutputMgrType, StateMgrType, etc
 
-using std::string;
-
 class Application;
 class CommunicationManager;
 class DVFSManager;
@@ -79,7 +77,7 @@ public:
     virtual ~TimeWarpSimulationManager();
 
     /// initialize the simulation objects before starting the simulation.
-    virtual void initialize(); 
+    virtual void initialize();
 
     /** Run the simulation.
 
@@ -102,7 +100,7 @@ public:
 
      @return The array of local object names.
      */
-    virtual vector<string>* getSimulationObjectNames();
+    virtual std::vector<std::string>* getSimulationObjectNames();
 
     /** Add these simulation object proxies to the total array of sim objects.
 
@@ -114,7 +112,7 @@ public:
      @param destSimulationManagerID The sim-manager who has the proxy.
      */
     virtual void registerSimulationObjectProxies(
-        const vector<string>* arrayOfObjectProxies,
+        const std::vector<std::string>* arrayOfObjectProxies,
         unsigned int sourceSimulationManagerID,
         unsigned int destSimulationManagerID);
 
@@ -144,9 +142,9 @@ public:
      The output managers call this method to cancel events when they are
      rolled back.
      */
-    virtual void cancelEvents(const vector<const Event*>& eventsToCancel);
+    virtual void cancelEvents(const std::vector<const Event*>& eventsToCancel);
     virtual void cancelEventsReceiver(SimulationObject* curObject,
-                                      vector<const NegativeEvent*>& cancelObjectIt);
+                                      std::vector<const NegativeEvent*>& cancelObjectIt);
     /** Return a handle to the communication manager.
 
      @return A handle to the communication manager.
@@ -220,14 +218,14 @@ public:
      @param object The string representation of the object.
      @return A pointer to the object corresponding to the string rep.
      */
-    virtual SimulationObject* getObjectHandle(const string& object) const {
+    virtual SimulationObject* getObjectHandle(const std::string& object) const {
         typeSimMap::const_iterator it = globalArrayOfSimObjPtrs.find(object);
         if (it == globalArrayOfSimObjPtrs.end())
         { return 0; }
         return it->second;
     }
 
-    virtual OBJECT_ID& getObjectId(const string& objectName) {
+    virtual OBJECT_ID& getObjectId(const std::string& objectName) {
         return *getObjectHandle(objectName)->getObjectID();
     }
 
@@ -235,7 +233,7 @@ public:
      Returns true if this simulation manager contains this object, false if
      it's non-local.
      */
-    virtual bool contains(const string& object) const;
+    virtual bool contains(const std::string& object) const;
     virtual bool contains(const ObjectID& objId) const;
 
     /** Returns a simulation object pointer.
@@ -291,15 +289,15 @@ public:
     virtual void setMessageAggregationFlag(bool flag);
 
     /// get a handle to a simulation input stream
-    virtual SimulationStream* getIFStream(const string& filename,
+    virtual SimulationStream* getIFStream(const std::string& filename,
                                           SimulationObject* object);
 
     /// get a handle to a simulation output stream
-    virtual SimulationStream* getOFStream(const string& filename,
-                                          SimulationObject* object, ios::openmode mode);
+    virtual SimulationStream* getOFStream(const std::string& filename,
+                                          SimulationObject* object, std::ios::openmode mode);
 
     /// get a handle to a simulation input-output stream
-    virtual SimulationStream* getIOFStream(const string& filename,
+    virtual SimulationStream* getIOFStream(const std::string& filename,
                                            SimulationObject* object);
 
     void configure(SimulationConfiguration& configuration);
@@ -307,7 +305,7 @@ public:
     const VTime& getPositiveInfinity() const;
     const VTime& getZero() const;
 
-    void shutdown(const string& errorMessage);
+    void shutdown(const std::string& errorMessage);
 
     /// Set the output manager type flag. Can be AGGRMGR, LAZYMGR, ADAPTIVEMGR.
     void setOutputMgrType(OutputMgrType type) {
@@ -454,7 +452,7 @@ protected:
     bool simulationCompleteFlag;
 
     /// Time up to which coast forwarding should be done.
-    vector<const VTime*> coastForwardTime;
+    std::vector<const VTime*> coastForwardTime;
 
     /// Flag to determine if message aggregation is enabled or not
     bool messageAggregation;
@@ -466,7 +464,7 @@ protected:
     typeSimMap globalArrayOfSimObjPtrs;
 
     /// Mapping between simulation object ids to names.
-    vector<vector<SimulationObject*> > globalArrayOfSimObjIDs;
+    std::vector<std::vector<SimulationObject*> > globalArrayOfSimObjIDs;
 
     /// handle to the StateManager Factory
     StateManager* myStateManager;
@@ -502,10 +500,10 @@ protected:
     PartitionManager* myPartitionManager;
 
     /// map of objects where each object can have several output file queues
-    vector<vector<TimeWarpSimulationStream*> > outFileQueues;
+    std::vector<std::vector<TimeWarpSimulationStream*> > outFileQueues;
 
     /// map of objects where each object can have several input file queues
-    vector<vector<TimeWarpSimulationStream*> > inFileQueues;
+    std::vector<std::vector<TimeWarpSimulationStream*> > inFileQueues;
 
     /// Used to specify the type of output manager used by the simulation manager.
     OutputMgrType outMgrType;
@@ -529,13 +527,13 @@ protected:
     /**
      Used to cancel local events.
      */
-    void cancelLocalEvents(const vector<const NegativeEvent*>& eventsToCancel);
+    void cancelLocalEvents(const std::vector<const NegativeEvent*>& eventsToCancel);
     /**
      Used to cancel remote events.
      */
     void
     cancelRemoteEvents(
-        const vector<const NegativeEvent*>& eventsToCancel);
+        const std::vector<const NegativeEvent*>& eventsToCancel);
 
     /**
      Used to route local events.
@@ -550,7 +548,7 @@ protected:
     /**
      Used to deal with negative events that we've been informed about.
      */
-    void handleNegativeEvents(const vector<const Event*>& negativeEvents);
+    void handleNegativeEvents(const std::vector<const Event*>& negativeEvents);
 
     /**
      Returns true if the simulation is complete, false otherwise.

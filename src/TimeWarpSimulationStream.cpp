@@ -1,7 +1,7 @@
 
 #include <stdlib.h>                     // for NULL, abort
 #include <iostream>                     // for cerr
-#include <set>                          // for _Rb_tree_const_iterator, etc
+#include <set>                          // for multiset, etc
 #include <vector>                       // for vector
 
 #include "FileData.h"                   // for FileData
@@ -19,14 +19,14 @@
 using std::stringstream;
 
 TimeWarpSimulationStream::TimeWarpSimulationStream(const string& fileName,
-                                                   ios::openmode mode,
+                                                   std::ios::openmode mode,
                                                    SimulationObject* simObj) {
     mySimulationObject = simObj;
     mySimulationManager = dynamic_cast<TimeWarpSimulationManager*>(simObj->getSimulationManager());
-    if (mode == ios::in) {
+    if (mode == std::ios::in) {
         inFileQueue = new InFileQueue(fileName);
         outFileQueue = NULL;
-    } else if ((mode == ios::out) || (mode == ios::app)) {
+    } else if ((mode == std::ios::out) || (mode == std::ios::app)) {
         inFileQueue = NULL;
         outFileQueue = new FileQueue(fileName);
     }
@@ -46,12 +46,12 @@ TimeWarpSimulationStream::flush() {
     if (*line != "") {
         myOutputBuffer.str("");
         outFileQueue->storeLine(mySimulationObject->getSimulationTime(), line);
-        seekp(ios::beg);
+        seekp(std::ios::beg);
     }
 }
 
 void
-TimeWarpSimulationStream::insert(ostringstream& ost) {
+TimeWarpSimulationStream::insert(std::ostringstream& ost) {
     // Do not insert the data during the coast forward phase.
 //  if(mySimulationManager->getCoastForwardTime(
 //     mySimulationObject->getObjectID()->getSimulationObjectID()) == 0){
@@ -59,7 +59,7 @@ TimeWarpSimulationStream::insert(ostringstream& ost) {
 //  }
 }
 
-fstream*
+std::fstream*
 TimeWarpSimulationStream::getInputStream() {
     if (inFileQueue != NULL) {
         return inFileQueue->access();
@@ -68,8 +68,8 @@ TimeWarpSimulationStream::getInputStream() {
     }
 }
 
-ostringstream&
-TimeWarpSimulationStream::readLine(ostringstream& ost) {
+std::ostringstream&
+TimeWarpSimulationStream::readLine(std::ostringstream& ost) {
     // Do not read anything when coasting forward.
     inFileQueue->storePos(mySimulationObject->getSimulationTime());
     char buff[8192];
@@ -111,14 +111,14 @@ TimeWarpSimulationStream::rollbackTo(const VTime& rollbackToTime) {
 
 /// Used in optimistic fossil collection to save the state of the stream.
 void
-TimeWarpSimulationStream::saveCheckpoint(ofstream* outFile, unsigned int saveTime) {
+TimeWarpSimulationStream::saveCheckpoint(std::ofstream* outFile, unsigned int saveTime) {
     char del = '_';
 
     // If there is an input file, save the position of the file at the checkpoint time.
     if (inFileQueue != NULL) {
         outFile->write(&del, sizeof(del));
 
-        multiset< InFileData >::iterator it = inFileQueue->begin();
+        std::multiset< InFileData >::iterator it = inFileQueue->begin();
         while (it != inFileQueue->end() && it->getTime().getApproximateIntTime() < saveTime) {
             it++;
         }
@@ -145,7 +145,7 @@ TimeWarpSimulationStream::saveCheckpoint(ofstream* outFile, unsigned int saveTim
         const string* line;
         unsigned int lineSize;
 
-        multiset< FileData >::iterator it = outFileQueue->begin();
+        std::multiset< FileData >::iterator it = outFileQueue->begin();
         while (it != outFileQueue->end() && it->getTime().getApproximateIntTime() < saveTime) {
             time = &it->getTime();
             toWrite = new SerializedInstance(time->getDataType());
@@ -175,7 +175,7 @@ TimeWarpSimulationStream::saveCheckpoint(ofstream* outFile, unsigned int saveTim
 
 /// Used in optimistic fossil collection to restore the state of the stream.
 void
-TimeWarpSimulationStream::restoreCheckpoint(ifstream* inFile, unsigned int restoreTime) {
+TimeWarpSimulationStream::restoreCheckpoint(std::ifstream* inFile, unsigned int restoreTime) {
     char del = '_';
     char delIn;
 

@@ -18,7 +18,7 @@ void
 AggressiveOutputManager::rollback(SimulationObject* object,
                                   const VTime& rollbackTime) {
     OutputEvents& outputEvents = getOutputEventsFor(*(object->getObjectID()));
-    vector<const Event*>* eventsToCancel = outputEvents.getEventsSentAtOrAfterAndRemove(rollbackTime);
+    std::vector<const Event*>* eventsToCancel = outputEvents.getEventsSentAtOrAfterAndRemove(rollbackTime);
 
     if (eventsToCancel->size() > 0) {
         getSimulationManager()->cancelEvents(*eventsToCancel);

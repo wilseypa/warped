@@ -10,6 +10,7 @@
 
 using std::cout;
 using std::endl;
+using std::vector;
 
 ChebyFossilCollManager::ChebyFossilCollManager(TimeWarpSimulationManager* sim,
                                                int checkPeriod,

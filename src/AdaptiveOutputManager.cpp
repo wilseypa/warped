@@ -13,6 +13,8 @@
 #include "VTime.h"                      // for VTime
 #include "WarpedDebug.h"                // for debugout
 
+using std::vector;
+
 DynamicOutputManager::DynamicOutputManager(TimeWarpSimulationManager* simMgr,
                                            bool useThirdThreshold) :
     LazyOutputManager(simMgr),

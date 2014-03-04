@@ -1,7 +1,6 @@
 #ifndef SIMULATION_OBJECT_H
 #define SIMULATION_OBJECT_H
 
-
 #include <iosfwd>                       // for ios
 #include <string>                       // for string
 
@@ -9,10 +8,6 @@
 #include "warped.h"                     // for SEVERITY
 
 class VTime;
-
-using std::string;
-using std::ios;
-
 class Event;
 class SerializedInstance;
 class SimulationManager;
@@ -43,10 +38,10 @@ public:
        Returns a string name for this object.  Each object's name must be
        unique across the simulation.
     */
-    virtual const string& getName() const = 0;
+    virtual const std::string& getName() const = 0;
 
     /// Returns a pointer to the receiver simulation object or a proxy.
-    SimulationObject* getObjectHandle(const string& objectToGet) const;
+    SimulationObject* getObjectHandle(const std::string& objectToGet) const;
 
     /**@name Public Class Methods of SimulationObject. */
     //@{
@@ -292,7 +287,7 @@ public:
     @param msg The error message.
     @param level The level of severity of the error.
     */
-    virtual void reportError(const string& msg, const SEVERITY level);
+    virtual void reportError(const std::string& msg, const SEVERITY level);
 
 
     /// Returns the name of the simulation object
@@ -313,14 +308,14 @@ public:
     virtual OBJECT_ID* getObjectID() const { return myObjectID; }
 
     /// get a handle to a simulation input stream
-    SimulationStream* getIFStream(const string& filename);
+    SimulationStream* getIFStream(const std::string& filename);
 
     /// get a handle to a simulation output stream
-    SimulationStream* getOFStream(const string& filename,
-                                  ios::openmode mode=ios::out);
+    SimulationStream* getOFStream(const std::string& filename,
+                                  std::ios::openmode mode=std::ios::out);
 
     /// get a handle to a simulation input-output stream
-    SimulationStream* getIOFStream(const string& filename);
+    SimulationStream* getIOFStream(const std::string& filename);
 
     //@} // End of Public Class Methods of SimulationObject.
     void setSimulationTime(const VTime& newSimulationTime);

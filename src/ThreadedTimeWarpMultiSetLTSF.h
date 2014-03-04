@@ -90,14 +90,14 @@ public:
     int whoHasObjectLock(int objId);
 private:
     //Lowest event position pointer for MULTILTSF
-    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator>
+    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator>
     lowestObjectPosition;
 
     ///Schedule Queue - MULTILTSF
     multiset<const Event*, receiveTimeLessThanEventIdLessThan>* scheduleQueue;
 
     //Lowest event position pointer for LadderQ. Also used by Splay Tree.
-    vector<const Event*> lowestLadderObjectPosition;
+    std::vector<const Event*> lowestLadderObjectPosition;
 
     ///Schedule Queue - LadderQ (Strict and Relaxed)
     LadderQueueStrict  *ladderQStrict;
@@ -110,7 +110,7 @@ private:
     LockState* scheduleQueueLock;
 
     ///Object Status Lock
-    vector<LockState*> objectStatusLock;
+    std::vector<LockState*> objectStatusLock;
 
     //Specfiy the synchronization mechanism in the config
     string syncMechanism;

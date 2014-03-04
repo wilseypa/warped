@@ -37,8 +37,6 @@ warped32_t getWarped32Min();
 
 #include "WarpedDebug.h"
 
-using std::ostringstream;
-
 // Console I/O operations - we define this stream interface to trap
 // the I/O produced by different processes and feed the I/O to the
 // central console
@@ -174,7 +172,7 @@ std::ostream& operator<<(std::ostream& os, SEVERITY severity) {
         break;
     default:
         //Converts severity from string to int, output is stream.str()
-        ostringstream stream;
+        std::ostringstream stream;
         stream << severity;
         os << "<Unknown Severity " + stream.str() +" >";
     }

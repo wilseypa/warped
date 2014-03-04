@@ -4,7 +4,7 @@
 
 #include <iosfwd>                       // for ostream
 #include <set>                          // for multiset
-#include <vector>                       // for vector
+#include <vector>                       // for std::vector
 
 #include "SetObject.h"                  // for SetObject (ptr only), etc
 #include "StateManager.h"               // for StateManager
@@ -57,7 +57,7 @@ public:
 
     /** Returns the array of object state periods.
     */
-    vector<unsigned int> getObjectStatePeriod();
+    std::vector<unsigned int> getObjectStatePeriod();
 
     /** Rollback and restore the state of the object at the specified time.
 
@@ -118,10 +118,10 @@ protected:
     unsigned int statePeriod;
 
     /// The state saving period of each object
-    vector<unsigned int> objectStatePeriod;
+    std::vector<unsigned int> objectStatePeriod;
 
     /// Time since the last saved state.
-    vector<int> periodCounter;
+    std::vector<int> periodCounter;
 
     /// A state queue for every object on this simulation manager.
     multiset< SetObject<State> >* myStateQueue;

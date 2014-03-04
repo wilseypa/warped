@@ -14,6 +14,7 @@
 
 using std::cerr;
 using std::endl;
+using std::vector;
 
 StateManagerImplementationBase::StateManagerImplementationBase(TimeWarpSimulationManager* simMgr,
                                                                unsigned int period) :

@@ -14,6 +14,7 @@
 using std::cout;
 using std::cerr;
 using std::endl;
+using std::vector;
 
 TimeWarpMultiSet::TimeWarpMultiSet(TimeWarpSimulationManager* initSimulationManager)
     :myNumCommittedEvents(0)

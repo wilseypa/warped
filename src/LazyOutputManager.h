@@ -145,30 +145,30 @@ protected:
     /** The lazy cancellation event queue. This stores the events that have a
         time greater the straggler time. They are to be compared to regenerated events.
     */
-    //vector<const Event*> *lazyCancelEvents;
+    //std::vector<const Event*> *lazyCancelEvents;
 
     /** List of events to be cancelled. Items are added during the lazyCancel check and then
         cancelled in handleCancelEvents.
     */
-    vector< vector<const Event*> *> eventsToCancel;
+    std::vector< std::vector<const Event*> *> eventsToCancel;
 
     /** Used to keep track of the number of lazy hits for the round of cancellation.
     */
-    vector<int> lazyHitCount;
+    std::vector<int> lazyHitCount;
 
     /* Used to keep track of the number of lazy misses for the round of cancellation.
     */
-    vector<int> lazyMissCount;
+    std::vector<int> lazyMissCount;
 
     /* Contains the lazy cancellation queues for the objects contained in this logical
        process.
     */
-    vector< vector<const Event*> *> lazyQueues;
+    std::vector< std::vector<const Event*> *> lazyQueues;
 
     /* True for normal lazy cancellation operation.
        False when just using checkLazyCancelEvent for the comparison (no insert).
     */
-    vector<bool> compareAndInsertMode;
+    std::vector<bool> compareAndInsertMode;
 
     //@} // End of Protected Class Methods of LazyOutputManager.
 };

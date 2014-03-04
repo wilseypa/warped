@@ -1,6 +1,7 @@
 #include <algorithm>                    // for for_each
 #include <functional>                   // for unary_function
 #include <iostream>                     // for cerr
+#include <string>
 
 #include "SimulationManagerImplementationBase.h"
 #include "SimulationObject.h"           // for SimulationObject
@@ -12,6 +13,7 @@ using std::unary_function;
 using std::for_each;
 using std::cerr;
 using std::endl;
+using std::vector;
 
 std::ostream* wout;
 std::ostream* werr;
@@ -88,7 +90,7 @@ SimulationManagerImplementationBase::displayObjectMap(std::ostream& out) {
 
     if (!localArrayOfSimObjPtrs->empty()) {
         //Obtains all the keys from localArrayOfSimObjPtrs
-        vector<string>* keys = getKeyVector(localArrayOfSimObjPtrs);
+        vector<std::string>* keys = getKeyVector(localArrayOfSimObjPtrs);
         //Obtains all the objects from localArrayOfSimObjPtrs
         vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
 

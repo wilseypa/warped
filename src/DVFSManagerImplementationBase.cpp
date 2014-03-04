@@ -7,7 +7,6 @@
 #include "DVFSManagerImplementationBase.h"
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "WarpedConfig.h"               // for HAVE_SCHED_GETCPU
-#include "warped.h"                     // for ostringstream
 
 class SimulationConfiguration;
 
@@ -68,7 +67,7 @@ void
 DVFSManagerImplementationBase::writeCSVRow(int node,
                                            double util,
                                            int freq) {
-    ostringstream path;
+    std::ostringstream path;
     path << "lp" << node << ".csv";
 
     ofstream fp(path.str().c_str(), ios_base::app);
@@ -92,7 +91,7 @@ DVFSManagerImplementationBase::configure(
 
 void
 DVFSManagerImplementationBase::setGovernorMode(int cpu, const char* governor) {
-    ostringstream path;
+    std::ostringstream path;
     path << "/sys/devices/system/cpu/cpu" << cpu
          << "/cpufreq/scaling_governor";
 
@@ -109,7 +108,7 @@ DVFSManagerImplementationBase::setGovernorMode(int cpu, const char* governor) {
 
 void
 DVFSManagerImplementationBase::setCPUFrequency(int cpu_idx, int freq) {
-    ostringstream path;
+    std::ostringstream path;
     path << "/sys/devices/system/cpu/cpu" << cpu_idx
          << "/cpufreq/scaling_setspeed";
 
@@ -259,7 +258,7 @@ DVFSManagerImplementationBase::initializeFrequencyIdxs(int maxidx) {
 
 void
 DVFSManagerImplementationBase::populateAvailableFrequencies() {
-    ostringstream path;
+    std::ostringstream path;
     path << "/sys/devices/system/cpu/cpu" << myCPU
          << "/cpufreq/scaling_available_frequencies";
 

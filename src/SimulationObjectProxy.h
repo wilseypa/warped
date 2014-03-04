@@ -5,10 +5,8 @@
 #include <fstream>
 #include <string>                       // for string
 
-#include "SimulationObject.h"           // for string, SimulationObject
+#include "SimulationObject.h"           // for SimulationObject
 #include "warped.h"                     // for DEBUG, SEVERITY
-
-using std::string;
 
 class CommunicationManager;
 class Event;
@@ -36,7 +34,7 @@ public:
 
     @param sourceSimMgr
     */
-    SimulationObjectProxy(const string& objectName,
+    SimulationObjectProxy(const std::string& objectName,
                           unsigned int sourceSimMgr,
                           unsigned int destSimMgr,
                           CommunicationManager* commMgr);
@@ -50,12 +48,12 @@ public:
     void configure(SimulationConfiguration&) {}
 
     /** Returns the message type for an EventMessage */
-    static const string& getEventMessageType();
+    static const std::string& getEventMessageType();
 
     /** Returns the message type for a NegativeEventMessage */
-    static const string& getNegativeEventMessageType();
+    static const std::string& getNegativeEventMessageType();
 
-    const string& getName() const {
+    const std::string& getName() const {
         return objectName;
     }
 
@@ -87,7 +85,7 @@ private:
     void deallocateState(const State* state);
 
     /// Empty (does not do anything).
-    void reportError(const string&, SEVERITY);
+    void reportError(const std::string&, SEVERITY);
 
     //@} // End of Private Class Attributes of SimulationObjectProxy
 
@@ -106,7 +104,7 @@ private:
     /**
        The name of the object I'm proxying for.
     */
-    const string objectName;
+    const std::string objectName;
 
 
     DEBUG(

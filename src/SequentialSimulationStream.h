@@ -7,10 +7,7 @@
 #include <string>                       // for string
 
 #include "SimulationStream.h"           // for fstream, SimulationStream
-#include "warped.h"                     // for ostringstream
 
-using std::string;
-using std::streambuf;
 using std::ios;
 
 class SequentialSimulationStream : public SimulationStream {
@@ -28,22 +25,22 @@ public:
     @mode  open file for reading/writing
     @flag  output to file or console (true or false)
     */
-    SequentialSimulationStream(const string& fileName, ios::openmode mode);
+    SequentialSimulationStream(const std::string& fileName, ios::openmode mode);
 
     /// Default destructor
     ~SequentialSimulationStream();
 
     /// virtual method that does the actual job of "endl".
-    virtual void flush() { fstream::flush(); }
+    virtual void flush() { std::fstream::flush(); }
 
     /// Returns a handle for reading a file for the stream.
-    virtual fstream* getInputStream();
+    virtual std::fstream* getInputStream();
 
     /// Reads one line from the file.
-    virtual ostringstream& readLine(ostringstream& ost);
+    virtual std::ostringstream& readLine(std::ostringstream& ost);
 
     /// Inserts data from ost into the stream.
-    virtual void insert(ostringstream& ost);
+    virtual void insert(std::ostringstream& ost);
 
 
     //@} // End of Public Class Methods of SequentialSimulationStream.
@@ -59,7 +56,7 @@ private:
         be used.
 
         @param mode the mode of the stream being set. */
-    SequentialSimulationStream(streambuf*, ios::openmode mode);
+    SequentialSimulationStream(std::streambuf*, ios::openmode mode);
 
     /**
        If we were opened with a filename, then we need to close the file at

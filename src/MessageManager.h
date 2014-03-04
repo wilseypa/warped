@@ -171,7 +171,7 @@ private:
     CommunicationManager* myCommunicationManager;
     SimulationManager* const mySimulationManager;
 
-    vector<Transceiver*> send_buffer;
+    std::vector<Transceiver*> send_buffer;
     Transceiver* receive_buffer;
 
     // The following are the variables need for deciding on the

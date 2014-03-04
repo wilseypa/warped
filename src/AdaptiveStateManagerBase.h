@@ -108,31 +108,31 @@ public:
     //@{
 
     /// filtered time to save one state.
-    vector< FIRFilter<double> > stateSaveTime;
+    std::vector< FIRFilter<double> > stateSaveTime;
 
     /// Filtered time to execute one event.
-    vector< FIRFilter<double> > eventExecutionTime;
+    std::vector< FIRFilter<double> > eventExecutionTime;
 
     /// Summation of the event execution time.
-    vector<double> sumEventTime;
+    std::vector<double> sumEventTime;
 
     /// Filtered time to coast forward.
-    vector< FIRFilter<double> > coastForwardTime;
+    std::vector< FIRFilter<double> > coastForwardTime;
 
     /// Filtered rollback length.
-    vector< FIRFilter<int> > rollbackLength;
+    std::vector< FIRFilter<int> > rollbackLength;
 
     /// Weighted filtered time to save one state.
-    vector< IIRFilter<double> > StateSaveTimeWeighted;
+    std::vector< IIRFilter<double> > StateSaveTimeWeighted;
 
     /// Weighted filtered time to execute one Event.
-    vector< IIRFilter<double> > EventExecutionTimeWeighted;
+    std::vector< IIRFilter<double> > EventExecutionTimeWeighted;
 
     /// Weighted filtered time to coast forward.
-    vector< IIRFilter<double> > CoastForwardTimeWeighted;
+    std::vector< IIRFilter<double> > CoastForwardTimeWeighted;
 
     /// Weighted filtered rollback length.
-    vector< IIRFilter<int> > rollbackLengthWeighted;
+    std::vector< IIRFilter<int> > rollbackLengthWeighted;
 
     //@} // end of Public Class Attributes
 
@@ -151,25 +151,25 @@ protected:
     //@{
 
     /// Variable used to store the starting time of save state operation.
-    vector<double> stateStartTime;
+    std::vector<double> stateStartTime;
 
     /// Variable used to store the stop time of save state operation.
-    vector<double> stateStopTime;
+    std::vector<double> stateStopTime;
 
     /// Variable used to store the time of event execution.
-    vector<double> eventTime;
+    std::vector<double> eventTime;
 
     /// Variable used to store the time of rollback operation.
-    vector<double> rollbackTime;
+    std::vector<double> rollbackTime;
 
     /// Variable used to store the time of event operation.
-    vector<double> pausedTime;
+    std::vector<double> pausedTime;
 
     /// Rollback count of last iteration.
-    vector<int> lastRollbackCount;
+    std::vector<int> lastRollbackCount;
 
     /// Flag that says we are in steady state, so no timings are needed.
-    vector<bool> steadyState;
+    std::vector<bool> steadyState;
 
     //@} // end of Protected Class Attributes.
 
@@ -179,13 +179,13 @@ private:
     //@{
 
     /// The StopWatch object.
-    vector<StopWatch> stopWatch;
+    std::vector<StopWatch> stopWatch;
 
     /// The event StopWatch object.
-    vector<StopWatch> eventStopWatch;
+    std::vector<StopWatch> eventStopWatch;
 
     /// The rollback StopWatch object.
-    vector<StopWatch> rollbackStopWatch;
+    std::vector<StopWatch> rollbackStopWatch;
 
     //@} // end of Private Class Attributes
 };

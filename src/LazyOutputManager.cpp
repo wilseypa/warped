@@ -13,6 +13,8 @@
 #include "VTime.h"                      // for VTime
 #include "WarpedDebug.h"                // for debugout
 
+using std::vector;
+
 LazyOutputManager::LazyOutputManager(TimeWarpSimulationManager* simMgr) :
     OutputManagerImplementationBase(simMgr) {
     for (int i = 0; i < simMgr->getNumberOfSimulationObjects(); i++) {

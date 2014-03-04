@@ -11,6 +11,7 @@
 using std::ios;
 using std::cerr;
 using std::endl;
+using std::string;
 
 SimulationObject::SimulationObject() : mySimulationManager(),
     myObjectID(0),

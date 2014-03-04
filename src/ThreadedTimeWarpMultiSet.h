@@ -185,7 +185,7 @@ private:
     //  MS *unProcessedQueueArray;
 
     /// Queues to hold the unprocessed Events for each simObj.
-    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*>
+    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*>
     unProcessedQueue;
 
     /// Iterator for the Events in Multiset.
@@ -193,13 +193,13 @@ private:
     unProcessedQueueIterator;
 
     /// Queues to hold the processed Events for each simObj.
-    vector<vector<const Event*>*> processedQueue;
+    std::vector<std::vector<const Event*>*> processedQueue;
 
     /// Queues to hold the removed events for each simObj.
-    vector<vector<const Event*>*> removedEventQueue;
+    std::vector<std::vector<const Event*>*> removedEventQueue;
 
     /// Iterators for each thread
-    typedef vector<const Event*>::iterator vIterate;
+    typedef std::vector<const Event*>::iterator vIterate;
     vIterate* vectorIterator;
     typedef multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator
     mIterate;

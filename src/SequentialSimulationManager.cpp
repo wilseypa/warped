@@ -18,6 +18,7 @@ class SimulationStream;
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::vector;
 
 SequentialSimulationManager::SequentialSimulationManager(Application* initApplication):
     SimulationManagerImplementationBase(),

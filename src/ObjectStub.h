@@ -7,10 +7,6 @@
 
 #include "Factory.h"                    // for Factory
 #include "Types.h"                      // for Kind
-#include "warped.h"                     // for ostringstream
-using std::string;
-
-using std::ostringstream;
 
 class FactoryImplementationBase;
 class SimulationObject;
@@ -53,7 +49,7 @@ public:
 
         @return Information about this object.
     */
-    virtual const string& getInformation() const = 0;
+    virtual const std::string& getInformation() const = 0;
 
     /** Is this object local?
 
@@ -68,7 +64,7 @@ public:
         @return A handle to the created object.
     */
     virtual SimulationObject* createSimulationObject(int argc,
-                                                     ostringstream& stream) = 0;
+                                                     std::ostringstream& stream) = 0;
 
     //@} // End of Public Class Methods of ObjectStub.
 

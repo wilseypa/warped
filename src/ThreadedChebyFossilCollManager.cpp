@@ -1,10 +1,11 @@
 #include <math.h>                       // for sqrt
 #include <pthread.h>                    // for pthread_getspecific
 #include <iostream>                     // for operator<<, etc
+#include <string>
 
 #include "LockState.h"                  // for LockState
 #include "ObjectID.h"                   // for ObjectID
-#include "SimulationObject.h"           // for SimulationObject, string
+#include "SimulationObject.h"           // for SimulationObject
 #include "ThreadedChebyFossilCollManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "VTime.h"                      // for VTime
@@ -105,12 +106,12 @@ ThreadedChebyFossilCollManager::sampleRollback(SimulationObject* object, const V
 }
 
 
-void ThreadedChebyFossilCollManager::getOfcChebyLock(int threadId, const string syncMech ) {
+void ThreadedChebyFossilCollManager::getOfcChebyLock(int threadId, const std::string syncMech ) {
     ofcFlagLock->setLock(threadId,syncMech);
     ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
 }
 
-void ThreadedChebyFossilCollManager ::releaseOfcChebyLock(int threadId, const string syncMech){
+void ThreadedChebyFossilCollManager ::releaseOfcChebyLock(int threadId, const std::string syncMech){
     ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
     ofcFlagLock->releaseLock(threadId,syncMech);
 }

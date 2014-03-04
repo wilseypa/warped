@@ -2,12 +2,14 @@
 #include <stdlib.h>                     // for abort, NULL
 #include <fstream>                      // for operator<<, basic_ostream, etc
 #include <iostream>                     // for cerr
+#include <string>
 
 #include "SimulationObjectProxy.h"
 
 class State;
 
 using std::cerr;
+using std::string;
 using std::endl;
 
 CommunicationManager*

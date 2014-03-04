@@ -13,13 +13,11 @@
 
 class Event;
 class SimulationObject;
+class TimeWarpSimulationManager;
 class VTime;
 
-using std::ofstream;
-
-class TimeWarpSimulationManager;
-
 using std::multiset;
+using std::ofstream;
 
 /** The OutputManagerImplementationBase class.
 
@@ -114,7 +112,7 @@ private:
     TimeWarpSimulationManager* mySimulationManager;
 
     /// Pointer to the event set.
-    vector< OutputEvents*> myOutputEvents;
+    std::vector< OutputEvents*> myOutputEvents;
 
     /// Data structure used for the one-anti-message optimization.
     //unordered_ map<string, bool> alreadySentAntiMessages;
