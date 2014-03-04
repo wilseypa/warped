@@ -16,6 +16,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::vector;
+using std::ofstream;
 
 OutputManagerImplementationBase::OutputManagerImplementationBase(TimeWarpSimulationManager* simMgr)
     :

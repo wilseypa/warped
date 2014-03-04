@@ -17,7 +17,6 @@
 #include "EventFunctors.h"
 #include "KernelMessage.h"              // for KernelMessage
 #include "LockState.h"                  // for LockState
-#include "OutputManager.h"              // for ofstream
 #include "RestoreCkptMessage.h"         // for RestoreCkptMessage, etc
 #include "Serializable.h"               // for Serializable
 #include "SerializedInstance.h"         // for SerializedInstance

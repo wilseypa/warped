@@ -17,7 +17,6 @@ class TimeWarpSimulationManager;
 class VTime;
 
 using std::multiset;
-using std::ofstream;
 
 /** The OutputManagerImplementationBase class.
 
@@ -86,7 +85,7 @@ public:
         @param objId The ID of the object being saved.
         @param saveTime The checkpoint time.
     */
-    virtual void saveOutputCheckpoint(ofstream* outFile, const ObjectID& objId, unsigned int saveTime);
+    virtual void saveOutputCheckpoint(std::ofstream* outFile, const ObjectID& objId, unsigned int saveTime);
 
     /**
       Remove all events from the output set. Used to restore state after
@@ -117,7 +116,7 @@ private:
     /// Data structure used for the one-anti-message optimization.
     //unordered_ map<string, bool> alreadySentAntiMessages;
 
-    ofstream* myStream;
+    std::ofstream* myStream;
 };
 
 #endif

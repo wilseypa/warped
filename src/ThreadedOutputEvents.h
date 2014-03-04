@@ -8,9 +8,7 @@
 #include <vector>                       // for vector, vector<>::iterator
 
 #include "LockState.h"
-#include "OutputManager.h"              // for ofstream
 #include "SetObject.h"
-#include "ThreadedOutputManager.h"      // for ofstream
 #include "ThreadedTimeWarpMultiSetLTSF.h"  // for list
 #include "ThreadedTimeWarpSimulationManager.h"
 #include "warped.h"

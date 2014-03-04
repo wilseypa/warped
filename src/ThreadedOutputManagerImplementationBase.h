@@ -17,12 +17,9 @@
 class Event;
 class SimulationObject;
 class ThreadedOutputEvents;
+class ThreadedTimeWarpSimulationManager;
 class TimeWarpSimulationManager;
 class VTime;
-
-using std::ofstream;
-
-class ThreadedTimeWarpSimulationManager;
 
 using std::multiset;
 
@@ -95,7 +92,7 @@ public:
         @param objId The ID of the object being saved.
         @param saveTime The checkpoint time.
     */
-    virtual void saveOutputCheckpoint(ofstream* outFile, const ObjectID& objId, unsigned int saveTime,
+    virtual void saveOutputCheckpoint(std::ofstream* outFile, const ObjectID& objId, unsigned int saveTime,
                                       int threadID);
 
     /**
@@ -125,7 +122,7 @@ private:
     vector< ThreadedOutputEvents*> myOutputEvents;
 
 
-    ofstream* myStream;
+    std::ofstream* myStream;
 };
 
 #endif /* ThreadedOUTPUTMANAGERIMPLEMENTATIONBASE_H_ */

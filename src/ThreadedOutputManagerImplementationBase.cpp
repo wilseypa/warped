@@ -85,7 +85,7 @@ ThreadedOutputManagerImplementationBase::getOldestEvent(unsigned int size,
     return retval;
 }
 
-void ThreadedOutputManagerImplementationBase::saveOutputCheckpoint(ofstream* outFile,
+void ThreadedOutputManagerImplementationBase::saveOutputCheckpoint(std::ofstream* outFile,
                                                                    const ObjectID& objId, unsigned int saveTime, int threadID) {
     unsigned int i = objId.getSimulationObjectID();
     myOutputEvents[i]->saveOutputCheckpoint(outFile, saveTime, threadID);

@@ -2,13 +2,12 @@
 #define THREADED_TIME_WARP_SIMULATION_MANAGER_H
 
 #include <pthread.h>                    // for pthread_key_t
-#include <iosfwd>                       // for std::ifstream, ofstream
-#include <string>                       // for std::string
+#include <iosfwd>                       // for ifstream, ofstream
+#include <string>                       // for string
 #include <vector>                       // for vector
 
 #include "LockedQueue.h"
 #include "ObjectID.h"                   // for ObjectID
-#include "OutputManager.h"              // for ofstream
 #include "ThreadedOptFossilCollManager.h"
 #include "ThreadedOutputManager.h"
 #include "ThreadedStateManager.h"
