@@ -404,10 +404,13 @@ bool TimeWarpSimulationManager::executeObjects(const VTime& simulateUntil) {
         if (mySimulationManagerID == 0) {
             if (myGVTManager->checkGVTPeriod()) {
                 myGVTManager->calculateGVT();
-                if (myGVTManager->getGVT() >= simulateUntil) {
-                    pastSimulationCompleteTime = true;
-                }
             }
+        }
+        // However, every sim manager has to check if it's past the max GVT,
+        // since it's possible for an object to schedule events in its own
+        // future indefinitely
+        if (myGVTManager->getGVT() >= simulateUntil) {
+            pastSimulationCompleteTime = true;
         }
 
         nextObject->executeProcess();
