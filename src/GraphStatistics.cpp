@@ -87,9 +87,13 @@ void GraphStatistics::output_metis_file(std::ofstream& file) {
             stats.insert(stats_it.first);
         }
     }
-
+    
+    if (stats.size() == 0) {
+        std::cerr << "Cannot create statistics file, no events were recorded" << std::endl;
+        return;
+    }
     if (stats.size() != 1) {
-        std::cerr << "Metis only supports one weight per edge" << std::endl;
+        std::cerr << "Cannot create statistics file, Metis only supports one weight per edge" << std::endl;
         return;
     }
 
