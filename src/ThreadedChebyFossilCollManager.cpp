@@ -108,11 +108,15 @@ ThreadedChebyFossilCollManager::sampleRollback(SimulationObject* object, const V
 
 void ThreadedChebyFossilCollManager::getOfcChebyLock(int threadId, const std::string syncMech ) {
     ofcFlagLock->setLock(threadId,syncMech);
-    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+    if (!_xtest()) {
+        ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+    }
 }
 
 void ThreadedChebyFossilCollManager ::releaseOfcChebyLock(int threadId, const std::string syncMech){
-    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+    if (!_xtest()) {
+        ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+    }
     ofcFlagLock->releaseLock(threadId,syncMech);
 }
 
