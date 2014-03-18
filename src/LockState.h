@@ -62,30 +62,33 @@ public:
         unsigned status;
         int retries = 0;
 
-        while (retries++ < TSXRTM_RETRIES) {
-            status = _xbegin();
-            if (status == _XBEGIN_STARTED) {
-                if (lockOwner == NOONE) {
-                   return;
+        if (tsxCommits == 0 && tsxAborts > TSXRTM_RETRIES * 100) { }
+        else { 
+            while (retries++ < TSXRTM_RETRIES) {
+                status = _xbegin();
+                if (status == _XBEGIN_STARTED) {
+                    if (lockOwner == NOONE) {
+                       return;
+                    }
+                    _xabort(_ABORT_LOCK_BUSY);
+                    break;
                 }
-                _xabort(_ABORT_LOCK_BUSY);
-                break;
+                ABORT_COUNT(_XA_RETRY, status);
+                ABORT_COUNT(_XA_EXPLICIT, status);
+                ABORT_COUNT(_XA_CONFLICT, status);
+                ABORT_COUNT(_XA_CAPACITY, status);
+                if (!(status & _XABORT_RETRY) ||
+                    ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) != _ABORT_LOCK_BUSY))
+                {
+                    break;
+                } else if ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) == _ABORT_LOCK_BUSY) {
+                    while (isLocked());
+                } else if (status & _XABORT_CONFLICT) {
+                    delay();
+                }
             }
-            ABORT_COUNT(_XA_RETRY, status);
-            ABORT_COUNT(_XA_EXPLICIT, status);
-            ABORT_COUNT(_XA_CONFLICT, status);
-            ABORT_COUNT(_XA_CAPACITY, status);
-            if (!(status & _XABORT_RETRY) ||
-                ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) != _ABORT_LOCK_BUSY))
-            {
-                break;
-            } else if ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) == _ABORT_LOCK_BUSY) {
-                while (isLocked());
-            } else if (status & _XABORT_CONFLICT) {
-                delay();
-            }
+            tsxAborts++;
         }
-        tsxAborts++;
 #endif
         if (syncMechanism == "HleAtomicLock") {
             while(!_xacquire(&lockOwner, &threadNumber));
