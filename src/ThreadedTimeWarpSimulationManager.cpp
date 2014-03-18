@@ -462,6 +462,10 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
     cout << "Number of catastrophic rollbacks: " << numCatastrophicRollbacks
          << endl;
 
+#if USETSX_RTM
+    std::cout << "Event Set TSX stats" << std::endl;
+    myEventSet->reportTSXstats();
+#endif
 }
 const Event*
 ThreadedTimeWarpSimulationManager::getEvent(SimulationObject* object) {

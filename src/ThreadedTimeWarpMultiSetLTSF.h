@@ -88,6 +88,9 @@ public:
     void releaseObjectLocksRecovery(int objNum);
 
     int whoHasObjectLock(int objId);
+
+    void reportTSXstats();
+
 private:
     //Lowest event position pointer for MULTILTSF
     std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator>

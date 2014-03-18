@@ -494,3 +494,7 @@ void ThreadedTimeWarpMultiSetLTSF::releaseObjectLocksRecovery(int objNum) {
                         << " during recovery." << endl;
     }
 }
+
+void ThreadedTimeWarpMultiSetLTSF::reportTSXstats() {
+    scheduleQueueLock->reportTSXstats();
+}

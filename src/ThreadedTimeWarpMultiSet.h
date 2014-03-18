@@ -176,6 +176,8 @@ public:
     int** getObjectMapping();
     void enLoadBalancer(ThreadedTimeWarpLoadBalancer* loadBalancer);
 
+    void reportTSXstats();
+
 private:
     LockState** unprocessedQueueLockState;
     LockState** processedQueueLockState;

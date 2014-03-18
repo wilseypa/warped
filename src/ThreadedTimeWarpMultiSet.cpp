@@ -863,3 +863,9 @@ void ThreadedTimeWarpMultiSet::releaseObjectLocksRecovery() {
         LTSF[i]->releaseAllScheduleQueueLocks();
     }
 }
+void ThreadedTimeWarpMultiSet::reportTSXstats() {
+    for (int i = 0; i < LTSFCount; i++) {
+        std::cout << "LTSF[" << i << "]:" << std::endl;
+        LTSF[i]->reportTSXstats();
+    }
+}
