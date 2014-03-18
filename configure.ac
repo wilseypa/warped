@@ -123,4 +123,8 @@ esac
 
 AC_CONFIG_FILES([Makefile src/Makefile thirdparty/Makefile thirdparty/json/Makefile thirdparty/metis/Makefile thirdparty/metis/GKlib/Makefile thirdparty/metis/libmetis/Makefile test/Makefile test/catch_tests/Makefile test/cppunit_tests/Makefile])
 
+AC_DEFINE([USETSX_RTM], 0, [Define to 1 to use Intel RTM TSX on supported Haswell processors])
+AC_DEFINE([TSXRTM_RETRIES], 10, [Define to number of times to try to enter transactional region for RTM])
+AC_DEFINE([L1DSZ], 64, [L1 cache line size for data alignment for TM])
+
 AC_OUTPUT
