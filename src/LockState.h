@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <pthread.h>
+#include "tsx.h"
 
 static const int NOONE = -1;
 class LockState {
@@ -17,7 +18,16 @@ public:
         pthread_mutex_destroy(&mutexLock);
     }
     bool releaseLock(const unsigned int& threadNumber, const std::string syncMechanism) {
-        if (syncMechanism == "AtomicLock") {
+#if USETSX_RTM
+        if (lockOwner == NOONE) {
+            _xend();
+            return true;
+        }
+#endif
+        if (syncMechanism == "HleAtomicLock") {
+            while (!_xrelease(&lockOwner, &threadNumber));
+            return true;
+        } else if (syncMechanism == "AtomicLock") {
             //If Currently Working and we can set it to Available then return true else return false;
             return __sync_bool_compare_and_swap(&lockOwner, threadNumber, NOONE);
         } else if (syncMechanism == "Mutex") {
@@ -40,7 +50,33 @@ public:
         }
     }
     void setLock(const unsigned int& threadNumber, const std::string syncMechanism) {
-        if (syncMechanism == "AtomicLock") {
+#if USETSX_RTM
+        unsigned status;
+        int retries = 0;
+
+        while (retries++ < TSXRTM_RETRIES) {
+            status = _xbegin();
+            if (status == _XBEGIN_STARTED) {
+                if (lockOwner == NOONE) {
+                   return;
+                }
+                _xabort(_ABORT_LOCK_BUSY);
+                break;
+            }
+            if (!(status & _XABORT_RETRY) ||
+                ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) != _ABORT_LOCK_BUSY))
+            {
+                break;
+            } else if ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) == _ABORT_LOCK_BUSY) {
+                while (isLocked());
+            } else if (status & _XABORT_CONFLICT) {
+                delay();
+            }
+        }
+#endif
+        if (syncMechanism == "HleAtomicLock") {
+            while(!_xacquire(&lockOwner, &threadNumber));
+        } else if (syncMechanism == "AtomicLock") {
             //If Available and we can set it to Working then return true else return false;
             if( lockOwner == threadNumber ) return;
             while (!__sync_bool_compare_and_swap(&lockOwner, NOONE, threadNumber));
@@ -69,7 +105,9 @@ public:
         }
     }
     bool hasLock(const unsigned int& threadNumber, const std::string syncMechanism) const {
-        if (syncMechanism == "AtomicLock") {
+        if (syncMechanism == "HleAtomicLock") {
+            return (threadNumber == (unsigned int) lockOwner);
+        } else if (syncMechanism == "AtomicLock") {
             return (threadNumber == (unsigned int) lockOwner);
         } else if (syncMechanism == "Mutex") {
             return (threadNumber == (unsigned int) lockOwner);
