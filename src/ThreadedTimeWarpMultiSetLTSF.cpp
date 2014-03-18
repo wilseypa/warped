@@ -90,10 +90,14 @@ ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
 
 void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
     scheduleQueueLock->setLock(threadId, syncMechanism);
-    ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
+    if (!_xtest()) {
+        ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
+    }
 }
 void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
-    ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
+    if (!_xtest()) {
+        ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
+    }
     scheduleQueueLock->releaseLock(threadId, syncMechanism);
 }
 const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int threadID) {
@@ -465,10 +469,14 @@ void ThreadedTimeWarpMultiSetLTSF::getObjectLock(int threadId, int objId) {
     /*  debug::debugout << "( " << mySimulationManager->getSimulationManagerID()
      << " ) Object - " << objId << " is Locked by the thread - "
      << threadId << "\n";*/
-    ASSERT(objectStatusLock[objId]->hasLock(threadId, syncMechanism));
+    if (!_xtest()) {
+        ASSERT(objectStatusLock[objId]->hasLock(threadId, syncMechanism));
+    }
 }
 void ThreadedTimeWarpMultiSetLTSF::releaseObjectLock(int threadId, int objId) {
-    ASSERT(objectStatusLock[objId]->hasLock(threadId, syncMechanism));
+    if (!_xtest()) {
+        ASSERT(objectStatusLock[objId]->hasLock(threadId, syncMechanism));
+    }
     objectStatusLock[objId]->releaseLock(threadId, syncMechanism);
     /*  debug::debugout << "( " << mySimulationManager->getSimulationManagerID()
      << " ) Object - " << objId << " is Released by the thread - "

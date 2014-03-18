@@ -1587,11 +1587,15 @@ void ThreadedTimeWarpSimulationManager::clearMessageBuffer() {
 }
 void ThreadedTimeWarpSimulationManager::getOfcFlagLock(int threadId, const string syncMech) {
     ofcFlagLock->setLock(threadId, syncMech);
-    ASSERT(ofcFlagLock->hasLock(threadId, syncMech));
+    if (!_xtest()) {
+        ASSERT(ofcFlagLock->hasLock(threadId, syncMech));
+    }
 }
 
 void ThreadedTimeWarpSimulationManager::releaseOfcFlagLock(int threadId, const string syncMech) {
-    ASSERT(ofcFlagLock->hasLock(threadId, syncMech));
+    if (!_xtest()) {
+        ASSERT(ofcFlagLock->hasLock(threadId, syncMech));
+    }
     ofcFlagLock->releaseLock(threadId, syncMech);
 }
 

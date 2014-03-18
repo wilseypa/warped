@@ -225,7 +225,9 @@ bool ThreadedTimeWarpMultiSet::threadHasUnprocessedQueueLock(int threadId,
 
 void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
     unprocessedQueueLockState[objId]->setLock(threadId, syncMechanism);
-    ASSERT(unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    if (!_xtest()) {
+        ASSERT(unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    }
 }
 void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
     if(!unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
@@ -233,18 +235,26 @@ void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
 }
 void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
     processedQueueLockState[objId]->setLock(threadId, syncMechanism);
-    ASSERT(processedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    if (!_xtest()) {
+        ASSERT(processedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    }
 }
 void ThreadedTimeWarpMultiSet::releaseProcessedLock(int threadId, int objId) {
-    ASSERT(processedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    if (!_xtest()) {
+        ASSERT(processedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    }
     processedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 }
 void ThreadedTimeWarpMultiSet::getremovedLock(int threadId, int objId) {
     removedQueueLockState[objId]->setLock(threadId, syncMechanism);
-    ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    if (!_xtest()) {
+        ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    }
 }
 void ThreadedTimeWarpMultiSet::releaseremovedLock(int threadId, int objId) {
-    ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    if (!_xtest()) {
+        ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
+    }
     removedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 }
 
