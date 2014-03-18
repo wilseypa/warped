@@ -42,7 +42,7 @@
 #define ABORT_COUNT(type, status)   \
     do {                            \
         if (status & (1 << type))   \
-            _abrt[type]++;   \
+            tsxAbrtType[type]++;   \
     } while (0)
 
 #define __rtm_force_inline __attribute__((__always_inline__)) inline

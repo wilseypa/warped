@@ -173,6 +173,9 @@ public:
 
     // Function to move a LP (unprocessed queue) to another LTSF queue
     virtual void moveLP(int sourceObj, int destLTSF) = 0;
+
+    virtual void reportTSXstats(void) = 0;
+
 protected:
     /**@name Protected Class Methods of ThreadedTimeWarpEventSet. */
     //@{

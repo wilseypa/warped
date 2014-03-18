@@ -13,6 +13,13 @@ public:
     LockState() {
         lockOwner = NOONE;
         pthread_mutex_init(&mutexLock, NULL);
+
+        //rtm stats
+        tsxCommits = 0;
+        tsxAborts = 0;
+        for (int i = 0; i < 4; i++) {
+            tsxAbrtType[i] = 0;
+        }
     }
     ~LockState() {
         pthread_mutex_destroy(&mutexLock);
@@ -21,6 +28,7 @@ public:
 #if USETSX_RTM
         if (lockOwner == NOONE) {
             _xend();
+            tsxCommits++;
             return true;
         }
 #endif
@@ -63,6 +71,10 @@ public:
                 _xabort(_ABORT_LOCK_BUSY);
                 break;
             }
+            ABORT_COUNT(_XA_RETRY, status);
+            ABORT_COUNT(_XA_EXPLICIT, status);
+            ABORT_COUNT(_XA_CONFLICT, status);
+            ABORT_COUNT(_XA_CAPACITY, status);
             if (!(status & _XABORT_RETRY) ||
                 ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) != _ABORT_LOCK_BUSY))
             {
@@ -73,6 +85,7 @@ public:
                 delay();
             }
         }
+        tsxAborts++;
 #endif
         if (syncMechanism == "HleAtomicLock") {
             while(!_xacquire(&lockOwner, &threadNumber));
@@ -127,9 +140,22 @@ public:
     int whoHasLock() {
         return lockOwner;
     }
+    void reportTSXstats() {
+        std::cout << "Total commits: " << tsxCommits << std::endl;
+        std::cout << "Total aborts: " << tsxAborts << std::endl;
+        std::cout << "\t_XA_RETRY: " << tsxAbrtType[_XA_RETRY] << std::endl;
+        std::cout << "\t_XA_EXPLICIT: " << tsxAbrtType[_XA_EXPLICIT] << std::endl;
+        std::cout << "\t_XA_CONFLICT: " << tsxAbrtType[_XA_CONFLICT] << std::endl;
+        std::cout << "\t_XA_CAPACITY: " << tsxAbrtType[_XA_CAPACITY] << std::endl;
+    }
 private:
     int lockOwner;
     pthread_mutex_t mutexLock;
+
+    //rtm stats
+    long tsxCommits;
+    long tsxAborts;
+    unsigned tsxAbrtType[4];
 };
 
 #endif /* LockState_H_ */
