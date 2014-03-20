@@ -35,6 +35,9 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
     //synchronization mechanism
     syncMechanism = initSimulationManager->getSyncMechanism();
 
+    //worker thread migration
+    workerThreadMigration = initSimulationManager->getWorkerThreadMigration();
+
     unprocessedQueueLockState = new LockState *[objectCount];
     processedQueueLockState = new LockState *[objectCount];
     removedQueueLockState = new LockState *[objectCount];
@@ -366,6 +369,11 @@ const Event* ThreadedTimeWarpMultiSet::peekEvent(SimulationObject* simObj,
     SimulationObject* simObject = NULL;
     if (simObj == NULL) {
         ret = LTSFByThread[threadId-1]->peek(threadId);
+
+        /* If worker thread migration requested */
+        if(workerThreadMigration) {
+            //to be added
+        }
     } else if (simObj != NULL) {
         unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
         if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) {

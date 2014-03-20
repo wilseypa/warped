@@ -217,6 +217,9 @@ private:
     //Specfiy the synchronization mechanism in the config
     string syncMechanism;
 
+    //Specify the workerThread migration status
+    bool workerThreadMigration;
+
     //ScheduleQueues (LTSF)
     ThreadedTimeWarpMultiSetLTSF** LTSF;
     string scheduleQScheme;

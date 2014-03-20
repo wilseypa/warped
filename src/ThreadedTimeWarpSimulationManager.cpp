@@ -70,15 +70,15 @@ using std::vector;
 
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     unsigned int numberOfWorkerThreads, const string syncMechanism,
-    bool loadBalancing, const string loadBalancingMetric,
+    bool workerThreadMigration, bool loadBalancing, const string loadBalancingMetric,
     const string loadBalancingTrigger, double loadBalancingVarianceThresh,
     unsigned int loadBalancingNormalInterval, unsigned int loadBalancingNormalThresh,
     unsigned int loadBalancingRelaxedInterval, unsigned int loadBalancingRelaxedThresh,
     const string scheduleQScheme, const string causalityType, unsigned int scheduleQCount,
     Application* initApplication) :
     numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism),
-    loadBalancing(loadBalancing), loadBalancingMetric(loadBalancingMetric),
-    loadBalancingTrigger(loadBalancingTrigger),
+    workerThreadMigration(workerThreadMigration), loadBalancing(loadBalancing), 
+    loadBalancingMetric(loadBalancingMetric), loadBalancingTrigger(loadBalancingTrigger),
     loadBalancingVarianceThresh(loadBalancingVarianceThresh),
     loadBalancingNormalInterval(loadBalancingNormalInterval),
     loadBalancingNormalThresh(loadBalancingNormalThresh),

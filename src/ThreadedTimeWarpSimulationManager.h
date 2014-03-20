@@ -43,7 +43,7 @@ extern pthread_key_t threadKey;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
     ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
-                                      const std::string syncMechanism, bool loadBalancing,
+                                      const std::string syncMechanism, bool workerThreadMigration, bool loadBalancing,
                                       const std::string loadBalancingMetric, const std::string loadBalancingTrigger,
                                       double loadBalancingVarianceThresh, unsigned int loadBalancingNormalInterval,
                                       unsigned int loadBalancingNormalThresh, unsigned int loadBalancingRelaxedInterval,
@@ -89,6 +89,10 @@ public:
 
     const std::string getSyncMechanism() {
         return syncMechanism;
+    }
+
+    bool getWorkerThreadMigration() {
+        return workerThreadMigration;
     }
 
     bool getLoadBalancing() {
@@ -388,6 +392,9 @@ private:
 
     //Specfied in the ThreadControl scope the configuraion file
     const std::string syncMechanism;
+
+    //Specfied in the ThreadControl scope the configuraion file
+    bool workerThreadMigration;
 
     //Specfied in the ThreadControl scope the configuraion file
     bool loadBalancing;
