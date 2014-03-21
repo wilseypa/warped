@@ -61,24 +61,6 @@ SimulationManagerImplementationBase::finalizeObjects() {
     delete objects;
 }
 
-void
-SimulationManagerImplementationBase::receiveEvent(Event*,
-                                                  SimulationObject*,
-                                                  SimulationObject*) {
-    shutdown("ERROR: receiveEvent() called in  SimulationManagerImplementationBase");
-}
-
-void
-SimulationManagerImplementationBase::simulate(const VTime&) {
-    shutdown("ERROR: simulate() called in SimulationManagerImplementationBase");
-}
-
-
-void
-SimulationManagerImplementationBase::registerSimulationObjects() {
-    shutdown("ERROR: registerSimulationObjects() called in SimulationManagerImplementationBase");
-}
-
 ///Converts vector to a std::map(string ObjectName, SimulationObject *)
 SimulationManagerImplementationBase::typeSimMap*
 SimulationManagerImplementationBase::partitionVectorToHashMap(vector<SimulationObject*>* vector) {
