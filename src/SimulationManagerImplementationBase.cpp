@@ -79,26 +79,6 @@ SimulationManagerImplementationBase::registerSimulationObjects() {
     shutdown("ERROR: registerSimulationObjects() called in SimulationManagerImplementationBase");
 }
 
-// print out the name to simulation object ptr map
-void
-SimulationManagerImplementationBase::displayObjectMap(std::ostream& out) {
-
-    if (!simObjectsByName->empty()) {
-        //Obtains all the keys from simObjectsByName
-        vector<std::string>* keys = getKeyVector(simObjectsByName);
-        //Obtains all the objects from simObjectsByName
-        vector<SimulationObject*>* objects = getElementVector(simObjectsByName);
-
-        for (unsigned int i = 0; i < objects->size(); i++) {
-            out << (*keys)[i] << ": " << (*objects)[i]->getObjectID();
-        }
-        delete objects;
-        delete keys;
-    } else {
-        out << "Object Names to Object Pointers Map is empty" << endl;
-    }
-}
-
 ///Converts vector to a std::map(string ObjectName, SimulationObject *)
 SimulationManagerImplementationBase::typeSimMap*
 SimulationManagerImplementationBase::partitionVectorToHashMap(vector<SimulationObject*>* vector) {

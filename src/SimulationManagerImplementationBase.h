@@ -85,12 +85,6 @@ protected:
     */
     void finalizeObjects();
 
-    /** Display the object name - object pointer map.
-
-    @param out Out-stream.
-    */
-    void displayObjectMap(std::ostream& out);
-
     /// Number of objects registered with this simulation manager.
     unsigned int numberOfObjects;
 
