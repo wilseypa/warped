@@ -55,14 +55,6 @@ public:
     */
     virtual void registerSimulationObjects();
 
-    /** This method is called to unregister a list (vector of simulation
-        object pointers) of simulation objects from the SimulationManager.
-        The size of the vector must be greater than or equal to one.
-
-        @param list The vector of simulation object pointers to unregister
-    */
-    void unregisterSimulationObjects(std::vector<SimulationObject*>* list);
-
     /// returns the number of simulation objects
     unsigned int getNumberOfSimulationObjects() const { return numberOfObjects; }
 

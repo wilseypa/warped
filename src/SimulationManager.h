@@ -111,17 +111,6 @@ public:
     */
     virtual void registerSimulationObjects() = 0;
 
-    /** This method is called to unregister a list (vector of simulation
-        object pointers) of simulation objects from the SimulationManager.
-        The size of the vector must be greater than or equal to one.
-
-        This is a pure virtual function and has to be overridden by the user.
-
-        @param list The vector of simulation object pointers to unregister
-    */
-    virtual
-    void unregisterSimulationObjects(std::vector<SimulationObject*>* list) = 0;
-
     /** Get object handle with string object as lookup.
 
     This is a pure virtual function and has to be overridden by the user.

@@ -79,11 +79,6 @@ SimulationManagerImplementationBase::registerSimulationObjects() {
     shutdown("ERROR: registerSimulationObjects() called in SimulationManagerImplementationBase");
 }
 
-void
-SimulationManagerImplementationBase::unregisterSimulationObjects(vector <SimulationObject*>* list) {
-    // some tasks this function is responsible for
-};
-
 // print out the name to simulation object ptr map
 void
 SimulationManagerImplementationBase::displayObjectMap(std::ostream& out) {
