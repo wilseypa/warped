@@ -42,6 +42,7 @@ public:
     void setLock(const unsigned int& threadNumber, const std::string syncMechanism) {
         if (syncMechanism == "AtomicLock") {
             //If Available and we can set it to Working then return true else return false;
+            if( lockOwner == threadNumber ) return;
             while (!__sync_bool_compare_and_swap(&lockOwner, NOONE, threadNumber));
         } else if (syncMechanism == "Mutex") {
             bool locked = false;
