@@ -117,10 +117,11 @@ protected:
         return keys;
     }
 
-    typeSimMap* localArrayOfSimObjPtrs;
+    /// Map of local Names -> SimulationObjects
+    typeSimMap* simObjectsByName;
 
-    /// Mapping between simulation object ids to names
-    std::vector<SimulationObject*> localArrayOfSimObjIDs;
+    /// Map of local ID -> SimulationObjects
+    std::vector<SimulationObject*> simObjectsByID;
 
     /// Turns a vector<SimulationObject *> into a map<string, SimulationObject *>.
     typeSimMap* partitionVectorToHashMap(std::vector<SimulationObject*>* vector);

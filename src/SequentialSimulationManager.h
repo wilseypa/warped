@@ -89,8 +89,8 @@ public:
     @return Handle to the object.
     */
     SimulationObject* getObjectHandle(const string& object) const {
-        typeSimMap::const_iterator it = localArrayOfSimObjPtrs->find(object);
-        if (it == localArrayOfSimObjPtrs->end())
+        typeSimMap::const_iterator it = simObjectsByName->find(object);
+        if (it == simObjectsByName->end())
         { return 0; }
         return it->second;
     }
@@ -101,7 +101,7 @@ public:
     @return Handle to the object.
     */
     SimulationObject* getObjectHandle(const OBJECT_ID& objectID) {
-        return localArrayOfSimObjIDs[objectID.getSimulationObjectID()];
+        return simObjectsByID[objectID.getSimulationObjectID()];
     }
 
     /// Get a handle to a simulation input stream

@@ -20,8 +20,8 @@ std::ostream* werr;
 
 SimulationManagerImplementationBase::SimulationManagerImplementationBase()
     : numberOfSimulationManagers(0),
-      localArrayOfSimObjPtrs(0),
-      localArrayOfSimObjIDs(0) {}
+      simObjectsByName(0),
+      simObjectsByID(0) {}
 
 SimulationManagerImplementationBase::~SimulationManagerImplementationBase() {
 }
@@ -36,8 +36,8 @@ public:
 
 void
 SimulationManagerImplementationBase::initializeObjects() {
-    //Obtains all the objects from localArrayOfSimObjPtrs
-    vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
+    //Obtains all the objects from simObjectsByName
+    vector<SimulationObject*>* objects = getElementVector(simObjectsByName);
     InitObject initObject;
     for_each< vector<SimulationObject*>::iterator, InitObject >(objects->begin(),
                                                                 objects->end(),
@@ -52,8 +52,8 @@ SimulationManagerImplementationBase::setNumberOfObjects(unsigned int numObjects)
 
 void
 SimulationManagerImplementationBase::finalizeObjects() {
-    //Obtains all the objects from localArrayOfSimObjPtrs
-    vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
+    //Obtains all the objects from simObjectsByName
+    vector<SimulationObject*>* objects = getElementVector(simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         (*objects)[i]->finalize();
@@ -83,11 +83,11 @@ SimulationManagerImplementationBase::registerSimulationObjects() {
 void
 SimulationManagerImplementationBase::displayObjectMap(std::ostream& out) {
 
-    if (!localArrayOfSimObjPtrs->empty()) {
-        //Obtains all the keys from localArrayOfSimObjPtrs
-        vector<std::string>* keys = getKeyVector(localArrayOfSimObjPtrs);
-        //Obtains all the objects from localArrayOfSimObjPtrs
-        vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
+    if (!simObjectsByName->empty()) {
+        //Obtains all the keys from simObjectsByName
+        vector<std::string>* keys = getKeyVector(simObjectsByName);
+        //Obtains all the objects from simObjectsByName
+        vector<SimulationObject*>* objects = getElementVector(simObjectsByName);
 
         for (unsigned int i = 0; i < objects->size(); i++) {
             out << (*keys)[i] << ": " << (*objects)[i]->getObjectID();

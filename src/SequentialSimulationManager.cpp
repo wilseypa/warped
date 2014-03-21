@@ -45,15 +45,15 @@ SequentialSimulationManager::~SequentialSimulationManager() {
     // is we didn't allocate them, so we should not destroy them.
 
     //   // iteratively call delete on each simulation object pointer
-    //   for(typeSimMap::iterator iter = localArrayOfSimObjPtrs->begin();
-    //       iter != localArrayOfSimObjPtrs->end();
+    //   for(typeSimMap::iterator iter = simObjectsByName->begin();
+    //       iter != simObjectsByName->end();
     //       iter++ ){
     //     SimulationObject *toDelete = (*iter).second;
     //     cout << "Deleting " << *toDelete->getObjectID() << endl;
     //     delete toDelete;
     //   }
 
-    delete localArrayOfSimObjPtrs;
+    delete simObjectsByName;
 }
 
 const Event*
@@ -178,15 +178,15 @@ SequentialSimulationManager::registerSimulationObjects() {
     }
 
     // create the map of name -> object
-    localArrayOfSimObjPtrs = partitionVectorToHashMap(simulationObjects);
+    simObjectsByName = partitionVectorToHashMap(simulationObjects);
     setNumberOfObjects(simulationObjects->size());
 
     // copy the simulation object pointers into our local vector
-    localArrayOfSimObjIDs = *simulationObjects;
+    simObjectsByID = *simulationObjects;
 
     // assign IDs to each of the objects in the order they were created
     unsigned int count = 0;
-    for (auto object : localArrayOfSimObjIDs) {
+    for (auto object : simObjectsByID) {
         // create and store in the map a relation between ids and object names
         OBJECT_ID* id = new OBJECT_ID(count);
 

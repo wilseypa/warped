@@ -949,12 +949,12 @@ void ThreadedTimeWarpSimulationManager::receiveKernelMessage(KernelMessage* msg)
 void ThreadedTimeWarpSimulationManager::fossilCollect(
     const VTime& fossilCollectTime) {
 
-    ASSERT(localArrayOfSimObjPtrs != 0);
+    ASSERT(simObjectsByName != 0);
     //Hard Coded ZERO, since this function is always called by the Master
     int threadID = 0;
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     //If the number of LP's > number of Objects
     //Then its possible this simulation has no objects assigned to it
@@ -1018,9 +1018,9 @@ void ThreadedTimeWarpSimulationManager::initialize() {
     cout << "SimulationManager(" << mySimulationManagerID
          << "): Initializing Objects" << endl;
 
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         // call initialize on the object
@@ -1084,7 +1084,7 @@ void ThreadedTimeWarpSimulationManager::configure(SimulationConfiguration& confi
     //    manager
     // b. resets the value of numberOfObjects to the number of objects
     //    actually resident on this simulation manager.
-    localArrayOfSimObjPtrs = createMapOfObjects();
+    simObjectsByName = createMapOfObjects();
 
     // configure the event set manager
     const TimeWarpEventSetFactory* myEventSetFactory =
@@ -1254,7 +1254,7 @@ ThreadedTimeWarpSimulationManager::getCoastForwardTime(
 }
 void ThreadedTimeWarpSimulationManager::registerSimulationObjects() {
     // allocate memory for our reverse map
-    localArrayOfSimObjIDs.resize(numberOfObjects);
+    simObjectsByID.resize(numberOfObjects);
 
     // allocate memory for our global reverse map - first dimension
     globalArrayOfSimObjIDs.resize(numberOfSimulationManagers);
@@ -1262,11 +1262,11 @@ void ThreadedTimeWarpSimulationManager::registerSimulationObjects() {
     // allocate memory for the second dimension of our 2-D array
     globalArrayOfSimObjIDs[mySimulationManagerID].resize(numberOfObjects);
 
-    //Obtains all the keys from localArrayOfSimObjPtrs
-    vector < string >* keys = getKeyVector(localArrayOfSimObjPtrs);
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    //Obtains all the keys from simObjectsByName
+    vector < string >* keys = getKeyVector(simObjectsByName);
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         // create and store in the map a relation between ids and object names
@@ -1294,7 +1294,7 @@ void ThreadedTimeWarpSimulationManager::registerSimulationObjects() {
         object->setInitialState(object->allocateState());
 
         // save map of ids to ptrs
-        localArrayOfSimObjIDs[i] = object;
+        simObjectsByID[i] = object;
         globalArrayOfSimObjIDs[mySimulationManagerID][i] = object;
 
         // initialize the coast forward vector element for the object
@@ -1338,7 +1338,7 @@ void ThreadedTimeWarpSimulationManager::handleAntiMessageFromStraggler(
 }
 void ThreadedTimeWarpSimulationManager::printObjectMaaping() {
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         SimulationObject* object = (*objects)[i];
