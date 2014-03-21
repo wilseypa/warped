@@ -135,11 +135,6 @@ public:
     void shutdown(const string& errorMessage);
 
 protected:
-    /// Mapping between simulation object names, object pointers & id
-    //typedef map<string, SimulationObject * >  typeNewSimMap;
-
-    typeSimMap* createMapOfObjects();
-
     /// The current simulation time.
     const VTime* simulationTime;
 
