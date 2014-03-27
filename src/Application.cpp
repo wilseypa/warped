@@ -7,3 +7,7 @@ const PartitionInfo* Application::getPartitionInfo(unsigned int numProcessorsAva
     RoundRobinPartitioner partitioner;
     return partitioner.partition(simulationObjects, numProcessorsAvailable);
 }
+
+int Application::finalize() {
+    return 0;
+}

@@ -50,7 +50,7 @@ public:
 
         @return Error code (non-zero return value indicates error)
     */
-    virtual int finalize() = 0;
+    virtual int finalize();
 
     virtual ~Application() {}
 
