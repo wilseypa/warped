@@ -132,46 +132,6 @@ public:
     */
     virtual void deallocateState(const State* state) = 0;
 
-    /** Serialize an event.
-
-    The kernel calls this method to handle migration of events from one
-    process to another. It is the responsibility of the simulation
-    object that generated the event to serialize that event. If an
-    application generates different types of events then it is up to the
-    application writer to distinguish between the different events. A
-    {\tt tag} field in the serialization instance may be used for this
-    purpose.
-
-    A good approach to do this would be to correspondingly overload the
-    {\tt serializeEvent} method in the {\tt EventBase} class to actually
-    perform the serialization of the event. During or after
-    serialization the event (or any of its constituents) should not be
-    deleted or altered by the process.
-
-    @return A pointer to a serialized event.
-    @param event A pointer to an event to be serialized.
-    */
-    virtual SerializedInstance* serializeEvent(Event* event);
-
-    /** Deserialize an event.
-
-    The kernel calls this method to handle deserialization of serialized
-    objects. It is the responsibility of the application process to
-    instantiate the right type of event (a {\tt tag} field can be used
-    for this). Having instantiated the right event, the process must
-    copy the corresponding data from the serialized object to the
-    event. A good mechanism to implement this functionality would be to
-    correspondingly overload the {\tt deserializeEvent} method in the
-    event class to actually copy the data from the serialized object to
-    the event.  The event generated from deserialization should not be
-    processed by the application.  Call to deserialization does not mean
-    that the process is being scheduled for simulation.
-
-    @return A pointer to a deserialized event.
-    @param instance A pointer to the instance to be deserialized.
-    */
-    virtual Event* deserializeEvent(SerializedInstance* instance);
-
     /** Reclaim an event.
 
     {\bf Note: We ourselves are undecided about these features and this
@@ -199,7 +159,7 @@ public:
 
     @param event Pointer to the reclaimed event.
     */
-    virtual void reclaimEvent(const Event* event) = 0;
+    virtual void reclaimEvent(const Event* event);
 
     /** Return the next event.
 

@@ -31,20 +31,6 @@ SimulationObject::receiveEvent(const Event* newEvent) {
     getSimulationManager()->handleEvent(newEvent);
 }
 
-SerializedInstance*
-SimulationObject::serializeEvent(Event* event) {
-    cerr << "Error: SimulationObject::serializeEvent called\n";
-    cerr << "Event is " << event << endl;
-    return NULL;
-}
-
-Event*
-SimulationObject::deserializeEvent(SerializedInstance* instance) {
-    cerr << "Error: SimulationObject::deserializeEvent called\n";
-    cerr << "Instance is " << instance << endl;
-    return NULL;
-}
-
 SimulationObject*
 SimulationObject::getObjectHandle(const string& objectToGet) const {
     ASSERT(getSimulationManager() != NULL);
