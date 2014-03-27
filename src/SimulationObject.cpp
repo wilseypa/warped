@@ -25,6 +25,11 @@ SimulationObject::~SimulationObject() {
 }
 
 void 
+SimulationObject::deallocateState(const State* state) {
+    delete state;
+}
+
+void 
 SimulationObject::reclaimEvent(const Event* event) {
     delete event;
 }
