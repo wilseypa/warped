@@ -24,6 +24,11 @@ SimulationObject::~SimulationObject() {
     delete localVirtualTime;
 }
 
+void 
+SimulationObject::reclaimEvent(const Event* event) {
+    delete event;
+}
+
 void
 SimulationObject::receiveEvent(const Event* newEvent) {
     ASSERT(newEvent != 0);
