@@ -72,7 +72,7 @@ public:
 
     /** This method is called after the simulation has ended.
 
-    This allows the simulation objects to ``clean up'' after themselves,
+    This allows the simulation objects to clean up after themselves,
     perform actions such as closing files, collecting statistics, and
     producing output.  {\tt PINFINITY} will be returned when {\tt
     getSimulationTime} is called during finalization. A call to {\tt
@@ -81,10 +81,8 @@ public:
     will return {\tt NULL}, and a call to {\tt reportError} will cause
     an error to be logged.  Any events sent with {\tt sendEvent} during
     finalization will {\bf not} be delivered.
-
-    This is a pure virtual function and has to be overridden by the user.
     */
-    virtual void finalize() = 0;
+    virtual void finalize() {}
 
     /** Call to application to execute its code for one simulation cycle.
 
