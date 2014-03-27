@@ -11,7 +11,7 @@ script:
   - make -j5
   - make check 
   - make install 
-  - make distcheck DISTCHECK_CONFIGURE_FLAGS="--with-mpiheader=/usr/include/mpich2"
+  - make distcheck DISTCHECK_CONFIGURE_FLAGS="--with-mpiheader=/usr/include/mpich2" -j5
 branches:
   only:
     - master
