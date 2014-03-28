@@ -66,9 +66,8 @@ SimulationConfiguration::SimulationConfiguration(const std::string& config_file_
     input.close();
 }
 
-SimulationConfiguration::SimulationConfiguration(std::istream& input) {
-    pimpl = std::unique_ptr<impl>(new impl(input));
-}
+SimulationConfiguration::SimulationConfiguration(std::istream& input)
+    : pimpl(std::unique_ptr<impl>(new impl(input))) {}
 
 SimulationConfiguration::~SimulationConfiguration() {}
 
