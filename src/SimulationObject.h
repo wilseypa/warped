@@ -128,7 +128,7 @@ public:
 
     @param state A pointer to the state to the deallocated.
     */
-    virtual void deallocateState(const State* state) = 0;
+    virtual void deallocateState(const State* state);
 
     /** Reclaim an event.
 
@@ -270,7 +270,7 @@ public:
 
     /// get a handle to a simulation output stream
     SimulationStream* getOFStream(const std::string& filename,
-                                  std::ios::openmode mode=std::ios::out);
+                                  std::ios::openmode mode = std::ios::out);
 
     /// get a handle to a simulation input-output stream
     SimulationStream* getIOFStream(const std::string& filename);
