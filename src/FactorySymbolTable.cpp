@@ -1,4 +1,7 @@
 
+#include <stddef.h>                     // for NULL
+
+#include "Factory.h"                    // for Factory
 #include "FactorySymbolTable.h"
 
 FactorySymbolTable::FactorySymbolTable(bool uniqueFlag) {

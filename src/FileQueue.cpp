@@ -1,7 +1,11 @@
 
+#include <cstdio>                       // for remove, perror, rename
+#include <cstdlib>                      // for abort
+#include <fstream>                      // for ofstream, ostream, etc
+
 #include "FileQueue.h"
-#include <cstdio>
-#include <fstream>
+#include "VTime.h"                      // for VTime
+
 using std::ofstream;
 using std::ifstream;
 

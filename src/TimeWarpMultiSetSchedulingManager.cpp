@@ -1,7 +1,12 @@
 
+#include <stddef.h>                     // for NULL
+
+#include "Event.h"                      // for Event
+#include "TimeWarpEventSet.h"           // for TimeWarpEventSet
 #include "TimeWarpMultiSetSchedulingManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "Event.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
 
 TimeWarpMultiSetSchedulingManager::TimeWarpMultiSetSchedulingManager(TimeWarpSimulationManager*
                                                                      initSimulationManager)

@@ -2,12 +2,20 @@
 #define STATE_MANAGER_IMPLEMENTATION_BASE_H
 
 
-#include "warped.h"
-#include "SetObject.h"
-#include "StateManager.h"
-#include "TimeWarpSimulationManager.h"
+#include <iosfwd>                       // for ostream
+#include <set>                          // for multiset
+#include <vector>                       // for vector
 
-#include <set>
+#include "SetObject.h"                  // for SetObject (ptr only), etc
+#include "StateManager.h"               // for StateManager
+#include "TimeWarpSimulationManager.h"
+#include "warped.h"
+
+class SimulationObject;
+class State;
+class TimeWarpSimulationManager;
+class VTime;
+
 using std::multiset;
 
 /** The StateManagerImplementationBase class.
@@ -49,7 +57,7 @@ public:
 
     /** Returns the array of object state periods.
     */
-    vector<unsigned int> getObjectStatePeriod();
+    std::vector<unsigned int> getObjectStatePeriod();
 
     /** Rollback and restore the state of the object at the specified time.
 
@@ -110,10 +118,10 @@ protected:
     unsigned int statePeriod;
 
     /// The state saving period of each object
-    vector<unsigned int> objectStatePeriod;
+    std::vector<unsigned int> objectStatePeriod;
 
     /// Time since the last saved state.
-    vector<int> periodCounter;
+    std::vector<int> periodCounter;
 
     /// A state queue for every object on this simulation manager.
     multiset< SetObject<State> >* myStateQueue;

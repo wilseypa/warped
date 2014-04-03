@@ -1,1 +1,1 @@
-SUBDIRS = json
+SUBDIRS = json metis

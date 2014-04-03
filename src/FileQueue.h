@@ -2,11 +2,18 @@
 #define FILE_QUEUE_H
 
 
-#include "warped.h"
-#include <fstream>
 #include <cstdlib>
-#include <set>
-#include "FileData.h"
+#include <fstream>
+#include <iostream>                     // for ios, streampos, cerr, cout, etc
+#include <set>                          // for multiset
+#include <string>                       // for string
+
+#include "FileData.h"                   // for FileData
+#include "warped.h"
+
+using std::string;
+
+class VTime;
 
 using std::multiset;
 using std::ios;

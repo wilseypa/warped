@@ -2,11 +2,14 @@
 #define OPTFOSSILCOLL_MANAGER_FACTORY_H
 
 
-#include "warped.h"
+#include "Configurer.h"                 // for Configurer
 #include "OptFossilCollManager.h"
 #include "SimulationManager.h"
-#include "Configurer.h"
 #include "ThreadedOptFossilCollManager.h"
+#include "warped.h"
+
+class Configurable;
+class SimulationConfiguration;
 
 /** The GVTManagerFactory class.
 

@@ -4,8 +4,8 @@
 
 #include "warped.h"
 #include "Configurable.h"
+
 #include <fstream>
-using std::ofstream;
 
 class Event;
 class SimulationObject;
@@ -93,7 +93,7 @@ public:
         @param objId The ID of the object being saved.
         @param saveTime The checkpoint time.
     */
-    virtual void saveOutputCheckpoint(ofstream* outFile, const ObjectID& objId,
+    virtual void saveOutputCheckpoint(std::ofstream* outFile, const ObjectID& objId,
                                       unsigned int saveTime) = 0;
 
     /**

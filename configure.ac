@@ -4,6 +4,7 @@ AC_CONFIG_HEADERS([src/WarpedConfig.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/Event.cpp])
 AM_INIT_AUTOMAKE([foreign])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 AC_PREREQ(2.61)
 
 AC_LANG([C++])
@@ -120,6 +121,15 @@ case $found_sockopt_type2 in
      ;;
 esac
 
-AC_CONFIG_FILES([Makefile src/Makefile thirdparty/Makefile thirdparty/json/Makefile test/Makefile test/catch_tests/Makefile test/cppunit_tests/Makefile])
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([thirdparty/Makefile])
+AC_CONFIG_FILES([thirdparty/json/Makefile])
+AC_CONFIG_FILES([thirdparty/metis/Makefile])
+AC_CONFIG_FILES([thirdparty/metis/GKlib/Makefile])
+AC_CONFIG_FILES([thirdparty/metis/libmetis/Makefile])
+AC_CONFIG_FILES([test/Makefile])
+AC_CONFIG_FILES([test/catch_tests/Makefile])
+AC_CONFIG_FILES([test/cppunit_tests/Makefile])
 
 AC_OUTPUT

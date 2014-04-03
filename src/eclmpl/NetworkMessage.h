@@ -1,6 +1,9 @@
 #ifndef NETWORK_MESSAGE_H
 #define NETWORK_MESSAGE_H
 
+#include <stddef.h>                     // for NULL
+#include <iosfwd>                       // for ostream
+
 #include "eclmplCommonInclude.h"
 
 /** The NetworkMessage class.

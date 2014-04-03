@@ -2,7 +2,13 @@
 #define CHEBYFOSSILCOLLMANAGER_H_
 
 
-#include "OptFossilCollManager.h"
+#include <vector>
+
+#include "OptFossilCollManager.h"       // for OptFossilCollManager
+
+class SimulationObject;
+class TimeWarpSimulationManager;
+class VTime;
 
 /** The ChebyFossilCollManager class.
 
@@ -51,13 +57,13 @@ protected:
 
     /// The rollback times for all of the simulation objects on this
     /// simulation manager.
-    vector< vector<unsigned int> > samples;
+    std::vector< std::vector<unsigned int> > samples;
 
-    /// The current index for the sample vector.
-    vector<unsigned int> sampleIndex;
+    /// The current index for the sample std::vector.
+    std::vector<unsigned int> sampleIndex;
 
     /// The current total rollback time for each simulation object.
-    vector<int> total;
+    std::vector<int> total;
 
     /// Used for calculating the active history length.
     double errorTerm;

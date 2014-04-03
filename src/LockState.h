@@ -3,8 +3,8 @@
 #define LockState_H_
 
 #include <iostream>
+#include <string>
 #include <pthread.h>
-using namespace std;
 
 static const int NOONE = -1;
 class LockState {
@@ -16,7 +16,7 @@ public:
     ~LockState() {
         pthread_mutex_destroy(&mutexLock);
     }
-    bool releaseLock(const unsigned int& threadNumber, const string syncMechanism) {
+    bool releaseLock(const unsigned int& threadNumber, const std::string syncMechanism) {
         if (syncMechanism == "AtomicLock") {
             //If Currently Working and we can set it to Available then return true else return false;
             return __sync_bool_compare_and_swap(&lockOwner, threadNumber, NOONE);
@@ -31,17 +31,18 @@ public:
                     return false;
                 }
             } else {
-                cout << "mutex_err_releaseLock" << endl;
+                std::cout << "mutex_err_releaseLock" << std::endl;
                 return false;
             }
         } else {
-            cout << "Invalid sync mechanism" << endl;
+            std::cout << "Invalid sync mechanism" << std::endl;
             return false;
         }
     }
-    void setLock(const unsigned int& threadNumber, const string syncMechanism) {
+    void setLock(const unsigned int& threadNumber, const std::string syncMechanism) {
         if (syncMechanism == "AtomicLock") {
             //If Available and we can set it to Working then return true else return false;
+            if( lockOwner == threadNumber ) return;
             while (!__sync_bool_compare_and_swap(&lockOwner, NOONE, threadNumber));
         } else if (syncMechanism == "Mutex") {
             bool locked = false;
@@ -58,27 +59,27 @@ public:
                         pthread_mutex_unlock(&mutexLock);
                     }
                 } else {
-                    cout << "mutex_err_setLock" << endl;
+                    std::cout << "mutex_err_setLock" << std::endl;
                     return;
                 }
             }
         } else {
-            cerr << "Invalid sync mechanism" << endl;
+            std::cerr << "Invalid sync mechanism" << std::endl;
             exit(-1);
         }
     }
-    bool hasLock(const unsigned int& threadNumber, const string syncMechanism) const {
+    bool hasLock(const unsigned int& threadNumber, const std::string syncMechanism) const {
         if (syncMechanism == "AtomicLock") {
             return (threadNumber == (unsigned int) lockOwner);
         } else if (syncMechanism == "Mutex") {
             return (threadNumber == (unsigned int) lockOwner);
         } else {
-            cout << "Invalid sync mechanism" << endl;
+            std::cout << "Invalid sync mechanism" << std::endl;
             return false;
         }
     }
     void showStatus() {
-        cout << "Locked By: " << lockOwner << endl;
+        std::cout << "Locked By: " << lockOwner << std::endl;
     }
     bool isLocked() {
         if (this->lockOwner == NOONE)

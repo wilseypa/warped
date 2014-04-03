@@ -4,11 +4,12 @@
 
 /* Include section */
 #include <iostream>
-#include <set>
 #include <list>
+#include <set>
+#include <vector>
 #include <pthread.h>
 
-using namespace std;
+#include "EventFunctors.h"
 
 /* Macro section */
 #define MAX_RUNG_NUM     8  //ref. sec 2.4 of ladderq paper
@@ -39,9 +40,9 @@ public:
         for (rungIndex = 0; rungIndex < MAX_RUNG_NUM-1; rungIndex++) {
             for (bucketIndex = 0; bucketIndex < MAX_BUCKET_NUM; bucketIndex++) {
                 rung_bucket = NULL;
-                if (!(rung_bucket = new list<const Event*>)) {
-                    cout << "Failed to allocate memory for Rung "
-                         << rungIndex+2 << ", Bucket " << bucketIndex+1 << "." << endl;
+                if (!(rung_bucket = new std::list<const Event*>)) {
+                    std::cout << "Failed to allocate memory for Rung "
+                         << rungIndex+2 << ", Bucket " << bucketIndex+1 << "." << std::endl;
                 }
                 rung1_to_n[rungIndex][bucketIndex] = rung_bucket;
             }
@@ -67,7 +68,7 @@ public:
     inline const Event* begin() {
 
         unsigned int bucketIndex = 0;
-        list<const Event*>::iterator lIterate;
+        std::list<const Event*>::iterator lIterate;
         bool isBucketWidthStatic = false;
 
         /* Remove from bottom if not empty */
@@ -84,7 +85,7 @@ public:
         if ((nRung > 0) && (INVALID == (bucketIndex = recurse_rung()))) {
             /* Check whether rungs still exist */
             if (nRung > 0) {
-                cout << "Received invalid Bucket index." << endl;
+                std::cout << "Received invalid Bucket index." << std::endl;
                 pthread_mutex_unlock(&rungMutex);
                 return NULL;
             }
@@ -112,7 +113,7 @@ public:
                 if (bucketIndex < numBucket[nRung-1]) {
                     rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
                 } else {
-                    cout << "numBucket handling needs improvement." << endl;
+                    std::cout << "numBucket handling needs improvement." << std::endl;
                     pthread_mutex_unlock(&rungMutex);
                     return NULL;
                 }
@@ -120,7 +121,7 @@ public:
 
             pthread_mutex_lock(&bottomMutex);
             if (true == bottomEmpty()) {
-                cout << "Bottom empty" << endl;
+                std::cout << "Bottom empty" << std::endl;
                 pthread_mutex_unlock(&bottomMutex);
                 pthread_mutex_unlock(&rungMutex);
                 return NULL;
@@ -136,7 +137,7 @@ public:
         /* Check if top has any events before proceeding further */
         pthread_mutex_lock(&topMutex);
         if (true == top.empty()) {
-            cout << "LadderQ is empty." << endl;
+            std::cout << "LadderQ is empty." << std::endl;
             pthread_mutex_unlock(&topMutex);
             return NULL;
         }
@@ -144,7 +145,7 @@ public:
         /* Move from top to top of empty ladder */
         /* Check if failed to create the first rung */
         if (false == create_new_rung(top.size(), minTS, &isBucketWidthStatic)) {
-            cout << "Failed to create the required rung." << endl;
+            std::cout << "Failed to create the required rung." << std::endl;
             pthread_mutex_unlock(&topMutex);
             return NULL;
         }
@@ -158,7 +159,7 @@ public:
                                rStart[0]) / bucketWidth[0];
 
             if (numRung0Buckets <= bucketIndex) {
-                cout << "Invalid bucket index." << endl;
+                std::cout << "Invalid bucket index." << std::endl;
                 lIterate++;
             } else {
                 RUNG(0,bucketIndex)->push_front(*lIterate);
@@ -177,7 +178,7 @@ public:
 
         /* Copy events from bucket_k into Bottom */
         if (INVALID == (bucketIndex = recurse_rung())) {
-            cout << "Received invalid Bucket index." << endl;
+            std::cout << "Received invalid Bucket index." << std::endl;
             pthread_mutex_unlock(&rungMutex);
             return NULL;
         }
@@ -201,7 +202,7 @@ public:
             if (bucketIndex < numBucket[0]) {
                 rCur[0] = rStart[0] + bucketIndex*bucketWidth[0];
             } else {
-                cout << "rung 1 numBucket handling needs improvement." << endl;
+                std::cout << "rung 1 numBucket handling needs improvement." << std::endl;
                 pthread_mutex_unlock(&rungMutex);
                 return NULL;
             }
@@ -210,7 +211,7 @@ public:
 
         pthread_mutex_lock(&bottomMutex);
         if (true == bottomEmpty()) {
-            cout << "Bottom empty" << endl;
+            std::cout << "Bottom empty" << std::endl;
             pthread_mutex_unlock(&bottomMutex);
             return NULL;
         }
@@ -283,12 +284,12 @@ public:
     /* Delete the specified event from LadderQ (if found) */
     inline void erase(const Event* delEvent) {
 
-        list<const Event*>::iterator lIterate;
+        std::list<const Event*>::iterator lIterate;
         unsigned int rungIndex = 0, bucketIndex = 0;
 
         /* Check whether valid event received */
         if (NULL == delEvent) {
-            cout << "Invalid event erase request received." << endl;
+            std::cout << "Invalid event erase request received." << std::endl;
             return;
         }
 
@@ -323,7 +324,7 @@ public:
                                rStart[rungIndex]) / bucketWidth[rungIndex];
 
             if (NUM_BUCKETS(rungIndex) <= bucketIndex) {
-                cout << "Incorrect calculation of bucket index." << endl;
+                std::cout << "Incorrect calculation of bucket index." << std::endl;
                 return;
             }
 
@@ -384,7 +385,7 @@ public:
 
         /* Check whether valid event received */
         if (NULL == newEvent) {
-            cout << "Invalid event insertion request received." << endl;
+            std::cout << "Invalid event insertion request received." << std::endl;
             return NULL;
         }
 
@@ -418,9 +419,9 @@ public:
 
             if (NUM_BUCKETS(rungIndex) <= bucketIndex) {
                 if (rungIndex > 0) {
-                    cout << "Ran out of bucket space." << endl;
+                    std::cout << "Ran out of bucket space." << std::endl;
                 } else {
-                    cout << "Rung 1 ran out of space." << endl;
+                    std::cout << "Rung 1 ran out of space." << std::endl;
                 }
                 return NULL;
             }
@@ -456,7 +457,7 @@ public:
 
                 if ((false == create_new_rung(bottomSize(), uiBucketStartVal, &isBucketWidthStatic)) &&
                         (false == isBucketWidthStatic)) {
-                    cout << "Failed to create the required rung." << endl;
+                    std::cout << "Failed to create the required rung." << std::endl;
                     pthread_mutex_unlock(&bottomMutex);
                     return NULL;
                 }
@@ -473,7 +474,7 @@ public:
             /* Transfer bottom to new rung */
             pthread_mutex_lock(&rungMutex);
 
-            multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
+            std::multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
             for (mIterate = bottom.begin(); mIterate != bottom.end(); mIterate++) {
 
                 bucketIndex =
@@ -482,10 +483,10 @@ public:
 
                 if (NUM_BUCKETS(nRung-1) <= bucketIndex) {
                     if (nRung > 1) {
-                        cout << "Ran out of bucket space. Need more." << endl;
+                        std::cout << "Ran out of bucket space. Need more." << std::endl;
                     } else {
-                        cout << "Rung 1 needs more space (available = " << numRung0Buckets
-                             << ", required = " << bucketIndex+1 << ")" << endl;
+                        std::cout << "Rung 1 needs more space (available = " << numRung0Buckets
+                             << ", required = " << bucketIndex+1 << ")" << std::endl;
                     }
                     pthread_mutex_unlock(&rungMutex);
                     pthread_mutex_unlock(&bottomMutex);
@@ -510,9 +511,9 @@ public:
                                 rStart[nRung-1]) / bucketWidth[nRung-1]);
             if (NUM_BUCKETS(nRung-1) <= bucketIndex) {
                 if (nRung > 1) {
-                    cout << "Ran out of bucket space. Needs more space." << endl;
+                    std::cout << "Ran out of bucket space. Needs more space." << std::endl;
                 } else {
-                    cout << "Rung 1 needs more space. Always hungry." << endl;
+                    std::cout << "Rung 1 needs more space. Always hungry." << std::endl;
                 }
                 pthread_mutex_unlock(&rungMutex);
                 pthread_mutex_unlock(&bottomMutex);
@@ -541,17 +542,17 @@ public:
 private:
 
     /* Top variables */
-    list<const Event*>  top;
+    std::list<const Event*>  top;
     unsigned int        maxTS;
     unsigned int        minTS;
     unsigned int        topStart;
     pthread_mutex_t     topMutex;
 
     /* Rungs */
-    vector<list<const Event*> *> rung0;  //first rung. ref. sec 2.4 of ladderq paper
-    list<const Event*>* rung_bucket;
+    std::vector<std::list<const Event*> *> rung0;  //first rung. ref. sec 2.4 of ladderq paper
+    std::list<const Event*>* rung_bucket;
     unsigned int        numRung0Buckets;
-    list<const Event*>* rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
+    std::list<const Event*>* rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
     unsigned int        nRung;
     unsigned int        bucketWidth[MAX_RUNG_NUM];
     unsigned int        numBucket[MAX_RUNG_NUM];
@@ -560,7 +561,7 @@ private:
     pthread_mutex_t     rungMutex;
 
     /* Bottom */
-    multiset<const Event*, receiveTimeLessThanEventIdLessThan> bottom;
+    std::multiset<const Event*, receiveTimeLessThanEventIdLessThan> bottom;
     pthread_mutex_t     bottomMutex;
 
     /** BOTTOM Functionalities */
@@ -602,11 +603,11 @@ private:
 
         /* Check the arguements */
         if (NULL == isBucketWidthStatic) {
-            cout << "Invalid memory address for monitoring change in bucketWidth" << endl;
+            std::cout << "Invalid memory address for monitoring change in bucketWidth" << std::endl;
             return false;
         }
         if (0 == numEvents) {
-            cout << "Rung creation request comes without presence of events." << endl;
+            std::cout << "Rung creation request comes without presence of events." << std::endl;
             return false;
         }
 
@@ -615,7 +616,7 @@ private:
         /* Check if this is the first rung creation */
         if (0 == nRung) {
             if (maxTS < minTS) {
-                cout << "Max TS less than min TS." << endl;
+                std::cout << "Max TS less than min TS." << std::endl;
                 return false;
             } else if (minTS == maxTS) {
                 bucketWidth[0] = MIN_BUCKET_WIDTH;
@@ -634,8 +635,8 @@ private:
 
             for (bucketIndex = numRung0Buckets; bucketIndex < 2*numBucketsReq; bucketIndex++) {
                 rung_bucket = NULL;
-                if (!(rung_bucket = new list<const Event*>)) {
-                    cout << "Failed to allocate memory for rung 0 bucket." << endl;
+                if (!(rung_bucket = new std::list<const Event*>)) {
+                    std::cout << "Failed to allocate memory for rung 0 bucket." << std::endl;
                     return false;
                 }
                 rung0.push_back(rung_bucket);
@@ -654,7 +655,7 @@ private:
 
             /* Check whether new rungs can be created */
             if (MAX_RUNG_NUM <= nRung) {
-                cout << "Overflow error for no. of rungs." << endl;
+                std::cout << "Overflow error for no. of rungs." << std::endl;
                 return false;
             }
             bucketWidth[nRung] = (bucketWidth[nRung-1] + numEvents - 1) / numEvents;
@@ -670,7 +671,7 @@ private:
 
         bool isBucketNotFound = false, isBucketWidthStatic = false, isRungNotEmpty = false;
         unsigned int bucketIndex = 0, newBucketIndex = 0;
-        list<const Event*>::iterator lIterate;
+        std::list<const Event*>::iterator lIterate;
 
         /* find_bucket label */
         do {
@@ -680,7 +681,7 @@ private:
 
             if ((0 == nRung) || (MAX_RUNG_NUM < nRung)) {
                 if (MAX_RUNG_NUM <= nRung) {
-                    cout << "Invalid number of rungs available for recurse_rung." << endl;
+                    std::cout << "Invalid number of rungs available for recurse_rung." << std::endl;
                 }
                 return INVALID;
             }
@@ -703,7 +704,7 @@ private:
                     if (false == create_new_rung(RUNG(nRung-1,bucketIndex)->size(),
                                                  rCur[nRung-1], &isBucketWidthStatic)) {
                         if (false == isBucketWidthStatic) {
-                            cout << "Failed to create a new rung." << endl;
+                            std::cout << "Failed to create a new rung." << std::endl;
                             return INVALID;
                         }
                         break;

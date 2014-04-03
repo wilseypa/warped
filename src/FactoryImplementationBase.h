@@ -2,9 +2,14 @@
 #define FACTORY_IMPLEMENTATION_BASE_H
 
 
-#include "Factory.h"
+#include <string>                       // for string
+
+#include "Factory.h"                    // for string, Factory
 #include "FactorySymbolTable.h"
 
+using std::string;
+
+class FactorySymbolTable;
 class ObjectStub;
 
 /** The FactoryImplementationBase base class.

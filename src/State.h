@@ -54,13 +54,6 @@ public:
     */
     virtual void copyState(const State*) = 0;
 
-    /** Return the size of the state.
-
-        This is a pure virtual function and must be overridden.
-
-    */
-    virtual unsigned int getStateSize() const = 0;
-
     //@} // End of Public Class Methods of State.
 protected:
     /**@name Protected Class Methods of State */

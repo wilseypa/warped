@@ -1,26 +1,41 @@
-#ifndef THREADEThreadedIMEWARPSIMULATIONMANAGER_H_
-#define THREADEThreadedIMEWARPSIMULATIONMANAGER_H_
+#ifndef THREADED_TIME_WARP_SIMULATION_MANAGER_H
+#define THREADED_TIME_WARP_SIMULATION_MANAGER_H
 
+#include <pthread.h>                    // for pthread_key_t
+#include <iosfwd>                       // for ifstream, ofstream
+#include <string>                       // for string
+#include <vector>                       // for vector
 
-#include "TimeWarpSimulationManager.h"
 #include "LockedQueue.h"
-#include "WorkerInformation.h"
+#include "ObjectID.h"                   // for ObjectID
+#include "ThreadedOptFossilCollManager.h"
 #include "ThreadedOutputManager.h"
 #include "ThreadedStateManager.h"
 #include "ThreadedTimeWarpEventSet.h"
-#include "ThreadedOptFossilCollManager.h"
 #include "ThreadedTimeWarpLoadBalancer.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "WorkerInformation.h"
+#include "warped.h"                     // for ASSERT
 
 class Application;
-//class ThreadedSchedulingManager;
-class SimulationObject;
+class AtomicState;
+class Event;
+class KernelMessage;
 class LocalKernelMessage;
+class LockState;
+class NegativeEvent;
+class OptFossilCollManager;
+class SchedulingManager;
+class SimulationConfiguration;
+class SimulationObject;
+class ThreadedOptFossilCollManager;
+class ThreadedOutputManager;
+class ThreadedStateManager;
+class ThreadedTimeWarpEventSet;
+class ThreadedTimeWarpLoadBalancer;
 class VTime;
 class WorkerInformation;
-class AtomicState;
-class ThreadedOptFossilCollManager;
-class ThreadedTimeWarpLoadBalancer;
-
 template<class element> class LockedQueue;
 
 extern pthread_key_t threadKey;
@@ -28,12 +43,12 @@ extern pthread_key_t threadKey;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
     ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
-                                      const string syncMechanism, bool loadBalancing,
-                                      const string loadBalancingMetric, const string loadBalancingTrigger,
+                                      const std::string syncMechanism, bool workerThreadMigration, bool loadBalancing,
+                                      const std::string loadBalancingMetric, const std::string loadBalancingTrigger,
                                       double loadBalancingVarianceThresh, unsigned int loadBalancingNormalInterval,
                                       unsigned int loadBalancingNormalThresh, unsigned int loadBalancingRelaxedInterval,
-                                      unsigned int loadBalancingRelaxedThresh, const string scheduleQScheme,
-                                      const string causalityType, unsigned int scheduleQCount, Application* initApplication);
+                                      unsigned int loadBalancingRelaxedThresh, const std::string scheduleQScheme,
+                                      const std::string causalityType, unsigned int scheduleQCount, Application* initApplication);
 
     virtual ~ThreadedTimeWarpSimulationManager();
     /** Return a handle to the state manager.
@@ -72,19 +87,23 @@ public:
         return numberOfWorkerThreads;
     }
 
-    const string getSyncMechanism() {
+    const std::string getSyncMechanism() {
         return syncMechanism;
+    }
+
+    bool getWorkerThreadMigration() {
+        return workerThreadMigration;
     }
 
     bool getLoadBalancing() {
         return loadBalancing;
     }
 
-    const string getLoadBalancingMetric() {
+    const std::string getLoadBalancingMetric() {
         return loadBalancingMetric;
     }
 
-    const string getLoadBalancingTrigger() {
+    const std::string getLoadBalancingTrigger() {
         return loadBalancingTrigger;
     }
 
@@ -108,23 +127,17 @@ public:
         return loadBalancingRelaxedThresh;
     }
 
-    const string getScheduleQScheme() {
+    const std::string getScheduleQScheme() {
         return scheduleQScheme;
     }
 
-    const string getCausalityType() {
+    const std::string getCausalityType() {
         return causalityType;
     }
 
     unsigned int getScheduleQCount() {
         return scheduleQCount;
     }
-
-    /** Create a map of simulation objects.
-
-     @return An STL hash-map of the simulation objects.
-     */
-    typeSimMap* createMapOfObjects();
 
     /** Return a handle to the scheduling manager.
 
@@ -183,31 +196,72 @@ public:
     const VTime* getMinCurrentExecTime();
 
     // Checks if this is the simulation manager that initiated the recovery process
-    bool getInitiatedRecovery() {
-        return initiatedRecovery;
-    }
+    bool getInitiatedRecovery() { return initiatedRecovery; }
 
     // Sets the flag to indicate that this is the manager that started recovery
-    void setInitiatedRecovery(bool initRec) {
-        initiatedRecovery = initRec;
-    }
+    void setInitiatedRecovery(bool initRec) { initiatedRecovery = initRec; }
 
-    // Releases all the locks that the workers have on the objects  (Called during a catastrophic rollback)
+    // Releases all the locks that the workers have on the objects (Called during a catastrophic rollback)
     void releaseObjectLocksRecovery();
 
     // Empty the message buffer
     void clearMessageBuffer();
 
     // Get optimistic fossil collection recovery flags lock
-    void getOfcFlagLock(int threadId, const string syncMech);
+    void getOfcFlagLock(int threadId, const std::string syncMech);
    
     // Release optimistic fossil collection recovery flags lock
    
-    void releaseOfcFlagLock(int threadId, const string syncMech); 
+    void releaseOfcFlagLock(int threadId, const std::string syncMech); 
+
+        void handleEvent(const Event* event);
+
+    /** call fossil collect on the file queues. This one passes in an integer
+     and should only be used with the optimistic fossil collection manager.
+
+     @param fossilCollectTime time upto which fossil collect is performed.
+     */
+    virtual void fossilCollectFileQueues(SimulationObject* object,
+                                         int fossilCollectTime);
+
+    /// Used in optimistic fossil collection to checkpoint the file queues.
+    void saveFileQueuesCheckpoint(std::ofstream* outFile,
+                                  const ObjectID& objId, unsigned int saveTime);
+
+    void restoreFileQueues(std::ifstream* inFile, const ObjectID& objId,
+                           unsigned int restoreTime);
+
+    void handleEventReceiver(SimulationObject* currObject, const Event* event,
+                             int threadID);
+
+    /// Return true when recovering from a catastrophic rollback during
+    /// optimimistic fossil collection.
+    bool getRecoveringFromCheckpoint() { return inRecovery; }
+
+    /// Set true when recovering from a catastrophic rollback during
+    /// optimimistic fossil collection.
+    void setRecoveringFromCheckpoint(bool inRec) { inRecovery = inRec; }
+
+    bool initiateLocalGVT();
+
+    bool setGVTTokenPending();
+    bool resetGVTTokenPending();
+
+    /** call fossil collect on the state, output, input queue, and file queues.
+
+     @param fossilCollectTime time upto which fossil collect is performed.
+     */
+    virtual void fossilCollect(const VTime& fossilCollectTime);
+
+    bool isRollbackJustCompleted(int objId);
+    void setRollbackCompletedStatus(int objId);
+    void resetRollbackCompletedStatus(int objId);
+    void setCheckpointing(bool chkpt) { checkpointing = chkpt; }
+
+    ///Holds information each thread needs to operate
+    WorkerInformation** workerStatus;
 
 protected:
-    /**@name Protected Class Methods of ThreadedTimeWarpSimulationManager. */
-    //@{
     //Main simulation function
     void simulate(const VTime& simulateUntil);
 
@@ -234,65 +288,13 @@ protected:
 
     ///Peekevent from ThreadedMultiset
     const Event* peekEvent(SimulationObject* object);
+
     /** Receive an event.
 
      @param event A pointer to the received event.
      */
-public:
-    void handleEvent(const Event* event);
-
-    /** call fossil collect on the file queues. This one passes in an integer
-     and should only be used with the optimistic fossil collection manager.
-
-     @param fossilCollectTime time upto which fossil collect is performed.
-     */
-    virtual void fossilCollectFileQueues(SimulationObject* object,
-                                         int fossilCollectTime);
-
-    /// Used in optimistic fossil collection to checkpoint the file queues.
-    void saveFileQueuesCheckpoint(std::ofstream* outFile,
-                                  const ObjectID& objId, unsigned int saveTime);
-
-    void restoreFileQueues(ifstream* inFile, const ObjectID& objId,
-                           unsigned int restoreTime);
-
-    void handleEventReceiver(SimulationObject* currObject, const Event* event,
-                             int threadID);
-
-    /// Return true when recovering from a catastrophic rollback during
-    /// optimimistic fossil collection.
-    bool getRecoveringFromCheckpoint() {
-        return inRecovery;
-    }
-
-    /// Set true when recovering from a catastrophic rollback during
-    /// optimimistic fossil collection.
-    void setRecoveringFromCheckpoint(bool inRec) {
-        inRecovery = inRec;
-    }
-
-    bool initiateLocalGVT();
-
-    bool setGVTTokenPending();
-    bool resetGVTTokenPending();
-
-    /** call fossil collect on the state, output, input queue, and file queues.
-
-     @param fossilCollectTime time upto which fossil collect is performed.
-     */
-    virtual void fossilCollect(const VTime& fossilCollectTime);
-
-    bool isRollbackJustCompleted(int objId);
-    void setRollbackCompletedStatus(int objId);
-    void resetRollbackCompletedStatus(int objId);
-    void setCheckpointing(bool chkpt) {
-        checkpointing = chkpt;
-    }
-
-protected:
-
     void cancelEventsReceiver(SimulationObject* curObject,
-                              vector<const NegativeEvent*>& cancelObjectIt, int threadID);
+                              std::vector<const NegativeEvent*>& cancelObjectIt, int threadID);
     /**
      Used to route local events.
      */
@@ -306,19 +308,19 @@ protected:
     /**
      Used to cancel local events.
      */
-    void cancelLocalEvents(const vector<const NegativeEvent*>& eventsToCancel,
+    void cancelLocalEvents(const std::vector<const NegativeEvent*>& eventsToCancel,
                            int threadID);
 
     /**
      Used to cancel remote events.
      */
     void
-    cancelRemoteEvents(const vector<const NegativeEvent*>& eventsToCancel,
+    cancelRemoteEvents(const std::vector<const NegativeEvent*>& eventsToCancel,
                        int threadID);
     /**
      Used to deal with negative events that we've been informed about.
      */
-    void handleNegativeEvents(const vector<const Event*>& negativeEvents,
+    void handleNegativeEvents(const std::vector<const Event*>& negativeEvents,
                               int threadID);
 
     /**
@@ -326,7 +328,7 @@ protected:
      rolled back.
      */
     void
-    cancelEvents(const vector<const Event*>& eventsToCancel);
+    cancelEvents(const std::vector<const Event*>& eventsToCancel);
 
     void rollback(SimulationObject* object, const VTime& rollbackTime,
                   int threadID);
@@ -337,8 +339,7 @@ protected:
                  const VTime& rollbackToTime, SimulationObject* object,
                  int threadID);
 
-    /*@param msg The message to receive.
-     */
+    ///@param msg The message to receive.
     virtual void receiveKernelMessage(KernelMessage* msg);
 
     /// initialize the simulation objects before starting the simulation.
@@ -390,16 +391,19 @@ private:
     unsigned int numberOfWorkerThreads;
 
     //Specfied in the ThreadControl scope the configuraion file
-    const string syncMechanism;
+    const std::string syncMechanism;
+
+    //Specfied in the ThreadControl scope the configuraion file
+    bool workerThreadMigration;
 
     //Specfied in the ThreadControl scope the configuraion file
     bool loadBalancing;
 
     //Specfied in the ThreadControl scope the configuraion file
-    const string loadBalancingMetric;
+    const std::string loadBalancingMetric;
 
     //Specfied in the ThreadControl scope the configuraion file
-    const string loadBalancingTrigger;
+    const std::string loadBalancingTrigger;
 
     //Specified in the ThreadControl scope of the configuration file
     double loadBalancingVarianceThresh;
@@ -417,20 +421,16 @@ private:
     unsigned int loadBalancingRelaxedThresh;
 
     //Specfiy the Scheduler scope of the configuraion file
-    const string scheduleQScheme;
+    const std::string scheduleQScheme;
 
     //Specfiy the Scheduler causality type of the configuraion file
-    const string causalityType;
+    const std::string causalityType;
 
     //Specified in the Scheduler scope of the configuration file
     unsigned int scheduleQCount;
 
-public:
-    ///Holds information each thread needs to operate
-    WorkerInformation** workerStatus;
-private:
     /// Time up to which coast forwarding should be done.
-    vector<const VTime*> coastForwardTime;
+    std::vector<const VTime*> coastForwardTime;
 
     /// Used to determine when the optimistic fossil collection manager is
     /// recovery from a catastrophic rollback.
@@ -492,9 +492,8 @@ private:
 
     ThreadedTimeWarpLoadBalancer* loadBalancer;
     
-    // used to lock optimistic fossil collection recovery flags. 
+    /// used to lock optimistic fossil collection recovery flags. 
     LockState* ofcFlagLock;
-
 };
 
-#endif /* ThreadedTIMEWARPSIMULATIONMANAGER_H_ */
+#endif // THREADED_TIME_WARP_SIMULATION_MANAGER_H

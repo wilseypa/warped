@@ -1,3 +1,8 @@
+#include <stdlib.h>                     // for getenv, NULL
+#include <iostream>                     // for cerr, endl
+
+#include "WarpedConfig.h"               // for SSH_COMMAND
+#include "eclmpl/eclmplCommonInclude.h"  // for __local__add_quotes
 #include "eclmplConnectionInterface.h"
 
 using std::cerr;
@@ -8,10 +13,10 @@ eclmplConnectionInterface::eclmplConnectionInterface() : connectionId(0),
 
     char* cmd = getenv("SSH_COMMAND");
     if (cmd != NULL) {
-        rshCmd = string(cmd);
+        rshCmd = std::string(cmd);
     } else {
 #ifdef SSH_COMMAND
-        rshCmd = string(__local__add_quotes(SSH_COMMAND));
+        rshCmd = std::string(__local__add_quotes(SSH_COMMAND));
 #else
         cerr << "Could not set command for starting remote shells.\n"
              << "Since you did not specify a location of a remote shell command\n"

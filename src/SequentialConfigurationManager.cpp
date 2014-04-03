@@ -1,5 +1,10 @@
 
+#include "EventSetFactory.h"            // for EventSetFactory
 #include "SequentialConfigurationManager.h"
+#include "SequentialSimulationManager.h"
+
+class SimulationConfiguration;
+class SimulationManager;
 
 SequentialConfigurationManager::SequentialConfigurationManager(Application* initApplication)
     : mySimulationManager(new SequentialSimulationManager(initApplication)),

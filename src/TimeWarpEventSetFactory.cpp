@@ -1,17 +1,20 @@
-#include "DefaultTimeWarpEventSet.h"
-#include "TimeWarpEventSetFactory.h"
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <string>                       // for allocator, operator==, etc
 
-#include <iostream>
-
-#include "TimeWarpMultiSet.h"
-#include "TimeWarpMultiSetOneAntiMsg.h"
-#include "TimeWarpSimulationManager.h"
-#include "TimeWarpSenderQueue.h"
-#include "SimulationConfiguration.h"
-#include "SchedulingData.h"
-
-#include "ThreadedTimeWarpMultiSet.h"
+#include "Configurable.h"               // for Configurable
+#include "DefaultTimeWarpEventSet.h"    // for DefaultTimeWarpEventSet
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
+#include "ThreadedTimeWarpMultiSet.h"   // for ThreadedTimeWarpMultiSet
 #include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpEventSet.h"           // for TimeWarpEventSet
+#include "TimeWarpEventSetFactory.h"
+#include "TimeWarpMultiSet.h"           // for TimeWarpMultiSet
+#include "TimeWarpMultiSetOneAntiMsg.h"  // for TimeWarpMultiSetOneAntiMsg
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
+using std::string;
 
 
 Configurable*
@@ -25,7 +28,7 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration& configuration,
 
     std::string antiMessages = configuration.get_string({"TimeWarp", "OutputManager", "AntiMessages"},
                                                         "Default");
-    std::string eventListType = configuration.get_string({"EventList", "Type"}, "Default");
+    std::string eventListType = configuration.get_string({"TimeWarp", "EventList", "Type"}, "Default");
     std::string simulationType = configuration.get_string({"Simulation"}, "Sequential");
 
     bool usingOneAntiMessageOpt = false;
@@ -34,7 +37,6 @@ TimeWarpEventSetFactory::allocate(SimulationConfiguration& configuration,
     }
 
     if (simulationType == "ThreadedTimeWarp") {
-        eventListType = configuration.get_string({"TimeWarp", "EventList", "Type"}, "Default");
         if (eventListType == "MultiSet") {
             ThreadedTimeWarpEventSet* retvalue = 0;
             retvalue = new ThreadedTimeWarpMultiSet(

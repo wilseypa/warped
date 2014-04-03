@@ -1,10 +1,13 @@
 
-#include "TimeWarpSimulationManagerFactory.h"
-#include "TimeWarpSimulationManager.h"
-#include "SimulationConfiguration.h"
-#include "ThreadedTimeWarpSimulationManager.h"
+#include <string>                       // for string, operator==, etc
 
-#include <string>
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "TimeWarpSimulationManagerFactory.h"
+
+class Application;
+class Configurable;
 
 TimeWarpSimulationManagerFactory::TimeWarpSimulationManagerFactory() {}
 
@@ -27,6 +30,9 @@ TimeWarpSimulationManagerFactory::allocate(
         //Specify the synchronization mechanism
         std::string syncMechanism = configuration.get_string({"TimeWarp", "ThreadControl", "SyncMechanism"},
                                                              "Mutex");
+        //Specify the worker thread migration option
+        bool workerThreadMigration = configuration.get_bool({"TimeWarp", "ThreadControl", "WorkerThreadMigration"},
+                                                            false);
         //Specify the load balancing option
         bool loadBalancing = configuration.get_bool({"TimeWarp", "ThreadControl", "LoadBalancing"},
                                                     false);
@@ -61,7 +67,7 @@ TimeWarpSimulationManagerFactory::allocate(
         int scheduleQCount = configuration.get_int({"TimeWarp", "Scheduler", "ScheduleQCount"}, 2);
 
         ThreadedTimeWarpSimulationManager* retvalue = 0;
-        retvalue = new ThreadedTimeWarpSimulationManager(numberOfWorkerThreads, syncMechanism,
+        retvalue = new ThreadedTimeWarpSimulationManager(numberOfWorkerThreads, syncMechanism, workerThreadMigration, 
                                                          loadBalancing, loadBalancingMetric, loadBalancingTrigger, loadBalancingVarianceThresh,
                                                          loadBalancingNormalInterval, loadBalancingNormalThresh, loadBalancingRelaxedInterval,
                                                          loadBalancingRelaxedThresh, scheduleQScheme, causalityType, scheduleQCount, (Application*) parent);

@@ -1,16 +1,24 @@
 
-#include "WarpedDebug.h"
-#include "EventSetFactory.h"
-#include "ObjectStub.h"
+#include <stdlib.h>                     // for NULL, exit
+#include <iostream>                     // for operator<<, basic_ostream, etc
+
+#include "Application.h"                // for Application
+#include "Configurable.h"               // for Configurable
+#include "Event.h"                      // for Event
+#include "EventSet.h"                   // for EventSet
+#include "EventSetFactory.h"            // for EventSetFactory
 #include "SequentialSimulationManager.h"
-#include "Application.h"
-#include "warped.h"
-#include "PartitionInfo.h"
-#include "Event.h"
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "SimulationObject.h"           // for SimulationObject
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT, werr, wout
+
+class SimulationStream;
 
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::vector;
 
 SequentialSimulationManager::SequentialSimulationManager(Application* initApplication):
     SimulationManagerImplementationBase(),
@@ -18,12 +26,12 @@ SequentialSimulationManager::SequentialSimulationManager(Application* initApplic
     sequentialWout(cerr.rdbuf(), ios::out),
     sequentialWerr(cerr.rdbuf(), ios::out),
     myApplication(initApplication),
-    totalSimulationTime(0.0) {
-    numberOfObjects = initApplication->getNumberOfSimulationObjects(0);
-
-    myEventSet = NULL;
-    numberOfProcessedEvents = 0;
-
+    totalSimulationTime(0.0),
+    trackEventCount(false),
+    statisticsFileFormat(""),
+    statisticsFilePath(""),
+    myEventSet(NULL),
+    numberOfProcessedEvents(0) {
     // Initialize wout and werr to suitable sequential simulation streams...
     wout = &sequentialWout;
     werr = &sequentialWerr;
@@ -36,16 +44,16 @@ SequentialSimulationManager::~SequentialSimulationManager() {
     // was allocated out of a "non-standard" part of memory.  What it comes down to
     // is we didn't allocate them, so we should not destroy them.
 
-//   // iteratively call delete on each simulation object pointer
-//   for( typeSimMap::iterator iter = localArrayOfSimObjPtrs->begin();
-//        iter != localArrayOfSimObjPtrs->end();
-//        iter++ ){
-//     SimulationObject *toDelete = (*iter).second;
-//     cout << "Deleting " << *toDelete->getObjectID() << endl;
-//     delete toDelete;
-//   }
+    //   // iteratively call delete on each simulation object pointer
+    //   for(typeSimMap::iterator iter = simObjectsByName->begin();
+    //       iter != simObjectsByName->end();
+    //       iter++ ){
+    //     SimulationObject *toDelete = (*iter).second;
+    //     cout << "Deleting " << *toDelete->getObjectID() << endl;
+    //     delete toDelete;
+    //   }
 
-    delete localArrayOfSimObjPtrs;
+    delete simObjectsByName;
 }
 
 const Event*
@@ -69,6 +77,14 @@ SequentialSimulationManager::handleEvent(const Event* event) {
     ASSERT(event != NULL);
     ASSERT(myEventSet != NULL);
     myEventSet->insert(event);
+
+    if (trackEventCount) {
+        graphStatistics.update_edge_stat(
+            event->getSender().getSimulationObjectID(),
+            event->getReceiver().getSimulationObjectID(),
+            "event_count"
+        );
+    }
 }
 
 void
@@ -98,9 +114,14 @@ SequentialSimulationManager::finalize() {
 
     cout << "Simulation complete (" << numberOfProcessedEvents << " events in "
          << totalSimulationTime << " secs, "
-         << (numberOfProcessedEvents/totalSimulationTime) << " events/sec).\n"
+         << (numberOfProcessedEvents / totalSimulationTime) << " events/sec).\n"
          << "Initalization - " << initializeWatch.elapsed() << " seconds\n"
          << "Finalization - " << finalizeWatch.elapsed() << " seconds\n";
+
+
+    if (trackEventCount) {
+        graphStatistics.write_to_file(statisticsFileFormat, statisticsFilePath);
+    }
 }
 
 void
@@ -136,6 +157,10 @@ SequentialSimulationManager::configure(SimulationConfiguration& configuration) {
     const EventSetFactory* tempEventSetFactory = EventSetFactory::instance();
     myEventSet = dynamic_cast<EventSet*>(tempEventSetFactory->allocate(configuration,
                                                                        this));
+
+    trackEventCount = configuration.get_bool({"Statistics", "EventCount"}, false);
+    statisticsFileFormat = configuration.get_string({"Statistics", "OutputFormat"}, "dot");
+    statisticsFilePath = configuration.get_string({"Statistics", "OutputFilePath"}, "statistics.dot");
 }
 
 // some tasks this function is responsible for
@@ -146,30 +171,24 @@ SequentialSimulationManager::configure(SimulationConfiguration& configuration) {
 // e. set the simulation manager pointer in each object
 void
 SequentialSimulationManager::registerSimulationObjects() {
-    // save the map of simulation object ptrs and object names
-    localArrayOfSimObjPtrs = createMapOfObjects();
+    std::vector<SimulationObject*>* simulationObjects = myApplication->getSimulationObjects();
 
-    if (localArrayOfSimObjPtrs == 0) {
+    if (simulationObjects == nullptr) {
         shutdown("Application returned null map of simulation objects - exiting");
     }
 
-    // allocate memory for our reverse map
-    localArrayOfSimObjIDs.resize(numberOfObjects);
+    // create the map of name -> object
+    simObjectsByName = partitionVectorToHashMap(simulationObjects);
+    setNumberOfObjects(simulationObjects->size());
 
-    vector<SimulationObject*>::iterator iter;
+    // copy the simulation object pointers into our local vector
+    simObjectsByID = *simulationObjects;
 
-    //Obtains all the objects from localArrayOfSimObjPtrs
-    vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
-
+    // assign IDs to each of the objects in the order they were created
     unsigned int count = 0;
-
-    // now traverse the map and fill in simulation object info
-    for (iter = objects->begin();
-            iter != objects->end();
-            iter++, count++) {
+    for (auto object : simObjectsByID) {
         // create and store in the map a relation between ids and object names
         OBJECT_ID* id = new OBJECT_ID(count);
-        SimulationObject* object = (*iter);
 
         // store this objects id for future reference
         object->setObjectID(id);
@@ -180,35 +199,11 @@ SequentialSimulationManager::registerSimulationObjects() {
         // lets allocate the initial state here
         object->setInitialState(object->allocateState());
 
-        // save map of ids to names
-        localArrayOfSimObjIDs[count] = object;
-    }
-    delete objects;
-
-};
-
-// this function constructs the map of simulation object names versus
-// simulation object pointers by interacting with the application
-
-SimulationManagerImplementationBase::typeSimMap* SequentialSimulationManager::createMapOfObjects() {
-    typeSimMap* retval = 0;
-
-    const PartitionInfo* appInfo =  myApplication->getPartitionInfo(1);
-
-    if (appInfo->getNumberOfPartitions() != 1) {
-        cerr << "Application returned multiple partitions when the kernel requested 1" << endl;
-        abort();
+        count++;
     }
 
-    retval = partitionVectorToHashMap(appInfo->getObjectSet(0));
-
-    setNumberOfObjects(retval->size());
-
-    delete appInfo;
-
-    return retval;
+    delete simulationObjects;
 }
-
 
 SimulationStream*
 SequentialSimulationManager::getIFStream(const string& fileName,
@@ -231,7 +226,7 @@ SimulationStream*
 SequentialSimulationManager::getIOFStream(const string& fileName,
                                           SimulationObject* object) {
     SequentialSimulationStream* simStream =
-        new SequentialSimulationStream(fileName, ios::in|ios::app);
+        new SequentialSimulationStream(fileName, ios::in | ios::app);
     return simStream;
 }
 

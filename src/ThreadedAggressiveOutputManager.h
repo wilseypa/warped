@@ -3,12 +3,16 @@
 
 
 #include <fstream>
-#include "warped.h"
+
 #include "ThreadedOutputManagerImplementationBase.h"
+#include "warped.h"
 
 class Event;
-class SimulationObject;
 class OutputManager;
+class SimulationConfiguration;
+class SimulationObject;
+class ThreadedTimeWarpSimulationManager;
+class VTime;
 
 /** The ThreadedAggressiveOutputManager class.
 

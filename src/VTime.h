@@ -2,12 +2,13 @@
 #define VTIME_H
 
 
-#include "warped.h"
-#include <Serializable.h>
-#include <iostream>
-#include <sstream>
-#include <string>
 #include <stdlib.h>
+#include <iostream>                     // for ostream
+#include <sstream>
+#include <string>                       // for operator<<, string
+
+#include "Serializable.h"               // for Serializable
+#include "warped.h"
 
 class VTime : public Serializable {
 public:
@@ -30,7 +31,7 @@ public:
     /**
        Return this VTime in a string representation.
     */
-    virtual const string toString() const = 0;
+    virtual const std::string toString() const = 0;
     /**
        Return an integer approximation of the current time
        This is used when the kernel needs an actual number for VTime

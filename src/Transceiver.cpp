@@ -1,6 +1,13 @@
 
+#include <stdlib.h>                     // for abort
+#include <string.h>                     // for memcpy
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <vector>                       // for vector
+
+#include "SerializedInstance.h"         // for SerializedInstance
 #include "Transceiver.h"
-#include "MsgAggregatingCommunicationManager.h"
+#include "eclmpl/PhysicalCommunicationLayer.h"
+
 using std::cerr;
 using std::endl;
 
@@ -101,7 +108,7 @@ Transceiver::receiveMessage() {
             abort();
         } else {
             unsigned int msgSize = newMsg->getSize();
-            const vector<char>& data = newMsg->getData();
+            const std::vector<char>& data = newMsg->getData();
             unsigned int* temp = (unsigned int*)(&data[0]);
             numberOfMsgs = *temp;
 

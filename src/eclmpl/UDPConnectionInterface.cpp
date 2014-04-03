@@ -1,7 +1,15 @@
-#include "UDPConnectionInterface.h"
+#include <stdlib.h>                     // for rand
+#include <sys/socket.h>                 // for SOL_SOCKET, SO_RCVBUF, etc
+#include <unistd.h>                     // for close
+#include <string>                       // for string, to_string, etc
+#include <vector>                       // for vector
 
-#include <vector>
-#include <string>
+#include "UDPConnectionInterface.h"
+#include "eclmpl/SocketBasedConnectionInterface.h"
+#include "eclmpl/eclmplConfigFileTable.h"  // for eclmplConfigFileTable
+#include "eclmpl/eclmplConnectionInterfaceImplementationBase.h"
+#include "eclmpl/eclmplSocket.h"        // for eclmplSocket
+#include "warped.h"                     // for ASSERT
 
 
 const std::string configFile = "procgroup";
@@ -142,7 +150,7 @@ UDPConnectionInterface::createAndReceiveSendSocketVector(eclmplConfigFileTable&
     for (unsigned int id = 0; id < numberOfConnections; id++) {
         if (id != connectionId) {
             std::vector<std::string> entry = udpConnectionTable.getEntry(id);
-            string host = entry[0];
+            std::string host = entry[0];
             // each entry looks like: hostname listenPort0 ... listenPortN,
             // so Port_i is accessed through entry[i+1]
             int portNr = std::stoi(entry[connectionId+1]);

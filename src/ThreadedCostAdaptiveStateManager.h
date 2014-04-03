@@ -2,10 +2,18 @@
 #define THREADEDCOSTADAPTIVESTATEMANAGER_HH
 
 
+#include <vector>                       // for vector
+
+#include "ObjectID.h"                   // for ObjectID
+#include "StopWatch.h"                  // for StopWatch
 #include "ThreadedStateManagerImplementationBase.h"
-#include "StopWatch.h"
 #include "controlkit/FIRFilter.h"
-#include "controlkit/IIRFilter.h"
+#include "controlkit/IIRFilter.h"       // for IIRFilter
+
+class SimulationConfiguration;
+class SimulationObject;
+class ThreadedTimeWarpSimulationManager;
+class VTime;
 
 /** The ThreadedCostAdaptiveStateManager class.
 

@@ -2,13 +2,11 @@
 #define SIMULATION_STREAM_H
 
 
-#include "warped.h"
+#include <fstream>                      // for ostringstream, fstream, etc
 #include <iostream>
-#include <fstream>
+#include <sstream>
 
-using std::fstream;
-
-class SimulationStream : public fstream {
+class SimulationStream : public std::fstream {
 public:
 
     /**@name Public Class Methods of SimulationStream. */
@@ -21,13 +19,13 @@ public:
     virtual void flush() = 0;
 
     /// Returns a handle for reading a file for the stream.
-    virtual fstream* getInputStream() = 0;
+    virtual std::fstream* getInputStream() = 0;
 
     /// Reads one line from the file.
-    virtual ostringstream& readLine(ostringstream& ost) = 0;
+    virtual std::ostringstream& readLine(std::ostringstream& ost) = 0;
 
     /// Inserts data from ost into the stream.
-    virtual void insert(ostringstream& ost) = 0;
+    virtual void insert(std::ostringstream& ost) = 0;
 
     //@} // End of Public Class Methods of SimulationStream.
 

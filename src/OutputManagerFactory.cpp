@@ -1,22 +1,24 @@
 
-#include "Event.h"
-#include "SimulationObject.h"
-#include "OutputManager.h"
-#include "AggressiveOutputManager.h"
-#include "LazyOutputManager.h"
-#include "AdaptiveOutputManager.h"
+#include <iostream>                     // for operator<<, endl, etc
+#include <string>                       // for allocator, operator==, etc
+
+#include "AdaptiveOutputManager.h"      // for DynamicOutputManager
+#include "AggressiveOutputManager.h"    // for AggressiveOutputManager
+#include "Configurable.h"               // for Configurable
+#include "LazyOutputManager.h"          // for LazyOutputManager
 #include "OutputManagerFactory.h"
-#include "SimulationConfiguration.h"
-#include "TimeWarpSimulationManager.h"
-#include "ThreadedOutputManager.h"
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "ThreadedAggressiveOutputManager.h"
-#include "ThreadedLazyOutputManager.h"
 #include "ThreadedDynamicOutputManager.h"
+#include "ThreadedLazyOutputManager.h"  // for ThreadedLazyOutputManager
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "WarpedDebug.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for OutputMgrType::ADAPTIVEMGR, etc
 
 using std::cerr;
 using std::endl;
+using std::string;
 
 OutputManagerFactory::OutputManagerFactory() {
 }

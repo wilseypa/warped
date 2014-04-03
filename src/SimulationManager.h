@@ -2,10 +2,19 @@
 #define SIMULATION_MANAGER_H
 
 
-#include "warped.h"
-#include "SimulationObject.h"
+#include <iosfwd>                       // for ios
+#include <string>                       // for string
+#include <vector>                       // for vector
+
+#include "Configurable.h"               // for Configurable
+#include "SimulationObject.h"           // for SimulationObject (ptr only), etc
 #include "SimulationStream.h"
-#include "Configurable.h"
+#include "warped.h"                     // for SEVERITY
+
+class Event;
+class SimulationObject;
+class SimulationStream;
+class VTime;
 
 /** The abstract base class SimulationManager.
 
@@ -102,17 +111,6 @@ public:
     */
     virtual void registerSimulationObjects() = 0;
 
-    /** This method is called to unregister a list (vector of simulation
-        object pointers) of simulation objects from the SimulationManager.
-        The size of the vector must be greater than or equal to one.
-
-        This is a pure virtual function and has to be overridden by the user.
-
-        @param list The vector of simulation object pointers to unregister
-    */
-    virtual
-    void unregisterSimulationObjects(vector<SimulationObject*>* list) = 0;
-
     /** Get object handle with string object as lookup.
 
     This is a pure virtual function and has to be overridden by the user.
@@ -120,7 +118,7 @@ public:
     @param object String used to look up object.
     @return Handle to the object.
     */
-    virtual SimulationObject* getObjectHandle(const string& object) const = 0;
+    virtual SimulationObject* getObjectHandle(const std::string& object) const = 0;
 
     /** Get the current simulation time.
 
@@ -131,16 +129,16 @@ public:
     virtual const VTime& getSimulationTime() const = 0;
 
     /// get a handle to a simulation input stream
-    virtual SimulationStream* getIFStream(const string& filename,
+    virtual SimulationStream* getIFStream(const std::string& filename,
                                           SimulationObject* object) = 0;
 
     /// get a handle to a simulation output stream
-    virtual SimulationStream* getOFStream(const string& filename,
+    virtual SimulationStream* getOFStream(const std::string& filename,
                                           SimulationObject* object,
-                                          ios::openmode mode=ios::out) = 0;
+                                          std::ios::openmode mode=std::ios::out) = 0;
 
     /// get a handle to a simulation input-output stream
-    virtual SimulationStream* getIOFStream(const string& filename,
+    virtual SimulationStream* getIOFStream(const std::string& filename,
                                            SimulationObject* object) = 0;
 
     /// Returns the number of objects associated xwith this SimulationManager
@@ -156,7 +154,7 @@ public:
        @param msg The error message.
        @param level The level of severity of the error.
     */
-    virtual void reportError(const string& msg, const SEVERITY level);
+    virtual void reportError(const std::string& msg, const SEVERITY level);
 
     /**
        This returns the simulation time that we are "safely" up to - we will
@@ -184,7 +182,7 @@ public:
     /**
        Shutdown, displaying "errorMessage" as the reason.
     */
-    virtual void shutdown(const string& errorMessage) = 0;
+    virtual void shutdown(const std::string& errorMessage) = 0;
 
     //@} // End of Public Class Methods of SimulationManager.
 

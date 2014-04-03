@@ -1,13 +1,15 @@
 #ifndef ECLMPL_CONNECTION_INTERFACE_IMPLEMENTATION_BASE
 #define ECLMPL_CONNECTION_INTERFACE_IMPLEMENTATION_BASE
 
-#include <vector>
-#include <string>
+#include <string>                       // for string
+#include <vector>                       // for vector
 
 #include "eclmplCommonInclude.h"
-#include "eclmplConnectionInterface.h"
-#include "eclmplContactInfo.h"
 #include "eclmplConfigFileTable.h"
+#include "eclmplConnectionInterface.h"  // for eclmplConnectionInterface
+#include "eclmplContactInfo.h"          // for eclmplContactInfo
+
+class eclmplConfigFileTable;
 
 /** The slaveStartupInfo struct.
 

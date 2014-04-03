@@ -1,6 +1,10 @@
+#include <vector> 
 
+#include "DeserializerManager.h"        // for string, DeserializerManager
 #include "InitializationMessage.h"
-#include "DeserializerManager.h"
+#include "SerializedInstance.h"         // for SerializedInstance
+
+class Serializable;
 
 void
 InitializationMessage::serialize(SerializedInstance* addTo) const {
@@ -12,9 +16,9 @@ InitializationMessage::serialize(SerializedInstance* addTo) const {
     addTo->addUnsigned(numSimulationManagers);
 }
 
-const vector<string>
+const std::vector<string>
 InitializationMessage::deserializeStringVector(SerializedInstance* data) {
-    vector<string> retval;
+    std::vector<string> retval;
     int numStrings = data->getInt();
     for (int i = 0; i < numStrings; i++) {
         retval.push_back(data->getString());
@@ -27,7 +31,7 @@ InitializationMessage::deserialize(SerializedInstance* data) {
     unsigned int source = data->getUnsigned();
     unsigned int dest = data->getUnsigned();
     unsigned int incNum = data->getUnsigned();
-    const vector<string>& objectNames = deserializeStringVector(data);
+    const std::vector<string>& objectNames = deserializeStringVector(data);
     unsigned int numLPs = data->getUnsigned();
 
     InitializationMessage* retval = new InitializationMessage(source,

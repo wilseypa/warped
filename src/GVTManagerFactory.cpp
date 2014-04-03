@@ -1,11 +1,18 @@
 
+#include <stddef.h>                     // for NULL
+#include <ostream>                      // for operator<<, basic_ostream, etc
+#include <string>                       // for allocator, operator+, etc
+
+#include "Configurable.h"               // for Configurable
 #include "GVTManagerFactory.h"
-#include "MatternGVTManager.h"
-#include "ThreadedMatternGVTManager.h"
-#include "SimulationConfiguration.h"
-#include "TimeWarpConfigurationManager.h"
+#include "MatternGVTManager.h"          // for MatternGVTManager
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "ThreadedMatternGVTManager.h"  // for ThreadedMatternGVTManager
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "WarpedDebug.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
+using std::string;
 
 GVTManagerFactory::GVTManagerFactory() {
 }

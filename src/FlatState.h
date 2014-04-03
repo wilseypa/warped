@@ -2,8 +2,8 @@
 #define FLAT_STATE_H
 
 
+#include "State.h"                      // for State
 #include "warped.h"
-#include "State.h"
 
 /** The abstract base class FlatState.
 

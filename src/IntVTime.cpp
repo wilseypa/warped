@@ -1,13 +1,15 @@
 
+#include <iostream>                     // for ostringstream, etc
+#include <string>                       // for string
+
+#include "DeserializerManager.h"        // for DeserializerManager, string
 #include "IntVTime.h"
-#include "Serializable.h"
-#include "SerializedInstance.h"
-#include "DeserializerManager.h"
-#include <string>
-#include <typeinfo>
-#include <iostream>
-#include <sstream>
-using std::ostringstream;
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "warped.h"                     // for etc
+
+class Serializable;
+class VTime;
+
 using std::cerr;
 using std::endl;
 
@@ -153,7 +155,7 @@ IntVTime::operator- (int right) const {
 
 const string
 IntVTime::toString() const {
-    ostringstream stream;
+    std::ostringstream stream;
     stream << myTime;
     return stream.str();
 }

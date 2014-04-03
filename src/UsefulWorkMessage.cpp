@@ -1,6 +1,9 @@
 
+#include "DeserializerManager.h"        // for string, DeserializerManager
+#include "SerializedInstance.h"         // for SerializedInstance
 #include "UsefulWorkMessage.h"
-#include "DeserializerManager.h"
+
+class Serializable;
 
 void
 UsefulWorkMessage::serialize(SerializedInstance* serialized) const {

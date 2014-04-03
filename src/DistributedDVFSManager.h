@@ -2,10 +2,17 @@
 #define DECENTRALIZED_CLOCK_FREQUENCY_MANAGER_H
 
 
-#include "DVFSManagerImplementationBase.h"
 #include <deque>
 #include <fstream>
+#include <string>                       // for string
 
+#include "DVFSManager.h"                // for DVFSManager::Algorithm, etc
+#include "DVFSManagerImplementationBase.h"
+
+using std::string;
+
+class KernelMessage;
+class SimulationConfiguration;
 class TimeWarpSimulationManager;
 
 /** The SharedDVFSManager base class.

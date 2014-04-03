@@ -1,9 +1,16 @@
 
-#include "eclmplConnectionInterfaceImplementationBase.h"
+#include <stdio.h>                      // for sprintf, perror
+#include <stdlib.h>                     // for atoi, abort, free
+#include <string.h>                     // for strlen, memcpy, strcpy, etc
+#include <unistd.h>                     // for execv, fork, getcwd
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <string>                       // for string, operator>>, etc
+#include <vector>                       // for vector
 
-#include <fstream>
-#include <vector>
-#include <string>
+#include "eclmpl/eclmplConfigFileTable.h"  // for eclmplConfigFileTable
+#include "eclmpl/eclmplContactInfo.h"   // for eclmplContactInfo
+#include "eclmplConnectionInterfaceImplementationBase.h"
+#include "warped.h"                     // for ASSERT
 
 const std::string configFile = "procgroup";
 const unsigned int maxBuf = 65535;

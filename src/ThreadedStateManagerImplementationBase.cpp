@@ -1,9 +1,18 @@
 
+#include <stdlib.h>                     // for exit, abort, NULL
+#include <iostream>                     // for operator<<, ostream, etc
+
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "LockState.h"                  // for LockState
+#include "SetObject.h"                  // for SetObject, ostream, etc
+#include "SimulationObject.h"           // for SimulationObject
+#include "State.h"                      // for State
+#include "ThreadedOptFossilCollManager.h"
 #include "ThreadedStateManagerImplementationBase.h"
-#include "SimulationObject.h"
-#include "State.h"
-#include "OptFossilCollManager.h"
-#include "SetObject.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "VTime.h"                      // for operator<<, VTime
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
 
 using std::cerr;
 using std::endl;

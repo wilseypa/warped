@@ -2,17 +2,22 @@
 #define DEFAULTTIMEWARPEVENTCONTAINER_H_
 
 
+#include <algorithm>                    // for sort
+#include <deque>                        // for _Deque_iterator, operator-, etc
+#include <iostream>                     // for endl, ostream
+#include <vector>                       // for vector
+
 #include "EventFunctors.h"
-#include <deque>
-#include <vector>
-#include <iostream>
+
+class Event;
+class VTime;
 
 using std::deque;
 using std::vector;
 using std::endl;
 
-class SimulationObject;
 class NegativeEvent;
+class SimulationObject;
 
 /**
    This class manages the set of events for a single SimulationObject.

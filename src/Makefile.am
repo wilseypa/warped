@@ -1,5 +1,3 @@
-AM_CPPFLAGS=-I$(top_srcdir)/thirdparty
-
 include eclmpl/Makefile.am.stub
 
 lib_LTLIBRARIES = libwarped.la 
@@ -15,6 +13,9 @@ endif
 endif
 
 libwarped_la_LIBADD += $(top_builddir)/thirdparty/json/libjsoncpp.la
+libwarped_la_LIBADD += $(top_builddir)/thirdparty/metis/libmetis/libmetis.la
+
+libwarped_la_CPPFLAGS=-I$(top_srcdir)/thirdparty -I$(top_srcdir)/thirdparty/metis/include
 
 CONTROLKIT_H_FILES = \
 	controlkit/Actuator.h \
@@ -39,7 +40,6 @@ WARPED_H_FILES = \
 	AggressiveOutputManager.h \
 	Application.h \
 	AtomicState.h \
-	CentralizedEventSetSchedulingManager.h \
 	ChebyFossilCollManager.h \
 	CirculateInitializationMessage.h \
 	CommunicatingEntity.h \
@@ -49,15 +49,12 @@ WARPED_H_FILES = \
 	Configurable.h \
 	ConfigurationManager.h \
 	Configurer.h \
-	ConsoleIO.h \
 	ControlManager.h \
 	CostAdaptiveStateManager.h \
 	DefaultCommunicationManager.h \
 	DefaultEvent.h \
 	DefaultObjectID.h \
-	DefaultPartitioner.h \
 	DefaultPhysicalCommunicationLayer.h \
-	DefaultSchedulingManager.h \
 	DefaultTimeWarpEventContainer.h \
 	DefaultTimeWarpEventContOneAntiMsg.h \
 	DefaultTimeWarpEventSet.h \
@@ -78,9 +75,10 @@ WARPED_H_FILES = \
 	FactoryManager.h \
 	FactorySymbolTable.h \
 	FileData.h \
-	FileManager.h \
 	FileQueue.h \
 	FlatState.h \
+	GraphStatistics.h \
+	GreedyPartitioner.h \
 	GVTManager.h \
 	GVTManagerFactory.h \
 	GVTManagerImplementationBase.h \
@@ -96,10 +94,6 @@ WARPED_H_FILES = \
 	LockFreeList.h \
 	LadderQRelaxed.h \
 	LazyOutputManager.h \
-	LocalEventMessage.h \
-	LocalFossilCollectMessage.h \
-	LocalKernelMessage.h \
-	LocalNegativeEventMessage.h \
 	LockedQueue.h \
 	LockState.h \
 	MatternGVTManager.h \
@@ -109,7 +103,6 @@ WARPED_H_FILES = \
 	MsgAggregatingCommunicationManager.h \
 	NegativeEvent.h \
 	NegativeEventMessage.h \
-	ObjectEventPair.h \
 	ObjectID.h \
 	ObjectStub.h \
 	OptFossilCollManager.h \
@@ -120,7 +113,9 @@ WARPED_H_FILES = \
 	OutputManagerImplementationBase.h \
 	Partitioner.h \
 	PartitionInfo.h \
+	PartitionManager.h \
 	PeriodicStateManager.h \
+	ProfileGuidedPartitioner.h \
 	ReceiverQueueContainer.h \
 	RestoreCkptMessage.h \
 	RoundRobinPartitioner.h \
@@ -129,7 +124,6 @@ WARPED_H_FILES = \
 	SchedulingManagerFactory.h \
 	SenderQueueContainer.h \
 	SequentialConfigurationManager.h \
-	SequentialFileManager.h \
 	SequentialSimulationManager.h \
 	SequentialSimulationStream.h \
 	Serializable.h \
@@ -145,9 +139,7 @@ WARPED_H_FILES = \
 	SimulationStream.h \
 	SingleLinkedList.h \
 	SingleTerminationManager.h \
-	SinkObject.h \
 	Socket.h \
-	SourceObject.h \
 	Spinner.h \
 	SplayTree.h \
 	StackOfPtr.h \
@@ -181,14 +173,12 @@ WARPED_H_FILES = \
 	ThreadedTimeWarpMultiSetSchedulingManager.h \
 	ThreadedTimeWarpSimulationManager.h \
 	TimeWarpCentralizedEventSet.h \
-	TimeWarpCentralizedEventSetFactory.h \
 	TimeWarpConfigurationManager.h \
 	TimeWarpEventSet.h \
 	TimeWarpEventSetFactory.h \
 	TimeWarpMultiSet.h \
 	TimeWarpMultiSetOneAntiMsg.h \
 	TimeWarpMultiSetSchedulingManager.h \
-	TimeWarpSenderQueue.h \
 	TimeWarpSimulationManager.h \
 	TimeWarpSimulationManagerFactory.h \
 	TimeWarpSimulationStream.h \
@@ -217,7 +207,7 @@ libwarped_la_SOURCES = \
 	AdaptiveOutputManager.cpp \
 	AdaptiveStateManagerBase.cpp \
 	AggressiveOutputManager.cpp \
-	CentralizedEventSetSchedulingManager.cpp \
+	Application.cpp \
 	ChebyFossilCollManager.cpp \
 	CirculateInitializationMessage.cpp \
 	CommunicationManager.cpp \
@@ -225,14 +215,11 @@ libwarped_la_SOURCES = \
 	CommunicationManagerImplementationBase.cpp \
 	Configurable.cpp \
 	Configurer.cpp \
-	ConsoleIO.cpp \
 	ControlManager.cpp \
 	CostAdaptiveStateManager.cpp \
 	DefaultCommunicationManager.cpp \
 	DefaultEvent.cpp \
-	DefaultPartitioner.cpp \
 	DefaultPhysicalCommunicationLayer.cpp \
-	DefaultSchedulingManager.cpp \
 	DefaultTimeWarpEventContainer.cpp \
 	DefaultTimeWarpEventContOneAntiMsg.cpp \
 	DefaultTimeWarpEventSet.cpp \
@@ -247,9 +234,10 @@ libwarped_la_SOURCES = \
 	FactoryImplementationBase.cpp \
 	FactoryManager.cpp \
 	FactorySymbolTable.cpp \
-	FileManager.cpp \
 	FileQueue.cpp \
 	FlatState.cpp \
+	GraphStatistics.cpp \
+	GreedyPartitioner.cpp \
 	GVTManagerFactory.cpp \
 	GVTManagerImplementationBase.cpp \
 	GVTUpdateMessage.cpp \
@@ -272,12 +260,13 @@ libwarped_la_SOURCES = \
 	OutputManagerImplementationBase.cpp \
 	Partitioner.cpp \
 	PartitionInfo.cpp \
+	PartitionManager.cpp \
 	PeriodicStateManager.cpp \
+	ProfileGuidedPartitioner.cpp \
 	RestoreCkptMessage.cpp \
 	RoundRobinPartitioner.cpp \
 	SchedulingManagerFactory.cpp \
 	SequentialConfigurationManager.cpp \
-	SequentialFileManager.cpp \
 	SequentialSimulationManager.cpp \
 	SequentialSimulationStream.cpp \
 	Serializable.cpp \
@@ -291,9 +280,7 @@ libwarped_la_SOURCES = \
 	SimulationObjectProxy.cpp \
 	SimulationStream.cpp \
 	SingleLinkedList.cpp \
-	SinkObject.cpp \
 	Socket.cpp \
-	SourceObject.cpp \
 	Spinner.cpp \
 	SplayTree.cpp \
 	StartMessage.cpp \
@@ -307,14 +294,12 @@ libwarped_la_SOURCES = \
 	ThreadedLazyOutputManager.cpp \
 	ThreadedMatternGVTManager.cpp \
 	ThreadedOutputEvents.cpp \
-	TimeWarpCentralizedEventSetFactory.cpp \
 	TimeWarpConfigurationManager.cpp \
 	TimeWarpEventSet.cpp \
 	TimeWarpEventSetFactory.cpp \
 	TimeWarpMultiSet.cpp \
 	TimeWarpMultiSetOneAntiMsg.cpp \
 	TimeWarpMultiSetSchedulingManager.cpp \
-	TimeWarpSenderQueue.cpp \
 	TimeWarpSimulationManager.cpp \
 	TimeWarpSimulationManagerFactory.cpp \
 	TimeWarpSimulationStream.cpp \

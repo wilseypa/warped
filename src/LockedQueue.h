@@ -2,9 +2,9 @@
 #define LOCKEDQUEUE_H_
 
 
-#include<pthread.h>
-#include<deque>
-//#include <iostream>
+#include <pthread.h>
+#include <deque>
+#include <string>
 
 using std::deque;
 
@@ -22,8 +22,8 @@ public:
     }
     ~LockedQueue() {};
 
-    void enqueue(element e, const string syncMech) {
-        const string syncMechanism = "ATOMICLOCK";  /* MUTEX code section is not needed currently.
+    void enqueue(element e, const std::string syncMech) {
+        const std::string syncMechanism = "ATOMICLOCK";  /* MUTEX code section is not needed currently.
                                  * Code section not deleted keeping future use
                                  * in mind */
 
@@ -42,8 +42,8 @@ public:
         }
     }
 
-    element dequeue(const string syncMech) {
-        const string syncMechanism = "ATOMICLOCK";  /* MUTEX code section is not needed currently.
+    element dequeue(const std::string syncMech) {
+        const std::string syncMechanism = "ATOMICLOCK";  /* MUTEX code section is not needed currently.
                                  * Code section not deleted keeping future use
                                  * in mind */
 
@@ -69,8 +69,8 @@ public:
         return returnVal;
     }
 
-    element peekNext(const string syncMech) {
-        const string syncMechanism = "ATOMICLOCK";  /* MUTEX code section is not needed currently.
+    element peekNext(const std::string syncMech) {
+        const std::string syncMechanism = "ATOMICLOCK";  /* MUTEX code section is not needed currently.
                                  * Code section not deleted keeping future use
                                  * in mind */
 

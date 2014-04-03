@@ -2,10 +2,13 @@
 #define GVT_MANAGER_FACTORY_H
 
 
-#include "warped.h"
+#include "Configurer.h"                 // for Configurer
 #include "GVTManager.h"
 #include "SimulationManager.h"
-#include "Configurer.h"
+#include "warped.h"
+
+class Configurable;
+class SimulationConfiguration;
 
 /** The GVTManagerFactory class.
 

@@ -2,9 +2,12 @@
 #define DEFAULT_EVENT_H
 
 
-#include "Event.h"
-#include "EventId.h"
-#include "SimulationObject.h"
+#include "Event.h"                      // for Event
+#include "EventId.h"                    // for EventId
+#include "ObjectID.h"                   // for ObjectID
+#include "SimulationObject.h"           // for SimulationObject
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
 
 /** A default implementation of the Event interface. */
 

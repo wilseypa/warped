@@ -1,12 +1,11 @@
 
-#include "Event.h"
-#include "EventId.h"
-#include "SerializedInstance.h"
-#include "OptFossilCollManager.h"
+#include <ostream>                      // for operator<<, ostream, etc
 
-// No longer using these for optimistic fossil collection.
-//bool Event::usingOptFossilCollMan = false;
-//OptFossilCollManager *Event::myOptFosColMan = NULL;
+#include "Event.h"
+#include "EventId.h"                    // for EventId, operator<<
+#include "ObjectID.h"                   // for ObjectID, operator<<
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "VTime.h"                      // for VTime, operator<<
 
 Event::~Event() {}
 
@@ -54,28 +53,4 @@ Event::serialize(SerializedInstance* addTo) const {
     addTo->addUnsigned(getReceiver().getSimulationManagerID());
     addTo->addUnsigned(getReceiver().getSimulationObjectID());
     addTo->addUnsigned(getEventId().val);
-}
-
-void*
-Event::operator new(size_t size) {
-    // No longer overloading the new operator for optimistic fossil collection.
-    /*if(!usingOptFossilCollMan){
-      return ::operator new(size);
-    }
-    else{
-      return myOptFosColMan->newEvent(size);
-    }*/
-    ::operator new(size);
-}
-
-void
-Event::operator delete(void* toDelete) {
-    // No longer overloading the delete operator for optimistic fossil collection.
-    /*if(!usingOptFossilCollMan){
-      ::operator delete(toDelete);
-    }
-    else{
-      myOptFosColMan->deleteEvent(toDelete);
-    }*/
-    ::operator delete(toDelete);
 }

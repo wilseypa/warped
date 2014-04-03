@@ -1,7 +1,18 @@
 #ifndef CF_ROLLBACK_VECTOR_MESSAGE_H
 #define CF_ROLLBACK_VECTOR_MESSAGE_H
 
-#include "KernelMessage.h"
+#include <string>                       // for string
+#include <vector>                       // for vector
+
+#include "DeserializerManager.h"        // for string
+#include "KernelMessage.h"              // for KernelMessage
+#include "Serializable.h"               // for string, etc
+
+class Serializable;
+
+using std::string;
+
+class SerializedInstance;
 
 /**
    Allows a vector of integers to be passed among nodes

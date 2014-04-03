@@ -1,18 +1,26 @@
 
-#include "SerializedInstance.h"
-#include "TimeWarpSimulationManager.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "CommunicationManagerImplementationBase.h"
-#include "TerminateToken.h"
-#include "StartMessage.h"
-#include "InitializationMessage.h"
+#include <stdlib.h>                     // for NULL, abort
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <unordered_map>                // for _Node_iterator
+#include <utility>                      // for pair
+#include <vector>                       // for vector
+
 #include "CirculateInitializationMessage.h"
-#include <sstream>
+#include "CommunicatingEntity.h"        // for CommunicatingEntity
+#include "CommunicationManagerImplementationBase.h"
+#include "InitializationMessage.h"      // for InitializationMessage
+#include "KernelMessage.h"              // for KernelMessage
+#include "Serializable.h"               // for Serializable
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "StartMessage.h"               // for StartMessage
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "eclmpl/PhysicalCommunicationLayer.h"
+#include "warped.h"                     // for ASSERT
 
 using std::istringstream;
-using std::ostringstream;
 using std::cerr;
 using std::endl;
+using std::vector;
 
 CommunicationManagerImplementationBase::CommunicationManagerImplementationBase(
     PhysicalCommunicationLayer* physicalLayer,

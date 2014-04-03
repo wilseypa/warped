@@ -2,11 +2,16 @@
 #define EVENT_H
 
 
-#include "warped.h"
-#include <Serializable.h>
+#include <Serializable.h>               // for Serializable
+#include <stddef.h>                     // for size_t
+#include <iosfwd>                       // for ostream
 
-class VTime;
+#include "warped.h"
+
 class EventId;
+class ObjectID;
+class SerializedInstance;
+class VTime;
 //class OptFossilCollManager;
 
 /** The abstract base class Event.
@@ -106,12 +111,6 @@ public:
     /// Overloaded operator ==
     friend bool operator==(const Event& eve1, const Event& eve2);
 
-    /// Overload operator new.
-    void* operator new(size_t);
-
-    /// Overload operator delete.
-    void operator delete(void*);
-
     /**
        A static utility method that allows the comparision of two events
        based on this interface.  In general derived events will want to
@@ -119,11 +118,6 @@ public:
        work.
     */
     static bool compareEvents(const Event*, const Event*);
-
-private:
-    // No longer using these for optimistic fossil collection.
-    //static OptFossilCollManager *myOptFosColMan;
-    //static bool usingOptFossilCollMan;
 };
 
 

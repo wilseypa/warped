@@ -1,9 +1,12 @@
+#include <iostream>                     // for basic_ostream::operator<<, etc
 
+#include "CommunicationManager.h"       // for CommunicationManager
+#include "KernelMessage.h"              // for KernelMessage
 #include "SharedDVFSManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "UsefulWorkMessage.h"
-#include "CommunicationManager.h"
-#include "WarpedDebug.h"
+#include "UsefulWorkMessage.h"          // for UsefulWorkMessage, etc
+#include "warped.h"                     // for ASSERT
+
+class SimulationConfiguration;
 
 using namespace std;
 

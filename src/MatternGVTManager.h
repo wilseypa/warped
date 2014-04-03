@@ -2,12 +2,20 @@
 #define MATTERN_GVT_MANAGER_H
 
 
+#include <string>                       // for string
+
 #include "GVTManagerImplementationBase.h"
 #include "MatternObjectRecord.h"
 
-class SchedulingManager;
+using std::string;
+
 class CommunicationManager;
+class KernelMessage;
+class MatternObjectRecord;
 class ObjectID;
+class SchedulingManager;
+class TimeWarpSimulationManager;
+class VTime;
 
 /** The MatternGVTManager class.
 

@@ -1,14 +1,20 @@
 #ifndef COMMUNICATION_MANAGER_H
 #define COMMUNICATION_MANAGER_H
 
-#include <unordered_map>
+#include <string>                       // for string, hash
+#include <unordered_map>                // for unordered_map
 
-#include "warped.h"
 #include "CommunicatingEntity.h"
+#include "Configurable.h"               // for Configurable
 #include "eclmpl/PhysicalCommunicationLayer.h"
-#include "Configurable.h"
+#include "warped.h"
 
+using std::string;
+
+class CommunicatingEntity;
 class KernelMessage;
+class SerializedInstance;
+class SimulationConfiguration;
 class SimulationObject;
 class TimeWarpSimulationManager;
 

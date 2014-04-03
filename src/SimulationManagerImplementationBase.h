@@ -1,12 +1,19 @@
 #ifndef SIMULATION_MANAGER_IMPLEMENTATION_BASE_H
 #define SIMULATION_MANAGER_IMPLEMENTATION_BASE_H
 
+#include <fstream>                      // for ostream
+#include <string>                       // for string, hash
+#include <unordered_map>                // for _Hashtable<>::iterator, etc
+#include <utility>                      // for pair
+#include <vector>                       // for vector
 
+#include "SimulationManager.h"          // for SimulationManager
+#include "SimulationObject.h"           // for string, etc
 #include "warped.h"
-#include <fstream>
-#include <unordered_map>
-#include "SimulationManager.h"
 
+class Event;
+class SimulationObject;
+class VTime;
 
 /** The base class that implements a SimulationManager.
 
@@ -19,53 +26,8 @@
 */
 class SimulationManagerImplementationBase : public SimulationManager {
 public:
-
-    /**@name Public Class Methods of SimulationObjectImplementationBase. */
-    //@{
-
-    /** Constructor.
-
-    @param numProcessors Number of processors in the simulation.
-    */
     SimulationManagerImplementationBase();
-
-    /// Destructor.
     virtual ~SimulationManagerImplementationBase();
-
-    /** This method is called to start the simulation.
-
-    The Simulation Manager calls this method when it is ready to start
-    the simulation.
-
-    @param simulateUntil The time till which to simulate
-    */
-
-    virtual void simulate(const VTime& simulateUntil);
-
-    /** Receive an event.
-
-    @param event Pointer to the received event.
-    @param sender Pointer to the sender of the event.
-    @param receiver Pointer to the receiver of the event.
-    */
-    virtual void receiveEvent(Event* event, SimulationObject* sender,
-                              SimulationObject* receiver);
-
-    /** This method is called to register a list (a hash_map of simulation
-        object pointers) of simulation objects with the Simulation Manager.
-        The size of the hash_map must be greater than or equal to one.
-
-        @param list The vector of simulation object pointers to register
-    */
-    virtual void registerSimulationObjects();
-
-    /** This method is called to unregister a list (vector of simulation
-        object pointers) of simulation objects from the SimulationManager.
-        The size of the vector must be greater than or equal to one.
-
-        @param list The vector of simulation object pointers to unregister
-    */
-    void unregisterSimulationObjects(vector<SimulationObject*>* list);
 
     /// returns the number of simulation objects
     unsigned int getNumberOfSimulationObjects() const { return numberOfObjects; }
@@ -78,9 +40,6 @@ public:
         return numberOfSimulationManagers;
     }
 
-
-    //@} // End of Public Class Methods of SimulationManagerImplementationBase.
-
 protected:
     /** This method is used to initialize the Simulation Manager before the
         simulation begins.
@@ -89,32 +48,16 @@ protected:
         required for initialization (examples of what might occur during
         initialization might include opening files, or setting up a
         distributed simulation).
-
     */
     void initializeObjects();
 
     /** This method is called after the simulation has ended.
 
-    This allows the Simulation Manager to ``clean up'', performing
+    This allows the Simulation Manager to clean up, performing
     actions such as closing files, collecting statistics, and producing
     output.
-
     */
     void finalizeObjects();
-
-    /**@name Protected Class Methods of SimulationManagerImplementationBase. */
-    //@{
-
-    /** Display the object name - object pointer map.
-
-    @param out Out-stream.
-    */
-    void displayObjectMap(std::ostream& out);
-
-    //@} // End of Protected Class Methods of SimulationManagerImplementationbase.
-
-    /**@name Protected Class Attributes of SimulationManagerImplementationBase.*/
-    //@{
 
     /// Number of objects registered with this simulation manager.
     unsigned int numberOfObjects;
@@ -122,10 +65,10 @@ protected:
     /// Number of simulation managers.
     unsigned int numberOfSimulationManagers;
 
-    typedef std::unordered_map<string, SimulationObject*> typeSimMap;
+    typedef std::unordered_map<std::string, SimulationObject*> typeSimMap;
 
-    vector<SimulationObject*>* getElementVector(typeSimMap* elementMap) {
-        vector<SimulationObject*>* objects = new vector<SimulationObject*>;
+    std::vector<SimulationObject*>* getElementVector(typeSimMap* elementMap) {
+        std::vector<SimulationObject*>* objects = new std::vector<SimulationObject*>;
         //Obtains all the objects from elementMap
         for (typeSimMap::iterator i = elementMap->begin(); i != elementMap->end(); i++) {
             objects->push_back(i->second);
@@ -133,8 +76,8 @@ protected:
         return objects;
     }
 
-    vector<string>* getKeyVector(typeSimMap* elementMap) {
-        vector<string>* keys = new vector<string>;
+    std::vector<std::string>* getKeyVector(typeSimMap* elementMap) {
+        std::vector<std::string>* keys = new std::vector<std::string>;
         //Obtains all the objects from elementMap
         for (typeSimMap::iterator i = elementMap->begin(); i != elementMap->end(); i++) {
             keys->push_back(i->first);
@@ -142,18 +85,14 @@ protected:
         return keys;
     }
 
-    typeSimMap* localArrayOfSimObjPtrs;
-    /// Mapping between simulation object ids to names
-    vector<SimulationObject*> localArrayOfSimObjIDs;
+    /// Map of local Names -> SimulationObjects
+    typeSimMap* simObjectsByName;
 
+    /// Map of local ID -> SimulationObjects
+    std::vector<SimulationObject*> simObjectsByID;
 
-
-    /**
-       Turns a vector<SimulationObject *> into a map<string, SimulationObject *>.
-    */
-    typeSimMap* partitionVectorToHashMap(vector<SimulationObject*>* vector);
-    //@} // End of Protected Class Attributes of SimulationManagerImplementationBase.
-
+    /// Turns a vector<SimulationObject *> into a map<string, SimulationObject *>.
+    typeSimMap* partitionVectorToHashMap(std::vector<SimulationObject*>* vector);
 };
 
 #endif

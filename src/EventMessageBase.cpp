@@ -1,6 +1,7 @@
 
+#include "Event.h"                      // for Event
 #include "EventMessageBase.h"
-#include "Event.h"
+#include "SerializedInstance.h"         // for SerializedInstance
 
 void
 EventMessageBase::serialize(SerializedInstance* addTo) const {

@@ -20,7 +20,7 @@ public:
         ListNode *h = new ListNode(k, INS);
         enlist(h);
         bool b = helpInsert(h, k);
-        if(__sync_bool_compare_and_swap( &(h->state), INS, (b ? DAT:INV) )) {
+        if(!__sync_bool_compare_and_swap( &(h->state), INS, (b ? DAT:INV) )) {
             helpRemove(h,k);
             h->state = INV;
         }

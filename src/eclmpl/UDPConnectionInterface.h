@@ -1,10 +1,13 @@
 #ifndef UDP_CONNECTION_INTERFACE_H
 #define UDP_CONNECTION_INTERFACE_H
 
-#include <vector>
+#include <vector>                       // for vector
 
-#include "eclmplCommonInclude.h"
 #include "SocketBasedConnectionInterface.h"
+#include "eclmplCommonInclude.h"
+
+class eclmplConfigFileTable;
+class eclmplSocket;
 
 class UDPConnectionInterface : public SocketBasedConnectionInterface {
 public:

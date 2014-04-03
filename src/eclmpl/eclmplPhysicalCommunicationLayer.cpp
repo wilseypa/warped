@@ -1,6 +1,11 @@
+#include <stddef.h>                     // for NULL
+#include <vector>                       // for vector
+
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "eclmpl/NetworkMessage.h"      // for NetworkMessage
+#include "eclmpl/eclmplCommonInclude.h"  // for ECLMPL_ASSERT
+#include "eclmpl/eclmplConnectionInterface.h"
 #include "eclmplPhysicalCommunicationLayer.h"
-#include "SerializedInstance.h"
-#include <fstream>
 
 #define ONLY_CHECK_PHYSICAL_LAYER_ON_EMPTY_QUEUE
 const int maxBuf = 65535;

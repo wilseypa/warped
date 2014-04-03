@@ -1,15 +1,28 @@
 
-#include "ThreadedTimeWarpMultiSet.h"
-#include "SimulationObject.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "ThreadedTimeWarpMultiSetSchedulingManager.h"
-#include "StragglerEvent.h"
-#include "ThreadedTimeWarpMultiSetLTSF.h"
+#include <string.h>                     // for NULL, memset
+#include <iostream>                     // for operator<<, basic_ostream, etc
 
-class NegativeEvent;
+#include "Event.h"                      // for Event, operator<<
+#include "EventId.h"                    // for EventId
+#include "LockState.h"                  // for LockState
+#include "NegativeEvent.h"              // for NegativeEvent
+#include "ObjectID.h"                   // for ObjectID
+#include "SimulationObject.h"           // for SimulationObject
+#include "StragglerEvent.h"             // for StragglerEvent
+#include "ThreadedStateManager.h"       // for ThreadedStateManager
+#include "ThreadedTimeWarpLoadBalancer.h"
+#include "ThreadedTimeWarpMultiSet.h"
+#include "ThreadedTimeWarpMultiSetLTSF.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
+#include "WorkerInformation.h"          // for __sync_fetch_and_add_4
+#include "warped.h"                     // for ASSERT
+
 using std::cout;
 using std::cerr;
 using std::endl;
+using std::vector;
 
 ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
     ThreadedTimeWarpSimulationManager* initSimulationManager) {
@@ -21,6 +34,9 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 
     //synchronization mechanism
     syncMechanism = initSimulationManager->getSyncMechanism();
+
+    //worker thread migration
+    workerThreadMigration = initSimulationManager->getWorkerThreadMigration();
 
     unprocessedQueueLockState = new LockState *[objectCount];
     processedQueueLockState = new LockState *[objectCount];
@@ -353,6 +369,11 @@ const Event* ThreadedTimeWarpMultiSet::peekEvent(SimulationObject* simObj,
     SimulationObject* simObject = NULL;
     if (simObj == NULL) {
         ret = LTSFByThread[threadId-1]->peek(threadId);
+
+        /* If worker thread migration requested */
+        if(workerThreadMigration) {
+            //to be added
+        }
     } else if (simObj != NULL) {
         unsigned int objId = simObj->getObjectID()->getSimulationObjectID();
         if (!this->unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) {

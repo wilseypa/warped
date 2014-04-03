@@ -8,14 +8,10 @@ using std::vector;
 class SimulationObject;
 
 /**
-   Describes the partitioning information requested by the application.
-
-   Basically, the kernels says "I've got <x> processors available".  The
-   application can say in response "<y> is optimal".  It will then provide
-   a PartitionInfo that describes how best to partition the application's
-   objects.
+    A PartitionInfo class contains a grouping of SimulationObjects. Each
+    partition in the PartitionInfo object will be assigned to a different
+    thread or process.
 */
-
 class PartitionInfo {
 public:
     PartitionInfo(unsigned int numPartitions);
@@ -23,34 +19,28 @@ public:
     ~PartitionInfo();
 
     /**
-       This is what the application feels is the optimal number of
-       partitions.  (The kernel might choose to ignore this information.)
+       The number of partitions in this PartitionInfo object.
     */
     unsigned int getNumberOfPartitions() const;
 
     /**
-       Get set <setNumber> of objects.
+       Get a partition of objects that was previously added.
 
-       @param setNumber The application will provide a partitioning scheme
-       based on the number of processes that the kernel says it wants.  The
-       count starts at 0.  (This is C++ after all ;-))
-
-       @return A set, or 0 if you've asked for more sets than the Application
-       says is optimal.
+       @param partitionNumber The index of the partition to retrieve. It must
+                              be smaller than the numebr of partitions added.
     */
-    vector<SimulationObject*>* getObjectSet(unsigned int setNumber) const;
+    vector<SimulationObject*>* getPartition(unsigned int partitionNumber) const;
 
 
     /**
-       The constructor of this PartitionInfo can add vectors via this method.
+       Add a partition of SimulationObjects. Every SimulationObject in the
+       simulation must be included in exactly one partition.
     */
-    void addPartition(unsigned int partitionNumber,
-                      vector<SimulationObject*>* toAdd);
-
+    void addPartition(vector<SimulationObject*>* partition);
 
 private:
     unsigned int myNumberOfPartitions;
-    vector<vector<SimulationObject*> *> myObjectSets;
+    vector<vector<SimulationObject*> *> myPartitions;
 };
 
 #endif

@@ -1,4 +1,18 @@
+#include <stddef.h>                     // for NULL
+#include <sys/time.h>                   // for timeval
+#include <deque>                        // for deque
+#include <iostream>                     // for operator<<, etc
+#include <queue>                        // for priority_queue
+#include <vector>                       // for vector
+
 #include "UDPSelectPhysicalCommunicationLayer.h"
+#include "eclmpl/UDPConnectionInterface.h"  // for UDPConnectionInterface
+#include "eclmpl/eclmplCommonInclude.h"  // for SequenceNumber, etc
+#include "eclmpl/eclmplConnectionInterface.h"
+#include "eclmpl/eclmplSocket.h"        // for eclmplSocket
+#include "eclmpl/eclmplUnreliableNetworkMessage.h"
+#include "warped.h"                     // for ASSERT
+
 using std::cerr;
 using std::endl;
 

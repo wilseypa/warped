@@ -1,11 +1,20 @@
 #ifndef ECLMPL_RELIABLE_PHYSICAL_COMMUNICATION_LAYER_H
 #define ECLMPL_RELIABLE_PHYSICAL_COMMUNICATION_LAYER_H
 
-#include "eclmplCommonInclude.h"
-#include "eclmplUnreliableNetworkMessage.h"
-#include "PhysicalCommunicationLayer.h"
-#include "eclmplTimer.h"
+#include <deque>                        // for deque
+#include <queue>                        // for priority_queue
+#include <vector>                       // for vector
+
+#include "PhysicalCommunicationLayer.h"  // for PhysicalCommunicationLayer
+#include "eclmplCommonInclude.h"        // for SequenceNumber, etc
 #include "eclmplConnectionInterface.h"
+#include "eclmplTimer.h"
+#include "eclmplUnreliableNetworkMessage.h"
+
+class SerializedInstance;
+class eclmplConnectionInterface;
+class eclmplTimer;
+class eclmplUnreliableNetworkMessage;
 
 using std::priority_queue;
 using std::vector;

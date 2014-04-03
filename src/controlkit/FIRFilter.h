@@ -1,10 +1,10 @@
 #ifndef FIR_FILTER_H
 #define FIR_FILTER_H
 
-
 #include <iostream>
+#include <vector>
+
 #include "Filter.h"
-using namespace std;
 
 /** The FIRFilter class.
 
@@ -66,7 +66,7 @@ private:
     Type current_sum;
 
     /// the filter buffer/array
-    vector<Type> fir_array;
+    std::vector<Type> fir_array;
 
     //@} // End of Private Class Attributed of FIRFilter
 };
@@ -77,7 +77,7 @@ private:
 template <class Type>
 inline FIRFilter<Type>::FIRFilter(int n) {
     if (n <= 1) {
-        cerr << "A window size of " << n <<" makes NO sense!" << endl;
+        std::cerr << "A window size of " << n <<" makes NO sense!" << std::endl;
     }
 
     size = n;

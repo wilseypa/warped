@@ -1,16 +1,20 @@
-#include "StateManagerFactory.h"
-#include "PeriodicStateManager.h"
-#include "CostAdaptiveStateManager.h"
-#include "SimulationConfiguration.h"
-#include "State.h"
-#include "SimulationObject.h"
-#include "TimeWarpSimulationManager.h"
-#include "ThreadedPeriodicStateManager.h"
-#include "ThreadedCostAdaptiveStateManager.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "WarpedDebug.h"
+#include <fstream>                      // for operator<<, basic_ostream, etc
+#include <string>                       // for allocator, operator==, etc
 
-#include <string>
+#include "Configurable.h"               // for Configurable
+#include "CostAdaptiveStateManager.h"   // for CostAdaptiveStateManager
+#include "PeriodicStateManager.h"       // for PeriodicStateManager
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
+#include "StateManager.h"               // for StateManager
+#include "StateManagerFactory.h"
+#include "ThreadedCostAdaptiveStateManager.h"
+#include "ThreadedPeriodicStateManager.h"
+#include "ThreadedStateManager.h"       // for ThreadedStateManager
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for StateMgrType::ADAPTIVESTATE, etc
+using std::string;
 
 StateManagerFactory::StateManagerFactory() {
 }

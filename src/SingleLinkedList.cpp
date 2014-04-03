@@ -5,6 +5,8 @@
 
 using std::for_each;
 using std::unary_function;
+using std::vector;
+using std::string;
 
 SingleLinkedList::SingleLinkedList() {
     processedEvents = new vector<const Event*>;

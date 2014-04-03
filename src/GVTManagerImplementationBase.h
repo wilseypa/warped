@@ -2,11 +2,18 @@
 #define GVT_MANAGER_IMPLEMENTATION_BASE_H
 
 
-#include "warped.h"
-#include "GVTManager.h"
+#include <string>                       // for string
 
-class TimeWarpSimulationManager;
+#include "GVTManager.h"                 // for GVTManager
+#include "warped.h"
+
+using std::string;
+
 class ObjectID;
+class SimulationConfiguration;
+class TimeWarpSimulationManager;
+class VTime;
+
 /** The GVTManagerImplementationBase base class.
 
     This is the implementation base class for the various GVT

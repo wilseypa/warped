@@ -1,10 +1,13 @@
+#include <vector>
 
+#include "DeserializerManager.h"        // for string, DeserializerManager
+#include "NegativeEvent.h"              // for NegativeEvent
 #include "NegativeEventMessage.h"
-#include "Event.h"
-#include "DeserializerManager.h"
+#include "Serializable.h"               // for Serializable
+#include "SerializedInstance.h"         // for SerializedInstance
 
 NegativeEventMessage::~NegativeEventMessage() {
-    vector<const NegativeEvent*>::const_iterator it(myEvents.begin());
+    std::vector<const NegativeEvent*>::const_iterator it(myEvents.begin());
     while (it != myEvents.end())
     { delete(*it++); }
 }
@@ -26,7 +29,7 @@ NegativeEventMessage::deserialize(SerializedInstance* data) {
     unsigned int incNum = data->getUnsigned();
     unsigned int numEvents = data->getUnsigned();
 
-    vector<const NegativeEvent*> events;
+    std::vector<const NegativeEvent*> events;
     for (int i = 1; i <= numEvents; i++) {
         events.push_back(dynamic_cast<NegativeEvent*>(data->getSerializable()));
     }

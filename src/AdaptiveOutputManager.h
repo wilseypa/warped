@@ -3,8 +3,13 @@
 
 
 #include <fstream>
+#include <vector>                       // for vector
+
+#include "LazyOutputManager.h"          // for LazyOutputManager
 #include "warped.h"
-#include "LazyOutputManager.h"
+
+class TimeWarpSimulationManager;
+class VTime;
 
 #define FILTER_DEPTH 16
 #define AGGRESSIVE_TO_LAZY 0.5
@@ -14,8 +19,8 @@
 enum cancellationMode {AGGRESSIVE, LAZY};
 
 class Event;
-class SimulationObject;
 class OutputManager;
+class SimulationObject;
 
 /** The DynamicOutputManager class.
 
@@ -104,15 +109,15 @@ protected:
 
     /** The current cancellation mode.
     */
-    vector<cancellationMode> curCancelMode;
+    std::vector<cancellationMode> curCancelMode;
 
     /** The hit count, how many lazy hits have occured.
     */
-    vector<int> hitCount;
+    std::vector<int> hitCount;
 
     /** The hit ratio is used to determine the cancellation mode.
     */
-    vector<float> hitRatio;
+    std::vector<float> hitRatio;
 
     /** The filter depth determines how many comparisons are used.
     */
@@ -120,15 +125,15 @@ protected:
 
     /** Keeps track of the results past comparisons.
     */
-    vector< vector<int> *> comparisonResults;
+    std::vector< std::vector<int> *> comparisonResults;
 
     /** Keeps track of index for comparisonResults.
     */
-    vector<int> curMeasured;
+    std::vector<int> curMeasured;
 
     /** True if permanently in aggressive mode.
     */
-    vector<bool> permanentlyAggressive;
+    std::vector<bool> permanentlyAggressive;
 
     /** True if using 3 threshold values instead of 2.
     */

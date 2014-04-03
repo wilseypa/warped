@@ -1,27 +1,33 @@
+#include <algorithm>                    // for for_each
+#include <functional>                   // for unary_function
+#include <iostream>                     // for cerr
+#include <string>
 
 #include "SimulationManagerImplementationBase.h"
-#include "Application.h"
-#include <functional>
-#include <algorithm>
+#include "SimulationObject.h"           // for SimulationObject
+
+class Event;
+class VTime;
 
 using std::unary_function;
 using std::for_each;
 using std::cerr;
 using std::endl;
+using std::vector;
 
 std::ostream* wout;
 std::ostream* werr;
 
 SimulationManagerImplementationBase::SimulationManagerImplementationBase()
     : numberOfSimulationManagers(0),
-      localArrayOfSimObjPtrs(0),
-      localArrayOfSimObjIDs(0) {}
+      simObjectsByName(0),
+      simObjectsByID(0) {}
 
 SimulationManagerImplementationBase::~SimulationManagerImplementationBase() {
 }
 
-class InitObject : public unary_function<SimulationObject*,
-        void> {
+class InitObject : public unary_function < SimulationObject*,
+        void > {
 public:
     void operator()(SimulationObject* toInit) {
         toInit->initialize();
@@ -30,8 +36,8 @@ public:
 
 void
 SimulationManagerImplementationBase::initializeObjects() {
-    //Obtains all the objects from localArrayOfSimObjPtrs
-    vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
+    //Obtains all the objects from simObjectsByName
+    vector<SimulationObject*>* objects = getElementVector(simObjectsByName);
     InitObject initObject;
     for_each< vector<SimulationObject*>::iterator, InitObject >(objects->begin(),
                                                                 objects->end(),
@@ -46,56 +52,13 @@ SimulationManagerImplementationBase::setNumberOfObjects(unsigned int numObjects)
 
 void
 SimulationManagerImplementationBase::finalizeObjects() {
-    //Obtains all the objects from localArrayOfSimObjPtrs
-    vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
+    //Obtains all the objects from simObjectsByName
+    vector<SimulationObject*>* objects = getElementVector(simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         (*objects)[i]->finalize();
     }
     delete objects;
-}
-
-void
-SimulationManagerImplementationBase::receiveEvent(Event*,
-                                                  SimulationObject*,
-                                                  SimulationObject*) {
-    shutdown("ERROR: receiveEvent() called in  SimulationManagerImplementationBase");
-}
-
-void
-SimulationManagerImplementationBase::simulate(const VTime&) {
-    shutdown("ERROR: simulate() called in SimulationManagerImplementationBase");
-}
-
-
-void
-SimulationManagerImplementationBase::registerSimulationObjects() {
-    shutdown("ERROR: registerSimulationObjects() called in SimulationManagerImplementationBase");
-}
-
-void
-SimulationManagerImplementationBase::unregisterSimulationObjects(vector <SimulationObject*>* list) {
-    // some tasks this function is responsible for
-};
-
-// print out the name to simulation object ptr map
-void
-SimulationManagerImplementationBase::displayObjectMap(std::ostream& out) {
-
-    if (!localArrayOfSimObjPtrs->empty()) {
-        //Obtains all the keys from localArrayOfSimObjPtrs
-        vector<string>* keys = getKeyVector(localArrayOfSimObjPtrs);
-        //Obtains all the objects from localArrayOfSimObjPtrs
-        vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
-
-        for (unsigned int i = 0; i < objects->size(); i++) {
-            out << (*keys)[i] << ": " << (*objects)[i]->getObjectID();
-        }
-        delete objects;
-        delete keys;
-    } else {
-        out << "Object Names to Object Pointers Map is empty" << endl;
-    }
 }
 
 ///Converts vector to a std::map(string ObjectName, SimulationObject *)

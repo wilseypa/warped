@@ -1,8 +1,14 @@
 
-#include "ThreadedOutputEvents.h"
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for cerr, cout
+
+#include "Event.h"                      // for Event
+#include "SimulationObject.h"           // for SimulationObject
+#include "ThreadedOutputEvents.h"       // for ThreadedOutputEvents
 #include "ThreadedOutputManagerImplementationBase.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "Event.h"
+#include "VTime.h"                      // for VTime
+#include "warped.h"                     // for ASSERT
 
 using std::cout;
 using std::cerr;
@@ -79,7 +85,7 @@ ThreadedOutputManagerImplementationBase::getOldestEvent(unsigned int size,
     return retval;
 }
 
-void ThreadedOutputManagerImplementationBase::saveOutputCheckpoint(ofstream* outFile,
+void ThreadedOutputManagerImplementationBase::saveOutputCheckpoint(std::ofstream* outFile,
                                                                    const ObjectID& objId, unsigned int saveTime, int threadID) {
     unsigned int i = objId.getSimulationObjectID();
     myOutputEvents[i]->saveOutputCheckpoint(outFile, saveTime, threadID);

@@ -2,14 +2,18 @@
 #define ROUNDROBINPARTITIONER_H
 
 
-#include <Partitioner.h>
+#include <Partitioner.h>                // for Partitioner
+#include <vector>                       // for vector
+
+class PartitionInfo;
+class SimulationObject;
 
 class RoundRobinPartitioner : public Partitioner {
 public:
     RoundRobinPartitioner();
 
     const PartitionInfo* partition(const vector<SimulationObject*>* objects,
-                                   const unsigned int numLPs) const;
+                                   const unsigned int numPartitions) const;
 };
 
 #endif

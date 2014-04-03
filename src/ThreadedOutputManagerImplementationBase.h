@@ -2,14 +2,24 @@
 #define THREADEDOUTPUTMANAGERIMPLEMENTATIONBASE_H_
 
 
-#include <fstream>
-#include <set>
-#include "warped.h"
-#include "ThreadedOutputEvents.h"
-#include "ThreadedOutputManager.h"
-using std::ofstream;
+#include <fstream>                      // for ofstream
+#include <set>                          // for multiset
+#include <vector>                       // for vector
 
+#include "ObjectID.h"                   // for ObjectID
+#include "ThreadedOutputEvents.h"
+#include "ThreadedOutputManager.h"      // for ofstream, etc
+#include "ThreadedTimeWarpMultiSet.h"   // for multiset
+#include "ThreadedTimeWarpMultiSetLTSF.h"  // for multiset
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "warped.h"
+
+class Event;
+class SimulationObject;
+class ThreadedOutputEvents;
 class ThreadedTimeWarpSimulationManager;
+class TimeWarpSimulationManager;
+class VTime;
 
 using std::multiset;
 
@@ -82,7 +92,7 @@ public:
         @param objId The ID of the object being saved.
         @param saveTime The checkpoint time.
     */
-    virtual void saveOutputCheckpoint(ofstream* outFile, const ObjectID& objId, unsigned int saveTime,
+    virtual void saveOutputCheckpoint(std::ofstream* outFile, const ObjectID& objId, unsigned int saveTime,
                                       int threadID);
 
     /**
@@ -112,7 +122,7 @@ private:
     vector< ThreadedOutputEvents*> myOutputEvents;
 
 
-    ofstream* myStream;
+    std::ofstream* myStream;
 };
 
 #endif /* ThreadedOUTPUTMANAGERIMPLEMENTATIONBASE_H_ */

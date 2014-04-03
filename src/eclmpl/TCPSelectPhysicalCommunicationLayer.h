@@ -1,10 +1,12 @@
 #ifndef TCP_SELECT_PHYSICAL_COMMUNICATION_LAYER_H
 #define TCP_SELECT_PHYSICAL_COMMUNICATION_LAYER_H
 
-#include "eclmplCommonInclude.h"
+#include <sys/select.h>                 // for fd_set
+
 #include "NetworkMessage.h"
-#include "eclmplPhysicalCommunicationLayer.h"
 #include "TCPConnectionInterface.h"
+#include "eclmplCommonInclude.h"
+#include "eclmplPhysicalCommunicationLayer.h"
 
 /** The TCPSelectPhysicalCommunicationLayer class.
 

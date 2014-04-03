@@ -1,6 +1,13 @@
-#include <mpi.h>
+#include <mpi.h>                        // for MPI_COMM_WORLD, MPI_BYTE, etc
+#include <stddef.h>                     // for NULL
+#include <algorithm>                    // for for_each, remove_if
+#include <ostream>                      // for operator<<, endl, etc
+
 #include "MPIPhysicalCommunicationLayer.h"
-#include "SerializedInstance.h"
+#include "SerializedInstance.h"         // for SerializedInstance
+#include "WarpedDebug.h"                // for debugout
+#include "eclmpl/MPIMessage.h"          // for MPIMessage, etc
+#include "warped.h"                     // for ASSERT
 
 using std::ofstream;
 using std::endl;

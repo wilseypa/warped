@@ -1,8 +1,8 @@
 
 #include "Configurable.h"
 
-vector<Configurer*>&
+std::vector<Configurer*>&
 Configurable::getConfigurersEmpty() {
-    static vector<Configurer*>& retval = *new vector<Configurer*>;
+    static std::vector<Configurer*>& retval = *new std::vector<Configurer*>;
     return retval;
 }

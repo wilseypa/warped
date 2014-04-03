@@ -1,4 +1,6 @@
 
+#include <stdlib.h>                     // for abort
+
 #include "VTime.h"
 
 VTime::~VTime() {}

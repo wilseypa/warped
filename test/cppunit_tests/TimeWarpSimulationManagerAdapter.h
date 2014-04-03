@@ -1,6 +1,9 @@
 #ifndef TIMEWARP_SIMULATION_MANAGER_ADAPTER_H
 #define TIMEWARP_SIMULATION_MANAGER_ADAPTER_H
 
+#include <string>
+#include <vector>
+
 #include "TimeWarpSimulationManager.h"
 #include "ObjectID.h"
 #include "IntVTime.h"
@@ -19,9 +22,9 @@ public:
 
     void registerSimulationObjects() {}
 
-    vector<string>* getSimulationObjectNames() { return 0; }
+    std::vector<std::string>* getSimulationObjectNames() { return 0; }
 
-    void registerSimulationObjectProxies(const vector<string>* arrayOfObjectProxies,
+    void registerSimulationObjectProxies(const std::vector<std::string>* arrayOfObjectProxies,
                                          unsigned int sourceSimulationManagerID,
                                          unsigned int destSimulationManagerID) {}
 
@@ -44,14 +47,14 @@ public:
 
     SchedulingData* getSchedulingData() { return 0; }
 
-    SimulationObject* getObjectHandle(const string& object) const { return 0; }
+    SimulationObject* getObjectHandle(const std::string& object) const { return 0; }
 
-    OBJECT_ID& getObjectId(const string& objectName) {
+    OBJECT_ID& getObjectId(const std::string& objectName) {
         static ObjectID retval(0, 0);
         return retval;
     }
 
-    bool contains(const string& object) const { return false; }
+    bool contains(const std::string& object) const { return false; }
 
     SimulationObject* getObjectHandle(const OBJECT_ID& objectID) const { return 0; }
 
@@ -75,21 +78,21 @@ public:
 
     void setMessageAggregationFlag(bool flag) {}
 
-    SimulationStream* getIFStream(const string& filename,
+    SimulationStream* getIFStream(const std::string& filename,
                                   SimulationObject* object) { return 0; }
 
-    SimulationStream* getOFStream(const string& filename,
+    SimulationStream* getOFStream(const std::string& filename,
                                   SimulationObject* object,
-                                  ios::openmode mode) { return 0; }
+                                  std::ios::openmode mode) { return 0; }
 
-    SimulationStream* getIOFStream(const string& filename,
+    SimulationStream* getIOFStream(const std::string& filename,
                                    SimulationObject* object) { return 0; }
 
     void configure(SimulationConfiguration& configuration) {}
 
 
 protected:
-    std::unordered_map<string, SimulationObject*>* createMapOfObjects() { return 0; }
+    std::unordered_map<std::string, SimulationObject*>* createMapOfObjects() { return 0; }
 
     void fossilCollect(const VTime& fossilCollectTime) {}
 

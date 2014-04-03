@@ -2,11 +2,16 @@
 #define SINGLE_LINKED_LIST_H
 
 
-#include <queue>
-#include "Event.h"
-#include "EventSet.h"
+#include <queue>                        // for priority_queue
+#include <string>                       // for string
+#include <vector>                       // for vector
 
-using std::priority_queue;
+#include "Event.h"                      // for Event
+#include "EventSet.h"                   // for EventSet
+#include "ObjectID.h"                   // for ObjectID
+#include "VTime.h"                      // for VTime
+
+class SimulationConfiguration;
 
 struct compareEvents {
     bool operator()(const Event* a, const Event* b) {
@@ -29,8 +34,8 @@ struct compareEvents {
     (compareEvents).
 
 */
-class SingleLinkedList : public priority_queue<const Event*,
-    vector<const Event*>,
+class SingleLinkedList : public std::priority_queue<const Event*,
+    std::vector<const Event*>,
         compareEvents>, public EventSet {
 public:
 
@@ -66,7 +71,7 @@ public:
 
     virtual void configure(SimulationConfiguration&) {}
 
-    static const string& getType();
+    static const std::string& getType();
 
     //@} // End of Public Class Methods of SingleLinkedList
 
@@ -83,7 +88,7 @@ private:
     //@{
 
     /// List of processedEvents that can be deleted.
-    vector<const Event*>* processedEvents;
+    std::vector<const Event*>* processedEvents;
 
     //@} // End of  Private Class Attributes of SingleLinkedList
 };

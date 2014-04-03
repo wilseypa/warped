@@ -1,31 +1,30 @@
-
 #include "Application.h"
 
-// This file provides a default definition of the createObjects() method
-// that must be defined by each application that uses warped.
+#include "RoundRobinPartitioner.h"
+#include "IntVTime.h"
+#include <vector>
+#include <string>
 
-// global argument variables
+const PartitionInfo* Application::getPartitionInfo(unsigned int numProcessorsAvailable,
+                                                   const std::vector<SimulationObject*>* simulationObjects) {
+    RoundRobinPartitioner partitioner;
+    return partitioner.partition(simulationObjects, numProcessorsAvailable);
+}
 
-char* simulate_label = NULL;
-
-extern bool debugFlag;  // This variable get's set by warped kernel
-extern int errors, warnings;  // These variables are used by warped kernel
-
-// This function returns the total number of objects present in the simulation
-int
-Application::getNumberOfSimulationObjects(int) {
-    //  return (elaboratedModule->getComponentInstantiations()->getNumberOfSymbols() - 1);
+int Application::finalize() {
     return 0;
 }
 
-int
-Application::finalize() {
-    delete elaboratedModule;
 
-    return 0;
+const VTime& Application::getPositiveInfinity() {
+    return IntVTime::getIntVTimePositiveInfinity();
 }
 
-void
-Application::displayCommandLineParameters(std::ostream& os) {
-    //  os << "  * -simulate        specify ssl_file_name and ssl_module to simulate\n";
+const VTime& Application::getZero() {
+    return IntVTime::getIntVTimeZero();
+}
+
+const VTime& Application::getTime(std::string& time) {
+    IntVTime* vtime = new IntVTime(std::stoi(time));
+    return *vtime;
 }

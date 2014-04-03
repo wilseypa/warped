@@ -1,13 +1,15 @@
+#include <unistd.h>                     // for gethostname
+#include <fstream>                      // for operator<<, basic_ostream, etc
+#include <iostream>                     // for cout
+#include <vector>                       // for vector
 
-#include "WarpedDebug.h"
-#include "warped.h"
+#include "CommunicationManager.h"       // for CommunicationManager
 #include "DistributedDVFSManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "UsefulWorkMessage.h"
-#include "CommunicationManager.h"
-#include <cmath>
-#include <ctime>
-#include <unistd.h>
+#include "KernelMessage.h"              // for KernelMessage
+#include "UsefulWorkMessage.h"          // for UsefulWorkMessage, etc
+#include "warped.h"                     // for ASSERT
+
+class SimulationConfiguration;
 
 DistributedDVFSManager::DistributedDVFSManager(TimeWarpSimulationManager* simMgr,
                                                int measurementPeriod,
@@ -41,7 +43,6 @@ DistributedDVFSManager::poll() {
                                                        dest,
                                                        myNumSimulationManagers,
                                                        UsefulWorkMessage::COLLECT);
-        //cout << "beginning measurement" << endl;
         myCommunicationManager->sendMessage(msg, dest);
         myWaitingForMessage = true;
     }
@@ -68,9 +69,9 @@ DistributedDVFSManager::configure(SimulationConfiguration& config) {
     char hostname[32];
     gethostname(hostname, 32);
     int freqIdx = maxidx / 2;
-    cout << "DVFSManager on " << hostname << " here. "
+    std::cout << "DVFSManager on " << hostname << " here. "
          << "initializing all frequencies to "
-         << myAvailableFreqs[freqIdx] << endl;
+         << myAvailableFreqs[freqIdx] << std::endl;
     setGovernors("userspace");
     setFrequencies(freqIdx);
 }

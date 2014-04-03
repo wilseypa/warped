@@ -2,7 +2,13 @@
 #define COSTADAPTIVESTATEMANAGER_HH
 
 
-#include "AdaptiveStateManagerBase.h"
+#include <vector>                       // for vector
+
+#include "AdaptiveStateManagerBase.h"   // for AdaptiveStateManagerBase
+
+class SimulationObject;
+class TimeWarpSimulationManager;
+class VTime;
 
 // The maximum period.
 const unsigned int maxDefaultInterval = 30;
@@ -67,19 +73,19 @@ protected:
     //@{
 
     // Number of events between recalculation of the checkpoint.
-    vector<long> eventsBetweenRecalculation;
+    std::vector<long> eventsBetweenRecalculation;
 
     // Events executed since last checkpoint interval recalculation.
-    vector<long> forwardExecutionLength;
+    std::vector<long> forwardExecutionLength;
 
     // The value of the cost function.
-    vector<double> filteredCostIndex;
+    std::vector<double> filteredCostIndex;
 
     // The previous value of the cost function.
-    vector<double> oldCostIndex;
+    std::vector<double> oldCostIndex;
 
     // Adaption value for period (magnitude of 1 and sign gives direction).
-    vector<int> adaptionValue;
+    std::vector<int> adaptionValue;
 
     //@} // end of Private Class Attributes
 };

@@ -1,8 +1,12 @@
 
-#include "Event.h"
+#include <sstream>                      // for istringstream
+#include <utility>                      // for pair, make_pair
+
 #include "CommunicationManager.h"
-#include "SimulationObject.h"
-#include <sstream>
+
+class CommunicatingEntity;
+class SimulationConfiguration;
+
 using std::istringstream;
 
 CommunicationManager::CommunicationManager(PhysicalCommunicationLayer* physicalLayer,

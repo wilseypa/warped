@@ -2,13 +2,15 @@
 #define THREADEThreadedIMEWARPEVENTSET_H_
 
 
-#include "warped.h"
-#include "Configurable.h"
+#include "Configurable.h"               // for Configurable
 #include "EventId.h"
+#include "warped.h"
+
 class Event;
 class NegativeEvent;
 class SimulationObject;
 class TimeWarpEventSetFactory;
+class VTime;
 
 /** The ThreadedTimeWarpEventSet abstract base class.
 

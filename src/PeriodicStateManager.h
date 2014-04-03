@@ -4,7 +4,10 @@
 
 #include "StateManagerImplementationBase.h"
 
+class SimulationConfiguration;
 class SimulationObject;
+class TimeWarpSimulationManager;
+class VTime;
 
 /** The PeriodicStateManager class.
 

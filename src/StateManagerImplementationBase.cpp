@@ -1,11 +1,20 @@
 
+#include <stdlib.h>                     // for abort, exit
+#include <iostream>                     // for operator<<, ostream, etc
+
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "ObjectID.h"                   // for ObjectID, operator<<
+#include "OptFossilCollManager.h"       // for OptFossilCollManager
+#include "SimulationObject.h"           // for SimulationObject
+#include "State.h"                      // for State
 #include "StateManagerImplementationBase.h"
-#include "SimulationObject.h"
-#include "State.h"
-#include "OptFossilCollManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for operator<<, VTime
+#include "WarpedDebug.h"                // for debugout
 
 using std::cerr;
 using std::endl;
+using std::vector;
 
 StateManagerImplementationBase::StateManagerImplementationBase(TimeWarpSimulationManager* simMgr,
                                                                unsigned int period) :

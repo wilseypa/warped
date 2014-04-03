@@ -1,8 +1,19 @@
 
+#include <algorithm>                    // for sort
+#include <fstream>                      // for operator<<, ostream
+
 #include "AdaptiveOutputManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "Event.h"
-#include "EventFunctors.h"
+#include "Event.h"                      // for Event
+#include "EventFunctors.h"              // for receiveTimeLessThan
+#include "ObjectID.h"                   // for ObjectID
+#include "OutputEvents.h"               // for OutputEvents
+#include "OutputManagerImplementationBase.h"
+#include "SimulationObject.h"           // for SimulationObject
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
+
+using std::vector;
 
 DynamicOutputManager::DynamicOutputManager(TimeWarpSimulationManager* simMgr,
                                            bool useThirdThreshold) :

@@ -1,4 +1,11 @@
+#include <netinet/in.h>                 // for IPPROTO_TCP
+#include <netinet/tcp.h>                // for TCP_NODELAY
+#include <vector>                       // for vector
+
 #include "TCPConnectionInterface.h"
+#include "eclmpl/SocketBasedConnectionInterface.h"
+#include "eclmpl/eclmplSocket.h"        // for eclmplSocket
+#include "warped.h"                     // for ASSERT
 
 TCPConnectionInterface::TCPConnectionInterface(const unsigned int& mtuSize) {
     mtu = mtuSize;

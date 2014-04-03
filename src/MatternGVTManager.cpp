@@ -1,13 +1,20 @@
 
+#include <stdio.h>                      // for sprintf
+#include <stdlib.h>                     // for NULL, abort, atoi
+#include <iostream>                     // for operator<<, basic_ostream, etc
+
+#include "CommunicationManager.h"       // for CommunicationManager
+#include "GVTUpdateMessage.h"           // for GVTUpdateMessage
+#include "KernelMessage.h"              // for KernelMessage
+#include "LazyOutputManager.h"          // for LazyOutputManager
 #include "MatternGVTManager.h"
-#include "SchedulingManager.h"
-#include "CommunicationManager.h"
-#include "TimeWarpSimulationManager.h"
-#include "MatternGVTMessage.h"
-#include "GVTUpdateMessage.h"
-#include "LazyOutputManager.h"
-#include "ObjectID.h"
-#include <sstream>
+#include "MatternGVTMessage.h"          // for MatternGVTMessage
+#include "MatternObjectRecord.h"        // for MatternObjectRecord, etc
+#include "SchedulingManager.h"          // for SchedulingManager
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime, operator<<
+#include "warped.h"                     // for ASSERT, MIN_FUNC, etc
+
 using std::istringstream;
 using std::ostringstream;
 using std::cout;

@@ -2,23 +2,32 @@
 #define THREADEThreadedIMEWARPMULTISET_H_
 
 
-#include <set>
-#include <list>
-#include "ThreadedTimeWarpEventSet.h"
-#include "LockState.h"
-#include "NegativeEvent.h"
+#include <list>                         // for list
+#include <set>                          // for multiset, etc
+#include <string>                       // for string
+#include <vector>                       // for vector, vector<>::iterator
+
 #include "EventFunctors.h"
-#include "ThreadedTimeWarpSimulationManager.h"
+#include "LockState.h"
+#include "NegativeEvent.h"              // for string, etc
+#include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
 #include "ThreadedTimeWarpMultiSetLTSF.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+
+class LockState;
+class SimulationConfiguration;
+class SimulationObject;
+class VTime;
 
 using std::multiset;
 using std::list;
+using std::string;
 
 class Event;
 class NegativeEvent;
-class ThreadedTimeWarpSimulationManager;
-class ThreadedTimeWarpMultiSetLTSF;
 class ThreadedTimeWarpLoadBalancer;
+class ThreadedTimeWarpMultiSetLTSF;
+class ThreadedTimeWarpSimulationManager;
 //class ThreadedTimeWarpMultiSetSchedulingManager;
 //class SimulationObject;
 
@@ -176,7 +185,7 @@ private:
     //  MS *unProcessedQueueArray;
 
     /// Queues to hold the unprocessed Events for each simObj.
-    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*>
+    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*>
     unProcessedQueue;
 
     /// Iterator for the Events in Multiset.
@@ -184,13 +193,13 @@ private:
     unProcessedQueueIterator;
 
     /// Queues to hold the processed Events for each simObj.
-    vector<vector<const Event*>*> processedQueue;
+    std::vector<std::vector<const Event*>*> processedQueue;
 
     /// Queues to hold the removed events for each simObj.
-    vector<vector<const Event*>*> removedEventQueue;
+    std::vector<std::vector<const Event*>*> removedEventQueue;
 
     /// Iterators for each thread
-    typedef vector<const Event*>::iterator vIterate;
+    typedef std::vector<const Event*>::iterator vIterate;
     vIterate* vectorIterator;
     typedef multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator
     mIterate;
@@ -207,6 +216,9 @@ private:
 
     //Specfiy the synchronization mechanism in the config
     string syncMechanism;
+
+    //Specify the workerThread migration status
+    bool workerThreadMigration;
 
     //ScheduleQueues (LTSF)
     ThreadedTimeWarpMultiSetLTSF** LTSF;

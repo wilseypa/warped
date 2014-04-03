@@ -1,14 +1,17 @@
 
+#include <stddef.h>                     // for NULL
+#include <iostream>                     // for operator<<, cerr, ostream, etc
+
+#include "Event.h"                      // for Event
+#include "ObjectID.h"                   // for ObjectID
+#include "SimulationManager.h"          // for SimulationManager
 #include "SimulationObject.h"
-#include "SimulationManager.h"
-#include "SimulationManagerImplementationBase.h"
-#include "TimeWarpSimulationManager.h"
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "Event.h"
+#include "VTime.h"                      // for VTime
 
 using std::ios;
 using std::cerr;
 using std::endl;
+using std::string;
 
 SimulationObject::SimulationObject() : mySimulationManager(),
     myObjectID(0),
@@ -21,25 +24,21 @@ SimulationObject::~SimulationObject() {
     delete localVirtualTime;
 }
 
+void 
+SimulationObject::deallocateState(const State* state) {
+    delete state;
+}
+
+void 
+SimulationObject::reclaimEvent(const Event* event) {
+    delete event;
+}
+
 void
 SimulationObject::receiveEvent(const Event* newEvent) {
     ASSERT(newEvent != 0);
     ASSERT(newEvent->getReceiver() == *getObjectID());
     getSimulationManager()->handleEvent(newEvent);
-}
-
-SerializedInstance*
-SimulationObject::serializeEvent(Event* event) {
-    cerr << "Error: SimulationObject::serializeEvent called\n";
-    cerr << "Event is " << event << endl;
-    return NULL;
-}
-
-Event*
-SimulationObject::deserializeEvent(SerializedInstance* instance) {
-    cerr << "Error: SimulationObject::deserializeEvent called\n";
-    cerr << "Instance is " << instance << endl;
-    return NULL;
 }
 
 SimulationObject*

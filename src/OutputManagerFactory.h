@@ -2,12 +2,14 @@
 #define OUTPUT_MANAGER_FACTORY_H
 
 
+#include "Configurer.h"                 // for Configurer
 #include "warped.h"
-#include "Configurer.h"
 
+class Configurable;
 class Event;
-class SimulationObject;
 class OutputManager;
+class SimulationConfiguration;
+class SimulationObject;
 
 /** The OutputManagerFactory class.
 

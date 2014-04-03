@@ -35,6 +35,13 @@ If you get a linker error telling you that the MPI library couldn't be found, yo
 
 Replace the paths in the above example with the locations of the MPI libraries and headers on your machine. 
 
+#### Silent Build Rules
+
+By default, the output of `make` is very verbose. WARPED is configured to support silent build rules on Automake versions 1.10 and newer. To build with silent rules, pass the `--enable-silent-rules` flag to `configure`.
+
+    ./configure --prefix=$HOME/lib/warped --enable-silent-rules
+
+
 # Prerequisites
 WARPED depends on an MPI implementation. It has only been tested with [mpich](http://www.mpich.org/), although other implementations may work.
 

@@ -1,21 +1,30 @@
 #ifndef THREADEThreadedTIMEWARPMULTISETLTSF_H_
 #define THREADEThreadedTIMEWARPMULTISETLTSF_H_
 
-// Copy and pasted from ThreadedTimeWarpMultiSet.h - clean out
-#include <set>
-#include <list>
-#include "ThreadedTimeWarpEventSet.h"
+#include <list>                         // for list
+#include <set>                          // for multiset, etc
+#include <string>                       // for string
+#include <vector>                       // for vector
+
 #include "AtomicState.h"
+#include "EventFunctors.h"
+#include "LadderQRelaxed.h"
+#include "LadderQStrict.h"
 #include "LockState.h"
 #include "NegativeEvent.h"
-#include "EventFunctors.h"
+#include "SplayTree.h"                  // for string, etc
+#include "ThreadedTimeWarpEventSet.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "LadderQStrict.h"
-#include "LadderQRelaxed.h"
-#include "SplayTree.h"
+
+class LadderQueueRelaxed;
+class LadderQueueStrict;
+class LockState;
+class SplayTree;
+class VTime;
 
 using std::multiset;
 using std::list;
+using std::string;
 
 class Event;
 class NegativeEvent;
@@ -81,14 +90,14 @@ public:
     int whoHasObjectLock(int objId);
 private:
     //Lowest event position pointer for MULTILTSF
-    vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator>
+    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator>
     lowestObjectPosition;
 
     ///Schedule Queue - MULTILTSF
     multiset<const Event*, receiveTimeLessThanEventIdLessThan>* scheduleQueue;
 
     //Lowest event position pointer for LadderQ. Also used by Splay Tree.
-    vector<const Event*> lowestLadderObjectPosition;
+    std::vector<const Event*> lowestLadderObjectPosition;
 
     ///Schedule Queue - LadderQ (Strict and Relaxed)
     LadderQueueStrict  *ladderQStrict;
@@ -101,7 +110,7 @@ private:
     LockState* scheduleQueueLock;
 
     ///Object Status Lock
-    vector<LockState*> objectStatusLock;
+    std::vector<LockState*> objectStatusLock;
 
     //Specfiy the synchronization mechanism in the config
     string syncMechanism;

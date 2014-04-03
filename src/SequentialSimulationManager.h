@@ -1,14 +1,33 @@
 #ifndef SEQUENTIAL_SIMULATION_MANAGER_H
 #define SEQUENTIAL_SIMULATION_MANAGER_H
 
+#include <iosfwd>                       // for ios
+#include <string>                       // for string
+#include <unordered_map>
+#include <utility>                      // for pair
+#include <vector>                       // for vector
 
-#include "warped.h"
-#include "SimulationManagerImplementationBase.h"
-#include "SequentialSimulationStream.h"
+#include "Configurer.h"                 // for string
+#include "DefaultObjectID.h"            // for OBJECT_ID
 #include "EventSet.h"
-#include "StopWatch.h"
+#include "GraphStatistics.h"            // for GraphStatistics
+#include "ObjectID.h"                   // for ObjectID
+#include "SequentialSimulationStream.h"  // for ios, etc
+#include "SimulationManagerImplementationBase.h"
+#include "SimulationObject.h"           // for SimulationObject (ptr only), etc
+#include "StopWatch.h"                  // for StopWatch
+#include "VTime.h"                      // for VTime
+#include "warped.h"
+
+class SimulationObject;
+
+using std::string;
 
 class Application;
+class Event;
+class EventSet;
+class SimulationConfiguration;
+class SimulationStream;
 
 /** The SequentialSimulationManager class.
 
@@ -20,23 +39,10 @@ class SequentialSimulationManager : public SimulationManagerImplementationBase {
 
 public:
 
-    /**@type friend class declarations */
-    //@{
-
     /** Builder class */
     friend class SequentialConfigurationManager;
 
-    //@} // End of friend class declarations
-
-    /**@name Public Class Methods of SequentialSimulationManager. */
-    //@{
-
-    /** Constructor.
-
-    */
     SequentialSimulationManager(Application* initApplication);
-
-    /// Destructor.
     ~SequentialSimulationManager();
 
     void initialize();
@@ -83,8 +89,8 @@ public:
     @return Handle to the object.
     */
     SimulationObject* getObjectHandle(const string& object) const {
-        typeSimMap::const_iterator it = localArrayOfSimObjPtrs->find(object);
-        if (it == localArrayOfSimObjPtrs->end())
+        typeSimMap::const_iterator it = simObjectsByName->find(object);
+        if (it == simObjectsByName->end())
         { return 0; }
         return it->second;
     }
@@ -95,19 +101,19 @@ public:
     @return Handle to the object.
     */
     SimulationObject* getObjectHandle(const OBJECT_ID& objectID) {
-        return localArrayOfSimObjIDs[objectID.getSimulationObjectID()];
+        return simObjectsByID[objectID.getSimulationObjectID()];
     }
 
-    /// get a handle to a simulation input stream
+    /// Get a handle to a simulation input stream
     SimulationStream* getIFStream(const string& filename,
                                   SimulationObject* object);
 
-    /// get a handle to a simulation output stream
+    /// Get a handle to a simulation output stream
     SimulationStream* getOFStream(const string& filename,
                                   SimulationObject* object,
                                   ios::openmode mode=ios::out);
 
-    /// get a handle to a simulation input-output stream
+    /// Get a handle to a simulation input-output stream
     SimulationStream* getIOFStream(const string& filename,
                                    SimulationObject* object);
 
@@ -128,35 +134,18 @@ public:
 
     void shutdown(const string& errorMessage);
 
-    //@} // End of Public Class Methods of SequentialSimulationManager.
-
 protected:
-    /**@name Protected Class Methods of SequentialSimulationManager. */
-    //@{
-    /// Mapping between simulation object names, object pointers & id
-    //typedef map<string, SimulationObject * >  typeNewSimMap;
-
-    typeSimMap* createMapOfObjects();
-    //@} // End of Protected Class Methods of SequentialSimulationManager.
-
-    /**@name Protected Class Attributes of SequentialSimulationManager. */
-    //@{
-
-    /// This is my current simulation time.
+    /// The current simulation time.
     const VTime* simulationTime;
 
-    /// the number of processed events
+    /// The number of processed events
     unsigned int numberOfProcessedEvents;
 
-    /// This is the handle to set of pending events
+    /// This is a handle to the set of pending events
     EventSet* myEventSet;
 
-    //@} // End of Protected Class Attributes of SequentialSimulationManager.
 
 private:
-    /**@name Private Class Attributes of SequentialSimulationManager. */
-    //@{
-
     void setSimulationTime(const VTime& newTime) {
         delete simulationTime;
         simulationTime = newTime.clone();
@@ -169,15 +158,17 @@ private:
     ///Local stream to be associated with global stream "werr"
     SequentialSimulationStream sequentialWerr;
 
-    /**
-       The application I am managing.
-    */
+    ///The managed application
     Application* myApplication;
 
     StopWatch initializeWatch;
     double totalSimulationTime;
 
-    //@} // End of Protected Class Attributes of SequentialSimulationManager.
+    /// Used to collect profiling data
+    GraphStatistics graphStatistics;
+    bool trackEventCount;
+    std::string statisticsFileFormat;
+    std::string statisticsFilePath;
 };
 
 #endif

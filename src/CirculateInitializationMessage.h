@@ -10,9 +10,15 @@
    RED, which means it's on it's second cycle, or BLACK.
 */
 
+#include <string>                       // for string
+
+#include "KernelMessage.h"              // for KernelMessage
+#include "Serializable.h"
+
+class Serializable;
 class SerializedInstance;
 
-#include "KernelMessage.h"
+using std::string;
 
 /**
    This class represents the token that gets passed between

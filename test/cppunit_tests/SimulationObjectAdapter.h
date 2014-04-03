@@ -1,17 +1,19 @@
 #ifndef SIMULATION_OBJECT_ADAPTER_H
 #define SIMULATION_OBJECT_ADAPTER_H
 
+#include <string>
+
 #include "SimulationObject.h"
 
 class SimulationObjectAdapter : public SimulationObject {
 public:
     SimulationObjectAdapter() {}
     ~SimulationObjectAdapter() {}
-    const string& getName() const {
-        static string retval = "";
+    const std::string& getName() const {
+        static std::string retval = "";
         return retval;
     }
-    SimulationObject* getObjectHandle(const string& objectToGet) const { return 0; }
+    SimulationObject* getObjectHandle(const std::string& objectToGet) const { return 0; }
     void initialize() {}
     void finalize() {}
     void executeProcess() {}

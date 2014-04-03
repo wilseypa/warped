@@ -4,11 +4,9 @@
 
 /* Include section */
 #include <iostream>
-#include <set>
-#include <list>
+#include <vector>
 #include "LockFreeList.h"
-
-using namespace std;
+#include "EventId.h"
 
 /* Macro section */
 #define MAX_RUNG_NUM     8  //ref. sec 2.4 of ladderq paper
@@ -43,8 +41,8 @@ public:
             for (bucketIndex = 0; bucketIndex < MAX_BUCKET_NUM; bucketIndex++) {
                 rung_bucket = NULL;
                 if (!(rung_bucket = new LockFreeList())) {
-                    cout << "Failed to allocate memory for Rung "
-                         << rungIndex+2 << ", Bucket " << bucketIndex+1 << "." << endl;
+                    std::cout << "Failed to allocate memory for Rung "
+                         << rungIndex+2 << ", Bucket " << bucketIndex+1 << "." << std::endl;
                 }
                 rung1_to_n[rungIndex][bucketIndex] = rung_bucket;
             }
@@ -62,7 +60,7 @@ public:
         unsigned int bucketIndex = 0;
         const Event *event = NULL;
         bool isBucketWidthStatic = false;
-        vector<const Event*> topResVec;
+        std::vector<const Event*> topResVec;
 
         /* Remove from bottom if not empty */
         if(!isDequeueReq) {
@@ -78,7 +76,7 @@ public:
         if ((nRung > 0) && (INVALID == (bucketIndex = recurse_rung()))) {
             /* Check whether rungs still exist */
             if (nRung > 0) {
-                cout << "Received invalid Bucket index." << endl;
+                std::cout << "Received invalid Bucket index." << std::endl;
                 return NULL;
             }
         }
@@ -102,7 +100,7 @@ public:
                 if (bucketIndex < numBucket[nRung-1]) {
                     rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
                 } else {
-                    cout << "numBucket handling needs improvement." << endl;
+                    std::cout << "numBucket handling needs improvement." << std::endl;
                     return NULL;
                 }
             }
@@ -121,7 +119,7 @@ public:
         /* Move from top to top of empty ladder */
         /* Check if failed to create the first rung */
         if (false == create_new_rung(top.size(), minTS, &isBucketWidthStatic)) {
-            cout << "Failed to create the required rung." << endl;
+            std::cout << "Failed to create the required rung." << std::endl;
             return NULL;
         }
 
@@ -146,13 +144,13 @@ public:
                 }
             }
         }
-        for( int index = 0; index < (int)topResVec.size(); index++ ) {
+        for(unsigned int index = 0; index < topResVec.size(); index++ ) {
             top.insert(topResVec[index]);
         }
 
         /* Copy events from bucket_k into Bottom */
         if (INVALID == (bucketIndex = recurse_rung())) {
-            cout << "Received invalid Bucket index." << endl;
+            std::cout << "Received invalid Bucket index." << std::endl;
             return NULL;
         }
 
@@ -170,7 +168,7 @@ public:
             if (bucketIndex < numBucket[0]) {
                 rCur[0] = rStart[0] + bucketIndex*bucketWidth[0];
             } else {
-                cout << "rung 1 numBucket handling needs improvement." << endl;
+                std::cout << "rung 1 numBucket handling needs improvement." << std::endl;
                 return NULL;
             }
         }
@@ -232,11 +230,11 @@ public:
 
         unsigned int rungIndex = 0, bucketIndex = 0;
         const Event *event = NULL;
-        vector<const Event*> eventVec;
+        std::vector<const Event*> eventVec;
 
         /* Check whether valid event received */
         if (NULL == delEvent) {
-            cout << "Invalid event erase request received." << endl;
+            std::cout << "Invalid event erase request received." << std::endl;
             return;
         }
 
@@ -258,7 +256,7 @@ public:
                                rStart[rungIndex]) / bucketWidth[rungIndex];
 
             if (NUM_BUCKETS(rungIndex) <= bucketIndex) {
-                cout << "Incorrect calculation of bucket index." << endl;
+                std::cout << "Incorrect calculation of bucket index." << std::endl;
                 return;
             }
 
@@ -274,7 +272,7 @@ public:
                         eventVec.push_back(event);
                     }
                 }
-                for( int index = 0; index < (int)eventVec.size(); index++ ) {
+                for(unsigned int index = 0; index < eventVec.size(); index++ ) {
                     rung_bucket->insert(eventVec[index]);
                 }
 
@@ -313,7 +311,7 @@ public:
 
         /* Check whether valid event received */
         if (NULL == newEvent) {
-            cout << "Invalid event insertion request received." << endl;
+            std::cout << "Invalid event insertion request received." << std::endl;
             return NULL;
         }
 
@@ -344,9 +342,9 @@ public:
 
             if (NUM_BUCKETS(rungIndex) <= bucketIndex) {
                 if (rungIndex > 0) {
-                    cout << "Ran out of bucket space." << endl;
+                    std::cout << "Ran out of bucket space." << std::endl;
                 } else {
-                    cout << "Rung 1 ran out of space." << endl;
+                    std::cout << "Rung 1 ran out of space." << std::endl;
                 }
                 return NULL;
             }
@@ -386,7 +384,7 @@ private:
     unsigned int        topStart;
 
     /* Rungs */
-    vector<LockFreeList *>  rung0;  //first rung. ref. sec 2.4 of ladderq paper
+    std::vector<LockFreeList *>  rung0;  //first rung. ref. sec 2.4 of ladderq paper
     LockFreeList            *rung_bucket;
     unsigned int            numRung0Buckets;
     LockFreeList            *rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
@@ -411,7 +409,7 @@ private:
         }
 
         if (NULL == isBucketWidthStatic) {
-            cout << "Invalid memory address for monitoring change in bucketWidth" << endl;
+            std::cout << "Invalid memory address for monitoring change in bucketWidth" << std::endl;
             return false;
         }
 
@@ -420,7 +418,7 @@ private:
         /* Check if this is the first rung creation */
         if (0 == nRung) {
             if (maxTS < minTS) {
-                cout << "Max TS less than min TS." << endl;
+                std::cout << "Max TS less than min TS." << std::endl;
                 return false;
             } else if (minTS == maxTS) {
                 bucketWidth[0] = MIN_BUCKET_WIDTH;
@@ -440,7 +438,7 @@ private:
             for (bucketIndex = numRung0Buckets; bucketIndex < 2*numBucketsReq; bucketIndex++) {
                 rung_bucket = NULL;
                 if (!(rung_bucket = new LockFreeList())) {
-                    cout << "Failed to allocate memory for rung 0 bucket." << endl;
+                    std::cout << "Failed to allocate memory for rung 0 bucket." << std::endl;
                     return false;
                 }
                 rung0.push_back(rung_bucket);
@@ -459,7 +457,7 @@ private:
 
             /* Check whether new rungs can be created */
             if (MAX_RUNG_NUM <= nRung) {
-                cout << "Overflow error for no. of rungs." << endl;
+                std::cout << "Overflow error for no. of rungs." << std::endl;
                 return false;
             }
             bucketWidth[nRung] = (bucketWidth[nRung-1] + numEvents - 1) / numEvents;
@@ -476,7 +474,7 @@ private:
         bool isBucketNotFound = false, isBucketWidthStatic = false, isRungNotEmpty = false;
         unsigned int bucketIndex = 0, newBucketIndex = 0;
         const Event *event = NULL;
-        vector<const Event*> rungResVec;
+        std::vector<const Event*> rungResVec;
 
         /* find_bucket label */
         do {
@@ -486,7 +484,7 @@ private:
 
             if ((0 == nRung) || (MAX_RUNG_NUM < nRung)) {
                 if (MAX_RUNG_NUM <= nRung) {
-                    cout << "Invalid number of rungs available for recurse_rung." << endl;
+                    std::cout << "Invalid number of rungs available for recurse_rung." << std::endl;
                 }
                 return INVALID;
             }
@@ -509,7 +507,7 @@ private:
                     if (false == create_new_rung(RUNG(nRung-1,bucketIndex)->size(),
                                                  rCur[nRung-1], &isBucketWidthStatic)) {
                         if (false == isBucketWidthStatic) {
-                            cout << "Failed to create a new rung." << endl;
+                            std::cout << "Failed to create a new rung." << std::endl;
                             return INVALID;
                         }
                         break;
@@ -533,7 +531,7 @@ private:
                         }
                     }
 
-                    for( int index = 0; index < (int)rungResVec.size(); index++ ) {
+                    for(unsigned int index = 0; index < rungResVec.size(); index++ ) {
                         RUNG(nRung-2,bucketIndex)->insert(rungResVec[index]);
                     }
                     rungResVec.clear();

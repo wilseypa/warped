@@ -2,16 +2,12 @@
 #define WARPED_MAIN_H
 
 
-#include <vector>
-#include <string>
+#include <string>                       // for string
 
-using std::vector;
-using std::string;
-
-class VTime;
 class Application;
 class Simulation;
 class SimulationConfiguration;
+class VTime;
 
 /**
    This class implements the main function for warped.
@@ -32,8 +28,8 @@ public:
     /**
        Constructor to be called by user's main.
     */
-    WarpedMain(Application* application, string configurationFileName,
-               string simulateUntil = "",  bool debug = false);
+    WarpedMain(Application* application, std::string configurationFileName,
+               std::string simulateUntil = "",  bool debug = false);
     /**
        Default Deconstructor
     */
@@ -84,9 +80,9 @@ public:
     const VTime& getNextEventTime();
 
 private:
-    string configurationFileName;
+    std::string configurationFileName;
     bool debugFlag;
-    string simulateUntil;
+    std::string simulateUntil;
 
     Application* myApplication;
     Simulation* mySimulation;

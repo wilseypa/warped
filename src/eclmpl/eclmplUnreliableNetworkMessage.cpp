@@ -1,4 +1,9 @@
-#include "eclmplCommonInclude.h"
+#include <netinet/in.h>                 // for htonl, ntohl
+#include <string.h>                     // for memcpy, NULL
+#include <ostream>                      // for operator<<, basic_ostream, etc
+#include <string>                       // for char_traits, string, etc
+
+#include "eclmplCommonInclude.h"        // for SequenceNumber, cppStrDup
 #include "eclmplUnreliableNetworkMessage.h"
 
 // This is defined in "warped.h" so when we compile this within warped
@@ -96,7 +101,7 @@ eclmplUnreliableNetworkMessage::deserialize(char* msg, const int&) {
 
 std::ostream&
 operator<< (std::ostream& os, const eclmplUnreliableNetworkMessage& msg) {
-    string type;
+    std::string type;
     switch (msg.hdr.type) {
     case UNDEFINED:
         type = "UNDEFINED";

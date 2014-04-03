@@ -1,6 +1,9 @@
 
+#include <string.h>                     // for memcpy, memset
+#include <iostream>                     // for operator<<, basic_ostream, etc
+
 #include "ThreadedTimeWarpLoadBalancer.h"
-#include "ThreadedTimeWarpMultiSet.h"
+#include "ThreadedTimeWarpMultiSet.h"   // for ThreadedTimeWarpMultiSet, etc
 #include "ThreadedTimeWarpSimulationManager.h"
 
 ThreadedTimeWarpLoadBalancer::ThreadedTimeWarpLoadBalancer(

@@ -2,12 +2,19 @@
 #define SEQUENTIAL_CONFIGURATION_MANAGER_H
 
 
-#include "warped.h"
-#include "ConfigurationManager.h"
+#include <vector>                       // for vector
+
+#include "ConfigurationManager.h"       // for ConfigurationManager
 #include "EventSetFactory.h"
 #include "SequentialSimulationManager.h"
+#include "warped.h"
 
 class Application;
+class Configurer;
+class EventSetFactory;
+class SequentialSimulationManager;
+class SimulationConfiguration;
+class SimulationManager;
 
 /** The SequentialConfigurationManager class.
 
@@ -32,7 +39,7 @@ public:
     */
     void configure(SimulationConfiguration& configuration);
 
-    vector<Configurer*>& getConfigurers() const;
+    std::vector<Configurer*>& getConfigurers() const;
 
     /**
        Gets the simulation manager for this configuration.

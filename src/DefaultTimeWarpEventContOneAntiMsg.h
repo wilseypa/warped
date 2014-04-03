@@ -4,6 +4,9 @@
 
 #include "DefaultTimeWarpEventContainer.h"
 
+class NegativeEvent;
+class SimulationObject;
+
 /**
     This class is the same as the base DefaultTimeWarpEventContainter
     class except for the remove function, which is modified to handle

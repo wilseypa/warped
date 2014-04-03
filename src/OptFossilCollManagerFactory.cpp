@@ -1,11 +1,18 @@
 
+#include <stddef.h>                     // for NULL
+#include <ostream>                      // for operator<<, basic_ostream, etc
+#include <string>                       // for allocator, operator==, etc
+
+#include "ChebyFossilCollManager.h"     // for ChebyFossilCollManager
+#include "Configurable.h"               // for Configurable
 #include "OptFossilCollManagerFactory.h"
-#include "ChebyFossilCollManager.h"
-#include "SimulationConfiguration.h"
-#include "TimeWarpConfigurationManager.h"
-#include "ThreadedTimeWarpSimulationManager.h"
+#include "SimulationConfiguration.h"    // for SimulationConfiguration
 #include "ThreadedChebyFossilCollManager.h"
-#include "WarpedDebug.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
+using std::string;
 
 OptFossilCollManagerFactory::OptFossilCollManagerFactory() {}
 

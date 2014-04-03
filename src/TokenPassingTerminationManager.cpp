@@ -1,13 +1,17 @@
+#include <stdlib.h>                     // for abort
+#include <iostream>                     // for operator<<, etc
 
+#include "KernelMessage.h"              // for KernelMessage
+#include "TerminationManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "TokenPassingTerminationManager.h"
-#include "TerminateToken.h"
-#include "TimeWarpSimulationManager.h"
-#include "CommunicationManager.h"
-#include "WarpedDebug.h"
+#include "WarpedDebug.h"                // for debugout
+#include "warped.h"                     // for ASSERT
+
 using debug::debugout;
 
-#include "TerminateToken.h"
-#include "CommunicationManager.h"
+#include "CommunicationManager.h"       // for CommunicationManager
+#include "TerminateToken.h"             // for TerminateToken, etc
 
 TokenPassingTerminationManager::TokenPassingTerminationManager(TimeWarpSimulationManager*
                                                                initSimulationManager) :

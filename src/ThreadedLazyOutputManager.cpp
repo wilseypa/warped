@@ -1,7 +1,17 @@
 
+#include <algorithm>                    // for sort
+#include <iostream>                     // for operator<<, basic_ostream, etc
+
+#include "Event.h"                      // for Event
+#include "EventFunctors.h"              // for sendTimeLessThan
+#include "ObjectID.h"                   // for ObjectID, operator<<
+#include "SimulationObject.h"           // for SimulationObject
 #include "ThreadedLazyOutputManager.h"
-#include "ThreadedOutputEvents.h"
+#include "ThreadedOutputEvents.h"       // for ThreadedOutputEvents
 #include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime, operator<<
+#include "WarpedDebug.h"                // for debugout
 
 ThreadedLazyOutputManager::ThreadedLazyOutputManager(
     ThreadedTimeWarpSimulationManager* simMgr) :

@@ -10,11 +10,18 @@
    RED, which means it's on it's second cycle, or BLACK.
 */
 
-class SerializedInstance;
+#include <string>                       // for string
 
-#include "EventMessageBase.h"
+#include "DeserializerManager.h"        // for string
+#include "EventMessageBase.h"           // for EventMessageBase
+#include "Serializable.h"               // for string, etc
+
+class Serializable;
+
+using std::string;
 
 class Event;
+class SerializedInstance;
 
 /**
    This class represents the token that gets passed between

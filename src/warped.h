@@ -2,16 +2,20 @@
 #define WARPED_H
 
 
-#include "WarpedConfig.h"
-
+#include <stddef.h>                     // for size_t, NULL
 /** This header file defines some of the default data types and
     enumerations used in the system. */
-#include <stdlib.h> //Used for abort()
+#include <stdlib.h>                     // for NULL
+#include <sys/types.h>                  // for int32_t, int64_t
 #include <algorithm> //Used for sort()
-#include <sys/types.h>
+#include <string>                       // for allocator, operator+, etc
+
+#include "ObjectID.h"                   // for ObjectID
+#include "WarpedConfig.h"               // for HAVE_STDINT_H, etc
 #ifdef HAVE_STDINT_H
 // The following is a C-99ism...
-#include <stdint.h>
+#include <stdint.h>                     // for int32_t, int64_t
+
 typedef int64_t warped64_t;
 typedef int32_t warped32_t;
 #elif defined(SIZEOF_LONG_LONG_) // defined in warped-config.h
@@ -28,11 +32,10 @@ warped64_t getWarped64Min();
 warped32_t getWarped32Max();
 warped32_t getWarped32Min();
 
-#include <iostream>
-#include "WarpedDebug.h"
-
+#include <iostream>                     // for operator<<, ostream, etc
 #include <sstream>
-using std::ostringstream;
+
+#include "WarpedDebug.h"
 
 // Console I/O operations - we define this stream interface to trap
 // the I/O produced by different processes and feed the I/O to the
@@ -40,10 +43,10 @@ using std::ostringstream;
 
 extern std::ostream* wout, *werr;
 
+// include the default definition of OBJECT_ID
+#include "DefaultObjectID.h"            // for OBJECT_ID
 // include the default definition of VTime
 #include "VTime.h"
-// include the default definition of OBJECT_ID
-#include "DefaultObjectID.h"
 
 // This definition for bool is used to ease portability between different
 // compliers (some of them have pre-defined type "bool" while some don't).
@@ -60,7 +63,8 @@ extern std::ostream* wout, *werr;
 // flag DEVELOPER_ASSERTIONS is turned "on"
 #ifndef ASSERT
 #ifndef  NO_DEVELOPER_ASSERTIONS
-#include <assert.h>
+#include <assert.h>                     // for assert
+
 #define ASSERT(x) assert(x)
 #else
 #define ASSERT(x)
@@ -168,7 +172,7 @@ std::ostream& operator<<(std::ostream& os, SEVERITY severity) {
         break;
     default:
         //Converts severity from string to int, output is stream.str()
-        ostringstream stream;
+        std::ostringstream stream;
         stream << severity;
         os << "<Unknown Severity " + stream.str() +" >";
     }

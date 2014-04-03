@@ -1,10 +1,17 @@
 
+#include <stdlib.h>                     // for abort, NULL
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <string>                       // for char_traits, operator<<
+
+#include "GVTUpdateMessage.h"           // for GVTUpdateMessage
+#include "KernelMessage.h"              // for KernelMessage
+#include "MatternGVTMessage.h"          // for MatternGVTMessage
+#include "MatternObjectRecord.h"        // for MatternObjectRecord, etc
+#include "SchedulingManager.h"          // for SchedulingManager
 #include "ThreadedMatternGVTManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "ThreadedLazyOutputManager.h"
-#include "MatternGVTMessage.h"
-#include "GVTUpdateMessage.h"
-#include "ThreadedTimeWarpMultiSetSchedulingManager.h"
+#include "VTime.h"                      // for VTime, operator<<
+#include "warped.h"                     // for MIN_FUNC, ASSERT
 
 ThreadedMatternGVTManager::ThreadedMatternGVTManager(ThreadedTimeWarpSimulationManager* simMgr,
                                                      unsigned int period) :

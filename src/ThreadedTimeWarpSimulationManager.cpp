@@ -1,55 +1,84 @@
+#include <stdlib.h>                     // for NULL, abort
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <sstream>
+#include <unordered_map>                // for unordered_map, etc
+#include <utility>                      // for pair, make_pair
 
-#include "ThreadedTimeWarpSimulationManager.h"
-#include "DefaultSchedulingManager.h"
-#include "ThreadedLazyOutputManager.h"
-#include "ThreadedDynamicOutputManager.h"
-#include "ThreadedAggressiveOutputManager.h"
-#include "StopWatch.h"
-#include "ObjectStub.h"
-#include "SimulationObjectProxy.h"
-#include "TimeWarpSimulationManager.h"
-#include "TimeWarpSimulationStream.h"
-#include "CommunicationManager.h"
-#include "TerminationManager.h"
-#include "EventMessage.h"
-#include "NegativeEvent.h"
-#include "NegativeEventMessage.h"
-#include "SingleTerminationManager.h"
-#include "ThreadedCostAdaptiveStateManager.h"
-#include "ThreadedOptFossilCollManager.h"
-#include "ThreadedTimeWarpMultiSet.h"
-#include "InitializationMessage.h"
-#include "StartMessage.h"
-#include "Application.h"
-#include "TokenPassingTerminationManager.h"
+#include "Application.h"                // for Application
+#include "AtomicState.h"                // for AtomicState
+#include "CommunicationManager.h"       // for CommunicationManager
+#include "CommunicationManagerFactory.h"
+#include "Configurable.h"               // for Configurable
+#include "DVFSManager.h"                // for DVFSManager
+#include "DVFSManagerFactory.h"         // for DVFSManagerFactory
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "Event.h"                      // for Event
+#include "EventId.h"                    // for EventId, operator<<
+#include "EventMessage.h"               // for EventMessage
+#include "GVTManager.h"                 // for GVTManager
+#include "GVTManagerFactory.h"          // for GVTManagerFactory
+#include "InitializationMessage.h"      // for InitializationMessage
+#include "KernelMessage.h"              // for KernelMessage
+#include "LockState.h"                  // for LockState
+#include "LockedQueue.h"                // for LockedQueue
+#include "NegativeEvent.h"              // for NegativeEvent
+#include "NegativeEventMessage.h"       // for NegativeEventMessage
 #include "OptFossilCollManagerFactory.h"
-#include "ThreadedTimeWarpEventSet.h"
-#include "ThreadedTimeWarpMultiSetSchedulingManager.h"
-#include "PartitionInfo.h"
-#include "StragglerEvent.h"
-#include "ThreadedMatternGVTManager.h"
-#include "SimulationConfiguration.h"
+#include "OutputManagerFactory.h"       // for OutputManagerFactory
+#include "PartitionManager.h"           // for PartitionManager
+#include "SchedulingManager.h"          // for SchedulingManager
+#include "SchedulingManagerFactory.h"   // for SchedulingManagerFactory
+#include "SimulationManagerImplementationBase.h"
+#include "SimulationObject.h"           // for SimulationObject
+#include "SimulationObjectProxy.h"      // for SimulationObjectProxy
+#include "SingleTerminationManager.h"   // for SingleTerminationManager
+#include "StartMessage.h"               // for StartMessage
+#include "StateManagerFactory.h"        // for StateManagerFactory
+#include "StopWatch.h"                  // for StopWatch
+#include "StragglerEvent.h"             // for StragglerEvent
+#include "TerminationManager.h"         // for TerminationManager
+#include "ThreadedCostAdaptiveStateManager.h"
+#include "ThreadedDynamicOutputManager.h"
+#include "ThreadedLazyOutputManager.h"  // for ThreadedLazyOutputManager
+#include "ThreadedMatternGVTManager.h"  // for ThreadedMatternGVTManager
+#include "ThreadedOptFossilCollManager.h"
+#include "ThreadedOutputManager.h"      // for ThreadedOutputManager
+#include "ThreadedStateManager.h"       // for ThreadedStateManager
+#include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
 #include "ThreadedTimeWarpLoadBalancer.h"
-#include "DVFSManager.h"
-#include "DistributedDVFSManager.h"
-#include "DVFSManagerFactory.h"
+#include "ThreadedTimeWarpMultiSet.h"   // for ThreadedTimeWarpMultiSet
+#include "ThreadedTimeWarpMultiSetSchedulingManager.h"
+#include "ThreadedTimeWarpSimulationManager.h"
+#include "TimeWarpEventSetFactory.h"    // for TimeWarpEventSetFactory
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "TimeWarpSimulationStream.h"   // for TimeWarpSimulationStream, etc
+#include "TokenPassingTerminationManager.h"
+#include "WarpedDebug.h"                // for debugout
+#include "WorkerInformation.h"          // for WorkerInformation, etc
+
+class SimulationConfiguration;
 
 int WorkerInformation::globalStillBusyCount = 0;
 bool WorkerInformation::workRemaining = true;
 
 pthread_key_t threadKey;
 
+using std::cout;
+using std::endl;
+using std::cerr;
+using std::vector;
+
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     unsigned int numberOfWorkerThreads, const string syncMechanism,
-    bool loadBalancing, const string loadBalancingMetric,
+    bool workerThreadMigration, bool loadBalancing, const string loadBalancingMetric,
     const string loadBalancingTrigger, double loadBalancingVarianceThresh,
-    unsigned int loadBalancingNormalInterval,unsigned int loadBalancingNormalThresh,
+    unsigned int loadBalancingNormalInterval, unsigned int loadBalancingNormalThresh,
     unsigned int loadBalancingRelaxedInterval, unsigned int loadBalancingRelaxedThresh,
     const string scheduleQScheme, const string causalityType, unsigned int scheduleQCount,
     Application* initApplication) :
     numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism),
-    loadBalancing(loadBalancing), loadBalancingMetric(loadBalancingMetric),
-    loadBalancingTrigger(loadBalancingTrigger),
+    workerThreadMigration(workerThreadMigration), loadBalancing(loadBalancing), 
+    loadBalancingMetric(loadBalancingMetric), loadBalancingTrigger(loadBalancingTrigger),
     loadBalancingVarianceThresh(loadBalancingVarianceThresh),
     loadBalancingNormalInterval(loadBalancingNormalInterval),
     loadBalancingNormalThresh(loadBalancingNormalThresh),
@@ -87,7 +116,7 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
     initiatedRecovery = false;
     lvtCount = 0;
     numCatastrophicRollbacks = 0;
-    
+
     ofcFlagLock = new LockState();
 }
 
@@ -100,6 +129,7 @@ ThreadedTimeWarpSimulationManager::~ThreadedTimeWarpSimulationManager() {
     delete GVTTimePeriodLock;
     delete myrealFossilCollManager;
     delete ofcFlagLock;
+    delete myPartitionManager;
 }
 
 inline void ThreadedTimeWarpSimulationManager::sendMessage(KernelMessage* msg,
@@ -315,14 +345,14 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
         if (inRecovery) {
             numCatastrophicRollbacks++;
             if (numberOfSimulationManagers > 1) {
-               while (workerStatus[0]->getStillBusyCount() > 0)
-                   debug::debugout << workerStatus[0]->getStillBusyCount()
+                while (workerStatus[0]->getStillBusyCount() > 0)
+                    debug::debugout << workerStatus[0]->getStillBusyCount()
                                     << endl;
                 if (initiatedRecovery) {
-                  myrealFossilCollManager->startRecovery();
-	              getOfcFlagLock(threadID,getSyncMechanism());
-                  initiatedRecovery = false;
-                  releaseOfcFlagLock(threadID,getSyncMechanism());
+                    myrealFossilCollManager->startRecovery();
+                    getOfcFlagLock(threadID, getSyncMechanism());
+                    initiatedRecovery = false;
+                    releaseOfcFlagLock(threadID, getSyncMechanism());
                 }
                 while (inRecovery)
                 { getMessages(); }
@@ -375,7 +405,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
                     //cout << "Resuming threads attached to ltsf " << ltsfIndex << endl;
                     for (unsigned int threadIndex = ltsfIndex; threadIndex < numberOfWorkerThreads - 1;
                             threadIndex = threadIndex + scheduleQCount) {
-                        workerStatus[threadIndex+1]->resume();
+                        workerStatus[threadIndex + 1]->resume();
                     }
                 }
             }
@@ -394,7 +424,7 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
     }
     sendPendingMessages();
     stopwatch.stop();
-    ostringstream oss;
+    std::ostringstream oss;
     oss << "lp" << mySimulationManagerID << ".csv";
     ofstream file(oss.str().c_str(), ios_base::app);
     if (file)
@@ -554,7 +584,7 @@ void ThreadedTimeWarpSimulationManager::handleRemoteEvent(const Event* event,
                         << endl;
         KernelMessage* msg = new EventMessage(getSimulationManagerID(),
                                               destSimMgrId, event, gVTInfo);
-	ASSERT(msg !=NULL);
+        ASSERT(msg != NULL);
 
         sendMessage(msg, destSimMgrId);
     }
@@ -744,9 +774,9 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject* object,
     const VTime* restoredTime = &myStateManager->restoreState(rollbackTime,
                                                               object, threadID);
 
-    if (usingOptFossilCollection){ 
+    if (usingOptFossilCollection) {
         if (!inRecovery) {
-            myrealFossilCollManager->sampleRollback(object, *restoredTime );
+            myrealFossilCollManager->sampleRollback(object, *restoredTime);
             myrealFossilCollManager->updateCheckpointTime(objId,
                                                           rollbackTime.getApproximateIntTime());
             if (*restoredTime > rollbackTime) {
@@ -757,11 +787,11 @@ void ThreadedTimeWarpSimulationManager::rollback(SimulationObject* object,
                                     << " - Catastrophic Rollback: Restored State Time: "
                                     << *restoredTime << ", Rollback Time: "
                                     << rollbackTime << ", Starting Recovery." << endl;
-                
-	                getOfcFlagLock(threadID,getSyncMechanism());
+
+                    getOfcFlagLock(threadID, getSyncMechanism());
                     myrealFossilCollManager->setRecovery(objId,
                                                          rollbackTime.getApproximateIntTime());
-                    releaseOfcFlagLock(threadID,getSyncMechanism());
+                    releaseOfcFlagLock(threadID, getSyncMechanism());
                 } else {
                     restoredTime = &getZero();
                 }
@@ -921,12 +951,12 @@ void ThreadedTimeWarpSimulationManager::receiveKernelMessage(KernelMessage* msg)
 void ThreadedTimeWarpSimulationManager::fossilCollect(
     const VTime& fossilCollectTime) {
 
-    ASSERT(localArrayOfSimObjPtrs != 0);
+    ASSERT(simObjectsByName != 0);
     //Hard Coded ZERO, since this function is always called by the Master
     int threadID = 0;
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     //If the number of LP's > number of Objects
     //Then its possible this simulation has no objects assigned to it
@@ -990,9 +1020,9 @@ void ThreadedTimeWarpSimulationManager::initialize() {
     cout << "SimulationManager(" << mySimulationManagerID
          << "): Initializing Objects" << endl;
 
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         // call initialize on the object
@@ -1019,8 +1049,9 @@ void ThreadedTimeWarpSimulationManager::initialize() {
     }
 }
 
-void ThreadedTimeWarpSimulationManager::configure(
-    SimulationConfiguration& configuration) {
+void ThreadedTimeWarpSimulationManager::configure(SimulationConfiguration& configuration) {
+    myPartitionManager = new PartitionManager(configuration);
+
     const CommunicationManagerFactory* myCommFactory =
         CommunicationManagerFactory::instance();
 
@@ -1055,7 +1086,7 @@ void ThreadedTimeWarpSimulationManager::configure(
     //    manager
     // b. resets the value of numberOfObjects to the number of objects
     //    actually resident on this simulation manager.
-    localArrayOfSimObjPtrs = createMapOfObjects();
+    simObjectsByName = createMapOfObjects();
 
     // configure the event set manager
     const TimeWarpEventSetFactory* myEventSetFactory =
@@ -1149,46 +1180,8 @@ void ThreadedTimeWarpSimulationManager::configure(
         numberOfSimulationManagers - 1);
 }
 
-// this function constructs the map of simulation object names versus
-// simulation object pointers by interacting with the application.
-// It also performs random partitioning of objects.
-SimulationManagerImplementationBase::typeSimMap*
-ThreadedTimeWarpSimulationManager::createMapOfObjects() {
-    typeSimMap* retval = 0;
-
-    const PartitionInfo* appPartitionInfo = myApplication->getPartitionInfo(
-                                                numberOfSimulationManagers);
-
-    vector<SimulationObject*>* localObjects;
-
-    for (int n = 0; n < numberOfSimulationManagers; n++) {
-        if (n == getSimulationManagerID()) {
-            localObjects = appPartitionInfo->getObjectSet(n);
-        } else {
-            // Delete the remote objects, they will not be used on this sim manager.
-            vector<SimulationObject*>* remoteObjects =
-                appPartitionInfo->getObjectSet(n);
-            for (int d = 0; d < remoteObjects->size(); d++) {
-                delete(*remoteObjects)[d];
-            }
-        }
-    }
-
-    for (vector<SimulationObject*>::iterator i = localObjects->begin(); i
-            != localObjects->end(); i++) {
-        (*i)->setSimulationManager(this);
-    }
-    retval = partitionVectorToHashMap(localObjects);
-
-    setNumberOfObjects(retval->size());
-
-    delete appPartitionInfo;
-
-    return retval;
-}
 void ThreadedTimeWarpSimulationManager::getGVTTimePeriodLock(int threadId) {
-    while (!GVTTimePeriodLock->setLock(threadId))
-        ;
+    while (!GVTTimePeriodLock->setLock(threadId)) {}
     ASSERT(GVTTimePeriodLock->hasLock(threadId));
 }
 void ThreadedTimeWarpSimulationManager::releaseGVTTimePeriodLock(int threadId) {
@@ -1197,8 +1190,7 @@ void ThreadedTimeWarpSimulationManager::releaseGVTTimePeriodLock(int threadId) {
 }
 
 void ThreadedTimeWarpSimulationManager::getLVTFlagLock(unsigned int threadId) {
-    while (!LVTFlagLock->setLock(threadId))
-        ;
+    while (!LVTFlagLock->setLock(threadId)) {}
     ASSERT(LVTFlagLock->hasLock(threadId));
 }
 void ThreadedTimeWarpSimulationManager::releaseLVTFlagLock(
@@ -1264,7 +1256,7 @@ ThreadedTimeWarpSimulationManager::getCoastForwardTime(
 }
 void ThreadedTimeWarpSimulationManager::registerSimulationObjects() {
     // allocate memory for our reverse map
-    localArrayOfSimObjIDs.resize(numberOfObjects);
+    simObjectsByID.resize(numberOfObjects);
 
     // allocate memory for our global reverse map - first dimension
     globalArrayOfSimObjIDs.resize(numberOfSimulationManagers);
@@ -1272,11 +1264,11 @@ void ThreadedTimeWarpSimulationManager::registerSimulationObjects() {
     // allocate memory for the second dimension of our 2-D array
     globalArrayOfSimObjIDs[mySimulationManagerID].resize(numberOfObjects);
 
-    //Obtains all the keys from localArrayOfSimObjPtrs
-    vector < string >* keys = getKeyVector(localArrayOfSimObjPtrs);
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    //Obtains all the keys from simObjectsByName
+    vector < string >* keys = getKeyVector(simObjectsByName);
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         // create and store in the map a relation between ids and object names
@@ -1304,7 +1296,7 @@ void ThreadedTimeWarpSimulationManager::registerSimulationObjects() {
         object->setInitialState(object->allocateState());
 
         // save map of ids to ptrs
-        localArrayOfSimObjIDs[i] = object;
+        simObjectsByID[i] = object;
         globalArrayOfSimObjIDs[mySimulationManagerID][i] = object;
 
         // initialize the coast forward vector element for the object
@@ -1348,7 +1340,7 @@ void ThreadedTimeWarpSimulationManager::handleAntiMessageFromStraggler(
 }
 void ThreadedTimeWarpSimulationManager::printObjectMaaping() {
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         SimulationObject* object = (*objects)[i];
@@ -1470,16 +1462,16 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
             }
             resetComputeLVTStatus();
             break;
-            /*      case 3:
-             if (*LVT > *minimum) {
-             LVT = minimum->clone();
-             }
-             LVTFlag = (numberOfWorkerThreads - 1);
-             for (int i = 1; i < numberOfWorkerThreads; i++) {
-             delete (LVTArray[i]);
-             }
-             resetComputeLVTStatus();
-             break;*/
+        /*      case 3:
+         if (*LVT > *minimum) {
+         LVT = minimum->clone();
+         }
+         LVTFlag = (numberOfWorkerThreads - 1);
+         for (int i = 1; i < numberOfWorkerThreads; i++) {
+         delete (LVTArray[i]);
+         }
+         resetComputeLVTStatus();
+         break;*/
         case 3:
             if (*LVT > *minimum) {
                 LVT = minimum->clone();
@@ -1591,13 +1583,13 @@ void ThreadedTimeWarpSimulationManager::clearMessageBuffer() {
         debug::debugout << "Deleted message from buffer." << endl;
     }
 }
-void ThreadedTimeWarpSimulationManager::getOfcFlagLock(int threadId, const string syncMech ) {
-    ofcFlagLock->setLock(threadId,syncMech);
-    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
+void ThreadedTimeWarpSimulationManager::getOfcFlagLock(int threadId, const string syncMech) {
+    ofcFlagLock->setLock(threadId, syncMech);
+    ASSERT(ofcFlagLock->hasLock(threadId, syncMech));
 }
 
-void ThreadedTimeWarpSimulationManager::releaseOfcFlagLock(int threadId, const string syncMech){
-    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
-    ofcFlagLock->releaseLock(threadId,syncMech);
+void ThreadedTimeWarpSimulationManager::releaseOfcFlagLock(int threadId, const string syncMech) {
+    ASSERT(ofcFlagLock->hasLock(threadId, syncMech));
+    ofcFlagLock->releaseLock(threadId, syncMech);
 }
 

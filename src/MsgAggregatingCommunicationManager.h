@@ -2,9 +2,15 @@
 #define MSG_AGGREGATING_COMMUNICATION_MANAGER_H
 
 
-#include "warped.h"
 #include "CommunicationManagerImplementationBase.h"
-#include "MessageManager.h"
+#include "MessageManager.h"             // for MessageManager
+#include "warped.h"
+
+class KernelMessage;
+class PhysicalCommunicationLayer;
+class SerializedInstance;
+class SimulationConfiguration;
+class TimeWarpSimulationManager;
 
 /** The MsgAggregatingCommunicationManager class.
 

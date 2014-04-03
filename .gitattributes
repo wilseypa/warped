@@ -1,0 +1,2 @@
+# Convert all files to unix style line endings on commit and checkout
+* text eol=lf

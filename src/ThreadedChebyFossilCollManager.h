@@ -3,7 +3,16 @@
 #ifndef THREADEDCHEBYFOSSILCOLLMANAGER_H_
 #define THREADEDCHEBYFOSSILCOLLMANAGER_H_
 
+#include <string>                       // for string
+#include <vector>                       // for vector
+
+#include "SimulationObject.h"           // for string, etc
 #include "ThreadedOptFossilCollManager.h"
+
+class LockState;
+class SimulationObject;
+class ThreadedTimeWarpSimulationManager;
+class VTime;
 
 /** The ChebyFossilCollManager class.
 
@@ -46,9 +55,9 @@ public:
     /** Used to get/release the lock of the data structure used in 
         chebyshev's inequality
     */
-    void getOfcChebyLock (int threadId, const string syncMech);
+    void getOfcChebyLock (int threadId, const std::string syncMech);
 
-    void releaseOfcChebyLock (int threadId, const string syncMech);
+    void releaseOfcChebyLock (int threadId, const std::string syncMech);
 
 
     //@} // End of Public Class Methods of ChebyFossilCollManager.

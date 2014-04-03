@@ -1,9 +1,12 @@
 #ifndef DESERIALIZER_MANAGER_H
 #define DESERIALIZER_MANAGER_H
 
+#include <string>                       // for string, hash
+#include <unordered_map>                // for unordered_map
+
+#include "Serializable.h"               // for string, etc
 #include "warped.h"
-#include <unordered_map>
-#include <string>
+
 using std::string;
 
 

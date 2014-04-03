@@ -2,13 +2,17 @@
 #define CLOCK_FREQUENCY_MANAGER_IMPLEMENTATION_BASE_H
 
 
-#include "warped.h"
-#include "DVFSManager.h"
-#include "controlkit/FIRFilter.h"
-#include "StopWatch.h"
+#include <string>                       // for string
+#include <vector>                       // for vector
 
-class TimeWarpSimulationManager;
+#include "DVFSManager.h"                // for DVFSManager::Algorithm, etc
+#include "StopWatch.h"                  // for StopWatch
+#include "controlkit/FIRFilter.h"       // for FIRFilter
+#include "warped.h"
+
 class CommunicationManager;
+class SimulationConfiguration;
+class TimeWarpSimulationManager;
 
 /** The DVFSManagerImplementationBase implementation base class.
 
@@ -37,7 +41,7 @@ public:
 
     virtual void delay(int) {}
 
-    virtual string toString();
+    virtual std::string toString();
 
     //@} // End of Public Class Methods of DVFSManagerImplementationBase.
 
@@ -53,7 +57,7 @@ protected:
     void populateAvailableFrequencies();
     void setCPUFrequency(int cpu_idx, int freq);
     bool updateFrequencyIdxs();
-    void fillUsefulWork(vector<double>&);
+    void fillUsefulWork(std::vector<double>&);
     void initializeFrequencyIdxs(int maxfreq);
     bool isDummy() const { return myAlg == FIXED; }
     bool debugPrint() const { return myDebugPrint; }
@@ -75,7 +79,7 @@ protected:
 
     // begin() == fastest, end() == slowest
     std::vector<int> myAvailableFreqs;
-    vector<int> myFrequencyIdxs;
+    std::vector<int> myFrequencyIdxs;
 
 private:
 

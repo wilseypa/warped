@@ -1,6 +1,8 @@
 #ifndef ECLMPL_CONNECTION_INTERFACE
 #define ECLMPL_CONNECTION_INTERFACE
 
+#include <string>                       // for string
+
 #include "eclmplCommonInclude.h"
 
 /** The eclmplConnectionInterface class.
@@ -200,7 +202,7 @@ protected:
     bool connected;
 
     /// Full-path name of remote shell command.
-    string rshCmd;
+    std::string rshCmd;
 
 //@} // End of Protected Class Attributes of eclmplConnectionInterface.
 };

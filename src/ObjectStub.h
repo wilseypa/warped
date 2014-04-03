@@ -2,14 +2,14 @@
 #define OBJECT_STUB_H
 
 
-#include "warped.h"
-#include "Factory.h"
-#include <sstream>
+#include <sstream>                      // for ostringstream
+#include <string>                       // for string
 
-using std::ostringstream;
+#include "Factory.h"                    // for Factory
+#include "Types.h"                      // for Kind
 
-class SimulationObject;
 class FactoryImplementationBase;
+class SimulationObject;
 
 /** The ObjectStub abstract base class.
 
@@ -49,7 +49,7 @@ public:
 
         @return Information about this object.
     */
-    virtual const string& getInformation() const = 0;
+    virtual const std::string& getInformation() const = 0;
 
     /** Is this object local?
 
@@ -64,7 +64,7 @@ public:
         @return A handle to the created object.
     */
     virtual SimulationObject* createSimulationObject(int argc,
-                                                     ostringstream& stream) = 0;
+                                                     std::ostringstream& stream) = 0;
 
     //@} // End of Public Class Methods of ObjectStub.
 

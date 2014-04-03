@@ -1,11 +1,17 @@
 
+#include <stddef.h>                     // for NULL
+#include <functional>                   // for unary_function
+
 #include "DefaultTimeWarpEventContainer.h"
-#include "Event.h"
-#include "NegativeEvent.h"
-#include "EventFunctors.h"
-#include "SimulationObject.h"
-#include "TimeWarpSimulationManager.h"
-#include "iostream"
+#include "Event.h"                      // for Event
+#include "EventId.h"                    // for EventId, operator<<
+#include "NegativeEvent.h"              // for NegativeEvent
+#include "ObjectID.h"                   // for ObjectID
+#include "SimulationObject.h"           // for SimulationObject
+#include "VTime.h"                      // for VTime
+#include "iostream"                     // for cout
+#include "warped.h"                     // for ASSERT
+
 using std::cout;
 using std::endl;
 

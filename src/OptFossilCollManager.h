@@ -2,23 +2,26 @@
 #define OPTFOSSILCOLLMANAGER_H_
 
 
-#include "warped.h"
-#include "CommunicatingEntity.h"
-#include "Configurable.h"
-#include "StateSetObject.h"
-#include <set>
-#include <fstream>
-#include <map>
-using namespace std;
+#include <map>                          // for map
+#include <string>                       // for string
+#include <vector>                       // for vector
 
-class TimeWarpSimulationManager;
-class SimulationObject;
-class VTime;
+#include "CommunicatingEntity.h"        // for CommunicatingEntity
+#include "Configurable.h"               // for Configurable
+#include "ObjectID.h"                   // for ObjectID
+#include "StateSetObject.h"
+#include "warped.h"
+
 class CommunicationManager;
 class Event;
+class KernelMessage;
 class NegativeEvent;
 class RestoreCkptMessage;
+class SimulationConfiguration;
+class SimulationObject;
 class State;
+class TimeWarpSimulationManager;
+class VTime;
 
 /** The Optimistic Fossil Collection Manager class.
 
@@ -127,23 +130,6 @@ public:
     */
     virtual bool checkFault(SimulationObject* obj);
 
-    /*// These are not currently used anywhere. It was a potential solution
-    // that did not work out as well as was hoped.
-    void *newEvent(size_t size);
-
-    void *newNegativeEvent(size_t size);
-
-    State *newState(SimulationObject *);
-
-    void deleteEvent(void *);
-
-    void deleteNegativeEvent(void *);
-
-    void deleteState(const State *, unsigned int);
-
-    void setStateQueue(multiset< SetObject<State> > *initStateQueue);
-    */
-
     //@} // End of Public Class Methods of OptFossilCollManager. */
 
 protected:
@@ -154,22 +140,22 @@ protected:
     CommunicationManager* myCommManager;
 
     /// The active history length of the object.
-    vector<int> activeHistoryLength;
+    std::vector<int> activeHistoryLength;
 
     /// The time of the most recent fossil collection for an object.
-    vector<int> lastCollectTimes;
+    std::vector<int> lastCollectTimes;
 
     /// The period at which fossil collection is performed.
-    vector<int> fossilPeriod;
+    std::vector<int> fossilPeriod;
 
     /// The time of the initial checkpoint save.
     const int firstCheckpointTime;
 
     /// The time of the next checkpoint save.
-    vector<int> nextCheckpointTime;
+    std::vector<int> nextCheckpointTime;
 
     /// The time of the last checkpoint save.
-    vector<int> lastCheckpointTime;
+    std::vector<int> lastCheckpointTime;
 
     /// The time of the last restored checkpoint. -1 if no restores have occurred.
     int lastRestoreTime;
@@ -185,7 +171,7 @@ protected:
     int defaultLength;
 
     /// The number of rollback samples that have been taken.
-    vector<int> numSamples;
+    std::vector<int> numSamples;
 
     /// The minimum number of rollback samples taken before calculating
     /// the active history length.
@@ -202,19 +188,10 @@ protected:
 
     /// The saved states for every object at checkpoint times. These
     /// are not written to a file because there is no function to serialize states.
-    map< int, vector<State*>* > checkpointedStates;
+    std::map< int, std::vector<State*>* > checkpointedStates;
 
     /// The path to the directory where the OFC checkpoint files are stored.
-    string ckptFilePath;
-
-    /*// These are not currently used anywhere. It was a potential solution
-    // that did not work out as well as was hoped.
-    // The state queue from the state manager.
-    multiset< SetObject<State> > *stateQueue;
-    vector<NegativeEvent*> availableNegEventMem;
-    vector<NegativeEvent*> inUseNegEventMem;
-    vector< vector<State*> > availableStateMem;
-    */
+    std::string ckptFilePath;
 
     //@} // End of Protected Class Methods of OptFossilCollManager.
 };

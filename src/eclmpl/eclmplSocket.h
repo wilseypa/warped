@@ -1,6 +1,10 @@
 #ifndef ECLMPL_SOCKET_H
 #define ECLMPL_SOCKET_H
 
+#include <netinet/in.h>                 // for sockaddr_in
+#include <sys/select.h>                 // for fd_set
+#include <string>                       // for string
+
 #include "eclmplCommonInclude.h"
 
 /** The eclmplSocket class.
@@ -56,7 +60,7 @@ protected:
     /// Remote address length.
     int remoteAddrLen; //*remoteAddrLen;
 
-    void printError(const int& error, const string fName) const;
+    void printError(const int& error, const std::string fName) const;
     struct hostent* wGethostbyname(const char* const name) const;
     int wFcntl(const int& fd, const int& cmd, const long& arg);
 private:

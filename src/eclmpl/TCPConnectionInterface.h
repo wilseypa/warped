@@ -1,8 +1,8 @@
 #ifndef TCP_CONNECTION_INTERFACE_H
 #define TCP_CONNECTION_INTERFACE_H
 
-#include "eclmplCommonInclude.h"
 #include "SocketBasedConnectionInterface.h"
+#include "eclmplCommonInclude.h"
 
 class TCPConnectionInterface : public SocketBasedConnectionInterface {
 public:

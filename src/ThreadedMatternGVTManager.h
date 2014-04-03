@@ -2,9 +2,12 @@
 #ifndef THREADEDMATTERNGVTMANAGER_H_
 #define THREADEDMATTERNGVTMANAGER_H_
 
-#include "MatternGVTManager.h"
+#include "MatternGVTManager.h"          // for MatternGVTManager
+
+class KernelMessage;
 class MatternGVTMessage;
 class ThreadedTimeWarpSimulationManager;
+class VTime;
 
 /** The ThreadedMatternGVTManager class.
 

@@ -1,12 +1,11 @@
-
 #include "PartitionInfo.h"
 
 PartitionInfo::PartitionInfo(unsigned int numPartitions) :
     myNumberOfPartitions(numPartitions) {}
 
 PartitionInfo::~PartitionInfo() {
-    for (int i = 0; i < myObjectSets.size(); i++) {
-        delete myObjectSets[i];
+    for (int i = 0; i < myPartitions.size(); i++) {
+        delete myPartitions[i];
     }
 }
 
@@ -16,14 +15,12 @@ PartitionInfo::getNumberOfPartitions() const {
 }
 
 vector<SimulationObject*>*
-PartitionInfo::getObjectSet(unsigned int setNumber) const {
-    return myObjectSets[setNumber];
+PartitionInfo::getPartition(unsigned int partitionNumber) const {
+    return myPartitions[partitionNumber];
 }
 
 void
-PartitionInfo::addPartition(unsigned int partitionNumber,
-                            vector<SimulationObject*>* toAdd) {
-    myObjectSets.reserve(partitionNumber + 1);
-    myObjectSets.insert(myObjectSets.begin() + partitionNumber,  toAdd);
+PartitionInfo::addPartition(vector<SimulationObject*>* partition) {
+    myPartitions.push_back(partition);
 }
 

@@ -2,13 +2,20 @@
 #define TIME_WARP_EVENT_SET_H
 
 
-#include "warped.h"
-#include "Configurable.h"
+#include <iosfwd>                       // for ostream
+#include <string>                       // for string
+
+#include "Configurable.h"               // for Configurable
 #include "EventId.h"
+#include "warped.h"
+
+using std::string;
+
 class Event;
 class NegativeEvent;
 class SimulationObject;
 class TimeWarpEventSetFactory;
+class VTime;
 
 /** The TimeWarpEventSet abstract base class.
 

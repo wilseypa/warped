@@ -13,8 +13,6 @@ warpedUnitTests_SOURCES = \
 	CirculateInitializationMessageTest.h \
 	CostAdaptiveStateManagerTest.cpp \
 	CostAdaptiveStateManagerTest.h \
-	DefaultSchedulingManagerTest.cpp \
-	DefaultSchedulingManagerTest.h \
 	DefaultTimeWarpEventSetOneAntiMsgTest.cpp \
 	DefaultTimeWarpEventSetOneAntiMsgTest.h \
 	DefaultTimeWarpEventSetTest.cpp \

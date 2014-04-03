@@ -2,9 +2,17 @@
 #define CENTRALIZED_CLOCK_FREQUENCY_MANAGER_H
 
 
-#include "warped.h"
-#include "DVFSManagerImplementationBase.h"
+#include <string>                       // for string
+#include <vector>                       // for vector
 
+#include "DVFSManager.h"                // for DVFSManager::Algorithm, etc
+#include "DVFSManagerImplementationBase.h"
+#include "warped.h"
+
+using std::string;
+
+class KernelMessage;
+class SimulationConfiguration;
 class TimeWarpSimulationManager;
 
 /** The SharedDVFSManager base class.

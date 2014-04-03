@@ -2,19 +2,19 @@
 #define OUTPUT_EVENTS_H
 
 
-#include "warped.h"
-#include "TimeWarpSimulationManager.h"
-#include <vector>
 #include <algorithm>
-#include <list>
-#include <fstream>
+#include <fstream>                      // for ofstream
+#include <list>                         // for list
+#include <vector>                       // for vector, vector<>::iterator
+
 #include "SetObject.h"
-using std::vector;
-using std::list;
-using std::ofstream;
+#include "TimeWarpSimulationManager.h"
+#include "warped.h"
 
 class Event;
+class TimeWarpSimulationManager;
 class VTime;
+template <class Element> class SetObject;
 
 /** The OutputEvents class.
 
@@ -41,7 +41,7 @@ public:
         @param searchTime Time to use.
         @return vector The vector of the events sent at or after the search time.
     */
-    vector<const Event*>* getEventsSentAtOrAfter(const VTime& searchTime);
+    std::vector<const Event*>* getEventsSentAtOrAfter(const VTime& searchTime);
 
     /** Returns the events sent at or after the search time and removes them from
         this container.
@@ -49,7 +49,7 @@ public:
         @param searchTime Time to use.
         @return vector The vector of the events sent at or after the search time.
     */
-    vector<const Event*>* getEventsSentAtOrAfterAndRemove(const VTime& searchTime);
+    std::vector<const Event*>* getEventsSentAtOrAfterAndRemove(const VTime& searchTime);
 
     /** Inserts the event into the container.
         @param Event The event to insert.
@@ -96,7 +96,7 @@ public:
 
         @param toRemove A vector of events to remove.
     */
-    void remove(const vector<const Event*>& toRemove);
+    void remove(const std::vector<const Event*>& toRemove);
 
     /** Used in optimistic fossil collection. This function saves certain
         necessary events to the given output file.
@@ -105,7 +105,7 @@ public:
         @param saveTime The time used to determine which event to write
                         to the output file.
     */
-    void saveOutputCheckpoint(ofstream* outFile, unsigned int saveTime);
+    void saveOutputCheckpoint(std::ofstream* outFile, unsigned int saveTime);
 
     /** Used in optimistic fossil collection. Removes all events from the container.
     */
@@ -120,17 +120,17 @@ private:
 
     /// The events with the sender and receiver simulation object on this
     /// simulation manager.
-    vector< SetObject<Event>* > outputEventsLocal;
+    std::vector< SetObject<Event>* > outputEventsLocal;
 
     /// The events with the receiver simulation object on a different
     /// simulation manager.
-    vector<const Event*> outputEventsRemote;
+    std::vector<const Event*> outputEventsRemote;
 
     /// This list holds events that have been removed.
-    list<const Event*> removedEventsRemote;
+    std::list<const Event*> removedEventsRemote;
 
     /// An iterator,
-    vector<const Event*>::iterator eventToRemove;
+    std::vector<const Event*>::iterator eventToRemove;
 
     /// True if the event to remove was actually removed.
     bool removedEventToRemove;

@@ -1,8 +1,18 @@
 
+#include <algorithm>                    // for sort
+#include <ostream>                      // for operator<<, etc
+
+#include "Event.h"                      // for Event
+#include "EventFunctors.h"              // for sendTimeLessThan
+#include "ObjectID.h"                   // for ObjectID
+#include "SimulationObject.h"           // for SimulationObject
 #include "ThreadedDynamicOutputManager.h"
+#include "ThreadedOutputEvents.h"       // for ThreadedOutputEvents
+#include "ThreadedOutputManagerImplementationBase.h"
 #include "ThreadedTimeWarpSimulationManager.h"
-#include "ThreadedOutputEvents.h"
-#include "Event.h"
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
 
 ThreadedDynamicOutputManager::ThreadedDynamicOutputManager(
     ThreadedTimeWarpSimulationManager* simMgr, unsigned int filterDepth,

@@ -7,8 +7,8 @@ class ApplicationAdapter : public Application {
 public:
     ApplicationAdapter() {}
 
-    const PartitionInfo* getPartitionInfo(unsigned int numProcessorsAvailable) { return 0; }
-    int getNumberOfSimulationObjects(int mgrId) const { return 0; }
+    std::vector<SimulationObject*>* getSimulationObjects()
+        { return new std::vector<SimulationObject*>; }
     virtual int finalize() { return 0; }
     ~ApplicationAdapter() {}
     void configure(SimulationConfiguration& configuration) {}

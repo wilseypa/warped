@@ -1,5 +1,14 @@
+#include <ostream>                      // for operator<<, basic_ostream, etc
+#include <string>                       // for char_traits, operator<<
 
 #include "CostAdaptiveStateManager.h"
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "ObjectID.h"                   // for ObjectID
+#include "SimulationObject.h"           // for SimulationObject
+#include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
+#include "WarpedDebug.h"                // for debugout
+
+class VTime;
 
 // These are the default values.
 const unsigned int defaultRecalculationPeriod = 100;

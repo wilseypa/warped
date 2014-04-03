@@ -1,6 +1,15 @@
+#include <ostream>                      // for operator<<, basic_ostream, etc
+#include <set>                          // for multiset, etc
+#include <string>                       // for char_traits, operator<<
 
+#include "DefaultObjectID.h"            // for OBJECT_ID
+#include "SetObject.h"                  // for SetObject, ostream
+#include "SimulationObject.h"           // for SimulationObject
+#include "State.h"                      // for State
 #include "ThreadedCostAdaptiveStateManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
+#include "VTime.h"                      // for VTime
+#include "WarpedDebug.h"                // for debugout
 
 // These are the default values.
 const unsigned int defaultRecalculationPeriod = 100;

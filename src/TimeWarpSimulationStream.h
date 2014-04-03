@@ -2,16 +2,21 @@
 #define TIMEWARP_SIMULATION_STREAM_H
 
 
-#include "warped.h"
-#include "SimulationStream.h"
-#include "TimeWarpSimulationManager.h"
-#include "FileQueue.h"
-#include "InFileQueue.h"
-#include <fstream>
+#include <fstream>                      // for ostringstream, ios, fstream, etc
 #include <sstream>
-using std::ostringstream;
-using std::ofstream;
-using std::ifstream;
+#include <string>                       // for string
+
+#include "FileQueue.h"                  // for ios, FileQueue (ptr only), etc
+#include "InFileQueue.h"
+#include "SimulationObject.h"           // for ios, etc
+#include "SimulationStream.h"           // for SimulationStream
+#include "TimeWarpSimulationManager.h"
+
+class FileQueue;
+class InFileQueue;
+class SimulationObject;
+class TimeWarpSimulationManager;
+class VTime;
 
 class TimeWarpSimulationStream : public SimulationStream {
     friend class TimeWarpSimulationManager;
@@ -28,7 +33,7 @@ public:
         @mode  open file for reading/writing
         @simObj object handle.
     */
-    TimeWarpSimulationStream(const string& fileName, ios::openmode mode,
+    TimeWarpSimulationStream(const std::string& fileName, std::ios::openmode mode,
                              SimulationObject* simObj);
 
     /// Default destructor
@@ -38,13 +43,13 @@ public:
     void flush();
 
     /// Returns a handle for reading a file for the stream.
-    virtual fstream* getInputStream();
+    virtual std::fstream* getInputStream();
 
     /// Reads one line from the file.
-    virtual ostringstream& readLine(ostringstream& ost);
+    virtual std::ostringstream& readLine(std::ostringstream& ost);
 
     /// Inserts data from ost into the stream.
-    virtual void insert(ostringstream& ost);
+    virtual void insert(std::ostringstream& ost);
 
     /// call fossil collect on the file queue
     void fossilCollect(const VTime& fossilCollectTime);
@@ -57,10 +62,10 @@ public:
     void rollbackTo(const VTime& rollbackToTime);
 
     /// Used in optimistic fossil collection to save the state of the stream.
-    void saveCheckpoint(ofstream* outFile, unsigned int saveTime);
+    void saveCheckpoint(std::ofstream* outFile, unsigned int saveTime);
 
     /// Used in optimistic fossil collection to restore the state of the stream.
-    void restoreCheckpoint(ifstream* inFile, unsigned int restoreTime);
+    void restoreCheckpoint(std::ifstream* inFile, unsigned int restoreTime);
 
     //@} // End of Public Class Methods of TimeWarpSimulationStream.
 
@@ -82,7 +87,7 @@ protected:
     InFileQueue* inFileQueue;
 
     /// A output buffer if the file turns out to be an output file...
-    ostringstream myOutputBuffer;
+    std::ostringstream myOutputBuffer;
 
     /// A pointer to the original file buffer for performing the actual I/O
     std::streambuf* originalBuffer;
@@ -94,7 +99,7 @@ private:
     //@{
 
     /// Internal useful method used to setup buffers
-    void setBuffer(ios::openmode mode);
+    void setBuffer(std::ios::openmode mode);
 
     /** A constructor that takes a fileDescriptor as a parameter. This
         constructor is used by the TimeWarpSimulationManager to initialize wout
@@ -103,7 +108,7 @@ private:
         method.
         @param fileHandle handle to the fstream to be used.
         @param mode the mode of the stream being set. */
-    TimeWarpSimulationStream(int fileHandle, ios::openmode mode);
+    TimeWarpSimulationStream(int fileHandle, std::ios::openmode mode);
     //@} // End of Private class methods of TimeWarpSimulationStream
 
     /**@name Private class attributes of TimeWarpSimulationManager. */

@@ -1,10 +1,14 @@
 #ifndef MPI_PHYSICAL_COMMUNICATION_LAYER_H
 #define MPI_PHYSICAL_COMMUNICATION_LAYER_H
 
-#include "warped.h"
+#include <vector>                       // for vector
+
+#include "MPIMessage.h"                 // for MPIMessage
+#include "PhysicalCommunicationLayer.h"  // for PhysicalCommunicationLayer
 #include "eclmplCommonInclude.h"
-#include "PhysicalCommunicationLayer.h"
-#include "MPIMessage.h"
+#include "warped.h"
+
+class SerializedInstance;
 
 /** The MPIPhysicalCommunicationLayer class.
 
@@ -92,8 +96,8 @@ private:
     void startMPI();
 
 
-    vector<MPIMessage> pendingSends;
-    vector<MPIMessage> pendingReceives;
+    std::vector<MPIMessage> pendingSends;
+    std::vector<MPIMessage> pendingReceives;
 };
 
 #endif

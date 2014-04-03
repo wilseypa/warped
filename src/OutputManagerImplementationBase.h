@@ -2,14 +2,20 @@
 #define OUTPUT_MANAGER_IMPLEMENTATION_BASE_H
 
 
-#include <fstream>
-#include <set>
-#include "warped.h"
-#include "OutputEvents.h"
-#include "OutputManager.h"
-using std::ofstream;
+#include <fstream>                      // for ofstream
+#include <set>                          // for multiset
+#include <vector>                       // for vector
 
+#include "ObjectID.h"                   // for ObjectID
+#include "OutputEvents.h"               // for ofstream, etc
+#include "OutputManager.h"              // for OutputManager
+#include "warped.h"
+
+class Event;
+class OutputEvents;
+class SimulationObject;
 class TimeWarpSimulationManager;
+class VTime;
 
 using std::multiset;
 
@@ -80,7 +86,7 @@ public:
         @param objId The ID of the object being saved.
         @param saveTime The checkpoint time.
     */
-    virtual void saveOutputCheckpoint(ofstream* outFile, const ObjectID& objId, unsigned int saveTime);
+    virtual void saveOutputCheckpoint(std::ofstream* outFile, const ObjectID& objId, unsigned int saveTime);
 
     /**
       Remove all events from the output set. Used to restore state after
@@ -106,12 +112,12 @@ private:
     TimeWarpSimulationManager* mySimulationManager;
 
     /// Pointer to the event set.
-    vector< OutputEvents*> myOutputEvents;
+    std::vector< OutputEvents*> myOutputEvents;
 
     /// Data structure used for the one-anti-message optimization.
     //unordered_ map<string, bool> alreadySentAntiMessages;
 
-    ofstream* myStream;
+    std::ofstream* myStream;
 };
 
 #endif
