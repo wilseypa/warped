@@ -26,8 +26,6 @@ public:
     /* Default constructor */
     inline LadderQueueRelaxed() {
 
-        isDequeueReq  = false;
-
         maxTS = minTS = topStart = nRung = 0;
         numRung0Buckets = 0;
         std::fill_n(bucketWidth, MAX_RUNG_NUM, 0);
@@ -55,7 +53,7 @@ public:
     }
 
     /* Peek at the available event */
-    inline const Event* begin() {
+    inline const Event* begin( bool isDequeueReq ) {
 
         unsigned int bucketIndex = 0;
         const Event *event = NULL;
@@ -208,9 +206,7 @@ public:
     /* Dequeue the event with lowest timestamp */
     inline const Event* dequeue() {
 
-        isDequeueReq = true;
-        const Event *retVal = begin();
-        isDequeueReq = false;
+        const Event *retVal = begin(true);
         return retVal;
     }
 
@@ -373,9 +369,6 @@ public:
     }
 
 private:
-
-    /* Common variables */
-    bool                isDequeueReq;
 
     /* Top variables */
     LockFreeList        top;
