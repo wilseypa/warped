@@ -20,6 +20,8 @@
 /* Official RTM intrinsics interface matching gcc/icc, but works
    on older gcc compatible compilers and binutils. */
 
+#define L1DSZ 64
+
 #define _XACQUIRE_PREFIX   ".byte 0xF2; "
 #define _XRELEASE_PREFIX   ".byte 0xF3; "
 
@@ -44,6 +46,8 @@
         if (status & (1 << type))   \
             tsxAbrtType[type]++;   \
     } while (0)
+
+#define TSXRTM_RETRIES 10
 
 #define __rtm_force_inline __attribute__((__always_inline__)) inline
 #define __hle_force_inline __attribute__((__always_inline__)) inline
