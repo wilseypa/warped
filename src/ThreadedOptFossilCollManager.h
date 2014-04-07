@@ -270,6 +270,6 @@ protected:
      */
 
     //@} // End of Protected Class Methods of OptFossilCollManager.
-};
+} __attribute__((aligned(L1DSZ)));
 
 #endif /* ThreadedOPTFOSSILCOLLMANAGER_H_ */

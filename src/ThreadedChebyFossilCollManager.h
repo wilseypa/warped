@@ -83,7 +83,7 @@ protected:
     /// cheby lock
     LockState* ofcChebyLock; 
     //@} // End of Protected Class Methods of ChebyFossilCollManager.
-};
+} __attribute__((aligned(L1DSZ)));
 
 
 

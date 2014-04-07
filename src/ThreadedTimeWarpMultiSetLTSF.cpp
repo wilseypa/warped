@@ -26,7 +26,12 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, in
 
     // Set up scheduleQueue (LTSF queue)
     if (scheduleQScheme == "MultiSet") {
-        scheduleQueue = new multiset<const Event*,receiveTimeLessThanEventIdLessThan> ;
+        void *schQmem = NULL;
+        if (posix_memalign(&schQmem, L1DSZ, sizeof(multiset<const Event*, receiveTimeLessThanEventIdLessThan>))) {
+            printf("POSIX_MEMALIGN ERROR!\n");
+            exit(1);
+        }
+        scheduleQueue = new (schQmem) multiset<const Event*,receiveTimeLessThanEventIdLessThan>;
     } else if (scheduleQScheme == "LadderQueue") {
         if(eventCausality == "RELAXED") {
             ladderQRelaxed = new LadderQueueRelaxed();
@@ -34,7 +39,12 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(int inObjectCount, in
             ladderQStrict = new LadderQueueStrict();
         }
     } else if (scheduleQScheme == "SplayTree") {
-        splayTree = new SplayTree;
+        void *schQmem = NULL;
+        if (posix_memalign(&schQmem, L1DSZ, sizeof(SplayTree))) {
+            printf("POSIX_MEMALIGN ERROR!\n");
+            exit(1);
+        }
+        splayTree = new (schQmem) SplayTree;
     } else {
         cout << "Invalid schedule queue scheme" << endl;
     }
@@ -376,7 +386,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
             debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
 
             ret = *(scheduleQueue->begin());
-            unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
+            register unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
             debug::debugout <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
 
             getObjectLock(threadId, objId);

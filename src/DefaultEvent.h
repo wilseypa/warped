@@ -8,6 +8,7 @@
 #include "SimulationObject.h"           // for SimulationObject
 #include "VTime.h"                      // for VTime
 #include "warped.h"                     // for ASSERT
+#include "tsx.h"
 
 /** A default implementation of the Event interface. */
 
@@ -87,7 +88,7 @@ private:
     const EventId eventId;
 
     //@} // End of Event Private Class Methods.
-};
+} __attribute__((aligned(L1DSZ)));
 
 
 #endif

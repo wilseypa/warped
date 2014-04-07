@@ -94,7 +94,7 @@ public:
 private:
     //Lowest event position pointer for MULTILTSF
     std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator>
-    lowestObjectPosition;
+    lowestObjectPosition __attribute__((aligned(L1DSZ)));
 
     ///Schedule Queue - MULTILTSF
     multiset<const Event*, receiveTimeLessThanEventIdLessThan>* scheduleQueue;
@@ -132,5 +132,5 @@ private:
     int** LTSFObjId;
 
     unsigned int minReceiveTime;
-};
+} __attribute__((aligned(L1DSZ)));
 #endif /* ThreadedTIMEWARPMULTISETLTSF_H_ */

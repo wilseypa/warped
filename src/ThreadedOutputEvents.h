@@ -160,6 +160,6 @@ private:
     LockState* removedListLock;
 
     //@} // End of Private Class Methods of ThreadedOutputEvents.
-};
+} __attribute__((aligned(L1DSZ)));
 
 #endif /* ThreadedOUTPUTEVENTS_H_ */

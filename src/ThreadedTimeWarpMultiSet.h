@@ -243,6 +243,6 @@ private:
     unsigned int* rolledBackEventsByLTSF;
     ThreadedTimeWarpLoadBalancer* myLoadBalancer;
     int lbType;
-};
+} __attribute__((aligned(L1DSZ)));
 
 #endif /* ThreadedTIMEWARPMULTISET_H_ */

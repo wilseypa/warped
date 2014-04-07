@@ -494,6 +494,6 @@ private:
     
     /// used to lock optimistic fossil collection recovery flags. 
     LockState* ofcFlagLock;
-};
+} __attribute__((aligned(L1DSZ)));
 
 #endif // THREADED_TIME_WARP_SIMULATION_MANAGER_H

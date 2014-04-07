@@ -172,6 +172,6 @@ protected:
 private:
     string syncMechanism;
 
-};
+} __attribute__((aligned(L1DSZ)));
 
 #endif /* ThreadedSTATEMANAGERIMPLEMENTATIONBASE_H_ */
