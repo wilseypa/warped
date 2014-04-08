@@ -49,9 +49,9 @@ public:
         }
 
         /* Initialize the mutexes */
-        pthread_mutex_init(&topMutex, NULL);
-        pthread_mutex_init(&rungMutex, NULL);
-        pthread_mutex_init(&bottomMutex, NULL);
+        //pthread_mutex_init(&topMutex, NULL);
+        //pthread_mutex_init(&rungMutex, NULL);
+        //pthread_mutex_init(&bottomMutex, NULL);
     }
 
     /* Destructor */
@@ -59,9 +59,9 @@ public:
         clear();
 
         /* Destroy the mutexes */
-        pthread_mutex_destroy(&topMutex);
-        pthread_mutex_destroy(&rungMutex);
-        pthread_mutex_destroy(&bottomMutex);
+        //pthread_mutex_destroy(&topMutex);
+        //pthread_mutex_destroy(&rungMutex);
+        //pthread_mutex_destroy(&bottomMutex);
     }
 
     /* Peek at the event with lowest timestamp */
@@ -72,32 +72,32 @@ public:
         bool isBucketWidthStatic = false;
 
         /* Remove from bottom if not empty */
-        pthread_mutex_lock(&bottomMutex);
+        //pthread_mutex_lock(&bottomMutex);
         if (!bottomEmpty()) {
             const Event* event = bottomBegin();
-            pthread_mutex_unlock(&bottomMutex);
+            //pthread_mutex_unlock(&bottomMutex);
             return event;
         }
-        pthread_mutex_unlock(&bottomMutex);
+        //pthread_mutex_unlock(&bottomMutex);
 
         /* If rungs exist, remove from rungs */
-        pthread_mutex_lock(&rungMutex);
+        //pthread_mutex_lock(&rungMutex);
         if ((nRung > 0) && (INVALID == (bucketIndex = recurse_rung()))) {
             /* Check whether rungs still exist */
             if (nRung > 0) {
                 std::cout << "Received invalid Bucket index." << std::endl;
-                pthread_mutex_unlock(&rungMutex);
+                //pthread_mutex_unlock(&rungMutex);
                 return NULL;
             }
         }
 
         if (nRung > 0) { /* Check required because recurse_rung() can affect nRung value */
-            pthread_mutex_lock(&bottomMutex);
+            //pthread_mutex_lock(&bottomMutex);
             for (lIterate = RUNG(nRung-1,bucketIndex)->begin();
                     lIterate != RUNG(nRung-1,bucketIndex)->end(); lIterate++) {
                 bottomInsert(*lIterate);
             }
-            pthread_mutex_unlock(&bottomMutex);
+            //pthread_mutex_unlock(&bottomMutex);
             RUNG(nRung-1,bucketIndex)->clear();
 
             /* If bucket returned is the last valid rung of the bucket */
@@ -114,31 +114,31 @@ public:
                     rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
                 } else {
                     std::cout << "numBucket handling needs improvement." << std::endl;
-                    pthread_mutex_unlock(&rungMutex);
+                    //pthread_mutex_unlock(&rungMutex);
                     return NULL;
                 }
             }
 
-            pthread_mutex_lock(&bottomMutex);
+            //pthread_mutex_lock(&bottomMutex);
             if (true == bottomEmpty()) {
-                std::cout << "Bottom empty" << std::endl;
-                pthread_mutex_unlock(&bottomMutex);
-                pthread_mutex_unlock(&rungMutex);
+                std::cout << "Bottom empty 1" << std::endl;
+                //pthread_mutex_unlock(&bottomMutex);
+                //pthread_mutex_unlock(&rungMutex);
                 return NULL;
             }
 
             const Event* event = bottomBegin();
-            pthread_mutex_unlock(&bottomMutex);
-            pthread_mutex_unlock(&rungMutex);
+            //pthread_mutex_unlock(&bottomMutex);
+            //pthread_mutex_unlock(&rungMutex);
             return event;
         }
-        pthread_mutex_unlock(&rungMutex);
+        //pthread_mutex_unlock(&rungMutex);
 
         /* Check if top has any events before proceeding further */
-        pthread_mutex_lock(&topMutex);
+        //pthread_mutex_lock(&topMutex);
         if (true == top.empty()) {
             std::cout << "LadderQ is empty." << std::endl;
-            pthread_mutex_unlock(&topMutex);
+            //pthread_mutex_unlock(&topMutex);
             return NULL;
         }
 
@@ -146,12 +146,12 @@ public:
         /* Check if failed to create the first rung */
         if (false == create_new_rung(top.size(), minTS, &isBucketWidthStatic)) {
             std::cout << "Failed to create the required rung." << std::endl;
-            pthread_mutex_unlock(&topMutex);
+            //pthread_mutex_unlock(&topMutex);
             return NULL;
         }
 
         /* Transfer events from Top to 1st rung of Ladder */
-        pthread_mutex_lock(&rungMutex);
+        //pthread_mutex_lock(&rungMutex);
         rCur[0] = rStart[0] + NUM_BUCKETS(0)*bucketWidth[0];
         for (lIterate = top.begin(); lIterate != top.end();) {
             bucketIndex =
@@ -174,21 +174,21 @@ public:
                 }
             }
         }
-        pthread_mutex_unlock(&topMutex);
+        //pthread_mutex_unlock(&topMutex);
 
         /* Copy events from bucket_k into Bottom */
         if (INVALID == (bucketIndex = recurse_rung())) {
             std::cout << "Received invalid Bucket index." << std::endl;
-            pthread_mutex_unlock(&rungMutex);
+            //pthread_mutex_unlock(&rungMutex);
             return NULL;
         }
 
-        pthread_mutex_lock(&bottomMutex);
+        //pthread_mutex_lock(&bottomMutex);
         for (lIterate = RUNG(0,bucketIndex)->begin();
                 lIterate != RUNG(0,bucketIndex)->end(); lIterate++) {
             bottomInsert(*lIterate);
         }
-        pthread_mutex_unlock(&bottomMutex);
+        //pthread_mutex_unlock(&bottomMutex);
 
         /* Clear that bucket */
         RUNG(0,bucketIndex)->clear();
@@ -203,21 +203,21 @@ public:
                 rCur[0] = rStart[0] + bucketIndex*bucketWidth[0];
             } else {
                 std::cout << "rung 1 numBucket handling needs improvement." << std::endl;
-                pthread_mutex_unlock(&rungMutex);
+                //pthread_mutex_unlock(&rungMutex);
                 return NULL;
             }
         }
-        pthread_mutex_unlock(&rungMutex);
+        //pthread_mutex_unlock(&rungMutex);
 
-        pthread_mutex_lock(&bottomMutex);
+        //pthread_mutex_lock(&bottomMutex);
         if (true == bottomEmpty()) {
-            std::cout << "Bottom empty" << std::endl;
-            pthread_mutex_unlock(&bottomMutex);
+            std::cout << "Bottom empty 2" << std::endl;
+            //pthread_mutex_unlock(&bottomMutex);
             return NULL;
         }
 
         const Event* event = bottomBegin();
-        pthread_mutex_unlock(&bottomMutex);
+        //pthread_mutex_unlock(&bottomMutex);
         return event;
     }
 
@@ -228,12 +228,12 @@ public:
 
         /* Top variables */
         maxTS = minTS = topStart = 0;
-        pthread_mutex_lock(&topMutex);
+        //pthread_mutex_lock(&topMutex);
         top.clear();
-        pthread_mutex_unlock(&topMutex);
+        //pthread_mutex_unlock(&topMutex);
 
         /* Rungs */
-        pthread_mutex_lock(&rungMutex);
+        //pthread_mutex_lock(&rungMutex);
         for (rungIndex = 0; rungIndex < MAX_RUNG_NUM; rungIndex++) {
             bucketWidth[rungIndex] = rStart[rungIndex] = rCur[rungIndex] = numBucket[rungIndex]   = 0;
 
@@ -242,12 +242,12 @@ public:
             }
         }
         nRung = 0;
-        pthread_mutex_unlock(&rungMutex);
+        //pthread_mutex_unlock(&rungMutex);
 
         /* Purge bottom */
-        pthread_mutex_lock(&bottomMutex);
+        //pthread_mutex_lock(&bottomMutex);
         bottomClear();
-        pthread_mutex_unlock(&bottomMutex);
+        //pthread_mutex_unlock(&bottomMutex);
     }
 
     /* Dequeue the event with lowest timestamp */
@@ -255,9 +255,9 @@ public:
 
         const Event* retVal = NULL;
         if (NULL != (retVal = begin())) {
-            pthread_mutex_lock(&bottomMutex);
+            //pthread_mutex_lock(&bottomMutex);
             bottom.erase(bottom.begin());
-            pthread_mutex_unlock(&bottomMutex);
+            //pthread_mutex_unlock(&bottomMutex);
         }
         return retVal;
     }
@@ -265,13 +265,13 @@ public:
     /* Check whether the LadderQ has any events or not */
     inline bool empty() {
 
-        pthread_mutex_lock(&topMutex);
-        pthread_mutex_lock(&rungMutex);
-        pthread_mutex_lock(&bottomMutex);
+        //pthread_mutex_lock(&topMutex);
+        //pthread_mutex_lock(&rungMutex);
+        //pthread_mutex_lock(&bottomMutex);
         bool status = ((0==nRung) & top.empty() & bottomEmpty());
-        pthread_mutex_unlock(&bottomMutex);
-        pthread_mutex_unlock(&rungMutex);
-        pthread_mutex_unlock(&topMutex);
+        //pthread_mutex_unlock(&bottomMutex);
+        //pthread_mutex_unlock(&rungMutex);
+        //pthread_mutex_unlock(&topMutex);
 
         return status;
     }
@@ -294,7 +294,7 @@ public:
         }
 
         /* Check and erase in top, if found */
-        pthread_mutex_lock(&topMutex);
+        //pthread_mutex_lock(&topMutex);
         if ((false == top.empty()) && (topStart < delEvent->getReceiveTime().getApproximateIntTime())) {
             for (lIterate = top.begin(); lIterate != top.end();) {
                 if (((*lIterate)->getReceiveTime().getApproximateIntTime() ==
@@ -307,10 +307,10 @@ public:
                     lIterate++;
                 }
             }
-            pthread_mutex_unlock(&topMutex);
+            //pthread_mutex_unlock(&topMutex);
             return;
         }
-        pthread_mutex_unlock(&topMutex);
+        //pthread_mutex_unlock(&topMutex);
 
         /* Step through rungs */
         while ((rungIndex < nRung)
@@ -328,7 +328,7 @@ public:
                 return;
             }
 
-            pthread_mutex_lock(&rungMutex);
+            //pthread_mutex_lock(&rungMutex);
             rung_bucket = RUNG(rungIndex,bucketIndex);
 
             if (false == rung_bucket->empty()) {
@@ -365,16 +365,16 @@ public:
                     }
                 }
             }
-            pthread_mutex_unlock(&rungMutex);
+            //pthread_mutex_unlock(&rungMutex);
             return;
         }
 
         /* Check and erase from bottom, if present */
-        pthread_mutex_lock(&bottomMutex);
+        //pthread_mutex_lock(&bottomMutex);
         if (false == bottomEmpty()) {
             bottomErase(delEvent);
         }
-        pthread_mutex_unlock(&bottomMutex);
+        //pthread_mutex_unlock(&bottomMutex);
     }
 
     /* Inserts the specified event into LadderQ (if already not present) */
@@ -392,7 +392,7 @@ public:
         /* Insert into top, if valid */
         if (newEvent->getReceiveTime().getApproximateIntTime() >
                 topStart) {  //deviation from APPENDIX of ladderq
-            pthread_mutex_lock(&topMutex);
+            //pthread_mutex_lock(&topMutex);
             if (minTS > newEvent->getReceiveTime().getApproximateIntTime()) {
                 minTS = newEvent->getReceiveTime().getApproximateIntTime();
             }
@@ -401,7 +401,7 @@ public:
             }
 
             top.push_front(newEvent);
-            pthread_mutex_unlock(&topMutex);
+            //pthread_mutex_unlock(&topMutex);
 
             return newEvent;
         }
@@ -427,7 +427,7 @@ public:
             }
 
             /* Adjust the numBucket and rCur parameters */
-            pthread_mutex_lock(&rungMutex);
+            //pthread_mutex_lock(&rungMutex);
             if (numBucket[rungIndex] < bucketIndex+1) {
                 numBucket[rungIndex] = bucketIndex+1;
             }
@@ -436,13 +436,13 @@ public:
             }
 
             RUNG(rungIndex,bucketIndex)->push_front(newEvent);
-            pthread_mutex_unlock(&rungMutex);
+            //pthread_mutex_unlock(&rungMutex);
 
             return newEvent;
         }
 
         /* If rung not found */
-        pthread_mutex_lock(&bottomMutex);
+        //pthread_mutex_lock(&bottomMutex);
         if (THRESHOLD < bottomSize()) {
             if (MAX_RUNG_NUM <= nRung) {
                 isBucketWidthStatic = true;
@@ -458,7 +458,7 @@ public:
                 if ((false == create_new_rung(bottomSize(), uiBucketStartVal, &isBucketWidthStatic)) &&
                         (false == isBucketWidthStatic)) {
                     std::cout << "Failed to create the required rung." << std::endl;
-                    pthread_mutex_unlock(&bottomMutex);
+                    //pthread_mutex_unlock(&bottomMutex);
                     return NULL;
                 }
             }
@@ -467,12 +467,12 @@ public:
             //ref sec 2.4 of ladderq + when bucket width becomes static
             if (true == isBucketWidthStatic) {
                 bottomInsert(newEvent);
-                pthread_mutex_unlock(&bottomMutex);
+                //pthread_mutex_unlock(&bottomMutex);
                 return newEvent;
             }
 
             /* Transfer bottom to new rung */
-            pthread_mutex_lock(&rungMutex);
+            //pthread_mutex_lock(&rungMutex);
 
             std::multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
             for (mIterate = bottom.begin(); mIterate != bottom.end(); mIterate++) {
@@ -488,8 +488,8 @@ public:
                         std::cout << "Rung 1 needs more space (available = " << numRung0Buckets
                              << ", required = " << bucketIndex+1 << ")" << std::endl;
                     }
-                    pthread_mutex_unlock(&rungMutex);
-                    pthread_mutex_unlock(&bottomMutex);
+                    //pthread_mutex_unlock(&rungMutex);
+                    //pthread_mutex_unlock(&bottomMutex);
                     return NULL;
                 }
 
@@ -515,8 +515,8 @@ public:
                 } else {
                     std::cout << "Rung 1 needs more space. Always hungry." << std::endl;
                 }
-                pthread_mutex_unlock(&rungMutex);
-                pthread_mutex_unlock(&bottomMutex);
+                //pthread_mutex_unlock(&rungMutex);
+                //pthread_mutex_unlock(&bottomMutex);
                 return NULL;
             }
 
@@ -528,13 +528,13 @@ public:
             }
 
             RUNG(nRung-1,bucketIndex)->push_front(newEvent);
-            pthread_mutex_unlock(&rungMutex);
+            //pthread_mutex_unlock(&rungMutex);
 
 
         } else { /* If BOTTOM is within threshold */
             bottomInsert(newEvent);
         }
-        pthread_mutex_unlock(&bottomMutex);
+        //pthread_mutex_unlock(&bottomMutex);
 
         return newEvent;
     }
@@ -546,7 +546,7 @@ private:
     unsigned int        maxTS;
     unsigned int        minTS;
     unsigned int        topStart;
-    pthread_mutex_t     topMutex;
+    //pthread_mutex_t     topMutex;
 
     /* Rungs */
     std::vector<std::list<const Event*> *> rung0;  //first rung. ref. sec 2.4 of ladderq paper
@@ -558,11 +558,11 @@ private:
     unsigned int        numBucket[MAX_RUNG_NUM];
     unsigned int        rStart[MAX_RUNG_NUM];
     unsigned int        rCur[MAX_RUNG_NUM];
-    pthread_mutex_t     rungMutex;
+    //pthread_mutex_t     rungMutex;
 
     /* Bottom */
     std::multiset<const Event*, receiveTimeLessThanEventIdLessThan> bottom;
-    pthread_mutex_t     bottomMutex;
+    //pthread_mutex_t     bottomMutex;
 
     /** BOTTOM Functionalities */
     /* Bottom erase */

@@ -503,7 +503,7 @@ time_t gk_str2time(char *str)
 
   memset(&time, '\0', sizeof(time));
   
-  if (strptime(str, "%m/%d/%Y %H:%M:%S", &time) == NULL)
+  if (strptime(str, "%m/%d/%Y %H:%M:%S", &time) == 0)
     return -1;
 
   rtime = mktime(&time);

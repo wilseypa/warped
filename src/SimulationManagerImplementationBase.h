@@ -29,40 +29,6 @@ public:
     SimulationManagerImplementationBase();
     virtual ~SimulationManagerImplementationBase();
 
-    /** This method is called to start the simulation.
-
-    The Simulation Manager calls this method when it is ready to start
-    the simulation.
-
-    @param simulateUntil The time till which to simulate
-    */
-    virtual void simulate(const VTime& simulateUntil);
-
-    /** Receive an event.
-
-    @param event Pointer to the received event.
-    @param sender Pointer to the sender of the event.
-    @param receiver Pointer to the receiver of the event.
-    */
-    virtual void receiveEvent(Event* event, SimulationObject* sender,
-                              SimulationObject* receiver);
-
-    /** This method is called to register a list (a hash_map of simulation
-        object pointers) of simulation objects with the Simulation Manager.
-        The size of the hash_map must be greater than or equal to one.
-
-        @param list The vector of simulation object pointers to register
-    */
-    virtual void registerSimulationObjects();
-
-    /** This method is called to unregister a list (vector of simulation
-        object pointers) of simulation objects from the SimulationManager.
-        The size of the vector must be greater than or equal to one.
-
-        @param list The vector of simulation object pointers to unregister
-    */
-    void unregisterSimulationObjects(std::vector<SimulationObject*>* list);
-
     /// returns the number of simulation objects
     unsigned int getNumberOfSimulationObjects() const { return numberOfObjects; }
 
@@ -87,17 +53,11 @@ protected:
 
     /** This method is called after the simulation has ended.
 
-    This allows the Simulation Manager to ``clean up'', performing
+    This allows the Simulation Manager to clean up, performing
     actions such as closing files, collecting statistics, and producing
     output.
     */
     void finalizeObjects();
-
-    /** Display the object name - object pointer map.
-
-    @param out Out-stream.
-    */
-    void displayObjectMap(std::ostream& out);
 
     /// Number of objects registered with this simulation manager.
     unsigned int numberOfObjects;
@@ -125,10 +85,11 @@ protected:
         return keys;
     }
 
-    typeSimMap* localArrayOfSimObjPtrs;
+    /// Map of local Names -> SimulationObjects
+    typeSimMap* simObjectsByName;
 
-    /// Mapping between simulation object ids to names
-    std::vector<SimulationObject*> localArrayOfSimObjIDs;
+    /// Map of local ID -> SimulationObjects
+    std::vector<SimulationObject*> simObjectsByID;
 
     /// Turns a vector<SimulationObject *> into a map<string, SimulationObject *>.
     typeSimMap* partitionVectorToHashMap(std::vector<SimulationObject*>* vector);

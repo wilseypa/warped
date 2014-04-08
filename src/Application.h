@@ -50,7 +50,7 @@ public:
 
         @return Error code (non-zero return value indicates error)
     */
-    virtual int finalize() = 0;
+    virtual int finalize();
 
     virtual ~Application() {}
 
@@ -63,20 +63,22 @@ public:
     */
     virtual void registerDeserializers() = 0;
 
-    /**
-       Returns positive infinity in this application's time definition.
-    */
-    virtual const VTime& getPositiveInfinity() = 0;
+    // Returns positive infinity in this application's time definition.
+    //
+    // The default implementation uses and integer time representation. This
+    // function, along with getZero and getTime, should be overridden if an
+    // application uses a different representation.
+    virtual const VTime& getPositiveInfinity();
 
     /**
        Returns zero in this application's time definition;
     */
-    virtual const VTime& getZero() = 0;
+    virtual const VTime& getZero();
 
     /**
        Returns a specified time in this application's time definition;
     */
-    virtual const VTime& getTime(std::string&) = 0;
+    virtual const VTime& getTime(std::string& time);
 
 protected:
     /**

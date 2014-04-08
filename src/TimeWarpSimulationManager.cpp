@@ -70,7 +70,7 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
         fossilCollect(getPositiveInfinity());
         if (usingOptFossilCollection) {
             vector<SimulationObject*>* objects = getElementVector(
-                                                     localArrayOfSimObjPtrs);
+                                                     simObjectsByName);
             for (unsigned int n = 0; n < objects->size(); n++) {
                 myStateManager->fossilCollect((*objects)[n],
                                               getPositiveInfinity());
@@ -115,7 +115,7 @@ TimeWarpSimulationManager::~TimeWarpSimulationManager() {
     delete myCommunicationManager;
     delete myGVTManager;
     delete myStateManager;
-    delete localArrayOfSimObjPtrs;
+    delete simObjectsByName;
     delete myDVFSManager;
 }
 
@@ -150,7 +150,7 @@ void TimeWarpSimulationManager::setMessageAggregationFlag(bool flag) {
 
 void TimeWarpSimulationManager::registerSimulationObjects() {
     // allocate memory for our reverse map
-    localArrayOfSimObjIDs.resize(numberOfObjects);
+    simObjectsByID.resize(numberOfObjects);
 
     // allocate memory for our global reverse map - first dimension
     globalArrayOfSimObjIDs.resize(numberOfSimulationManagers);
@@ -158,11 +158,11 @@ void TimeWarpSimulationManager::registerSimulationObjects() {
     // allocate memory for the second dimension of our 2-D array
     globalArrayOfSimObjIDs[mySimulationManagerID].resize(numberOfObjects);
 
-    //Obtains all the keys from localArrayOfSimObjPtrs
-    vector<std::string>* keys = getKeyVector(localArrayOfSimObjPtrs);
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    //Obtains all the keys from simObjectsByName
+    vector<std::string>* keys = getKeyVector(simObjectsByName);
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         // create and store in the map a relation between ids and object names
@@ -182,7 +182,7 @@ void TimeWarpSimulationManager::registerSimulationObjects() {
         object->setInitialState(object->allocateState());
 
         // save map of ids to ptrs
-        localArrayOfSimObjIDs[i] = object;
+        simObjectsByID[i] = object;
         globalArrayOfSimObjIDs[mySimulationManagerID][i] = object;
 
         // initialize the coast forward vector element for the object
@@ -239,8 +239,8 @@ TimeWarpSimulationManager::createMapOfObjects() {
 // message during the start-up of a distributed simulation.
 vector<std::string>*
 TimeWarpSimulationManager::getSimulationObjectNames() {
-    //Obtains all the keys from localArrayOfSimObjPtrs
-    vector < std::string >* keys = getKeyVector(localArrayOfSimObjPtrs);
+    //Obtains all the keys from simObjectsByName
+    vector < std::string >* keys = getKeyVector(simObjectsByName);
     return keys;
 }
 
@@ -1005,10 +1005,10 @@ bool TimeWarpSimulationManager::checkIdleStatus() {
 }
 
 void TimeWarpSimulationManager::fossilCollect(const VTime& fossilCollectTime) {
-    ASSERT(localArrayOfSimObjPtrs != 0);
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    ASSERT(simObjectsByName != 0);
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     //If the number of LP's > number of Objects
     //Then its possible this simulation has no objects assigned to it
@@ -1101,9 +1101,9 @@ void TimeWarpSimulationManager::initialize() {
     cout << "SimulationManager(" << mySimulationManagerID
          << "): Initializing Objects" << endl;
 
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         // call initialize on the object
@@ -1132,9 +1132,9 @@ void TimeWarpSimulationManager::initialize() {
 void TimeWarpSimulationManager::finalize() {
     debug::debugout << "Finalizing Simulation Manager: "
                     << this->getSimulationManagerID() << std::endl;
-    //Obtains all the objects from localArrayOfSimObjPtrs
+    //Obtains all the objects from simObjectsByName
     vector<SimulationObject*>* objects = getElementVector(
-                                             localArrayOfSimObjPtrs);
+                                             simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         SimulationObject* object = (*objects)[i];
@@ -1197,9 +1197,9 @@ TimeWarpSimulationManager::getIOFStream(const std::string& fileName,
 // print out the name to simulation object ptr map
 void TimeWarpSimulationManager::displayGlobalObjectMap(std::ostream& out) {
     if (!globalArrayOfSimObjPtrs.empty()) {
-        vector < std::string >* keys = getKeyVector(localArrayOfSimObjPtrs);
+        vector < std::string >* keys = getKeyVector(simObjectsByName);
         vector<SimulationObject*>* objects = getElementVector(
-                                                 localArrayOfSimObjPtrs);
+                                                 simObjectsByName);
 
         for (unsigned int i = 0; i < objects->size(); i++) {
             out << (*keys)[i] << ": " << (*objects)[i]->getObjectID();
@@ -1247,7 +1247,7 @@ void TimeWarpSimulationManager::configure(SimulationConfiguration& configuration
     //    manager
     // b. resets the value of numberOfObjects to the number of objects
     //    actually resident on this simulation manager.
-    localArrayOfSimObjPtrs = createMapOfObjects();
+    simObjectsByName = createMapOfObjects();
 
     // configure the event set manager
     const TimeWarpEventSetFactory* myEventSetFactory =

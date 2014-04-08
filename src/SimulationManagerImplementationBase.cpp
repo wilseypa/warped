@@ -20,8 +20,8 @@ std::ostream* werr;
 
 SimulationManagerImplementationBase::SimulationManagerImplementationBase()
     : numberOfSimulationManagers(0),
-      localArrayOfSimObjPtrs(0),
-      localArrayOfSimObjIDs(0) {}
+      simObjectsByName(0),
+      simObjectsByID(0) {}
 
 SimulationManagerImplementationBase::~SimulationManagerImplementationBase() {
 }
@@ -36,8 +36,8 @@ public:
 
 void
 SimulationManagerImplementationBase::initializeObjects() {
-    //Obtains all the objects from localArrayOfSimObjPtrs
-    vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
+    //Obtains all the objects from simObjectsByName
+    vector<SimulationObject*>* objects = getElementVector(simObjectsByName);
     InitObject initObject;
     for_each< vector<SimulationObject*>::iterator, InitObject >(objects->begin(),
                                                                 objects->end(),
@@ -52,56 +52,13 @@ SimulationManagerImplementationBase::setNumberOfObjects(unsigned int numObjects)
 
 void
 SimulationManagerImplementationBase::finalizeObjects() {
-    //Obtains all the objects from localArrayOfSimObjPtrs
-    vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
+    //Obtains all the objects from simObjectsByName
+    vector<SimulationObject*>* objects = getElementVector(simObjectsByName);
 
     for (unsigned int i = 0; i < objects->size(); i++) {
         (*objects)[i]->finalize();
     }
     delete objects;
-}
-
-void
-SimulationManagerImplementationBase::receiveEvent(Event*,
-                                                  SimulationObject*,
-                                                  SimulationObject*) {
-    shutdown("ERROR: receiveEvent() called in  SimulationManagerImplementationBase");
-}
-
-void
-SimulationManagerImplementationBase::simulate(const VTime&) {
-    shutdown("ERROR: simulate() called in SimulationManagerImplementationBase");
-}
-
-
-void
-SimulationManagerImplementationBase::registerSimulationObjects() {
-    shutdown("ERROR: registerSimulationObjects() called in SimulationManagerImplementationBase");
-}
-
-void
-SimulationManagerImplementationBase::unregisterSimulationObjects(vector <SimulationObject*>* list) {
-    // some tasks this function is responsible for
-};
-
-// print out the name to simulation object ptr map
-void
-SimulationManagerImplementationBase::displayObjectMap(std::ostream& out) {
-
-    if (!localArrayOfSimObjPtrs->empty()) {
-        //Obtains all the keys from localArrayOfSimObjPtrs
-        vector<std::string>* keys = getKeyVector(localArrayOfSimObjPtrs);
-        //Obtains all the objects from localArrayOfSimObjPtrs
-        vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
-
-        for (unsigned int i = 0; i < objects->size(); i++) {
-            out << (*keys)[i] << ": " << (*objects)[i]->getObjectID();
-        }
-        delete objects;
-        delete keys;
-    } else {
-        out << "Object Names to Object Pointers Map is empty" << endl;
-    }
 }
 
 ///Converts vector to a std::map(string ObjectName, SimulationObject *)

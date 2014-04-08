@@ -4,9 +4,8 @@
 #include <cstdint>                      // for int64_t
 #include <initializer_list>             // for initializer_list
 #include <iosfwd>                       // for istream
+#include <memory>                       // for unique_ptr
 #include <string>                       // for string
-
-#include "json/json.h"                  // for Value
 
 // This class holds configuration settings read in from a configuration file
 //
@@ -68,8 +67,9 @@ public:
 
 private:
     void init(std::istream& input);
-    Json::Value get_value(std::initializer_list<std::string> list);
-    Json::Value root_;
+
+    class impl;
+    std::unique_ptr<impl> pimpl;
 };
 
 #endif

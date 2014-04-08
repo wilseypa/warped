@@ -24,25 +24,21 @@ SimulationObject::~SimulationObject() {
     delete localVirtualTime;
 }
 
+void 
+SimulationObject::deallocateState(const State* state) {
+    delete state;
+}
+
+void 
+SimulationObject::reclaimEvent(const Event* event) {
+    delete event;
+}
+
 void
 SimulationObject::receiveEvent(const Event* newEvent) {
     ASSERT(newEvent != 0);
     ASSERT(newEvent->getReceiver() == *getObjectID());
     getSimulationManager()->handleEvent(newEvent);
-}
-
-SerializedInstance*
-SimulationObject::serializeEvent(Event* event) {
-    cerr << "Error: SimulationObject::serializeEvent called\n";
-    cerr << "Event is " << event << endl;
-    return NULL;
-}
-
-Event*
-SimulationObject::deserializeEvent(SerializedInstance* instance) {
-    cerr << "Error: SimulationObject::deserializeEvent called\n";
-    cerr << "Instance is " << instance << endl;
-    return NULL;
 }
 
 SimulationObject*

@@ -45,15 +45,15 @@ SequentialSimulationManager::~SequentialSimulationManager() {
     // is we didn't allocate them, so we should not destroy them.
 
     //   // iteratively call delete on each simulation object pointer
-    //   for(typeSimMap::iterator iter = localArrayOfSimObjPtrs->begin();
-    //       iter != localArrayOfSimObjPtrs->end();
+    //   for(typeSimMap::iterator iter = simObjectsByName->begin();
+    //       iter != simObjectsByName->end();
     //       iter++ ){
     //     SimulationObject *toDelete = (*iter).second;
     //     cout << "Deleting " << *toDelete->getObjectID() << endl;
     //     delete toDelete;
     //   }
 
-    delete localArrayOfSimObjPtrs;
+    delete simObjectsByName;
 }
 
 const Event*
@@ -171,30 +171,24 @@ SequentialSimulationManager::configure(SimulationConfiguration& configuration) {
 // e. set the simulation manager pointer in each object
 void
 SequentialSimulationManager::registerSimulationObjects() {
-    // save the map of simulation object ptrs and object names
-    localArrayOfSimObjPtrs = createMapOfObjects();
+    std::vector<SimulationObject*>* simulationObjects = myApplication->getSimulationObjects();
 
-    if (localArrayOfSimObjPtrs == 0) {
+    if (simulationObjects == nullptr) {
         shutdown("Application returned null map of simulation objects - exiting");
     }
 
-    // allocate memory for our reverse map
-    localArrayOfSimObjIDs.resize(numberOfObjects);
+    // create the map of name -> object
+    simObjectsByName = partitionVectorToHashMap(simulationObjects);
+    setNumberOfObjects(simulationObjects->size());
 
-    vector<SimulationObject*>::iterator iter;
+    // copy the simulation object pointers into our local vector
+    simObjectsByID = *simulationObjects;
 
-    //Obtains all the objects from localArrayOfSimObjPtrs
-    vector<SimulationObject*>* objects = getElementVector(localArrayOfSimObjPtrs);
-
+    // assign IDs to each of the objects in the order they were created
     unsigned int count = 0;
-
-    // now traverse the map and fill in simulation object info
-    for (iter = objects->begin();
-            iter != objects->end();
-            iter++, count++) {
+    for (auto object : simObjectsByID) {
         // create and store in the map a relation between ids and object names
         OBJECT_ID* id = new OBJECT_ID(count);
-        SimulationObject* object = (*iter);
 
         // store this objects id for future reference
         object->setObjectID(id);
@@ -205,30 +199,11 @@ SequentialSimulationManager::registerSimulationObjects() {
         // lets allocate the initial state here
         object->setInitialState(object->allocateState());
 
-        // save map of ids to names
-        localArrayOfSimObjIDs[count] = object;
+        count++;
     }
-    delete objects;
-
-}
-
-// this function constructs the map of simulation object names versus
-// simulation object pointers by interacting with the application
-SimulationManagerImplementationBase::typeSimMap* SequentialSimulationManager::createMapOfObjects() {
-    typeSimMap* retval = 0;
-
-    std::vector<SimulationObject*>* simulationObjects = myApplication->getSimulationObjects();
-
-    // Since this is a sequential simulation with only one processor, there's
-    // no reason to partition the objects.
-    retval = partitionVectorToHashMap(simulationObjects);
-
-    setNumberOfObjects(retval->size());
 
     delete simulationObjects;
-    return retval;
 }
-
 
 SimulationStream*
 SequentialSimulationManager::getIFStream(const string& fileName,

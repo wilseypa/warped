@@ -39,8 +39,11 @@ public:
     }
 
     const Event *pop_front() {
-        const Event *k = begin();
-        if( !erase(k) ) return NULL;
+        const Event *k = NULL;
+        while(listSize) {
+            k = begin();
+            if( erase(k) ) break;
+        }
         return k;
     }
 
