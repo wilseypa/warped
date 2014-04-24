@@ -317,7 +317,6 @@ public:
     /* Inserts the specified event into LadderQ (if already not present) */
     inline const Event* insert(const Event* newEvent) {
 
-        bool isBucketWidthStatic = false;
         unsigned int rungIndex = 0, bucketIndex = 0;
 
         /* Check whether valid event received */
@@ -372,31 +371,24 @@ public:
         }
 
         /* If bottom exceeds threshold */
-        if (THRESHOLD < bottomSize()) {
-            /* If rung not found */
-            if ( (nRung == 0) || (nRung >= MAX_RUNG_NUM) ) {
-                isBucketWidthStatic = true;
-
-            } else { /* Check if failed to create a rung */
-
-                /* Check if new event to be inserted is smaller than what is present in BOTTOM */
-                unsigned int uiBucketStartVal = bottomBegin()->getReceiveTime().getApproximateIntTime();
-                if (uiBucketStartVal > newEvent->getReceiveTime().getApproximateIntTime()) {
-                    uiBucketStartVal = newEvent->getReceiveTime().getApproximateIntTime();
-                }
-
-                if ((false == create_new_rung(bottomSize(), uiBucketStartVal, &isBucketWidthStatic)) &&
-                        (false == isBucketWidthStatic)) {
-                    std::cout << "Failed to create the required rung." << std::endl;
-                    return NULL;
-                }
-            }
-
-            /* Intentionally let the bottom continue to overflow */
-            //ref sec 2.4 of ladderq + when bucket width becomes static
-            if (true == isBucketWidthStatic) {
+        if (THRESHOLD <= bottomSize()) {
+            /* If no additional rungs can be created */
+            if (nRung >= MAX_RUNG_NUM) {
+                /* Intentionally let the bottom continue to overflow */
+                //ref sec 2.4 of ladderq + when bucket width becomes static
                 bottomInsert(newEvent);
                 return newEvent;
+            }
+
+            /* Check if new event to be inserted is smaller than what is present in BOTTOM */
+            unsigned int uiBucketStartVal = bottomBegin()->getReceiveTime().getApproximateIntTime();
+            if (uiBucketStartVal > newEvent->getReceiveTime().getApproximateIntTime()) {
+                uiBucketStartVal = newEvent->getReceiveTime().getApproximateIntTime();
+            }
+
+            if ( !create_rung_for_bottom_transfer(uiBucketStartVal) ) {
+                std::cout << "Failed to create the rung for event transfer from bottom." << std::endl;
+                return NULL;
             }
 
             /* Transfer bottom to new rung */
@@ -411,9 +403,6 @@ public:
                 /* Adjust the numBucket and rCur parameters */
                 if (numBucket[nRung-1] < bucketIndex+1) {
                     numBucket[nRung-1] = bucketIndex+1;
-                }
-                if (mIterate == bottom.begin()) {
-                    rCur[nRung-1] = rStart[nRung-1] + bucketIndex*bucketWidth[nRung-1];
                 }
 
                 RUNG(nRung-1,bucketIndex)->push_front(*mIterate);
@@ -565,6 +554,38 @@ private:
             numBucket[nRung-1] = 0;
             return true;
         }
+    }
+
+    /* Create a rung (implicitly) for transfer of event from Bottom */
+    /* Note: This is different from create_new_rung() */
+    inline bool create_rung_for_bottom_transfer(unsigned int startVal) {
+
+        unsigned int bucketIndex = 0;
+
+        nRung++;
+        rStart[nRung-1] = rCur[nRung-1] = startVal;
+        numBucket[nRung-1] = 0;
+        if(nRung == 1) {
+            ASSERT(topStart >= startVal);
+            bucketWidth[0] = std::max( (topStart-startVal)/bottomSize(), (unsigned int) MIN_BUCKET_WIDTH );
+
+            /* Create the actual rungs */
+            //create double of required no of buckets. ref sec 2.4 of ladderq
+            for (bucketIndex = numRung0Buckets; bucketIndex < 2*bottomSize(); bucketIndex++) {
+                rung_bucket = NULL;
+                if (!(rung_bucket = new std::list<const Event*>)) {
+                    std::cout << "Failed to allocate memory for rung-0 bucket." << std::endl;
+                    return false;
+                }
+                rung0.push_back(rung_bucket);
+            }
+            numRung0Buckets = bucketIndex;
+
+        } else { /* When not the top rung */
+            ASSERT(rCur[nRung-2] >= startVal);
+            bucketWidth[nRung-1] = std::max( (rCur[nRung-2]-startVal)/THRESHOLD, (unsigned int) MIN_BUCKET_WIDTH );
+        }
+        return true;
     }
 
     /* Recurse rung */
