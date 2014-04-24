@@ -128,7 +128,7 @@ public:
         }
 
         /* Transfer events from Top to 1st rung of Ladder */
-        rCur[0] = rStart[0] + NUM_BUCKETS(0)*bucketWidth[0];
+        /* Note: No need to update rCur[0] since it will be equal to rStart[0] initially. */
         for (lIterate = top.begin(); lIterate != top.end();) {
             ASSERT( (*lIterate)->getReceiveTime().getApproximateIntTime() >= rStart[0] );
             bucketIndex =
@@ -139,12 +139,9 @@ public:
             RUNG(0,bucketIndex)->push_front(*lIterate);
             lIterate = top.erase(lIterate);
 
-            /* Update the numBucket and rCur parameter */
+            /* Update the numBucket parameter */
             if (numBucket[0] < bucketIndex+1) {
                 numBucket[0] = bucketIndex+1;
-            }
-            if (rCur[0] > rStart[0] + bucketIndex*bucketWidth[0]) {
-                rCur[0] = rStart[0] + bucketIndex*bucketWidth[0];
             }
         }
 
@@ -153,6 +150,7 @@ public:
             std::cout << "Received invalid Bucket index." << std::endl;
             return NULL;
         }
+        ASSERT(!bucketIndex);
 
         for (lIterate = RUNG(nRung-1,bucketIndex)->begin();
                 lIterate != RUNG(nRung-1,bucketIndex)->end(); lIterate++) {
@@ -197,7 +195,7 @@ public:
 
         /* Rungs */
         for (rungIndex = 0; rungIndex < MAX_RUNG_NUM; rungIndex++) {
-            bucketWidth[rungIndex] = rStart[rungIndex] = rCur[rungIndex] = numBucket[rungIndex]   = 0;
+            bucketWidth[rungIndex] = rStart[rungIndex] = rCur[rungIndex] = numBucket[rungIndex] = 0;
 
             for (bucketIndex = 0; bucketIndex < NUM_BUCKETS(rungIndex); bucketIndex++) {
                 RUNG(rungIndex,bucketIndex)->clear();
@@ -251,6 +249,7 @@ public:
                         ((*lIterate)->getSender() == delEvent->getSender())) {
 
                     lIterate = top.erase(lIterate);
+                    break;
                 } else {
                     lIterate++;
                 }
@@ -279,6 +278,7 @@ public:
                             ((*lIterate)->getSender() == delEvent->getSender())) {
 
                         lIterate = rung_bucket->erase(lIterate);
+                        break;
                     } else {
                         lIterate++;
                     }
@@ -329,11 +329,15 @@ public:
         /* Insert into top, if valid */
         if (newEvent->getReceiveTime().getApproximateIntTime() >
                 topStart) {  //deviation from APPENDIX of ladderq
-            if (minTS > newEvent->getReceiveTime().getApproximateIntTime()) {
-                minTS = newEvent->getReceiveTime().getApproximateIntTime();
-            }
-            if (maxTS < newEvent->getReceiveTime().getApproximateIntTime()) {
-                maxTS = newEvent->getReceiveTime().getApproximateIntTime();
+            if(top.empty()) {
+                maxTS = minTS = newEvent->getReceiveTime().getApproximateIntTime();
+            } else {
+                if (minTS > newEvent->getReceiveTime().getApproximateIntTime()) {
+                    minTS = newEvent->getReceiveTime().getApproximateIntTime();
+                }
+                if (maxTS < newEvent->getReceiveTime().getApproximateIntTime()) {
+                    maxTS = newEvent->getReceiveTime().getApproximateIntTime();
+                }
             }
 
             top.push_front(newEvent);
@@ -367,9 +371,10 @@ public:
             return newEvent;
         }
 
-        /* If rung not found */
+        /* If bottom exceeds threshold */
         if (THRESHOLD < bottomSize()) {
-            if (MAX_RUNG_NUM <= nRung) {
+            /* If rung not found */
+            if ( (nRung == 0) || (nRung >= MAX_RUNG_NUM) ) {
                 isBucketWidthStatic = true;
 
             } else { /* Check if failed to create a rung */
@@ -395,7 +400,6 @@ public:
             }
 
             /* Transfer bottom to new rung */
-
             std::multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
             for (mIterate = bottom.begin(); mIterate != bottom.end(); mIterate++) {
                 ASSERT( (*mIterate)->getReceiveTime().getApproximateIntTime() >= rStart[nRung-1] );
@@ -449,9 +453,9 @@ private:
 
     /* Rungs */
     std::vector<std::list<const Event*> *> rung0;  //first rung. ref. sec 2.4 of ladderq paper
-    std::list<const Event*>* rung_bucket;
-    unsigned int        numRung0Buckets;
-    std::list<const Event*>* rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
+    std::list<const Event*>                *rung_bucket;
+    unsigned int                           numRung0Buckets;
+    std::list<const Event*>*               rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
     unsigned int        nRung;
     unsigned int        bucketWidth[MAX_RUNG_NUM];
     unsigned int        numBucket[MAX_RUNG_NUM];
@@ -528,7 +532,7 @@ private:
 
             /* Create the actual rungs */
             //create double of required no of buckets. ref sec 2.4 of ladderq
-            unsigned int numBucketsReq = (maxTS - minTS + bucketWidth[0] -1) / bucketWidth[0];
+            unsigned int numBucketsReq = numEvents;
 
             for (bucketIndex = numRung0Buckets; bucketIndex < 2*numBucketsReq; bucketIndex++) {
                 rung_bucket = NULL;
@@ -555,10 +559,10 @@ private:
                 std::cout << "Overflow error for no. of rungs." << std::endl;
                 return false;
             }
-            bucketWidth[nRung] = (bucketWidth[nRung-1] + numEvents - 1) / numEvents;
-            rStart[nRung] = rCur[nRung] = initStartAndCurVal;
-            numBucket[nRung] = 0;
             nRung++;
+            bucketWidth[nRung-1] = (bucketWidth[nRung-2] + numEvents - 1) / numEvents;
+            rStart[nRung-1] = rCur[nRung-1] = initStartAndCurVal;
+            numBucket[nRung-1] = 0;
             return true;
         }
     }
@@ -573,6 +577,7 @@ private:
         /* find_bucket label */
         do {
             isBucketNotFound = false;
+            isBucketWidthStatic = false;
             isRungNotEmpty = false;
             bucketIndex = 0;
 
@@ -600,11 +605,11 @@ private:
                 if (THRESHOLD < RUNG(nRung-1,bucketIndex)->size()) {
                     if (false == create_new_rung(RUNG(nRung-1,bucketIndex)->size(),
                                                  rCur[nRung-1], &isBucketWidthStatic)) {
-                        if (false == isBucketWidthStatic) {
+                        if (!isBucketWidthStatic) {
                             std::cout << "Failed to create a new rung." << std::endl;
                             return INVALID;
                         }
-                        break;
+                        break; //failed to create a new rung
                     }
 
                     for (lIterate = RUNG(nRung-2,bucketIndex)->begin();
