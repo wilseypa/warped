@@ -38,7 +38,7 @@ public:
         for (rungIndex = 0; rungIndex < MAX_RUNG_NUM-1; rungIndex++) {
             for (bucketIndex = 0; bucketIndex < MAX_BUCKET_NUM; bucketIndex++) {
                 rung_bucket = NULL;
-                if (!(rung_bucket = new LockFreeList())) {
+                if (!(rung_bucket = new LockFreeList<const Event *>())) {
                     std::cout << "Failed to allocate memory for Rung "
                          << rungIndex+2 << ", Bucket " << bucketIndex+1 << "." << std::endl;
                 }
@@ -371,24 +371,24 @@ public:
 private:
 
     /* Top variables */
-    LockFreeList        top;
-    unsigned int        maxTS;
-    unsigned int        minTS;
-    unsigned int        topStart;
+    LockFreeList<const Event *>  top;
+    unsigned int                 maxTS;
+    unsigned int                 minTS;
+    unsigned int                 topStart;
 
     /* Rungs */
-    std::vector<LockFreeList *>  rung0;  //first rung. ref. sec 2.4 of ladderq paper
-    LockFreeList            *rung_bucket;
-    unsigned int            numRung0Buckets;
-    LockFreeList            *rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
-    unsigned int            nRung;
-    unsigned int            bucketWidth[MAX_RUNG_NUM];
-    unsigned int            numBucket[MAX_RUNG_NUM];
-    unsigned int            rStart[MAX_RUNG_NUM];
-    unsigned int            rCur[MAX_RUNG_NUM];
+    std::vector<LockFreeList<const Event *> *>  rung0;  //first rung. ref. sec 2.4 of ladderq paper
+    LockFreeList<const Event *>  *rung_bucket;
+    unsigned int                 numRung0Buckets;
+    LockFreeList<const Event *>  *rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
+    unsigned int                 nRung;
+    unsigned int                 bucketWidth[MAX_RUNG_NUM];
+    unsigned int                 numBucket[MAX_RUNG_NUM];
+    unsigned int                 rStart[MAX_RUNG_NUM];
+    unsigned int                 rCur[MAX_RUNG_NUM];
 
     /* Bottom */
-    LockFreeList        bottom;
+    LockFreeList<const Event *>  bottom;
 
     /* Create (here implicitly allocate) a new rung */
     inline bool create_new_rung(unsigned int numEvents, unsigned int initStartAndCurVal,
@@ -430,7 +430,7 @@ private:
 
             for (bucketIndex = numRung0Buckets; bucketIndex < 2*numBucketsReq; bucketIndex++) {
                 rung_bucket = NULL;
-                if (!(rung_bucket = new LockFreeList())) {
+                if (!(rung_bucket = new LockFreeList<const Event *>())) {
                     std::cout << "Failed to allocate memory for rung 0 bucket." << std::endl;
                     return false;
                 }
