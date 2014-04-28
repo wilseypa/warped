@@ -1,10 +1,9 @@
 #ifndef PHYSICAL_COMMUNICATION_LAYER_H
 #define PHYSICAL_COMMUNICATION_LAYER_H
 
-#include <warped.h>
-
-class SimulationConfiguration;
-class SerializedInstance;
+#include "eclmplCommonInclude.h"
+#include "SocketBasedConnectionInterface.h"
+#include "SerializedInstance.h"
 
 /** The PhysicalCommunicationLayer abstract base class.
 
@@ -36,9 +35,9 @@ class PhysicalCommunicationLayer {
 public:
     /**@name Public Class Methods of PhysicalCommunicationLayer. */
     //@{
-
+    
     /// Destructor.
-    virtual ~PhysicalCommunicationLayer() {};
+    virtual ~PhysicalCommunicationLayer() {}
 
     /** Init physical layer.
 
@@ -52,37 +51,24 @@ public:
 
         @return Id of the simulation manager.
     */
-    virtual int physicalGetId() const = 0;
+    virtual unsigned int physicalGetId() const = 0;
 
-
-    /** Send buffer.
+    /** Send data.
 
         This is a pure virtual function that has to be overriden.
 
-        @param buffer Char buffer to send.
-        @param size Size of the buffer to send.
+        @param toSend Serialized instance to send.
+        @param dest Destination to send to.
     */
-    virtual void physicalSend(const SerializedInstance* toSend,
-                              unsigned int dest) = 0;
+    virtual void physicalSend(const SerializedInstance* toSend, unsigned int dest) = 0;
 
-    /** Check the probe to see if there are message to retrieve.
+    /** Check the probe to see if there are messages to retrieve.
 
         This is a pure virtual function that has to be overriden.
 
         @return The retrieved message (NULL if no message).
     */
     virtual SerializedInstance* physicalProbeRecv() = 0;
-
-
-//   /** Retrieve message into a buffer.
-
-//       @param buffer Buffer to which we save the message.
-//       @param size Size of the buffer.
-//       @param sizeStatus Was the size of retr. msg > size?
-//       @return True/False, Was any message retrieved?
-//   */
-//   virtual bool physicalProbeRecvBuffer(char *buffer, int size,
-//                     bool& sizeStatus) = 0;
 
     /// Clean up.
     virtual void physicalFinalize() = 0;
@@ -91,17 +77,21 @@ public:
 
         @return The number of processes involved in the communicator.
     */
-    virtual int physicalGetSize() const = 0;
+    virtual unsigned int physicalGetSize() const = 0;
 
     //@} // End of Public Class Methods of PhysicalCommunicationLayer.
-
+    
 protected:
     /**@name Protected Class Methods of PhysicalCommunicationLayer. */
     //@{
 
     /// Default Constructor.
-    PhysicalCommunicationLayer() {};
-
+    /// Do not instanciate objects of this class
+    /** The constructor has been made protected to prevent instanciation of objects of this type.
+        However, derived classes will need to use it to construct themselves.
+    */
+    PhysicalCommunicationLayer() {}
+    
     //@} // End of Protected Class Methods of PhysicalCommunicationLayer.
 };
 

@@ -1,14 +1,3 @@
-#include <arpa/inet.h>                  // for inet_addr
-#include <errno.h>                      // for EBADF, EFAULT, ENOTSOCK, etc
-#include <netdb.h>                      // for gethostbyname, etc
-#include <stdlib.h>                     // for atoi
-#include <string.h>                     // for NULL, bzero, strchr, strlen, etc
-#include <sys/socket.h>                 // for socklen_t, AF_INET, accept, etc
-#include <unistd.h>                     // for close, read, write
-#include <iostream>                     // for operator<<, basic_ostream, etc
-
-#include "WarpedConfig.h"               // for USE_SOCKLEN_T
-#include "eclmpl/eclmplCommonInclude.h"  // for ECLMPL_ASSERT
 #include "eclmplSocket.h"
 
 #define IP_VER AF_INET // AF_INET for IPv4, AF_INET6 for IPv6
@@ -30,7 +19,6 @@ eclmplSocket::eclmplSocket(const int& type, const int& protocol) {
     // Open a TCP socket (an Internet stream socket).
     ECLMPL_ASSERT((socketFd = socket(IP_VER, type, protocol)) != -1);
     portNumber  = -1;
-    //remoteAddr = NULL;
     remoteAddrLen = 0;//NULL;
 } // End of default constructor.
 
@@ -40,7 +28,7 @@ eclmplSocket::eclmplSocket(const int& sockFd, const struct sockaddr_in& addr, co
     remoteAddr.sin_family = addr.sin_family;;
     remoteAddr.sin_addr.s_addr = addr.sin_addr.s_addr;
     remoteAddr.sin_port = addr.sin_port;
-    remoteAddrLen = addrLen; //*remoteAddrLen;
+    remoteAddrLen = addrLen;
     portNumber = ntohs(remoteAddr.sin_port);
 } // End of Constructor.
 
@@ -51,9 +39,7 @@ eclmplSocket::~eclmplSocket() {
     //delete remoteAddr;
 } // End of destructor.
 
-// int bind(int sockfd, struct sockaddr *my_addr, int addrlen);
-int
-eclmplSocket::wBind(const int& portNr) {
+int eclmplSocket::wBind(const int& portNr) {
     int retVal;
     struct sockaddr_in serverAddr;
     portNumber = portNr;
@@ -354,7 +340,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
     std::string msg;
 
     std::cerr << "ERROR occured for call to \"" << fName << "\" - Cause: ";
-    if (fName == "socket") {
+    if (fName.compare("socket") == 0) {
         switch (error) {
         case EPROTONOSUPPORT:
             msg = "The protocol type or the specified protocol is not supported within this domain.";
@@ -381,7 +367,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             break;
         }
     } // End of if (fname == "socket").
-    else if (fName == "bind") {
+    else if (fName.compare("bind") == 0) {
         switch (error) {
         case EBADF:
             msg = "sockfd is not a valid descriptor.";
@@ -400,7 +386,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             break;
         }
     } // End of else if (fName == "bind").
-    else if (fName == "listen") {
+    else if (fName.compare("listen") == 0) {
         switch (error) {
         case EBADF:
             msg = "The argument sockfd is not a valid descriptor";
@@ -416,7 +402,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             break;
         }
     } // End of else if (fName == "listen").
-    else if (fName == "connect") {
+    else if (fName.compare("connect") == 0) {
         switch (error) {
         case EBADF:
             msg = "Bad descriptor.";
@@ -465,7 +451,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             break;
         }
     } // End of else if (fName == "connect").
-    else if (fName == "gethostbyname") {
+    else if (fName.compare("gethostbyname") == 0) {
         switch (error) {
         case HOST_NOT_FOUND:
             msg = "The specified host is unknown.";
@@ -484,7 +470,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             msg = defaultError;
         }
     } // End of else if (fName == "gethostbyname").
-    else if (fName == "accept") {
+    else if (fName.compare("accept") == 0) {
         switch (error) {
         case EBADF:
             msg = "The descriptor is invalid.";
@@ -513,7 +499,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             break;
         }
     } // End of  else if (fName == "accept").
-    else if (fName == "recv" || fName == "recvfrom") {
+    else if (fName.compare("recv") == 0 || fName.compare("recvfrom") == 0) {
         switch (error) {
         case EBADF:
             msg = "The argument s is an invalid descriptor.";
@@ -542,7 +528,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             break;
         }
     } // End of else if (fName == "recv" || fName == "recvfrom").
-    else if (fName == "write") {
+    else if (fName.compare("write") == 0) {
         switch (error) {
         case EBADF:
             msg = "fd is not a valid file descriptor or is not open for writing.";
@@ -576,7 +562,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             break;
         }
     } // End of else if (fName == "write").
-    else if (fName == "send" || fName == "sendto") {
+    else if (fName.compare("send") == 0 || fName.compare("sendto") == 0) {
         switch (error) {
         case EBADF:
             msg = "An invalid descriptor was specified.";
@@ -617,7 +603,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             break;
         }
     } // End of .
-    else if (fName == "setsockopt") {
+    else if (fName.compare("setsockopt") == 0) {
         switch (error) {
         case EBADF:
             msg = "The argument s is not a valid descriptor.";
@@ -638,7 +624,7 @@ eclmplSocket::printError(const int& error, const std::string fName) const {
             break;
         }
     } // End of .
-    else if (fName == "read") {
+    else if (fName.compare("read") == 0) {
         switch (error) {
         case EAGAIN:
             msg = "Non-blocking  I/O  has  been  selected  using  O_NONBLOCK "

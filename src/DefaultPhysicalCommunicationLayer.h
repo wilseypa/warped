@@ -1,11 +1,8 @@
 #ifndef DEFAULT_PHYSICAL_COMMUNICATION_LAYER_H
 #define DEFAULT_PHYSICAL_COMMUNICATION_LAYER_H
 
-
 #include "eclmpl/PhysicalCommunicationLayer.h"
-#include "warped.h"
-
-class SerializedInstance;
+#include "SerializedInstance.h"
 
 /** The DefaultPhysicalCommunicationLayer class.
 
@@ -24,52 +21,42 @@ public:
     DefaultPhysicalCommunicationLayer();
 
     /// Destructor.
-    ~DefaultPhysicalCommunicationLayer();
+    virtual ~DefaultPhysicalCommunicationLayer();
 
     /** Initialize the physical communication layer.
 
         @param configuration The SimulationConfiguration to use for this run.
     */
-    void physicalInit();
+    virtual void physicalInit();
 
     /** Get the Id of the simulation manager.
 
         @return Id of the simulation manager.
     */
-    int physicalGetId() const;
+    virtual unsigned int physicalGetId() const;
 
-    /** Send buffer.
+    /** Send data.
 
-        @param buffer Char buffer to send.
-        @param size Size of the buffer to send.
-        @param dest destination simulation manager
+        @param toSend Serialized instance to send.
+        @param dest Destination to send to.
     */
-    void physicalSend(const SerializedInstance* toSend, unsigned int dest);
+    virtual void physicalSend(const SerializedInstance* toSend, unsigned int dest);
 
 
     /** Check the probe to see if there are message to retrieve.
 
         @return The retrieved message (NULL if no message).
     */
-    SerializedInstance* physicalProbeRecv();
-
-//   /** Retrieve message into a buffer.
-
-//       @param buffer Buffer to which we save the message.
-//       @param size Size of the buffer.
-//       @param sizeStatus Was the size of retr. msg > size?
-//       @return True/False, Was any message retrieved?
-//   */
-//   bool physicalProbeRecvBuffer(char *buffer, int size, bool& sizeStatus);
+    virtual SerializedInstance* physicalProbeRecv();
 
     /// Clean up.
-    void physicalFinalize();
+    virtual void physicalFinalize();
 
     /** Return how many processes are involved in the communicator.
 
         @return The number of processes involved in the communicator.
     */
-    virtual int physicalGetSize() const;
+    virtual unsigned int physicalGetSize() const;
 
     //@} // End of Public Class Methods of DefaultPhysicalCommunicationLayer.
 };

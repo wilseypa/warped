@@ -1,5 +1,3 @@
-include eclmpl/Makefile.am.stub
-
 lib_LTLIBRARIES = libwarped.la 
 
 if HAVE_MPICH
@@ -32,6 +30,22 @@ CONTROLKIT_H_FILES = \
 	controlkit/Sensor.h \
 	controlkit/SensorImplementationBase.h \
 	controlkit/SyncSensor.h
+
+ECLMPL_H_FILES = \
+	eclmpl/eclmplCommonInclude.h \
+	eclmpl/MPIMessage.h \
+	eclmpl/MPIPhysicalCommunicationLayer.h \
+	eclmpl/PhysicalCommunicationLayer.h \
+	eclmpl/eclmplConfigFileTable.h \
+	eclmpl/eclmplContactInfo.h \
+	eclmpl/TCPSelectPhysicalCommunicationLayer.h \
+	eclmpl/UDPSelectPhysicalCommunicationLayer.h \
+	eclmpl/eclmplSocket.h \
+	eclmpl/SocketBasedConnectionInterface.h \
+	eclmpl/TCPConnectionInterface.h \
+	eclmpl/UDPConnectionInterface.h \
+	eclmpl/TCPNetworkMessage.h \
+	eclmpl/UDPNetworkMessage.h
 
 WARPED_H_FILES = \
 	$(ECLMPL_H_FILES) \
@@ -199,6 +213,20 @@ library_include_HEADERS = $(WARPED_H_FILES) \
 
 controlkit_includedir=$(includedir)/controlkit
 controlkit_include_HEADERS= $(CONTROLKIT_H_FILES)
+
+ECLMPL_SRC = \
+	eclmpl/MPIMessage.cpp \
+	eclmpl/MPIPhysicalCommunicationLayer.cpp \
+	eclmpl/eclmplConfigFileTable.cpp \
+	eclmpl/eclmplContactInfo.cpp \
+	eclmpl/TCPSelectPhysicalCommunicationLayer.cpp \
+	eclmpl/UDPSelectPhysicalCommunicationLayer.cpp \
+	eclmpl/TCPNetworkMessage.cpp \
+	eclmpl/UDPNetworkMessage.cpp \
+	eclmpl/eclmplSocket.cpp \
+	eclmpl/SocketBasedConnectionInterface.cpp \
+	eclmpl/TCPConnectionInterface.cpp \
+	eclmpl/UDPConnectionInterface.cpp
 
 libwarped_la_SOURCES = \
 	$(CONTROLKIT_H_FILES) \

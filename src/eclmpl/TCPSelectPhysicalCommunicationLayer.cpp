@@ -1,40 +1,93 @@
-#include <string.h>                     // for NULL, memcpy
-#include <sys/time.h>                   // for timeval
-#include <deque>                        // for deque
-#include <iostream>                     // for cerr, endl
-#include <vector>                       // for vector
-
 #include "TCPSelectPhysicalCommunicationLayer.h"
-#include "eclmpl/NetworkMessage.h"      // for NetworkMessage
-#include "eclmpl/TCPConnectionInterface.h"  // for TCPConnectionInterface
-#include "eclmpl/eclmplCommonInclude.h"  // for ECLMPL_MTU
-#include "eclmpl/eclmplConnectionInterface.h"
-#include "eclmpl/eclmplSocket.h"        // for eclmplSocket
 
-using std::cerr;
-using std::endl;
-
-const unsigned int mtu = ECLMPL_MTU; // No messages with greater size may be received or sent.
-// This number itself can be changed of course...
-const int maxBuf = 65535;
-
-TCPSelectPhysicalCommunicationLayer::TCPSelectPhysicalCommunicationLayer() {
-    connInterface = new TCPConnectionInterface(mtu);
-    maxFd = -1;
+TCPSelectPhysicalCommunicationLayer::TCPSelectPhysicalCommunicationLayer() : PhysicalCommunicationLayer(), maxFd(-1) {
+    connInterface = new TCPConnectionInterface(ECLMPL_MTU);
+    
     FD_ZERO(&selectListenSet);
     FD_ZERO(&fdSet);
-    recvBuf = new char[maxBuf];
+    recvBuf = new char[MAXBUF];
 } // End of default constructor.
 
 TCPSelectPhysicalCommunicationLayer::~TCPSelectPhysicalCommunicationLayer() {
     delete connInterface;
-    delete []recvBuf;
+    delete[] recvBuf;
+    
+    for (unsigned int i = 0; i < inOrderMessageQ.size(); i++) {
+        delete inOrderMessageQ[i];
+    }
 } // End of desctructor.
 
-void
-TCPSelectPhysicalCommunicationLayer::probeNetwork() {
+void TCPSelectPhysicalCommunicationLayer::physicalInit() {
+    std::vector<std::string> argv;
+    argv.resize(1);
+    argv[0] = string();
+
+    connInterface->establishConnections(argv);
+    
+    if (physicalGetSize() > 1) {
+        initializeCommunicationLayerAttributes();
+    }
+} // End of physicalInit().
+
+unsigned int TCPSelectPhysicalCommunicationLayer::physicalGetId() const {
+    return connInterface->getConnectionId();
+} // End of physicalGetId().
+
+void TCPSelectPhysicalCommunicationLayer::physicalSend(const SerializedInstance* toSend, unsigned int dest) {
+    const void* buffer = &toSend->getData()[0];
+    unsigned int size = toSend->getSize();
+    unsigned int physicalSize = physicalGetSize();
+
+    ECLMPL_ASSERT(buffer != NULL);
+    ECLMPL_ASSERT(dest <= physicalSize);
+    ECLMPL_ASSERT(size <= connInterface->getMTU());
+    
+    if (physicalSize > 1) {
+        ECLMPL_ASSERT(dest != physicalGetId());
+        connInterface->send(size, buffer, dest);
+    }
+    
+    //toSend is created by serialize and needs to be deleted
+    delete toSend;
+} // End of physicalSend(...).
+
+SerializedInstance* TCPSelectPhysicalCommunicationLayer::physicalProbeRecv() {
+    // Only probe for new messages if the queue of received messages is empty
+    if (connInterface->getNumberOfConnections() > 1 && inOrderMessageQ.empty() == true) {
+        probeNetwork();
+    }
+    
+    return getNextInSequence();
+} // End of physicalProbeRecv().
+
+void TCPSelectPhysicalCommunicationLayer::physicalFinalize() {
+    connInterface->tearDownConnections();
+} // End of physicalFinalize().
+
+unsigned int TCPSelectPhysicalCommunicationLayer::physicalGetSize() const {
+    return connInterface->getNumberOfConnections();
+} // End of physicalGetSize().
+
+void TCPSelectPhysicalCommunicationLayer::initializeCommunicationLayerAttributes() {
+    unsigned int physicalSize = physicalGetSize();
+    
+    connInterface->disableNagle();
+    maxFd = -1;
+    for (unsigned int i = 0; i < physicalSize; i++) {
+        if (connInterface->socket[i]->getSocketFd() > maxFd) {
+            maxFd = connInterface->socket[i]->getSocketFd();
+        }
+        FD_SET(connInterface->socket[i]->getSocketFd(),
+               &selectListenSet);
+    }
+    fdSet = selectListenSet;
+    maxFd += 1; // Needed for call to select.
+} // End of setupAttributes(...).
+
+void TCPSelectPhysicalCommunicationLayer::probeNetwork() {
+    unsigned int physicalSize = connInterface->getNumberOfConnections();
     unsigned int size = 0;
-    NetworkMessage* nwMsg;
+    TCPNetworkMessage* nwMsg;
 
     // Probe to see if any messages are available.
     timeval timeout;
@@ -51,35 +104,35 @@ TCPSelectPhysicalCommunicationLayer::probeNetwork() {
     selectListenSet = fdSet;
     select(maxFd, &selectListenSet, NULL, NULL, &timeout);
     for (unsigned int i = 0; i < physicalSize; i++) {
-        if (static_cast<TCPConnectionInterface*>(connInterface)->socket[i]->wFD_ISSET(
-                    &selectListenSet) == true) {
-            size = maxBuf;
+        if (connInterface->socket[i]->wFD_ISSET(&selectListenSet) == true) {
+            size = MAXBUF;
             connInterface->recv(size, recvBuf, i);
             if (size > 0) {
-                char* newBuf = new char[size];
-                memcpy(newBuf, recvBuf, size);
-                nwMsg = new NetworkMessage((int)size, newBuf);
+                nwMsg = new TCPNetworkMessage(size, recvBuf);
                 inOrderMessageQ.push_back(nwMsg);
-            } else {
-                // These are commented out because I believe messages of size=0 should be allowed
-                // cerr << physicalId << ": Error! TCP Input buffer corrupted. Aborting." << endl;
-                // exit(1);
             }
         } // End of if (recvSocket[i].wFD_ISSET(&selectListenSet) == true).
     } // End of for (int i = 0; i < physicalSize; i++).
 } // End of TCP_probeNetwork().
 
-void
-TCPSelectPhysicalCommunicationLayer::initializeCommunicationLayerAttributes() {
-    static_cast<TCPConnectionInterface*>(connInterface)->disableNagle();
-    maxFd = -1;
-    for (unsigned int i = 0; i < physicalSize; i++) {
-        if (static_cast<TCPConnectionInterface*>(connInterface)->socket[i]->getSocketFd() > maxFd) {
-            maxFd = static_cast<TCPConnectionInterface*>(connInterface)->socket[i]->getSocketFd();
-        }
-        FD_SET(static_cast<TCPConnectionInterface*>(connInterface)->socket[i]->getSocketFd(),
-               &selectListenSet);
-    }
-    fdSet = selectListenSet;
-    maxFd += 1; // Needed for call to select.
-} // End of setupAttributes(...).
+SerializedInstance* TCPSelectPhysicalCommunicationLayer::getNextInSequence() {
+    SerializedInstance* retval = NULL;
+
+    TCPNetworkMessage* nwMsg;
+    char* msg = NULL;
+    unsigned int msgSize = 0;
+
+    if (inOrderMessageQ.empty() == false) {
+        nwMsg = inOrderMessageQ.front();
+        inOrderMessageQ.pop_front();
+        
+        msgSize = nwMsg->getUserDataSize();
+        msg = new char[msgSize];
+        nwMsg->getUserData(msg, msgSize);
+        
+        retval = new SerializedInstance(msg, msgSize);
+        delete nwMsg;
+    } // End of if (inOrderMessageQIsEmpty == false).
+    
+    return retval;
+} // End of getNextInSequence().
