@@ -459,9 +459,6 @@ void SocketBasedConnectionInterface::scanConfigFile(const std::string& fileName,
     free(pwd);
 
     fullFilePathName = fullFilePathName + "/" + fileName;
-    // DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE
-    std::cout << "Opening File: " << fullFilePathName << std::endl;
-    // DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE
     infile.open(fullFilePathName, std::ios::in);
     ASSERT(infile.good() == true);
 
@@ -470,7 +467,6 @@ void SocketBasedConnectionInterface::scanConfigFile(const std::string& fileName,
     while (infile.good()) {
         std::string arg1 = std::string();
         infile >> arg1;
-        std::cout << "while: Read from file: " << arg1 << std::endl;
         
         if(arg1.length() != 0) {
             tableEntry.clear();
@@ -478,7 +474,6 @@ void SocketBasedConnectionInterface::scanConfigFile(const std::string& fileName,
             for (int i = 1; i < argsPerEntry; i++) {
                 std::string arg2 = std::string();
                 infile >> arg2;
-                std::cout << "for" << i << ": Read from file: " << arg2 << std::endl;
                 tableEntry.push_back(arg2);
             }
             connTable.addEntry(tableEntry);
