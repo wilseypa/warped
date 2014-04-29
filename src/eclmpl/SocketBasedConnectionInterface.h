@@ -233,7 +233,7 @@ protected:
         @param fileName Full path file name of the configuration file.
         @param argsPerEntry Number of arguments per line in the file.
     */
-    virtual void scanConfigFile(const std::string& fileName, eclmplConfigFileTable& connTable, int argsPerEntry = 2);
+    virtual void scanConfigFile(const std::string& fileName, eclmplConfigFileTable& connTable, int argsPerEntry);
     
     virtual void createSocketPtrVector();
     

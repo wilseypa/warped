@@ -150,7 +150,7 @@ bool SocketBasedConnectionInterface::establishConnections(std::vector<std::strin
     }
     else {
         eclmplConfigFileTable* connTable = new eclmplConfigFileTable();
-        scanConfigFile(std::string("procgroup"), *connTable);
+        scanConfigFile(std::string("procgroup"), *connTable, 2);
         establishConnectionsMasterToSlaves(argv, *connTable);
         delete connTable;
     }
@@ -449,7 +449,6 @@ slaveStartupInfo SocketBasedConnectionInterface::parseCommandLineArguments(std::
 // 2. full pathname of executable to execute
 void SocketBasedConnectionInterface::scanConfigFile(const std::string& fileName, eclmplConfigFileTable& connTable, int argsPerEntry) {
     std::ifstream infile;
-    std::string arg;
     std::vector<std::string> tableEntry;
 
     char* pwd = getcwd(NULL, 65535);
@@ -460,22 +459,34 @@ void SocketBasedConnectionInterface::scanConfigFile(const std::string& fileName,
     free(pwd);
 
     fullFilePathName = fullFilePathName + "/" + fileName;
-    infile.open(fullFilePathName.c_str(), std::ios::in);
-    ASSERT(infile != NULL);
+    // DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE
+    std::cout << "Opening File: " << fullFilePathName << std::endl;
+    // DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE DEBUG LINE
+    infile.open(fullFilePathName, std::ios::in);
+    ASSERT(infile.good() == true);
 
     connectionId = 0;
     numberOfConnections = 0;
     while (infile.good()) {
-        infile >> arg;
-        tableEntry.clear();
-        tableEntry.push_back(arg);
-        for (int i = 1; i < argsPerEntry; i++) {
-            infile >> arg;
-            tableEntry.push_back(arg);
+        std::string arg1 = std::string();
+        infile >> arg1;
+        std::cout << "while: Read from file: " << arg1 << std::endl;
+        
+        if(arg1.length() != 0) {
+            tableEntry.clear();
+            tableEntry.push_back(arg1);
+            for (int i = 1; i < argsPerEntry; i++) {
+                std::string arg2 = std::string();
+                infile >> arg2;
+                std::cout << "for" << i << ": Read from file: " << arg2 << std::endl;
+                tableEntry.push_back(arg2);
+            }
+            connTable.addEntry(tableEntry);
+            numberOfConnections++;
         }
-        connTable.addEntry(tableEntry);
-        numberOfConnections++;
     }
+    
+    infile.close();
 } // End of scanConfigFile(...).
 
 void SocketBasedConnectionInterface::createSocketPtrVector() {

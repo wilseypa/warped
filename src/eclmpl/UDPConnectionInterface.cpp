@@ -25,7 +25,7 @@ bool UDPConnectionInterface::establishConnections(std::vector<std::string>& argv
         establishConnectionsFromSlaves(startupInfo);
     } else {
         eclmplConfigFileTable* connTable = new eclmplConfigFileTable();
-        scanConfigFile(std::string("procgroup"), *connTable);
+        scanConfigFile(std::string("procgroup"), *connTable, 2);
         establishConnectionsMasterToSlaves(argv, *connTable);
         delete connTable;
     }
