@@ -1,4 +1,3 @@
-
 #ifndef LadderQueueStrict_H_
 #define LadderQueueStrict_H_
 
@@ -39,7 +38,7 @@ public:
         unsigned int rungIndex = 0, bucketIndex = 0;
         for (rungIndex = 0; rungIndex < MAX_RUNG_NUM-1; rungIndex++) {
             for (bucketIndex = 0; bucketIndex < MAX_BUCKET_NUM; bucketIndex++) {
-                rung_bucket = NULL;
+                std::list<const Event*> *rung_bucket = NULL;
                 if (!(rung_bucket = new std::list<const Event*>)) {
                     std::cout << "Failed to allocate memory for Rung "
                          << rungIndex+2 << ", Bucket " << bucketIndex+1 << "." << std::endl;
@@ -150,7 +149,6 @@ public:
             std::cout << "Received invalid Bucket index." << std::endl;
             return NULL;
         }
-        ASSERT(!bucketIndex);
 
         for (lIterate = RUNG(nRung-1,bucketIndex)->begin();
                 lIterate != RUNG(nRung-1,bucketIndex)->end(); lIterate++) {
@@ -269,7 +267,7 @@ public:
                                rStart[rungIndex]) / bucketWidth[rungIndex],
                           NUM_BUCKETS(rungIndex)-1 );
 
-            rung_bucket = RUNG(rungIndex,bucketIndex);
+            std::list<const Event*> *rung_bucket = RUNG(rungIndex,bucketIndex);
             if (false == rung_bucket->empty()) {
                 for (lIterate = rung_bucket->begin(); lIterate != rung_bucket->end();) {
                     if (((*lIterate)->getReceiveTime().getApproximateIntTime() ==
@@ -436,20 +434,19 @@ private:
 
     /* Top variables */
     std::list<const Event*>  top;
-    unsigned int        maxTS;
-    unsigned int        minTS;
-    unsigned int        topStart;
+    unsigned int maxTS;
+    unsigned int minTS;
+    unsigned int topStart;
 
     /* Rungs */
     std::vector<std::list<const Event*> *> rung0;  //first rung. ref. sec 2.4 of ladderq paper
-    std::list<const Event*>                *rung_bucket;
-    unsigned int                           numRung0Buckets;
-    std::list<const Event*>*               rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
-    unsigned int        nRung;
-    unsigned int        bucketWidth[MAX_RUNG_NUM];
-    unsigned int        numBucket[MAX_RUNG_NUM];
-    unsigned int        rStart[MAX_RUNG_NUM];
-    unsigned int        rCur[MAX_RUNG_NUM];
+    unsigned int numRung0Buckets;
+    std::list<const Event*> *rung1_to_n[MAX_RUNG_NUM-1][MAX_BUCKET_NUM];  //2nd to 8th rungs
+    unsigned int nRung;
+    unsigned int bucketWidth[MAX_RUNG_NUM];
+    unsigned int numBucket[MAX_RUNG_NUM];
+    unsigned int rStart[MAX_RUNG_NUM];
+    unsigned int rCur[MAX_RUNG_NUM];
 
     /* Bottom */
     std::multiset<const Event*, receiveTimeLessThanEventIdLessThan> bottom;
@@ -524,7 +521,7 @@ private:
             unsigned int numBucketsReq = numEvents;
 
             for (bucketIndex = numRung0Buckets; bucketIndex < 2*numBucketsReq; bucketIndex++) {
-                rung_bucket = NULL;
+                std::list<const Event*> *rung_bucket = NULL;
                 if (!(rung_bucket = new std::list<const Event*>)) {
                     std::cout << "Failed to allocate memory for rung 0 bucket." << std::endl;
                     return false;
@@ -572,7 +569,7 @@ private:
             /* Create the actual rungs */
             //create double of required no of buckets. ref sec 2.4 of ladderq
             for (bucketIndex = numRung0Buckets; bucketIndex < 2*bottomSize(); bucketIndex++) {
-                rung_bucket = NULL;
+                std::list<const Event*> *rung_bucket = NULL;
                 if (!(rung_bucket = new std::list<const Event*>)) {
                     std::cout << "Failed to allocate memory for rung-0 bucket." << std::endl;
                     return false;
@@ -634,7 +631,7 @@ private:
                     }
 
                     for (lIterate = RUNG(nRung-2,bucketIndex)->begin();
-                            lIterate != RUNG(nRung-2,bucketIndex)->end();) {
+                            lIterate != RUNG(nRung-2,bucketIndex)->end(); lIterate++) {
                         ASSERT( (*lIterate)->getReceiveTime().getApproximateIntTime() >= rStart[nRung-1] );
                         newBucketIndex = 
                             std::min( (unsigned int) ((*lIterate)->getReceiveTime().getApproximateIntTime() - 
@@ -642,13 +639,13 @@ private:
                                       NUM_BUCKETS(nRung-1)-1 );
 
                         RUNG(nRung-1,newBucketIndex)->push_front(*lIterate);
-                        lIterate = RUNG(nRung-2,bucketIndex)->erase(lIterate);
 
                         /* Calculate numBucket of new rung */
                         if (numBucket[nRung-1] < newBucketIndex+1) {
                             numBucket[nRung-1] = newBucketIndex+1;
                         }
                     }
+                    RUNG(nRung-2,bucketIndex)->clear();
 
                     /* Re-calculate rCur and numBucket of old rung */
                     newBucketIndex = bucketIndex+1;
