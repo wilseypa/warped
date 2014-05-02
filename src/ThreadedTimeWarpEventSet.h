@@ -171,8 +171,6 @@ public:
     //Function to check whether schedule queue is empty or not
     virtual bool  isScheduleQueueEmpty(int)=0;
 
-    // Function to move a LP (unprocessed queue) to another LTSF queue
-    virtual void moveLP(int sourceObj, int destLTSF) = 0;
 protected:
     /**@name Protected Class Methods of ThreadedTimeWarpEventSet. */
     //@{

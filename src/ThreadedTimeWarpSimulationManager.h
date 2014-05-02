@@ -12,7 +12,6 @@
 #include "ThreadedOutputManager.h"
 #include "ThreadedStateManager.h"
 #include "ThreadedTimeWarpEventSet.h"
-#include "ThreadedTimeWarpLoadBalancer.h"
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "VTime.h"                      // for VTime
 #include "WorkerInformation.h"
@@ -33,7 +32,6 @@ class ThreadedOptFossilCollManager;
 class ThreadedOutputManager;
 class ThreadedStateManager;
 class ThreadedTimeWarpEventSet;
-class ThreadedTimeWarpLoadBalancer;
 class VTime;
 class WorkerInformation;
 template<class element> class LockedQueue;
@@ -490,9 +488,7 @@ private:
 
     unsigned int numberOfLocalAntimessages;
 
-    ThreadedTimeWarpLoadBalancer* loadBalancer;
-    
-    /// used to lock optimistic fossil collection recovery flags. 
+    //used to lock optimistic fossil collection recovery flags. 
     LockState* ofcFlagLock;
 };
 

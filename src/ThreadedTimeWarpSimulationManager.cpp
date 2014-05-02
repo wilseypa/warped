@@ -45,7 +45,6 @@
 #include "ThreadedOutputManager.h"      // for ThreadedOutputManager
 #include "ThreadedStateManager.h"       // for ThreadedStateManager
 #include "ThreadedTimeWarpEventSet.h"   // for ThreadedTimeWarpEventSet
-#include "ThreadedTimeWarpLoadBalancer.h"
 #include "ThreadedTimeWarpMultiSet.h"   // for ThreadedTimeWarpMultiSet
 #include "ThreadedTimeWarpMultiSetSchedulingManager.h"
 #include "ThreadedTimeWarpSimulationManager.h"
@@ -387,10 +386,6 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
                     resetGVTTokenPending();
                 }
             }
-        }
-        // Initiate load balancer measurement / movement
-        if (loadBalancing && loadBalancingTrigger == "MasterPoll") {
-            loadBalancer->balanceCheck();
         }
         //Clear message Buffer
         sendPendingMessages();
@@ -1093,22 +1088,6 @@ void ThreadedTimeWarpSimulationManager::configure(SimulationConfiguration& confi
     myEventSet = dynamic_cast<ThreadedTimeWarpEventSet*>(eventSet);
     ASSERT(myEventSet != 0);
     myEventSet->configure(configuration);
-
-    // Setup load balancer
-    //Configurable *loadBalancer = myLoadBalancerFactory->allocate(configuration, this);
-    //myLoadBalancer = dynamic_cast<ThreadedTimeWarpLoadBalancer *>(loadBalancer);
-    if (loadBalancing) {
-        loadBalancer = new ThreadedTimeWarpLoadBalancer(this,
-                                                        dynamic_cast<ThreadedTimeWarpMultiSet*>(myEventSet),
-                                                        getLoadBalancingVarianceThresh(),
-                                                        getLoadBalancingNormalInterval(),
-                                                        getLoadBalancingNormalThresh(),
-                                                        getLoadBalancingRelaxedInterval(),
-                                                        getLoadBalancingRelaxedThresh());
-        if (loadBalancingTrigger == "Rollback") {
-            dynamic_cast<ThreadedTimeWarpMultiSet*>(myEventSet)->enLoadBalancer(loadBalancer);
-        }
-    }
 
     // lets now set up and configure the state manager
     const StateManagerFactory* myStateFactory = StateManagerFactory::instance();

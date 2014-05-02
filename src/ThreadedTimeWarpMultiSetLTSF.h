@@ -1,5 +1,5 @@
-#ifndef THREADEThreadedTIMEWARPMULTISETLTSF_H_
-#define THREADEThreadedTIMEWARPMULTISETLTSF_H_
+#ifndef THREADED_TIMEWARP_MULTISET_LTSF_H_
+#define THREADED_TIMEWARP_MULTISET_LTSF_H_
 
 #include <list>                         // for list
 #include <set>                          // for multiset, etc
@@ -32,26 +32,23 @@ class ThreadedTimeWarpSimulationManager;
 
 class ThreadedTimeWarpMultiSetLTSF {
 public:
-    // Creates an LTSF queue with 'objectCount' input queues
-    ThreadedTimeWarpMultiSetLTSF(int objectCount, int LTSFCountVal, const string syncMechanism,
-                                 const string scheduleQScheme, const string causalityType, int** inLTSFObjId);
+    // Creates an LTSF queue
+    ThreadedTimeWarpMultiSetLTSF(
+            const string syncMechanism, const string scheduleQScheme, const string causalityType,
+            std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> *lowestObjPos,
+            std::vector<const Event*> *lowestObjPosAlt, std::vector<LockState*> *objStatusLock );
+
     ~ThreadedTimeWarpMultiSetLTSF();
 
     void getScheduleQueueLock(int threadId);
 
     void releaseScheduleQueueLock(int threadId);
 
-    //A Temp Function to find min of Schedule Queue, will be replaced by GVT calc Function
     const VTime* nextEventToBeScheduledTime(int threadID);
 
-    /** To get total pending message in the InputEventQueue for all Objects
-     * @return Pending EventCount
-     */
-    int getMessageCount(int threadId);
     bool isScheduleQueueEmpty();
 
     //Release all schedule queue locks for releaseObjectLocksRecovery.
-    // There might be a better way to do this.
     void releaseAllScheduleQueueLocks();
 
     // Clears the scheduleQueue
@@ -60,20 +57,16 @@ public:
     // Sets lowest object positions
     void setLowestObjectPosition(int threadId, int index);
 
-    const Event* removeLP(int objId);
-    int addLP(int oldLockOwner);
-
     // Inserts new event into scheduleQueue and updates lowestObjectPosition
     void insertEvent(int objId, const Event* newEvent);
+
     // Inserts a blank event
     void insertEmptyEvent(int objId);
 
     // Erases the given event from the given objId, skipping the first time ??
     void eraseSkipFirst(int objId);
 
-    int getScheduleQueueSize();
-
-    // ??
+    //Peek lowest event in the schedule queue
     const Event* peek(int threadId);
 
     void getObjectLock(int threadId, int objId);
@@ -82,35 +75,15 @@ public:
 
     bool isObjectScheduled(int objId);
 
+    int whoHasObjectLock(int objId);
+
     bool isObjectScheduledBy(int threadId, int objId);
 
     // Release all the object locks during a catastrophic rollback.
     void releaseObjectLocksRecovery(int objNum);
 
-    int whoHasObjectLock(int objId);
+
 private:
-    //Lowest event position pointer for MULTILTSF
-    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator>
-    lowestObjectPosition;
-
-    ///Schedule Queue - MULTILTSF
-    multiset<const Event*, receiveTimeLessThanEventIdLessThan>* scheduleQueue;
-
-    //Lowest event position pointer for LadderQ. Also used by Splay Tree.
-    std::vector<const Event*> lowestLadderObjectPosition;
-
-    ///Schedule Queue - LadderQ (Strict and Relaxed)
-    LadderQueueStrict  *ladderQStrict;
-    LadderQueueRelaxed *ladderQRelaxed;
-
-    ///Schedule Queue - SplayTree
-    SplayTree* splayTree;
-
-    ///Schedule Queue Lock
-    LockState* scheduleQueueLock;
-
-    ///Object Status Lock
-    std::vector<LockState*> objectStatusLock;
 
     //Specfiy the synchronization mechanism in the config
     string syncMechanism;
@@ -121,13 +94,34 @@ private:
     //Specify the event causality type
     string eventCausality;
 
+    //Lowest event position pointer
+    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> *lowestObjectPosition;
+
+    //Schedule Queue
+    multiset<const Event*, receiveTimeLessThanEventIdLessThan>* scheduleQueue;
+
+    //Lowest event position pointer for Ladder Queue and Splay Tree.
+    std::vector<const Event*> *lowestObjectPositionAlt;
+
+    //Schedule Queue - LadderQ (Strict and Relaxed)
+    LadderQueueStrict  *ladderQStrict;
+    LadderQueueRelaxed *ladderQRelaxed;
+
+    //Schedule Queue - SplayTree
+    SplayTree* splayTree;
+
+    //Schedule Queue Lock
+    LockState* scheduleQueueLock;
+
+    //Object Status Lock
+    std::vector<LockState*> *objectStatusLock;
+
     // Number of LTSF Queues in use
     int LTSFCount;
 
     int objectCount;
 
-    int** LTSFObjId;
-
     unsigned int minReceiveTime;
 };
-#endif /* ThreadedTIMEWARPMULTISETLTSF_H_ */
+
+#endif /* THREADED_TIMEWARP_MULTISET_LTSF_H_ */

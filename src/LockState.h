@@ -6,7 +6,8 @@
 #include <string>
 #include <pthread.h>
 
-static const int NOONE = -1;
+#define NOONE 0xFFFF
+
 class LockState {
 public:
     LockState() {
@@ -52,7 +53,7 @@ public:
                         lockOwner = threadNumber;
                         pthread_mutex_unlock(&mutexLock);
                         locked = true;
-                    } else if(lockOwner == (int) threadNumber) {
+                    } else if(lockOwner == threadNumber) {
                         pthread_mutex_unlock(&mutexLock);
                         locked = true;
                     } else {
@@ -70,9 +71,9 @@ public:
     }
     bool hasLock(const unsigned int& threadNumber, const std::string syncMechanism) const {
         if (syncMechanism == "AtomicLock") {
-            return (threadNumber == (unsigned int) lockOwner);
+            return (threadNumber == lockOwner);
         } else if (syncMechanism == "Mutex") {
-            return (threadNumber == (unsigned int) lockOwner);
+            return (threadNumber == lockOwner);
         } else {
             std::cout << "Invalid sync mechanism" << std::endl;
             return false;
@@ -91,7 +92,7 @@ public:
         return lockOwner;
     }
 private:
-    int lockOwner;
+    unsigned int lockOwner;
     pthread_mutex_t mutexLock;
 };
 

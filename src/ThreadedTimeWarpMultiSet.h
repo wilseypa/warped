@@ -1,6 +1,5 @@
-#ifndef THREADEThreadedIMEWARPMULTISET_H_
-#define THREADEThreadedIMEWARPMULTISET_H_
-
+#ifndef THREADED_TIMEWARP_MULTISET_H_
+#define THREADED_TIMEWARP_MULTISET_H_
 
 #include <list>                         // for list
 #include <set>                          // for multiset, etc
@@ -25,11 +24,8 @@ using std::string;
 
 class Event;
 class NegativeEvent;
-class ThreadedTimeWarpLoadBalancer;
 class ThreadedTimeWarpMultiSetLTSF;
 class ThreadedTimeWarpSimulationManager;
-//class ThreadedTimeWarpMultiSetSchedulingManager;
-//class SimulationObject;
 
 class ThreadedTimeWarpMultiSet: public ThreadedTimeWarpEventSet {
 public:
@@ -123,14 +119,6 @@ public:
                        int threadId);
     void fossilCollect(const Event*, int threadId);
 
-    ////void getScheduleQueueLock(int threadId);
-
-    ////void releaseScheduleQueueLock(int threadId);
-
-    ////void getObjectLock(int threadId, int objId);
-
-    ////void releaseObjectLock(int threadId, int objId);
-
     bool isObjectScheduled(int objId);
 
     bool isObjectScheduledBy(int threadId, int objId);
@@ -163,52 +151,34 @@ public:
                                           const VTime& minimumTime, int threadId);
     const VTime* getMinEventTime(unsigned int threadId, unsigned int objId);
 
-    // Release all the object locks during a catastrophic rollback.
+    //Release all the object locks during a catastrophic rollback.
     void releaseObjectLocksRecovery();
 
-    // Load balancing functions
-    void moveLP(int sourceObj, int destLTSF);
-
-    unsigned int* getCommittedEventsByObj();
-    unsigned int* getCommittedEventsByLTSF();
-    unsigned int* getRolledBackEventsByObj();
-    unsigned int* getRolledBackEventsByLTSF();
-    int** getObjectMapping();
-    void enLoadBalancer(ThreadedTimeWarpLoadBalancer* loadBalancer);
-
 private:
+
     LockState** unprocessedQueueLockState;
     LockState** processedQueueLockState;
     LockState** removedQueueLockState;
 
-    //  typedef std::multiset<const Event*, receiveTimeLessThanEventIdLessThan>* MS;
-    //  MS *unProcessedQueueArray;
+    //Queues to hold the unprocessed Events for each simObj.
+    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*> unProcessedQueue;
 
-    /// Queues to hold the unprocessed Events for each simObj.
-    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>*>
-    unProcessedQueue;
+    //Iterator for the Events in Multiset.
+    multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator unProcessedQueueIterator;
 
-    /// Iterator for the Events in Multiset.
-    multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator
-    unProcessedQueueIterator;
-
-    /// Queues to hold the processed Events for each simObj.
+    //Queues to hold the processed Events for each simObj.
     std::vector<std::vector<const Event*>*> processedQueue;
 
-    /// Queues to hold the removed events for each simObj.
+    //Queues to hold the removed events for each simObj.
     std::vector<std::vector<const Event*>*> removedEventQueue;
 
-    /// Iterators for each thread
+    //Iterators for each thread
     typedef std::vector<const Event*>::iterator vIterate;
-    vIterate* vectorIterator;
-    typedef multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator
-    mIterate;
-    mIterate* multisetIterator;
+    vIterate *vectorIterator;
+    typedef multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator mIterate;
+    mIterate *multisetIterator;
 
-    ///Object Status Lock
-    ////AtomicState** objectStatusLock;
-
-    /// The handle to the simulation manager.
+    //The handle to the simulation manager.
     ThreadedTimeWarpSimulationManager* mySimulationManager;
 
     //number of objects associated with the manager
@@ -229,18 +199,6 @@ private:
     // ScheduleQueue (LTSF) Lookup Tables
     ThreadedTimeWarpMultiSetLTSF** LTSFByObj;
     ThreadedTimeWarpMultiSetLTSF** LTSFByThread;
-    int** LTSFObjId;
-#define OBJID 0
-#define LTSFOWNER 1
-
-    // Variables used for load balancing - arrays
-    // Reset to 0 at beginning of simulation.
-    unsigned int* committedEventsByObj;
-    unsigned int* committedEventsByLTSF;
-    unsigned int* rolledBackEventsByObj;
-    unsigned int* rolledBackEventsByLTSF;
-    ThreadedTimeWarpLoadBalancer* myLoadBalancer;
-    int lbType;
 };
 
-#endif /* ThreadedTIMEWARPMULTISET_H_ */
+#endif /* THREADED_TIMEWARP_MULTISET_H_ */
