@@ -41,12 +41,9 @@ extern pthread_key_t threadKey;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
     ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
-                                      const std::string syncMechanism, bool workerThreadMigration, bool loadBalancing,
-                                      const std::string loadBalancingMetric, const std::string loadBalancingTrigger,
-                                      double loadBalancingVarianceThresh, unsigned int loadBalancingNormalInterval,
-                                      unsigned int loadBalancingNormalThresh, unsigned int loadBalancingRelaxedInterval,
-                                      unsigned int loadBalancingRelaxedThresh, const std::string scheduleQScheme,
-                                      const std::string causalityType, unsigned int scheduleQCount, Application* initApplication);
+                                      const std::string syncMechanism, bool workerThreadMigration,
+                                      const std::string scheduleQScheme, const std::string causalityType, 
+                                      unsigned int scheduleQCount, Application* initApplication);
 
     virtual ~ThreadedTimeWarpSimulationManager();
     /** Return a handle to the state manager.
@@ -91,38 +88,6 @@ public:
 
     bool getWorkerThreadMigration() {
         return workerThreadMigration;
-    }
-
-    bool getLoadBalancing() {
-        return loadBalancing;
-    }
-
-    const std::string getLoadBalancingMetric() {
-        return loadBalancingMetric;
-    }
-
-    const std::string getLoadBalancingTrigger() {
-        return loadBalancingTrigger;
-    }
-
-    double getLoadBalancingVarianceThresh() {
-        return loadBalancingVarianceThresh;
-    }
-
-    unsigned int getLoadBalancingNormalInterval() {
-        return loadBalancingNormalInterval;
-    }
-
-    unsigned int getLoadBalancingNormalThresh() {
-        return loadBalancingNormalThresh;
-    }
-
-    unsigned int getLoadBalancingRelaxedInterval() {
-        return loadBalancingRelaxedInterval;
-    }
-
-    unsigned int getLoadBalancingRelaxedThresh() {
-        return loadBalancingRelaxedThresh;
     }
 
     const std::string getScheduleQScheme() {

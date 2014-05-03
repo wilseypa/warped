@@ -148,13 +148,6 @@ public:
              int threadID) = 0;
 
     /**
-     Determine if the event would be in the past if it were inserted
-
-     @return True if it would be in the past.
-     */
-    virtual bool inThePast(const Event*, int threadID) = 0;
-
-    /**
      Remove all events from the event set. Used to restore state after
      a catastrophic rollback while using optimistic fossil collection.
      */

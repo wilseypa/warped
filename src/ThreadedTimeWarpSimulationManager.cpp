@@ -68,34 +68,23 @@ using std::cerr;
 using std::vector;
 
 ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
-    unsigned int numberOfWorkerThreads, const string syncMechanism,
-    bool workerThreadMigration, bool loadBalancing, const string loadBalancingMetric,
-    const string loadBalancingTrigger, double loadBalancingVarianceThresh,
-    unsigned int loadBalancingNormalInterval, unsigned int loadBalancingNormalThresh,
-    unsigned int loadBalancingRelaxedInterval, unsigned int loadBalancingRelaxedThresh,
-    const string scheduleQScheme, const string causalityType, unsigned int scheduleQCount,
-    Application* initApplication) :
-    numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism),
-    workerThreadMigration(workerThreadMigration), loadBalancing(loadBalancing), 
-    loadBalancingMetric(loadBalancingMetric), loadBalancingTrigger(loadBalancingTrigger),
-    loadBalancingVarianceThresh(loadBalancingVarianceThresh),
-    loadBalancingNormalInterval(loadBalancingNormalInterval),
-    loadBalancingNormalThresh(loadBalancingNormalThresh),
-    loadBalancingRelaxedInterval(loadBalancingRelaxedInterval),
-    loadBalancingRelaxedThresh(loadBalancingRelaxedThresh),
-    scheduleQScheme(scheduleQScheme),
-    causalityType(causalityType), scheduleQCount(scheduleQCount), masterID(0),
-    coastForwardTime(0), myrealFossilCollManager(0), myStateManager(0),
-    messageBuffer(new LockedQueue<KernelMessage*>),
-    workerStatus(new WorkerInformation*[numberOfWorkerThreads + 1]),
-    myOutputManager(0), mySchedulingManager(0), checkGVT(false),
-    GVTTimePeriodLock(new AtomicState()),
-    LVTFlag(0), LVTFlagLock(new AtomicState()),
-    numberOfRemoteAntimessages(0), numberOfNegativeEventMessage(0),
-    numberOfLocalAntimessages(0),
-    computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
-    rollbackCompleted(new bool[numberOfObjects]), inRecovery(false),
-    GVTTokenPending(false), TimeWarpSimulationManager(initApplication) {
+                unsigned int numberOfWorkerThreads, const string syncMechanism, 
+                bool workerThreadMigration, const string scheduleQScheme, 
+                const string causalityType, unsigned int scheduleQCount,
+                Application* initApplication) :
+        numberOfWorkerThreads(numberOfWorkerThreads), syncMechanism(syncMechanism),
+        workerThreadMigration(workerThreadMigration), scheduleQScheme(scheduleQScheme),
+        causalityType(causalityType), scheduleQCount(scheduleQCount), 
+        TimeWarpSimulationManager(initApplication), masterID(0), coastForwardTime(0), 
+        myrealFossilCollManager(0), myStateManager(0), 
+        messageBuffer(new LockedQueue<KernelMessage*>),
+        workerStatus(new WorkerInformation*[numberOfWorkerThreads + 1]),
+        myOutputManager(0), mySchedulingManager(0), checkGVT(false),
+        GVTTimePeriodLock(new AtomicState()), LVTFlag(0), LVTFlagLock(new AtomicState()),
+        numberOfRemoteAntimessages(0), numberOfNegativeEventMessage(0),
+        numberOfLocalAntimessages(0), computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
+        rollbackCompleted(new bool[numberOfObjects]), inRecovery(false),
+        GVTTokenPending(false) {
 
     LVT = &getZero();
     LVTArray = new const VTime *[numberOfWorkerThreads + 1];

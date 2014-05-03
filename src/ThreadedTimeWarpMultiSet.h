@@ -125,8 +125,6 @@ public:
 
     void updateScheduleQueueAfterExecute(int objId, int threadId);
 
-    bool inThePast(const Event*, int threadId);
-
     /**
      Remove all events from the event set. Used to restore state after
      a catastrophic rollback while using optimistic fossil collection.

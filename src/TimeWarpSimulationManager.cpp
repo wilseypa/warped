@@ -576,7 +576,6 @@ void TimeWarpSimulationManager::handleEventReceiver(
 
 void TimeWarpSimulationManager::handleLocalEvent(const Event* event) {
     SimulationObject* receiver = getObjectHandle(event->getReceiver());
-    //  if( !myEventSet->inThePast( event ) ){
     if (event->getReceiveTime() > receiver->getSimulationTime()) {
         myEventSet->insert(event);
     } else {

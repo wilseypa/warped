@@ -344,31 +344,6 @@ TimeWarpMultiSet::rollback(SimulationObject* object,
     insertObjPos[objId] = unprocessedObjEvents[objId]->begin();
 }
 
-bool
-TimeWarpMultiSet::inThePast(const Event* toCheck) {
-    unsigned int objId = toCheck->getReceiver().getSimulationObjectID();
-    bool retval = false;
-
-    if (!processedObjEvents[objId]->empty()) {
-        // Events are pushed on to the back of the processed events vector.
-        // Because they can only be pushed on in order, the vector is always sorted.
-        const Event* lastProc = processedObjEvents[objId]->back();
-
-        if (lastProc != NULL) {
-            if (toCheck->getReceiveTime() != lastProc->getReceiveTime()) {
-                retval = toCheck->getReceiveTime() < lastProc->getReceiveTime();
-            } else {
-                if (toCheck->getEventId() != lastProc->getEventId()) {
-                    retval = toCheck->getEventId() < lastProc->getEventId();
-                } else {
-                    retval = toCheck->getSender() < lastProc->getSender();
-                }
-            }
-        }
-    }
-    return retval;
-}
-
 void
 TimeWarpMultiSet::ofcPurge() {
     multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator msit;
