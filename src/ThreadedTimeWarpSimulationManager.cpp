@@ -76,21 +76,19 @@ ThreadedTimeWarpSimulationManager::ThreadedTimeWarpSimulationManager(
         workerThreadMigration(workerThreadMigration), scheduleQScheme(scheduleQScheme),
         causalityType(causalityType), scheduleQCount(scheduleQCount), 
         TimeWarpSimulationManager(initApplication), masterID(0), coastForwardTime(0), 
-        myrealFossilCollManager(0), myStateManager(0), 
-        messageBuffer(new LockedQueue<KernelMessage*>),
         workerStatus(new WorkerInformation*[numberOfWorkerThreads + 1]),
-        myOutputManager(0), mySchedulingManager(0), checkGVT(false),
-        GVTTimePeriodLock(new AtomicState()), LVTFlag(0), LVTFlagLock(new AtomicState()),
-        numberOfRemoteAntimessages(0), numberOfNegativeEventMessage(0),
-        numberOfLocalAntimessages(0), computeLVTStatus(new bool*[numberOfWorkerThreads + 1]),
-        rollbackCompleted(new bool[numberOfObjects]), inRecovery(false),
-        GVTTokenPending(false) {
+        myrealFossilCollManager(0), myOutputManager(0), myStateManager(0), 
+        mySchedulingManager(0), messageBuffer(new LockedQueue<KernelMessage*>), 
+        inRecovery(false), checkGVT(false), GVTTimePeriodLock(new AtomicState()), LVTFlag(0), 
+        LVTFlagLock(new AtomicState()), computeLVTStatus(new bool*[numberOfWorkerThreads + 1]), 
+        GVTTokenPending(false), rollbackCompleted(new bool[numberOfObjects]), 
+        numberOfNegativeEventMessage(0), numberOfRemoteAntimessages(0), numberOfLocalAntimessages(0) {
 
     LVT = &getZero();
     LVTArray = new const VTime *[numberOfWorkerThreads + 1];
     sendMinTimeArray = new const VTime *[numberOfWorkerThreads + 1];
 
-    for (int i = 0; i < numberOfWorkerThreads + 1; i++) {
+    for (unsigned int i = 0; i < numberOfWorkerThreads + 1; i++) {
         computeLVTStatus[i] = new bool(0);
         *(computeLVTStatus[i]) = 1;
         sendMinTimeArray[i] = NULL;
@@ -170,11 +168,12 @@ void ThreadedTimeWarpSimulationManager::createWorkerThreads() {
     }
 }
 
-void* ThreadedTimeWarpSimulationManager::startWorkerThread(void* arguments) {
+void *ThreadedTimeWarpSimulationManager::startWorkerThread(void* arguments) {
     //Convert the arguments from void* back to thread_args
     thread_args* myArgs = static_cast<thread_args*>(arguments);
     //Start executing objects
     myArgs->simManager->workerThread(myArgs->threadIndex);
+    return NULL;
 }
 
 bool ThreadedTimeWarpSimulationManager::executeObjects(
@@ -318,10 +317,8 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
     cout << "SimulationManager(" << mySimulationManagerID
          << "): Starting simulation - End time: " << simulateUntil << ")"
          << endl;
-    bool LTSFDestTemp = 1;
     printObjectMaaping();
     //Do ASSERT for all components of the kernel
-    bool pastSimulationCompleteTime = false; // Use it to terminate
     getMessages();
     createWorkerThreads();
     StopWatch stopwatch;
@@ -362,9 +359,9 @@ void ThreadedTimeWarpSimulationManager::simulate(const VTime& simulateUntil) {
                         //Reset the GVT flag so the Worker thread can increase GVT Period
                         bool checkGVTOn = __sync_bool_compare_and_swap(
                                               &checkGVT, true, false);
+                        ASSERT(checkGVTOn);
                         resetGVTTokenPending();
                         if (myGVTManager->getGVT() >= simulateUntil) {
-                            pastSimulationCompleteTime = true;
                         }
                     }
                 }
@@ -543,11 +540,9 @@ void ThreadedTimeWarpSimulationManager::handleEventReceiver(
 
 void ThreadedTimeWarpSimulationManager::handleLocalEvent(const Event* event,
                                                          int threadID) {
-    SimulationObject* receiver = getObjectHandle(event->getReceiver());
-    unsigned int objId = receiver->getObjectID()->getSimulationObjectID();
     myEventSet->insert(event, threadID);
-
 }
+
 void ThreadedTimeWarpSimulationManager::handleRemoteEvent(const Event* event,
                                                           int threadID) {
     int
@@ -673,7 +668,7 @@ void ThreadedTimeWarpSimulationManager::cancelRemoteEvents(
 }
 
 void ThreadedTimeWarpSimulationManager::handleNegativeEvents(
-    const vector<const Event*>& negativeEvents, int threadID) {
+        const vector<const Event*>& negativeEvents, int threadID) {
     cancelEvents(negativeEvents);
 }
 
@@ -896,13 +891,6 @@ void ThreadedTimeWarpSimulationManager::receiveKernelMessage(KernelMessage* msg)
         const ObjectID senderZero = (eventsToCancel[0])->getSender();
         const ObjectID receiverZero = (eventsToCancel[0])->getReceiver();
         const EventId eventIdZero = (eventsToCancel[0])->getEventId();
-        const VTime* sendTimeZero = (eventsToCancel[0])->getSendTime().clone();
-        const VTime* receiveTimeZero =
-            (eventsToCancel[0])->getReceiveTime().clone();
-        const NegativeEvent* copiedEvent = new NegativeEvent(*sendTimeZero,
-                                                             *receiveTimeZero, senderZero, receiverZero, eventIdZero);
-        const StragglerEvent* stragEvent = new StragglerEvent(copiedEvent, 0,
-                                                              eventsToCancel);
 
     } else if (dynamic_cast<InitializationMessage*>(msg) != 0) {
         InitializationMessage* initMsg =
@@ -1274,7 +1262,7 @@ void ThreadedTimeWarpSimulationManager::registerSimulationObjects() {
     }
     delete objects;
     delete keys;
-    for (int i = 0; i < numberOfObjects; i++) {
+    for (unsigned int i = 0; i < numberOfObjects; i++) {
         resetRollbackCompletedStatus(i);
     }
 }
@@ -1368,8 +1356,7 @@ inline void ThreadedTimeWarpSimulationManager::updateSendMinTime(
             sendMinTimeArray[threadId] = sendTime->clone();
         } else if (sendMinTimeArray[threadId] != NULL
                    && *sendMinTimeArray[threadId] > *sendTime) {
-            //delete(sendMinTimeArray[threadId]);
-            sendMinTimeArray[threadId] == sendTime->clone();
+            sendMinTimeArray[threadId] = sendTime->clone();
         }
     }
 
@@ -1385,12 +1372,12 @@ void ThreadedTimeWarpSimulationManager::decrementLVTFlag(unsigned int threadId) 
 }
 
 void ThreadedTimeWarpSimulationManager::resetComputeLVTStatus() {
-    for (int i = 1; i < numberOfWorkerThreads; i++) {
+    for (unsigned int i = 1; i < numberOfWorkerThreads; i++) {
         *(computeLVTStatus[i]) = 0;
     }
 }
 void ThreadedTimeWarpSimulationManager::setComputeLVTStatus() {
-    for (int i = 0; i < numberOfWorkerThreads + 1; i++) {
+    for (unsigned int i = 0; i < numberOfWorkerThreads + 1; i++) {
         computeLVTStatus[i] = new bool(0);
         *(computeLVTStatus[i]) = 1;
         //  sendMinTimeArray[i] = NULL;
@@ -1402,7 +1389,7 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
     if (LVTFlag == 0) {
         lvtCount++;
         const VTime* minimum = &(getPositiveInfinity());
-        for (int i = 1; i < numberOfWorkerThreads; i++) {
+        for (unsigned int i = 1; i < numberOfWorkerThreads; i++) {
             if (LVTArray[i] != 0 && *LVTArray[i] < *minimum)
             { minimum = LVTArray[i]; }
         }
@@ -1413,7 +1400,7 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
         case 1:
             LVT = minimum->clone();
             LVTFlag = (numberOfWorkerThreads - 1);
-            for (int i = 1; i < numberOfWorkerThreads; i++) {
+            for (unsigned int i = 1; i < numberOfWorkerThreads; i++) {
                 delete(LVTArray[i]);
             }
             resetComputeLVTStatus();
@@ -1423,7 +1410,7 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
                 LVT = minimum->clone();
             }
             LVTFlag = (numberOfWorkerThreads - 1);
-            for (int i = 1; i < numberOfWorkerThreads; i++) {
+            for (unsigned int i = 1; i < numberOfWorkerThreads; i++) {
                 delete(LVTArray[i]);
             }
             resetComputeLVTStatus();
@@ -1444,7 +1431,7 @@ bool ThreadedTimeWarpSimulationManager::updateLVTfromArray() {
             }
             ret = true;
             lvtCount = 0;
-            for (int i = 1; i < numberOfWorkerThreads; i++) {
+            for (unsigned int i = 1; i < numberOfWorkerThreads; i++) {
                 delete(LVTArray[i]);
             }
 
@@ -1460,10 +1447,10 @@ const VTime* ThreadedTimeWarpSimulationManager::getLVT() {
 void ThreadedTimeWarpSimulationManager::saveFileQueuesCheckpoint(
     ofstream* outFile, const ObjectID& objId, unsigned int saveTime) {
     unsigned int i = objId.getSimulationObjectID();
-    for (int j = 0; j < outFileQueues[i].size(); j++) {
+    for (int j = 0; j < (int)outFileQueues[i].size(); j++) {
         (outFileQueues[i][j])->saveCheckpoint(outFile, saveTime);
     }
-    for (int j = 0; j < inFileQueues[i].size(); j++) {
+    for (int j = 0; j < (int)inFileQueues[i].size(); j++) {
         (inFileQueues[i][j])->saveCheckpoint(outFile, saveTime);
     }
 }
@@ -1472,11 +1459,11 @@ void ThreadedTimeWarpSimulationManager::saveFileQueuesCheckpoint(
 void ThreadedTimeWarpSimulationManager::restoreFileQueues(ifstream* inFile,
                                                           const ObjectID& objId, unsigned int restoreTime) {
     unsigned int i = objId.getSimulationObjectID();
-    for (int j = 0; j < outFileQueues[i].size(); j++) {
+    for (int j = 0; j < (int)outFileQueues[i].size(); j++) {
         (outFileQueues[i][j])->restoreCheckpoint(inFile, restoreTime);
     }
 
-    for (int j = 0; j < inFileQueues[i].size(); j++) {
+    for (int j = 0; j < (int)inFileQueues[i].size(); j++) {
         (inFileQueues[i][j])->restoreCheckpoint(inFile, restoreTime);
     }
 }

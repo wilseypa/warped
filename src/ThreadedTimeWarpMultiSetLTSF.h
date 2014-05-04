@@ -35,8 +35,7 @@ public:
     // Creates an LTSF queue
     ThreadedTimeWarpMultiSetLTSF(
             const string syncMechanism, const string scheduleQScheme, const string causalityType,
-            std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> *lowestObjPos,
-            std::vector<const Event*> *lowestObjPosAlt, std::vector<LockState*> *objStatusLock );
+            std::vector<const Event*> *lowestObjPos, std::vector<LockState*> *objStatusLock );
 
     ~ThreadedTimeWarpMultiSetLTSF();
 
@@ -95,13 +94,10 @@ private:
     string eventCausality;
 
     //Lowest event position pointer
-    std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> *lowestObjectPosition;
+    std::vector<const Event*> *lowestObjectPosition;
 
     //Schedule Queue
     multiset<const Event*, receiveTimeLessThanEventIdLessThan>* scheduleQueue;
-
-    //Lowest event position pointer for Ladder Queue and Splay Tree.
-    std::vector<const Event*> *lowestObjectPositionAlt;
 
     //Schedule Queue - LadderQ (Strict and Relaxed)
     LadderQueueStrict  *ladderQStrict;

@@ -17,18 +17,15 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(
             const string syncMech,
             const string scheQScheme,
             const string causalityType,
-            std::vector<multiset<const Event*, receiveTimeLessThanEventIdLessThan>::iterator> *lowestObjPos,
-            std::vector<const Event*> *lowestObjPosAlt,
+            std::vector<const Event*> *lowestObjPos,
             std::vector<LockState*> *objStatusLock ) :
         syncMechanism(syncMech),
         scheduleQScheme(scheQScheme),
         eventCausality(causalityType),
         lowestObjectPosition(lowestObjPos),
-        lowestObjectPositionAlt(lowestObjPosAlt),
         objectStatusLock(objStatusLock) {
 
     ASSERT(lowestObjectPosition);
-    ASSERT(lowestObjectPositionAlt);
     ASSERT(objectStatusLock);
 
     // Set up scheduleQueue (LTSF queue)
@@ -158,21 +155,21 @@ void ThreadedTimeWarpMultiSetLTSF::clearScheduleQueue(int threadId) {
 void ThreadedTimeWarpMultiSetLTSF::setLowestObjectPosition(int threadId, int index) {
     if (scheduleQScheme == "MultiSet") {
         this->getScheduleQueueLock(threadId);
-        lowestObjectPosition->at(index) = scheduleQueue->end();
+        lowestObjectPosition->at(index) = NULL;
         this->releaseScheduleQueueLock(threadId);
 
     } else if (scheduleQScheme == "LadderQueue") {
         if(eventCausality == "Relaxed") {
-            lowestObjectPositionAlt->at(index) = ladderQRelaxed->end();
+            lowestObjectPosition->at(index) = NULL;
         } else {
             this->getScheduleQueueLock(threadId);
-            lowestObjectPositionAlt->at(index) = ladderQStrict->end();
+            lowestObjectPosition->at(index) = NULL;
             this->releaseScheduleQueueLock(threadId);
         }
 
     } else { //SplayTree
         this->getScheduleQueueLock(threadId);
-        lowestObjectPositionAlt->at(index) = splayTree->end();
+        lowestObjectPosition->at(index) = NULL;
         this->releaseScheduleQueueLock(threadId);
     }
 }
@@ -180,55 +177,56 @@ void ThreadedTimeWarpMultiSetLTSF::setLowestObjectPosition(int threadId, int ind
 void ThreadedTimeWarpMultiSetLTSF::insertEvent(int objId, const Event* newEvent) {
     if (scheduleQScheme == "MultiSet") {
         ASSERT(newEvent);
-        lowestObjectPosition->at(objId) = scheduleQueue->insert(newEvent);
+        lowestObjectPosition->at(objId) = *(scheduleQueue->insert(newEvent));
     } else if (scheduleQScheme == "LadderQueue") {
         ASSERT(newEvent);
         if(eventCausality == "Relaxed") {
-            lowestObjectPositionAlt->at(objId) = ladderQRelaxed->insert(newEvent);
+            lowestObjectPosition->at(objId) = ladderQRelaxed->insert(newEvent);
         } else {
             debug::debugout<<"Inserting " << newEvent << "." <<endl;
-            lowestObjectPositionAlt->at(objId) = ladderQStrict->insert(newEvent);
+            lowestObjectPosition->at(objId) = ladderQStrict->insert(newEvent);
         }
     } else { //SplayTree
         ASSERT(newEvent);
         splayTree->insert(newEvent);
-        lowestObjectPositionAlt->at(objId) = newEvent;
+        lowestObjectPosition->at(objId) = newEvent;
     }
 }
 
 void ThreadedTimeWarpMultiSetLTSF::insertEmptyEvent(int objId) {
     if (scheduleQScheme == "MultiSet") {
-        lowestObjectPosition->at(objId) = scheduleQueue->end();
+        lowestObjectPosition->at(objId) = NULL;
     } else if (scheduleQScheme == "LadderQueue") {
         if(eventCausality == "Relaxed") {
-            lowestObjectPositionAlt->at(objId) = ladderQRelaxed->end();
+            lowestObjectPosition->at(objId) = NULL;
         } else {
-            lowestObjectPositionAlt->at(objId) = ladderQStrict->end();
+            lowestObjectPosition->at(objId) = NULL;
         }
     } else { //SplayTree
-        lowestObjectPositionAlt->at(objId) = splayTree->end();
+        lowestObjectPosition->at(objId) = NULL;
     }
 }
 
 void ThreadedTimeWarpMultiSetLTSF::eraseSkipFirst(int objId) {
     // Do not erase the first time.
+    ASSERT(lowestObjectPosition->size() > objId);
     if (scheduleQScheme == "MultiSet") {
-        if (lowestObjectPosition->at(objId) != scheduleQueue->end()) {
+        if (lowestObjectPosition->at(objId) != NULL) {
             scheduleQueue->erase(lowestObjectPosition->at(objId));
         }
     } else if (scheduleQScheme == "LadderQueue") {
         if(eventCausality == "Relaxed") {
-            if (lowestObjectPositionAlt->at(objId) != ladderQRelaxed->end()) {
-                ladderQRelaxed->erase(lowestObjectPositionAlt->at(objId));
+            if (lowestObjectPosition->at(objId) != NULL) {
+                ladderQRelaxed->erase(lowestObjectPosition->at(objId));
             }
         } else {
-            if (lowestObjectPositionAlt->at(objId) != ladderQStrict->end()) {
-                ladderQStrict->erase(lowestObjectPositionAlt->at(objId));
+            if (lowestObjectPosition->at(objId) != NULL) {
+                ladderQStrict->erase(lowestObjectPosition->at(objId));
             }
         }
     } else { //SplayTree
-        if (lowestObjectPositionAlt->at(objId) != splayTree->end()) {
-            splayTree->erase(lowestObjectPositionAlt->at(objId));
+        if (lowestObjectPosition->at(objId) != NULL) {
+            splayTree->erase(lowestObjectPosition->at(objId));
         }
     }
 }
@@ -245,7 +243,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
             debug::debugout << "(" << threadId << ") Locking the Object " << objId << endl;
             getObjectLock(threadId, objId);
             scheduleQueue->erase(scheduleQueue->begin());
-            lowestObjectPosition->at(objId) = scheduleQueue->end();
+            lowestObjectPosition->at(objId) = NULL;
         }
         this->releaseScheduleQueueLock(threadId);
 
@@ -263,7 +261,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
                 unsigned int objId = ret->getReceiver().getSimulationObjectID();
                 debug::debugout << "(" << threadId << ") Locking the Object " << objId << endl;
                 this->getObjectLock(threadId, objId);
-                lowestObjectPositionAlt->at(objId) = ladderQRelaxed->end();
+                lowestObjectPosition->at(objId) = NULL;
             }
             this->releaseScheduleQueueLock(threadId);
         } else {
@@ -279,7 +277,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
                 unsigned int objId = ret->getReceiver().getSimulationObjectID();
                 debug::debugout << "(" << threadId << ") Locking the Object " << objId << endl;
                 this->getObjectLock(threadId, objId);
-                lowestObjectPositionAlt->at(objId) = ladderQStrict->end();
+                lowestObjectPosition->at(objId) = NULL;
             }
             this->releaseScheduleQueueLock(threadId);
         }
@@ -295,7 +293,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
             unsigned int objId = ret->getReceiver().getSimulationObjectID();
             debug::debugout << "(" << threadId << ") Locking the Object " << objId << endl;
             this->getObjectLock(threadId, objId);
-            lowestObjectPositionAlt->at(objId) = splayTree->end();
+            lowestObjectPosition->at(objId) = NULL;
         }
         this->releaseScheduleQueueLock(threadId);
     }

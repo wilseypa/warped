@@ -232,7 +232,7 @@ protected:
     void createWorkerThreads();
 
     /// The function called by pthread_create must be static
-    static void* startWorkerThread(void* arguments);
+    static void *startWorkerThread(void* arguments);
 
     ///Function to be executed by threads
     void workerThread(const unsigned int& threadId);
@@ -420,7 +420,7 @@ private:
     unsigned int masterID;
 
     //Flag for initiating the LVT Calculation between threads
-    unsigned int LVTFlag;
+    int LVTFlag;
 
     AtomicState* LVTFlagLock;
 
