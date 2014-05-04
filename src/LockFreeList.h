@@ -7,6 +7,7 @@
 /* Include section */
 #include "ListNode.h"
 
+template <class T>
 class LockFreeList {
 
 public:
@@ -15,9 +16,9 @@ public:
 
     ~LockFreeList() {}
 
-    bool insert( const Event *k ) {
+    bool insert( T k ) {
         if(!k) return false;
-        ListNode *h = new ListNode(k, INS);
+        ListNode<T> *h = new ListNode<T>(k, INS);
         enlist(h);
         bool b = helpInsert(h, k);
         if(!__sync_bool_compare_and_swap( &(h->state), INS, (b ? DAT:INV) )) {
@@ -28,9 +29,9 @@ public:
         return b;
     }
 
-    bool erase( const Event *k ) {
+    bool erase( T k ) {
         if(!k) return false;
-        ListNode *h = new ListNode(k, REM);
+        ListNode<T> *h = new ListNode<T>(k, REM);
         enlist(h);
         bool b = helpRemove(h, k);
         h->state = INV;
@@ -38,17 +39,16 @@ public:
         return b;
     }
 
-    const Event *pop_front() {
-        const Event *k = NULL;
+    T pop_front() {
         while(listSize) {
-            k = begin();
-            if( erase(k) ) break;
+            T k = begin();
+            if( erase(k) ) return k;
         }
-        return k;
+        return NULL;
     }
 
-    const Event *begin() {
-        ListNode *curr = head;
+    T begin() {
+        ListNode<T> *curr = head;
         while( curr != NULL ) {
             state_t s = curr->state;
             if( s == DAT) break;
@@ -72,11 +72,11 @@ public:
 
 private:
 
-    ListNode *head;
-    int      listSize;
+    ListNode<T> *head;
+    int         listSize;
 
-    void enlist( ListNode *h ) {
-        ListNode *old = NULL;
+    void enlist( ListNode<T> *h ) {
+        ListNode<T> *old = NULL;
         while(true) {
             old = head;
             h->next = old;
@@ -84,14 +84,14 @@ private:
         }
     }
 
-    bool helpInsert( ListNode *h, const Event *k ) {
-        ListNode *pred = h;
-        ListNode *curr = pred->next;
+    bool helpInsert( ListNode<T> *h, T k ) {
+        ListNode<T> *pred = h;
+        ListNode<T> *curr = pred->next;
 
         while( curr != NULL ) {
             state_t s = curr->state;
             if( s == INV ) {
-                ListNode *succ = curr->next;
+                ListNode<T> *succ = curr->next;
                 pred->next = succ;
                 curr = succ;
             } else if( curr->key != k ) {
@@ -106,14 +106,14 @@ private:
         return true;
     }
 
-    bool helpRemove( ListNode *h, const Event *k ) {
-        ListNode *pred = h;
-        ListNode *curr = pred->next;
+    bool helpRemove( ListNode<T> *h, T k ) {
+        ListNode<T> *pred = h;
+        ListNode<T> *curr = pred->next;
 
         while( curr != NULL ) {
             state_t s = curr->state;
             if( s == INV ) {
-                ListNode *succ = curr->next;
+                ListNode<T> *succ = curr->next;
                 pred->next = succ;
                 curr = succ;
             } else if( curr->key != k ) {

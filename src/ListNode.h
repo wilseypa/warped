@@ -1,9 +1,6 @@
 #ifndef ListNode_H_
 #define ListNode_H_
 
-/* Include section */
-#include "Event.h"
-
 /* State of node */
 typedef enum state_e {
     INS = 0,
@@ -13,16 +10,17 @@ typedef enum state_e {
 } state_t;
 
 /* Node of a lock-free list */
+template<class T>
 class ListNode {
 
 public:
 
-    ListNode(const Event *keyVal, state_t stateVal): 
+    ListNode(T keyVal, state_t stateVal): 
                 key(keyVal), state(stateVal), next(NULL) {}
 
     ~ListNode() {}
 
-    const Event *key;
+    T key;
     state_t state;
     ListNode *next;
 };
