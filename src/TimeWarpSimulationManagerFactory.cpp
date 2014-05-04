@@ -33,30 +33,6 @@ TimeWarpSimulationManagerFactory::allocate(
         //Specify the worker thread migration option
         bool workerThreadMigration = configuration.get_bool({"TimeWarp", "ThreadControl", "WorkerThreadMigration"},
                                                             false);
-        //Specify the load balancing option
-        bool loadBalancing = configuration.get_bool({"TimeWarp", "ThreadControl", "LoadBalancing"},
-                                                    false);
-        //Specify the load balancing metric
-        std::string loadBalancingMetric = configuration.get_string({"TimeWarp", "ThreadControl", "LoadBalancingMetric"},
-                                                                   "EventExecutionRatio");
-        //Specify the load balancing trigger
-        std::string loadBalancingTrigger = configuration.get_string({"TimeWarp", "ThreadControl", "LoadBalancingTrigger"},
-                                                                    "Rollback");
-        //Read the load balancing variance threshold
-        double loadBalancingVarianceThresh = configuration.get_double({"TimeWarp", "ThreadControl", "LoadBalancingVarianceThresh"},
-                                                                      0.2);
-        //Read the specified interval for normal load balancing
-        int loadBalancingNormalInterval = configuration.get_int({"TimeWarp", "ThreadControl", "LoadBalancingNormalInterval"},
-                                                                3);
-        //Read the specified threshold for normal load balancing
-        int loadBalancingNormalThresh = configuration.get_int({"TimeWarp", "ThreadControl", "LoadBalancingNormalThresh"},
-                                                              5);
-        //Read the specified interval for relaxed load balancing
-        int loadBalancingRelaxedInterval = configuration.get_int({"TimeWarp", "ThreadControl", "LoadBalancingRelaxedInterval"},
-                                                                 15);
-        //Read the specified threshold for relaxed load balancing
-        int loadBalancingRelaxedThresh = configuration.get_int({"TimeWarp", "ThreadControl", "LoadBalancingRelaxedThresh"},
-                                                               2);
         //Specify the schedule queue scheme
         std::string scheduleQScheme = configuration.get_string({"TimeWarp", "Scheduler", "ScheduleQScheme"},
                                                                "MultiSet");
@@ -67,10 +43,10 @@ TimeWarpSimulationManagerFactory::allocate(
         int scheduleQCount = configuration.get_int({"TimeWarp", "Scheduler", "ScheduleQCount"}, 2);
 
         ThreadedTimeWarpSimulationManager* retvalue = 0;
-        retvalue = new ThreadedTimeWarpSimulationManager(numberOfWorkerThreads, syncMechanism, workerThreadMigration, 
-                                                         loadBalancing, loadBalancingMetric, loadBalancingTrigger, loadBalancingVarianceThresh,
-                                                         loadBalancingNormalInterval, loadBalancingNormalThresh, loadBalancingRelaxedInterval,
-                                                         loadBalancingRelaxedThresh, scheduleQScheme, causalityType, scheduleQCount, (Application*) parent);
+        retvalue = new ThreadedTimeWarpSimulationManager( numberOfWorkerThreads, syncMechanism, 
+                                                          workerThreadMigration, scheduleQScheme, 
+                                                          causalityType, scheduleQCount, 
+                                                          (Application*) parent );
         return retvalue;
     } else {
         retval = new TimeWarpSimulationManager((Application*) parent);

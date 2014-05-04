@@ -422,12 +422,12 @@ protected:
     }
 
     void setSimulationTime(const VTime& newSimulationTime) {
+
+        ASSERT( newSimulationTime.getApproximateIntTime() );
         std::cerr
                 << "Error SimulationManager wide simulationTime is no longer used."
                 << std::endl;
         abort();
-        //delete simulationTime;
-        //simulationTime = newSimulationTime.clone();
     }
 
     void setCoastForwardTime(const unsigned int& objectID,

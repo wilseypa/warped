@@ -64,8 +64,6 @@ public:
 
     void rollback(SimulationObject*, const VTime&);
 
-    bool inThePast(const Event*);
-
     void ofcPurge();
 
     void debugDump(const string& objectName, std::ostream& os);

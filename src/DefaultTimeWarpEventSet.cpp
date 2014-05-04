@@ -123,11 +123,6 @@ DefaultTimeWarpEventSet::rollback(SimulationObject* object,
     getEventContainer(object->getObjectID()).rollback(rollbackTime);
 }
 
-bool
-DefaultTimeWarpEventSet::inThePast(const Event* toCheck) {
-    return getEventContainer(&toCheck->getReceiver()).isInThePast(toCheck);
-}
-
 void
 DefaultTimeWarpEventSet::ofcPurge() {
     SimulationObject* obj = NULL;

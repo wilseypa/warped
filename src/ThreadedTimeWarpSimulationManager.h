@@ -12,7 +12,6 @@
 #include "ThreadedOutputManager.h"
 #include "ThreadedStateManager.h"
 #include "ThreadedTimeWarpEventSet.h"
-#include "ThreadedTimeWarpLoadBalancer.h"
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
 #include "VTime.h"                      // for VTime
 #include "WorkerInformation.h"
@@ -33,7 +32,6 @@ class ThreadedOptFossilCollManager;
 class ThreadedOutputManager;
 class ThreadedStateManager;
 class ThreadedTimeWarpEventSet;
-class ThreadedTimeWarpLoadBalancer;
 class VTime;
 class WorkerInformation;
 template<class element> class LockedQueue;
@@ -43,12 +41,9 @@ extern pthread_key_t threadKey;
 class ThreadedTimeWarpSimulationManager: public TimeWarpSimulationManager {
 public:
     ThreadedTimeWarpSimulationManager(unsigned int numberOfWorkerThreads,
-                                      const std::string syncMechanism, bool workerThreadMigration, bool loadBalancing,
-                                      const std::string loadBalancingMetric, const std::string loadBalancingTrigger,
-                                      double loadBalancingVarianceThresh, unsigned int loadBalancingNormalInterval,
-                                      unsigned int loadBalancingNormalThresh, unsigned int loadBalancingRelaxedInterval,
-                                      unsigned int loadBalancingRelaxedThresh, const std::string scheduleQScheme,
-                                      const std::string causalityType, unsigned int scheduleQCount, Application* initApplication);
+                                      const std::string syncMechanism, bool workerThreadMigration,
+                                      const std::string scheduleQScheme, const std::string causalityType, 
+                                      unsigned int scheduleQCount, Application* initApplication);
 
     virtual ~ThreadedTimeWarpSimulationManager();
     /** Return a handle to the state manager.
@@ -93,38 +88,6 @@ public:
 
     bool getWorkerThreadMigration() {
         return workerThreadMigration;
-    }
-
-    bool getLoadBalancing() {
-        return loadBalancing;
-    }
-
-    const std::string getLoadBalancingMetric() {
-        return loadBalancingMetric;
-    }
-
-    const std::string getLoadBalancingTrigger() {
-        return loadBalancingTrigger;
-    }
-
-    double getLoadBalancingVarianceThresh() {
-        return loadBalancingVarianceThresh;
-    }
-
-    unsigned int getLoadBalancingNormalInterval() {
-        return loadBalancingNormalInterval;
-    }
-
-    unsigned int getLoadBalancingNormalThresh() {
-        return loadBalancingNormalThresh;
-    }
-
-    unsigned int getLoadBalancingRelaxedInterval() {
-        return loadBalancingRelaxedInterval;
-    }
-
-    unsigned int getLoadBalancingRelaxedThresh() {
-        return loadBalancingRelaxedThresh;
     }
 
     const std::string getScheduleQScheme() {
@@ -269,7 +232,7 @@ protected:
     void createWorkerThreads();
 
     /// The function called by pthread_create must be static
-    static void* startWorkerThread(void* arguments);
+    static void *startWorkerThread(void* arguments);
 
     ///Function to be executed by threads
     void workerThread(const unsigned int& threadId);
@@ -457,7 +420,7 @@ private:
     unsigned int masterID;
 
     //Flag for initiating the LVT Calculation between threads
-    unsigned int LVTFlag;
+    int LVTFlag;
 
     AtomicState* LVTFlagLock;
 
@@ -490,9 +453,7 @@ private:
 
     unsigned int numberOfLocalAntimessages;
 
-    ThreadedTimeWarpLoadBalancer* loadBalancer;
-    
-    /// used to lock optimistic fossil collection recovery flags. 
+    //used to lock optimistic fossil collection recovery flags. 
     LockState* ofcFlagLock;
 } __attribute__((aligned(L1DSZ)));
 

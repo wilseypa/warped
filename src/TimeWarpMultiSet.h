@@ -104,12 +104,6 @@ public:
     */
     virtual void ofcPurge();
 
-    /** Determines if the event is in the past based on the receive time,
-        then sender and the event id.
-        @return bool True if in the past.
-    */
-    virtual bool inThePast(const Event*);
-
     /// Print the event set.
     void print(std::ostream& out);
 

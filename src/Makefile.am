@@ -167,7 +167,6 @@ WARPED_H_FILES = \
 	ThreadedStateManager.h \
 	ThreadedStateManagerImplementationBase.h \
 	ThreadedTimeWarpEventSet.h \
-	ThreadedTimeWarpLoadBalancer.h \
 	ThreadedTimeWarpMultiSet.h \
 	ThreadedTimeWarpMultiSetLTSF.h \
 	ThreadedTimeWarpMultiSetSchedulingManager.h \
@@ -318,7 +317,6 @@ libwarped_la_SOURCES = \
     ThreadedPeriodicStateManager.cpp \
     ThreadedStateManagerImplementationBase.cpp \
     ThreadedTimeWarpEventSet.cpp \
-    ThreadedTimeWarpLoadBalancer.cpp \
     ThreadedTimeWarpMultiSet.cpp \
     ThreadedTimeWarpMultiSetLTSF.cpp \
     ThreadedTimeWarpMultiSetSchedulingManager.cpp \

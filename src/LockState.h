@@ -7,7 +7,8 @@
 #include <pthread.h>
 #include "tsx.h"
 
-static const int NOONE = -1;
+#define NOONE 0xFFFF
+
 class LockState {
 public:
     LockState() {
