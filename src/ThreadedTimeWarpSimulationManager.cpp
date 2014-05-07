@@ -171,6 +171,15 @@ void ThreadedTimeWarpSimulationManager::createWorkerThreads() {
 void *ThreadedTimeWarpSimulationManager::startWorkerThread(void* arguments) {
     //Convert the arguments from void* back to thread_args
     thread_args* myArgs = static_cast<thread_args*>(arguments);
+
+    //set CPU affinity
+    cpu_set_t cpuset;
+
+    CPU_ZERO(&cpuset);
+    CPU_SET(myArgs->threadIndex, &cpuset);
+    int r = pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset);
+    assert(!r);
+
     //Start executing objects
     myArgs->simManager->workerThread(myArgs->threadIndex);
     return NULL;
