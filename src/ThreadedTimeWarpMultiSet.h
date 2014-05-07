@@ -197,6 +197,7 @@ private:
     // ScheduleQueue (LTSF) Lookup Tables
     unsigned int *LTSFByObj;
     unsigned int *LTSFByThread;
+    unsigned int *MigrateCntPerThread;
 };
 
 #endif /* THREADED_TIMEWARP_MULTISET_H_ */

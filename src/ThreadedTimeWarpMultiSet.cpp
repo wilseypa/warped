@@ -23,6 +23,9 @@ using std::endl;
 using std::vector;
 using std::multiset;
 
+#define MAX_MIGRATION_CNT 50
+
+
 ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
                         ThreadedTimeWarpSimulationManager *initSimulationManager) :
         mySimulationManager(initSimulationManager) {
@@ -66,6 +69,7 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 
     LTSFByThread = new unsigned int[threadCount];
     LTSFByObj = new unsigned int[objectCount];
+    MigrateCntPerThread = new unsigned int[threadCount];
 
     //Initialize schedule queues
     for (int i=0; i < LTSFCount; i++) {
@@ -77,6 +81,7 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
     //Assign threads to LTSF queues
     for (int i=0; i < threadCount; i++) {
         LTSFByThread[i] = i % LTSFCount;
+        MigrateCntPerThread[i] = 0;
     }
 
     //Warning message if uneven distribution of threads to LTSF queues
@@ -596,10 +601,11 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int th
     }
 
     /* If worker thread migration requested */
-    if(workerThreadMigration) {
+    if( workerThreadMigration && (MigrateCntPerThread[threadId-1] < MAX_MIGRATION_CNT) ) {
         ASSERT( LTSFByObj[objId] == LTSFByThread[threadId-1] );
         LTSFByObj[objId] = (LTSFByObj[objId]+1) % LTSFCount;
         LTSFByThread[threadId-1] = LTSFByObj[objId];
+        MigrateCntPerThread[threadId-1]++;
     }
 
     LTSF[LTSFByObj[objId]]->getScheduleQueueLock(threadId);
