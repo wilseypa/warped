@@ -199,6 +199,8 @@ private:
     // ScheduleQueue (LTSF) Lookup Tables
     unsigned int *LTSFByObj;
     unsigned int *LTSFByThread;
+
+    unsigned int *MigrateCntPerThread;
 } __attribute__((aligned(L1DSZ)));
 
 #endif /* THREADED_TIMEWARP_MULTISET_H_ */
