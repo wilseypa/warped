@@ -47,7 +47,7 @@
             tsxAbrtType[type]++;   \
     } while (0)
 
-#define TSXRTM_RETRIES 10
+#define TSXRTM_RETRIES 1
 
 #define __rtm_force_inline __attribute__((__always_inline__)) inline
 #define __hle_force_inline __attribute__((__always_inline__)) inline
@@ -55,7 +55,7 @@
 static __hle_force_inline int _xacquire(int *lockOwner, const unsigned int *threadNumber)
 {
     unsigned char ret;
-    asm volatile("mov $-0x1, %%eax\n"
+    asm volatile("mov $0xFFFF, %%eax\n"
                  _XACQUIRE_PREFIX "lock cmpxchg %2, %1\n" 
                  "sete %0"
                  : "=q"(ret), "=m"(*lockOwner)
@@ -71,7 +71,7 @@ static __hle_force_inline int _xrelease(int *lockOwner, const unsigned int *thre
                  _XRELEASE_PREFIX "lock cmpxchg %3, %1\n"
                  "sete %0"
                  : "=q"(ret), "=m"(*lockOwner)
-                 : "r"(*threadNumber), "r"(-0x1) 
+                 : "r"(*threadNumber), "r"(0xFFFF)
                  : "memory", "%eax");
     return (int) ret;
 }
