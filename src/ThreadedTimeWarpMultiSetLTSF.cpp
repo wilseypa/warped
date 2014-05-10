@@ -396,6 +396,7 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
             if (!ladderQRelaxed->empty()) {
                 debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
                 if( !(ret = ladderQRelaxed->dequeue()) ) {
+                    this->releaseScheduleQueueLock(threadId);
                     return NULL;
                 }
                 unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
