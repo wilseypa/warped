@@ -107,11 +107,9 @@ const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int thread
 
     } else if (scheduleQScheme == "LadderQueue") {
         if(eventCausality == "Relaxed") {
-            this->getScheduleQueueLock(threadID);
             if (!ladderQRelaxed->empty()) {
-                ret = &(ladderQRelaxed->begin(false)->getReceiveTime());
+                ret = &(ladderQRelaxed->begin()->getReceiveTime());
             }
-            this->releaseScheduleQueueLock(threadID);
         } else {
             this->getScheduleQueueLock(threadID);
             if (!ladderQStrict->empty()) {
@@ -397,20 +395,14 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
             this->getScheduleQueueLock(threadId);
             if (!ladderQRelaxed->empty()) {
                 debug::debugout<<"( "<< threadId << " T ) Peeking from Schedule Queue"<<endl;
-                ret = ladderQRelaxed->dequeue();
-                if (ret == NULL) {
-                    cout << "dequeue() func returned NULL" << endl;
-                    return ret;
+                if( !(ret = ladderQRelaxed->dequeue()) ) {
+                    return NULL;
                 }
-                debug::debugout<<"Dequeued " << ret << ". "<< endl;
                 unsigned int objId = LTSFObjId[ret->getReceiver().getSimulationObjectID()][0];
-
+                lowestLadderObjectPosition[objId] = NULL;
+                debug::debugout<<"Dequeued " << ret << ". "<< endl;
                 debug::debugout <<" ( "<< threadId << ") Locking the Object " <<objId <<endl;
-
                 this->getObjectLock(threadId, objId);
-
-                //set the indexer/pointer to NULL
-                lowestLadderObjectPosition[objId] = ladderQRelaxed->end();
             }
             this->releaseScheduleQueueLock(threadId);
         } else {

@@ -241,11 +241,7 @@ public:
         /* Check and erase in top, if found */
         if ((false == top.empty()) && (topStart < delEvent->getReceiveTime().getApproximateIntTime())) {
             for (lIterate = top.begin(); lIterate != top.end();) {
-                if (((*lIterate)->getReceiveTime().getApproximateIntTime() ==
-                        delEvent->getReceiveTime().getApproximateIntTime()) &&
-                        ((*lIterate)->getEventId() == delEvent->getEventId()) &&
-                        ((*lIterate)->getSender() == delEvent->getSender())) {
-
+                if( (*lIterate) == delEvent ) {
                     lIterate = top.erase(lIterate);
                     break;
                 } else {
@@ -270,11 +266,7 @@ public:
             std::list<const Event*> *rung_bucket = RUNG(rungIndex,bucketIndex);
             if (false == rung_bucket->empty()) {
                 for (lIterate = rung_bucket->begin(); lIterate != rung_bucket->end();) {
-                    if (((*lIterate)->getReceiveTime().getApproximateIntTime() ==
-                            delEvent->getReceiveTime().getApproximateIntTime()) &&
-                            ((*lIterate)->getEventId() == delEvent->getEventId()) &&
-                            ((*lIterate)->getSender() == delEvent->getSender())) {
-
+                    if( (*lIterate) == delEvent ) {
                         lIterate = rung_bucket->erase(lIterate);
                         break;
                     } else {

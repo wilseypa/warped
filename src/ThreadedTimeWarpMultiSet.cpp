@@ -344,7 +344,7 @@ const Event* ThreadedTimeWarpMultiSet::getEvent(SimulationObject* simObj,
     const Event* peeked = peekEvent(simObj, threadId);
     if (peeked != NULL) {
         retval = getEventWhileRollback(simObj, threadId);
-        ASSERT(peeked == retval);
+        //ASSERT(peeked == retval);
     }
     return retval;
 }
