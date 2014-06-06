@@ -106,6 +106,14 @@ WarpedMain::getNextEventTime() {
 
 int
 WarpedMain::main(int argc, char** argv) {
+    //bind manager thread to core 0
+    cpu_set_t mask;
+    CPU_ZERO(&mask);
+    CPU_SET(0, &mask);
+    if (sched_setaffinity(0, sizeof(mask), &mask) < 0) {
+        perror("sched_setaffinity");
+    }
+
     initializeSimulation();
 
     if (simulateUntil == "") {
