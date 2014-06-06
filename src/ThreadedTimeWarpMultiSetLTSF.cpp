@@ -404,6 +404,7 @@ void ThreadedTimeWarpMultiSetLTSF::releaseObjectLocksRecovery(int objNum) {
     }
 }
 
+#if USETSX_RTM
 void ThreadedTimeWarpMultiSetLTSF::reportTSXstats() {
     std::cout << "Total commits: " << tsxCommits << std::endl;
     std::cout << "Total aborts: " << tsxAborts << std::endl;
@@ -412,3 +413,4 @@ void ThreadedTimeWarpMultiSetLTSF::reportTSXstats() {
     std::cout << "\t_XA_CONFLICT: " << tsxAbrtType[_XA_CONFLICT] << std::endl;
     std::cout << "\t_XA_CAPACITY: " << tsxAbrtType[_XA_CAPACITY] << std::endl;
 }
+#endif

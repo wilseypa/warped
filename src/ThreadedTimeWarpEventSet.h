@@ -164,7 +164,9 @@ public:
     //Function to check whether schedule queue is empty or not
     virtual bool  isScheduleQueueEmpty(int)=0;
 
+#if USETSX_RTM
     virtual void reportTSXstats(void) = 0;
+#endif
 
 protected:
     /**@name Protected Class Methods of ThreadedTimeWarpEventSet. */
