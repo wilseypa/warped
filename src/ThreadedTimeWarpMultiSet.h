@@ -152,7 +152,9 @@ public:
     //Release all the object locks during a catastrophic rollback.
     void releaseObjectLocksRecovery();
 
+#if USETSX_RTM
     void reportTSXstats();
+#endif
 
 private:
 
@@ -201,6 +203,17 @@ private:
     unsigned int *LTSFByThread;
 
     unsigned int *MigrateCntPerThread;
+
+#if USETSX_RTM
+    //TSX RTM
+    int tsxRtmRetries;
+
+    //TSX RTM stats
+    long tsxCommits;
+    long tsxAborts;
+    unsigned tsxAbrtType[4];
+#endif
+
 } __attribute__((aligned(L1DSZ)));
 
 #endif /* THREADED_TIMEWARP_MULTISET_H_ */
