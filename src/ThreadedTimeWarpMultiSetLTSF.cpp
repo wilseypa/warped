@@ -12,6 +12,7 @@
 #include "VTime.h"                      // for VTime
 #include "WarpedDebug.h"                // for debugout
 #include "warped.h"                     // for ASSERT
+#include "tsx.h"
 
 ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF( 
             const string syncMech,
@@ -59,6 +60,17 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(
 
     //Create the schedule queue lock
     scheduleQueueLock = new LockState();
+
+#if USETSX_RTM
+    tsxRtmRetries = TSXRTM_RETRIES;
+
+    //rtm stats
+    tsxCommits = 0;
+    tsxAborts = 0;
+    for (int i = 0; i < 4; i++) {
+        tsxAbrtType[i] = 0;
+    }
+#endif
 }
 
 ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
@@ -77,17 +89,61 @@ ThreadedTimeWarpMultiSetLTSF::~ThreadedTimeWarpMultiSetLTSF() {
 }
 
 void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
-    scheduleQueueLock->setLock(threadId, syncMechanism);
-    if (!_xtest()) {
+#if USETSX_RTM
+    unsigned status;
+    int retries = 0;
+
+    if (tsxCommits == 0 && tsxAborts > TSXRTM_RETRIES * 100) { }
+    else if (tsxRtmRetries > 1 && tsxAborts > tsxCommits << 1) {
+        tsxRtmRetries--;
+    } else {
+        do {
+            status = _xbegin();
+            if (status == _XBEGIN_STARTED) {
+                if (!scheduleQueueLock->isLocked()) {
+                   return;
+                }
+                _xabort(_ABORT_LOCK_BUSY);
+            }
+            ABORT_COUNT(_XA_RETRY, status);
+            ABORT_COUNT(_XA_EXPLICIT, status);
+            ABORT_COUNT(_XA_CONFLICT, status);
+            ABORT_COUNT(_XA_CAPACITY, status);
+            if (!(status & _XABORT_RETRY) ||
+                ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) != _ABORT_LOCK_BUSY))
+            {
+                break;
+            } else if ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) == _ABORT_LOCK_BUSY) {
+                while (scheduleQueueLock->isLocked());
+            } else if (status & _XABORT_CONFLICT) {
+                _mm_pause();
+            }
+        } while (retries++ < tsxRtmRetries);
+        tsxAborts++;
+    }
+#endif
+    if (syncMechanism == "HleAtomicLock") {
+        scheduleQueueLock->setHleLock(threadId);
+    } else {
+        scheduleQueueLock->setLock(threadId, syncMechanism);
         ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
     }
 }
 
 void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
-    if (!_xtest()) {
-        ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
+#if USETSX_RTM
+    if (!scheduleQueueLock->isLocked()) {
+        _xend();
+        tsxCommits++;
+        return;
     }
-    scheduleQueueLock->releaseLock(threadId, syncMechanism);
+#endif
+    if (syncMechanism == "HleAtomicLock") {
+        scheduleQueueLock->releaseHleLock(threadId);
+    } else {
+        ASSERT(scheduleQueueLock->hasLock(threadId, syncMechanism));
+        scheduleQueueLock->releaseLock(threadId, syncMechanism);
+    }
 }
 
 const VTime* ThreadedTimeWarpMultiSetLTSF::nextEventToBeScheduledTime(int threadID) {
@@ -349,5 +405,10 @@ void ThreadedTimeWarpMultiSetLTSF::releaseObjectLocksRecovery(int objNum) {
 }
 
 void ThreadedTimeWarpMultiSetLTSF::reportTSXstats() {
-    scheduleQueueLock->reportTSXstats();
+    std::cout << "Total commits: " << tsxCommits << std::endl;
+    std::cout << "Total aborts: " << tsxAborts << std::endl;
+    std::cout << "\t_XA_RETRY: " << tsxAbrtType[_XA_RETRY] << std::endl;
+    std::cout << "\t_XA_EXPLICIT: " << tsxAbrtType[_XA_EXPLICIT] << std::endl;
+    std::cout << "\t_XA_CONFLICT: " << tsxAbrtType[_XA_CONFLICT] << std::endl;
+    std::cout << "\t_XA_CAPACITY: " << tsxAbrtType[_XA_CAPACITY] << std::endl;
 }

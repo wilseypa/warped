@@ -83,7 +83,9 @@ public:
 
 //    int whoHasObjectLock(int objId);
 
+#if USETSX_RTM
     void reportTSXstats();
+#endif
 
 private:
     //Lowest event position pointer for MULTILTSF
@@ -124,6 +126,17 @@ private:
     int objectCount;
 
     unsigned int minReceiveTime;
+
+#if USETSX_RTM
+    //TSX RTM
+    int tsxRtmRetries;
+
+    //TSX RTM stats
+    long tsxCommits;
+    long tsxAborts;
+    unsigned tsxAbrtType[4];
+#endif
+
 } __attribute__((aligned(L1DSZ)));
 
 #endif /* THREADED_TIMEWARP_MULTISET_LTSF_H_ */
