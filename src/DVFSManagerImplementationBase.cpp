@@ -6,7 +6,7 @@
 
 #include "DVFSManagerImplementationBase.h"
 #include "TimeWarpSimulationManager.h"  // for TimeWarpSimulationManager
-#include "WarpedConfig.h"               // for HAVE_SCHED_GETCPU
+#include <WarpedConfig.h>               // for HAVE_SCHED_GETCPU
 
 class SimulationConfiguration;
 

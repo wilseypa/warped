@@ -7,7 +7,7 @@
 #include <unistd.h>                     // for close, read, write
 #include <iostream>                     // for operator<<, basic_ostream, etc
 
-#include "WarpedConfig.h"               // for USE_SOCKLEN_T
+#include <WarpedConfig.h>               // for USE_SOCKLEN_T
 #include "eclmpl/eclmplCommonInclude.h"  // for ECLMPL_ASSERT
 #include "eclmplSocket.h"
 

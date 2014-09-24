@@ -1,7 +1,7 @@
 #include <stdlib.h>                     // for getenv, NULL
 #include <iostream>                     // for cerr, endl
 
-#include "WarpedConfig.h"               // for SSH_COMMAND
+#include <WarpedConfig.h>               // for SSH_COMMAND
 #include "eclmpl/eclmplCommonInclude.h"  // for __local__add_quotes
 #include "eclmplConnectionInterface.h"
 

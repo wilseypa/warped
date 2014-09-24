@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "WarpedConfig.h"
+#include <WarpedConfig.h>
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

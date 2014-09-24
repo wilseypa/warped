@@ -1,5 +1,5 @@
 
-#include "WarpedConfig.h"               // for HAVE_STDINT_H, etc
+#include <WarpedConfig.h>               // for HAVE_STDINT_H, etc
 
 #ifdef HAVE_STDINT_H
 #ifndef __STDC_LIMIT_MACROS

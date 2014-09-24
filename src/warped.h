@@ -11,7 +11,7 @@
 #include <string>                       // for allocator, operator+, etc
 
 #include "ObjectID.h"                   // for ObjectID
-#include "WarpedConfig.h"               // for HAVE_STDINT_H, etc
+#include <WarpedConfig.h>               // for HAVE_STDINT_H, etc
 #ifdef HAVE_STDINT_H
 // The following is a C-99ism...
 #include <stdint.h>                     // for int32_t, int64_t
