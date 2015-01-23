@@ -70,12 +70,12 @@ public:
             exit(-1);
         }
     }
+    void releaseHleLock(const unsigned int& threadNumber) {
+        while (!_xrelease(&paddedLockOwner.lockOwner, &threadNumber));
+    }
     void setHleLock(const unsigned int& threadNumber) {
         if( paddedLockOwner.lockOwner == threadNumber ) return;
         while(!_xacquire(&paddedLockOwner.lockOwner, &threadNumber));
-    }
-    void releaseHleLock(const unsigned int& threadNumber) {
-        while (!_xrelease(&paddedLockOwner.lockOwner, &threadNumber));
     }
     bool hasLock(const unsigned int& threadNumber, const std::string syncMechanism) const {
         if (syncMechanism == "HleAtomicLock") {
@@ -106,15 +106,8 @@ private:
         int lockOwner;
         char padding[60];
     } paddedLockOwner __attribute__((aligned(L1DSZ)));
-    pthread_mutex_t mutexLock;
+    pthread_mutex_t mutexLock __attribute__((aligned(L1DSZ)));
 
-    //rtm retries
-    int tsxRtmRetries;
-
-    //rtm stats
-    long tsxCommits;
-    long tsxAborts;
-    unsigned tsxAbrtType[4];
 } __attribute__((aligned(L1DSZ)));
 
 #endif /* LockState_H_ */
