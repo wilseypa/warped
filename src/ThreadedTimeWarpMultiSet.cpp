@@ -16,15 +16,12 @@
 #include "WarpedDebug.h"                // for debugout
 #include "WorkerInformation.h"          // for __sync_fetch_and_add_4
 #include "warped.h"                     // for ASSERT
-
-using std::cout;
-using std::cerr;
+using std::cout; using std::cerr;
 using std::endl;
 using std::vector;
 using std::multiset;
 
-#define MAX_MIGRATION_CNT 50
-
+#define MAX_MIGRATION_CNT -1 
 
 ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
                         ThreadedTimeWarpSimulationManager *initSimulationManager) :
@@ -66,12 +63,14 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
 
     //Assert whether thread count greater than or equal  to LTSF queue count
     //only for static thread assignment to LTSF queues
-    if (workerThreadMigration) {
+    if (!workerThreadMigration) {
         ASSERT(threadCount >= LTSFCount);
     }
 
     LTSFByThread = new unsigned int[threadCount];
+    LTSFByInitThread = new unsigned int[threadCount];
     LTSFByObj = new unsigned int[objectCount];
+    LTSFByInitObj = new unsigned int[objectCount];
     MigrateCntPerThread = new unsigned int[threadCount];
 
     //Initialize schedule queues
@@ -84,6 +83,7 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
     //Assign threads to LTSF queues
     for (int i=0; i < threadCount; i++) {
         LTSFByThread[i] = i % LTSFCount;
+        LTSFByInitThread[i] = LTSFByThread[i];
         MigrateCntPerThread[i] = 0;
     }
 
@@ -112,7 +112,24 @@ ThreadedTimeWarpMultiSet::ThreadedTimeWarpMultiSet(
         //Create lookup table to associate between an unprocessed queue id
         // and the appropriate LTSF queue
         LTSFByObj[i] = i % LTSFCount;
+        LTSFByInitObj[i] = LTSFByObj[i];
     }
+
+#if USETSX_RTM
+    TSXRTM_ABORTLIMIT = TSXRTM_RETRIES * 100;
+    processedTsxRtmRetries = TSXRTM_RETRIES;
+    unprocessedTsxRtmRetries = TSXRTM_RETRIES;
+
+    //rtm stats
+    processedTsxCommits = 0;
+    processedTsxAborts = 0;
+    unprocessedTsxCommits = 0;
+    unprocessedTsxAborts = 0;
+    for (int i = 0; i < 4; i++) {
+        processedTsxAbrtType[i] = 0;
+        unprocessedTsxAbrtType[i] = 0;
+    }
+#endif
 }
 
 ThreadedTimeWarpMultiSet::~ThreadedTimeWarpMultiSet() {
@@ -149,22 +166,26 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
     unsigned status;
     int retries = 0;
 
-    if (tsxCommits == 0 && tsxAborts > TSXRTM_RETRIES * 100) { }
-    else if (tsxRtmRetries > 1 && tsxAborts > tsxCommits << 1) {
-        tsxRtmRetries--;
-    } else {
+    if (unprocessedTsxCommits == 0 && unprocessedTsxAborts > TSXRTM_ABORTLIMIT) { }
+    else {
+        if (unprocessedTsxAborts > processedTsxCommits << 1) {
+            unprocessedTsxRtmRetries--; 
+        } else if (unprocessedTsxRtmRetries < TSXRTM_RETRIES) {
+            unprocessedTsxRtmRetries++;
+        }
+
         do {
-            status = _xbegin();
+            status = _xbegin_compat();
             if (status == _XBEGIN_STARTED) {
                 if (!unprocessedQueueLockState[objId]->isLocked()) {
                    return;
                 }
-                _xabort(_ABORT_LOCK_BUSY);
+                _xabort_compat(_ABORT_LOCK_BUSY);
             }
-            ABORT_COUNT(_XA_RETRY, status);
-            ABORT_COUNT(_XA_EXPLICIT, status);
-            ABORT_COUNT(_XA_CONFLICT, status);
-            ABORT_COUNT(_XA_CAPACITY, status);
+            UNPROCESSED_ABORT_COUNT(_XA_RETRY, status);
+            UNPROCESSED_ABORT_COUNT(_XA_EXPLICIT, status);
+            UNPROCESSED_ABORT_COUNT(_XA_CONFLICT, status);
+            UNPROCESSED_ABORT_COUNT(_XA_CAPACITY, status);
             if (!(status & _XABORT_RETRY) ||
                 ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) != _ABORT_LOCK_BUSY))
             {
@@ -174,8 +195,8 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
             } else if (status & _XABORT_CONFLICT) {
                 _mm_pause();
             }
-        } while (retries++ < tsxRtmRetries);
-        tsxAborts++;
+        } while (retries++ < unprocessedTsxRtmRetries);
+        unprocessedTsxAborts++;
     }
 #endif
     if (syncMechanism == "HleAtomicLock") {
@@ -187,14 +208,14 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
 }
 
 void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
+   if(!unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
 #if USETSX_RTM
     if (!unprocessedQueueLockState[objId]->isLocked()) {
-        _xend();
-        tsxCommits++;
+        _xend_compat();
+        unprocessedTsxCommits++;
         return;
     }
 #endif
-    if(!unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
     if (syncMechanism == "HleAtomicLock") {
         unprocessedQueueLockState[objId]->releaseHleLock(threadId);
     } else {
@@ -208,22 +229,26 @@ void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
     unsigned status;
     int retries = 0;
 
-    if (tsxCommits == 0 && tsxAborts > TSXRTM_RETRIES * 100) { }
-    else if (tsxRtmRetries > 1 && tsxAborts > tsxCommits << 1) {
-        tsxRtmRetries--;
-    } else {
+    if (processedTsxCommits == 0 && processedTsxAborts > TSXRTM_ABORTLIMIT) { }
+    else {
+        if (processedTsxAborts > processedTsxCommits << 1) {
+            processedTsxRtmRetries--; 
+        } else if (processedTsxRtmRetries < TSXRTM_RETRIES) {
+            processedTsxRtmRetries++;
+        }
+
         do {
-            status = _xbegin();
+            status = _xbegin_compat();
             if (status == _XBEGIN_STARTED) {
                 if (!processedQueueLockState[objId]->isLocked()) {
                    return;
                 }
-                _xabort(_ABORT_LOCK_BUSY);
+                _xabort_compat(_ABORT_LOCK_BUSY);
             }
-            ABORT_COUNT(_XA_RETRY, status);
-            ABORT_COUNT(_XA_EXPLICIT, status);
-            ABORT_COUNT(_XA_CONFLICT, status);
-            ABORT_COUNT(_XA_CAPACITY, status);
+            PROCESSED_ABORT_COUNT(_XA_RETRY, status);
+            PROCESSED_ABORT_COUNT(_XA_EXPLICIT, status);
+            PROCESSED_ABORT_COUNT(_XA_CONFLICT, status);
+            PROCESSED_ABORT_COUNT(_XA_CAPACITY, status);
             if (!(status & _XABORT_RETRY) ||
                 ((status & _XABORT_EXPLICIT) && _XABORT_CODE(status) != _ABORT_LOCK_BUSY))
             {
@@ -233,8 +258,8 @@ void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
             } else if (status & _XABORT_CONFLICT) {
                 _mm_pause();
             }
-        } while (retries++ < tsxRtmRetries);
-        tsxAborts++;
+        } while (retries++ < processedTsxRtmRetries);
+        processedTsxAborts++;
     }
 #endif
     if (syncMechanism == "HleAtomicLock") {
@@ -246,14 +271,14 @@ void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
 }
 
 void ThreadedTimeWarpMultiSet::releaseProcessedLock(int threadId, int objId) {
+    if(!processedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
 #if USETSX_RTM
     if (!processedQueueLockState[objId]->isLocked()) {
-        _xend();
-        tsxCommits++;
+        _xend_compat();
+        processedTsxCommits++;
         return;
     }
 #endif
-    if(!processedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
     if (syncMechanism == "HleAtomicLock") {
         processedQueueLockState[objId]->releaseHleLock(threadId);
     } else {
@@ -264,15 +289,11 @@ void ThreadedTimeWarpMultiSet::releaseProcessedLock(int threadId, int objId) {
 
 void ThreadedTimeWarpMultiSet::getremovedLock(int threadId, int objId) {
     removedQueueLockState[objId]->setLock(threadId, syncMechanism);
-    if (!_xtest()) {
-        ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
-    }
+    ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
 }
 
 void ThreadedTimeWarpMultiSet::releaseremovedLock(int threadId, int objId) {
-    if (!_xtest()) {
-        ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
-    }
+    ASSERT(removedQueueLockState[objId]->hasLock(threadId, syncMechanism));
     removedQueueLockState[objId]->releaseLock(threadId, syncMechanism);
 }
 
@@ -706,11 +727,17 @@ void ThreadedTimeWarpMultiSet::updateScheduleQueueAfterExecute(int objId, int th
     }
 
     /* If worker thread migration requested */
-    if( workerThreadMigration && (MigrateCntPerThread[threadId-1] < MAX_MIGRATION_CNT) ) {
-        ASSERT( LTSFByObj[objId] == LTSFByThread[threadId-1] );
-        LTSFByObj[objId] = (LTSFByObj[objId]+1) % LTSFCount;
-        LTSFByThread[threadId-1] = LTSFByObj[objId];
-        MigrateCntPerThread[threadId-1]++;
+    if (workerThreadMigration) {
+        if (MAX_MIGRATION_CNT < 0 || (MigrateCntPerThread[threadId-1] < MAX_MIGRATION_CNT)) {
+            ASSERT( LTSFByObj[objId] == LTSFByThread[threadId-1] );
+            LTSFByObj[objId] = (LTSFByObj[objId]+1) % LTSFCount;
+            LTSFByThread[threadId-1] = LTSFByObj[objId];
+            MigrateCntPerThread[threadId-1]++;
+        } else if (MigrateCntPerThread[threadId-1] == MAX_MIGRATION_CNT) {
+            LTSFByObj[objId] = LTSFByInitObj[objId];
+            LTSFByThread[threadId-1] = LTSFByInitThread[threadId-1];
+            workerThreadMigration = false;
+        }
     }
 
     LTSF[LTSFByObj[objId]]->getScheduleQueueLock(threadId);

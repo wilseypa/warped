@@ -27,6 +27,20 @@ class NegativeEvent;
 class ThreadedTimeWarpMultiSetLTSF;
 class ThreadedTimeWarpSimulationManager;
 
+#if USETSX_RTM
+#define PROCESSED_ABORT_COUNT(type, status)   \
+    do {                            \
+        if (status & (1 << type))   \
+            processedTsxAbrtType[type]++;   \
+    } while (0)
+
+#define UNPROCESSED_ABORT_COUNT(type, status)   \
+    do {                            \
+        if (status & (1 << type))   \
+            unprocessedTsxAbrtType[type]++;   \
+    } while (0)
+#endif
+
 class ThreadedTimeWarpMultiSet: public ThreadedTimeWarpEventSet {
 public:
     ThreadedTimeWarpMultiSet(ThreadedTimeWarpSimulationManager* initSimulationManager);
@@ -201,17 +215,24 @@ private:
     // ScheduleQueue (LTSF) Lookup Tables
     unsigned int *LTSFByObj;
     unsigned int *LTSFByThread;
+    unsigned int *LTSFByInitObj;
+    unsigned int *LTSFByInitThread;
 
     unsigned int *MigrateCntPerThread;
 
 #if USETSX_RTM
     //TSX RTM
-    int tsxRtmRetries;
+    int TSXRTM_ABORTLIMIT;
+    int processedTsxRtmRetries;
+    int unprocessedTsxRtmRetries;
 
     //TSX RTM stats
-    long tsxCommits;
-    long tsxAborts;
-    unsigned tsxAbrtType[4];
+    long processedTsxCommits;
+    long processedTsxAborts;
+    unsigned processedTsxAbrtType[4];
+    long unprocessedTsxCommits;
+    long unprocessedTsxAborts;
+    unsigned unprocessedTsxAbrtType[4];
 #endif
 
 } __attribute__((aligned(L1DSZ)));
