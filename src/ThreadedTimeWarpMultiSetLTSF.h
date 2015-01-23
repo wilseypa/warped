@@ -130,6 +130,7 @@ private:
 #if USETSX_RTM
     //TSX RTM
     int tsxRtmRetries;
+    int TSXRTM_ABORTLIMIT;
 
     //TSX RTM stats
     long tsxCommits;

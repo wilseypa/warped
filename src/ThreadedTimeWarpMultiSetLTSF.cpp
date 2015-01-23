@@ -63,6 +63,7 @@ ThreadedTimeWarpMultiSetLTSF::ThreadedTimeWarpMultiSetLTSF(
 
 #if USETSX_RTM
     tsxRtmRetries = TSXRTM_RETRIES;
+    TSXRTM_ABORTLIMIT = TSXRTM_RETRIES * 100;
 
     //rtm stats
     tsxCommits = 0;
@@ -92,18 +93,24 @@ void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
 #if USETSX_RTM
     unsigned status;
     int retries = 0;
+    
+    if (tsxCommits == 0 && tsxAborts > TSXRTM_ABORTLIMIT) { }
+    else {
+        if (tsxAborts > tsxCommits << 1) {
+            tsxRtmRetries--; 
+        } else if (tsxRtmRetries < TSXRTM_RETRIES) {
+            tsxRtmRetries++;
+        }
 
-    if (tsxCommits == 0 && tsxAborts > TSXRTM_RETRIES * 100) { }
-    else if (tsxRtmRetries > 1 && tsxAborts > tsxCommits << 1) {
-        tsxRtmRetries--;
-    } else {
         do {
-            status = _xbegin();
+            status = _xbegin_compat();
             if (status == _XBEGIN_STARTED) {
-                if (!scheduleQueueLock->isLocked()) {
+                unsigned ret = scheduleQueueLock->whoHasLock();
+               if (ret || ret == 0) {
+//                if (!scheduleQueueLock->isLocked()) {
                    return;
                 }
-                _xabort(_ABORT_LOCK_BUSY);
+                _xabort_compat(_ABORT_LOCK_BUSY);
             }
             ABORT_COUNT(_XA_RETRY, status);
             ABORT_COUNT(_XA_EXPLICIT, status);
@@ -133,7 +140,7 @@ void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
 void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
 #if USETSX_RTM
     if (!scheduleQueueLock->isLocked()) {
-        _xend();
+        _xend_compat();
         tsxCommits++;
         return;
     }
@@ -372,15 +379,11 @@ const Event* ThreadedTimeWarpMultiSetLTSF::peek(int threadId) {
 
 void ThreadedTimeWarpMultiSetLTSF::getObjectLock(int threadId, int objId) {
     objectStatusLock->at(objId)->setLock(threadId, syncMechanism);
-    if (!_xtest()) {
-        ASSERT(objectStatusLock->at(objId)->hasLock(threadId, syncMechanism));
-    }
+    ASSERT(objectStatusLock->at(objId)->hasLock(threadId, syncMechanism));
 }
 
 void ThreadedTimeWarpMultiSetLTSF::releaseObjectLock(int threadId, int objId) {
-    if (!_xtest()) {
-        ASSERT(objectStatusLock->at(objId)->hasLock(threadId, syncMechanism));
-    }
+    ASSERT(objectStatusLock->at(objId)->hasLock(threadId, syncMechanism));
     objectStatusLock->at(objId)->releaseLock(threadId, syncMechanism);
 }
 

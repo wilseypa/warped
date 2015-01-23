@@ -25,6 +25,8 @@
 #define _XACQUIRE_PREFIX   ".byte 0xF2; "
 #define _XRELEASE_PREFIX   ".byte 0xF3; "
 
+//#if  (__GNUC__ < 4  || \
+//      __GNUC__ == 4 && __GNUC_MINOR__ < 9) 
 #define _XBEGIN_STARTED		(~0u)
 #define _XABORT_EXPLICIT	(1 << 0)
 #define _XABORT_RETRY		(1 << 1)
@@ -33,13 +35,12 @@
 #define _XABORT_DEBUG		(1 << 4)
 #define _XABORT_NESTED		(1 << 5)
 #define _XABORT_CODE(x)		(((x) >> 24) & 0xff)
+//#endif /* GCC VERSION CHECK */
 
 #define _XA_EXPLICIT    0
 #define _XA_RETRY       1
 #define _XA_CONFLICT    2
 #define _XA_CAPACITY    3   
-
-#define _ABORT_LOCK_BUSY    0xff
 
 #define ABORT_COUNT(type, status)   \
     do {                            \
@@ -47,7 +48,9 @@
             tsxAbrtType[type]++;   \
     } while (0)
 
-#define TSXRTM_RETRIES 1
+#define _ABORT_LOCK_BUSY    0xff
+
+#define TSXRTM_RETRIES 1 
 
 #define __rtm_force_inline __attribute__((__always_inline__)) inline
 #define __hle_force_inline __attribute__((__always_inline__)) inline
@@ -76,29 +79,32 @@ static __hle_force_inline int _xrelease(int *lockOwner, const unsigned int *thre
     return (int) ret;
 }
 
-static __rtm_force_inline int _xbegin(void)
+//#if  (__GNUC__ < 4  || \
+//      __GNUC__ == 4 && __GNUC_MINOR__ < 9) 
+static __rtm_force_inline int _xbegin_compat(void)
 {
 	int ret = _XBEGIN_STARTED;
 	asm volatile(".byte 0xc7,0xf8 ; .long 0" : "+a" (ret) :: "memory");
 	return ret;
 }
 
-static __rtm_force_inline void _xend(void)
+static __rtm_force_inline void _xend_compat(void)
 {
 	 asm volatile(".byte 0x0f,0x01,0xd5" ::: "memory");
 }
 
-static __rtm_force_inline void _xabort(const unsigned int status)
+static __rtm_force_inline void _xabort_compat(const unsigned int status)
 {
 	asm volatile(".byte 0xc6,0xf8,%P0" :: "i" (status) : "memory");
 }
 
-static __rtm_force_inline int _xtest(void)
+static __rtm_force_inline int _xtest_compat(void)
 {
 	unsigned char out;
 	asm volatile(".byte 0x0f,0x01,0xd6 ; setnz %0" : "=r" (out) :: "memory");
 	return out;
 }
+//#endif /* GCC VERSION CHECK */
 
 static inline void delay(void)
 {
