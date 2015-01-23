@@ -462,42 +462,30 @@ void ThreadedOutputEvents::ofcPurge(int threadID) {
 
 void ThreadedOutputEvents::acquireLocalLock(int threadId) {
     localQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism());
-    if (!_xtest()) {
-        ASSERT(localQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
-    }
+    ASSERT(localQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
 void ThreadedOutputEvents::releaseLocalLock(int threadId) {
-    if (!_xtest()) {
-        ASSERT(localQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
-    }
+    ASSERT(localQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
     localQueueLock->releaseLock(threadId, mySimulationManager->getSyncMechanism());
 }
 
 void ThreadedOutputEvents::acquireRemoteLock(int threadId) {
     remoteQueueLock->setLock(threadId, mySimulationManager->getSyncMechanism());
-    if (!_xtest()) {
-        ASSERT(remoteQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
-    }
+    ASSERT(remoteQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
 void ThreadedOutputEvents::releaseRemoteLock(int threadId) {
-    if (!_xtest()) {
-        ASSERT(remoteQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
-    }
+    ASSERT(remoteQueueLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
     remoteQueueLock->releaseLock(threadId, mySimulationManager->getSyncMechanism());
 }
 
 void ThreadedOutputEvents::acquireRemovedLock(int threadId) {
     removedListLock->setLock(threadId, mySimulationManager->getSyncMechanism());
-    if (!_xtest()) {
-        ASSERT(removedListLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
-    }
+    ASSERT(removedListLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
 }
 
 void ThreadedOutputEvents::releaseRemovedLock(int threadId) {
-    if (!_xtest()) {
-        ASSERT(removedListLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
-    }
+    ASSERT(removedListLock->hasLock(threadId, mySimulationManager->getSyncMechanism()));
     removedListLock->releaseLock(threadId, mySimulationManager->getSyncMechanism());
 }

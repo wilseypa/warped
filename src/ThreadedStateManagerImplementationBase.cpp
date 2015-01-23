@@ -339,15 +339,11 @@ void ThreadedStateManagerImplementationBase::ofcPurge(unsigned int objId,
 void ThreadedStateManagerImplementationBase::getStateQueueLock(int threadId,
                                                                int objId) {
     stateQueueLock[objId]->setLock(threadId, syncMechanism);
-    if (!_xtest()) {
-        ASSERT(stateQueueLock[objId]->hasLock(threadId, syncMechanism));
-    }
+    ASSERT(stateQueueLock[objId]->hasLock(threadId, syncMechanism));
 }
 void ThreadedStateManagerImplementationBase::releaseStateQueueLock(int threadId,
                                                                    int objId) {
-    if (!_xtest()) {
-        ASSERT(stateQueueLock[objId]->hasLock(threadId, syncMechanism));
-    }
+    ASSERT(stateQueueLock[objId]->hasLock(threadId, syncMechanism));
     stateQueueLock[objId]->releaseLock(threadId, syncMechanism);
 }
 void ThreadedStateManagerImplementationBase::initStateQueueLocks(

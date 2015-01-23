@@ -799,29 +799,21 @@ int ThreadedOptFossilCollManager::getLeastCollectTime() {
 
 void ThreadedOptFossilCollManager::getOfcFlagLock(int threadId, const string syncMech ) {
     ofcFlagLock->setLock(threadId,syncMech);
-    if (!_xtest()) {
-        ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
-    }
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
 }
 
 void ThreadedOptFossilCollManager::releaseOfcFlagLock(int threadId, const string syncMech){
-    if (!_xtest()) {
-        ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
-    }
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
     ofcFlagLock->releaseLock(threadId,syncMech);
 }
 
 void ThreadedOptFossilCollManager::getOfcCheckPointLock(int threadId, const string syncMech ) {
     ofcFlagLock->setLock(threadId,syncMech);
-    if (!_xtest()) {
-        ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
-    }
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
 }
 
 void ThreadedOptFossilCollManager::releaseOfcCheckPointLock(int threadId, const string syncMech){
-    if (!_xtest()) {
-        ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
-    }
+    ASSERT(ofcFlagLock->hasLock(threadId,syncMech));
     ofcFlagLock->releaseLock(threadId,syncMech);
 }
 
