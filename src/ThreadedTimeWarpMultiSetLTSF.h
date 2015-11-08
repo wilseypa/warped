@@ -5,6 +5,7 @@
 #include <set>                          // for multiset, etc
 #include <string>                       // for string
 #include <vector>                       // for vector
+#include <forward_list>                 // for forward_list schedule queue
 
 #include "AtomicState.h"
 #include "EventFunctors.h"
@@ -106,6 +107,9 @@ private:
 
     //Schedule Queue
     multiset<const Event*, receiveTimeLessThanEventIdLessThan>* scheduleQueue;
+
+    //Schedule Queue
+    forward_list<const Event*>* lnkListSchedQ;
 
     //Schedule Queue - LadderQ (Strict and Relaxed)
     LadderQueueStrict  *ladderQStrict;

@@ -50,7 +50,7 @@
 
 #define _ABORT_LOCK_BUSY    0xff
 
-#define TSXRTM_RETRIES 1 
+#define TSXRTM_RETRIES 19 
 
 #define __rtm_force_inline __attribute__((__always_inline__)) inline
 #define __hle_force_inline __attribute__((__always_inline__)) inline

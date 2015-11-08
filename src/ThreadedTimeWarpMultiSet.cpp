@@ -177,10 +177,12 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
         do {
             status = _xbegin_compat();
             if (status == _XBEGIN_STARTED) {
+#if USETSX_RTM_STRICT
                 if (!unprocessedQueueLockState[objId]->isLocked()) {
-                   return;
+                    _xabort_compat(_ABORT_LOCK_BUSY);
                 }
-                _xabort_compat(_ABORT_LOCK_BUSY);
+#endif /* USETSX_RTM_STRICT */
+                return;
             }
             UNPROCESSED_ABORT_COUNT(_XA_RETRY, status);
             UNPROCESSED_ABORT_COUNT(_XA_EXPLICIT, status);
@@ -240,10 +242,12 @@ void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
         do {
             status = _xbegin_compat();
             if (status == _XBEGIN_STARTED) {
-                if (!processedQueueLockState[objId]->isLocked()) {
-                   return;
+#if USETSX_RTM_STRICT
+                if (!unprocessedQueueLockState[objId]->isLocked()) {
+                    _xabort_compat(_ABORT_LOCK_BUSY);
                 }
-                _xabort_compat(_ABORT_LOCK_BUSY);
+#endif /* USETSX_RTM_STRICT */
+                return;
             }
             PROCESSED_ABORT_COUNT(_XA_RETRY, status);
             PROCESSED_ABORT_COUNT(_XA_EXPLICIT, status);
