@@ -132,6 +132,7 @@ AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([test/catch_tests/Makefile])
 AC_CONFIG_FILES([test/cppunit_tests/Makefile])
 
-AC_DEFINE([USETSX_RTM], 1, [Define to 1 to use Intel RTM TSX on supported Haswell processors])
+dnl AC_DEFINE([USETSX_RTM], 1, [Define to 1 to use Intel LAZY RTM TSX on supported Haswell processors])
+dnl AC_DEFINE([USETSX_RTM_STRICT], 1, [Define to 1 to use Intel STRICT RTM TSX on supported Haswell processors])
 
 AC_OUTPUT

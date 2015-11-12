@@ -166,8 +166,8 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
     unsigned status;
     int retries = 0;
 
-    if (unprocessedTsxCommits == 0 && unprocessedTsxAborts > TSXRTM_ABORTLIMIT) { }
-    else {
+//    if (unprocessedTsxCommits == 0 && unprocessedTsxAborts > TSXRTM_ABORTLIMIT) { }
+//    else {
         if (unprocessedTsxAborts > processedTsxCommits << 1) {
             unprocessedTsxRtmRetries--; 
         } else if (unprocessedTsxRtmRetries < TSXRTM_RETRIES) {
@@ -178,7 +178,7 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
             status = _xbegin_compat();
             if (status == _XBEGIN_STARTED) {
 #if USETSX_RTM_STRICT
-                if (!unprocessedQueueLockState[objId]->isLocked()) {
+                if (unprocessedQueueLockState[objId]->isLocked()) {
                     _xabort_compat(_ABORT_LOCK_BUSY);
                 }
 #endif /* USETSX_RTM_STRICT */
@@ -199,7 +199,7 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
             }
         } while (retries++ < unprocessedTsxRtmRetries);
         unprocessedTsxAborts++;
-    }
+//    }
 #endif
     if (syncMechanism == "HleAtomicLock") {
         unprocessedQueueLockState[objId]->setHleLock(threadId);
@@ -210,14 +210,21 @@ void ThreadedTimeWarpMultiSet::getunProcessedLock(int threadId, int objId) {
 }
 
 void ThreadedTimeWarpMultiSet::releaseunProcessedLock(int threadId, int objId) {
-   if(!unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
+    if (!_xtest_compat()) {
+        if(!unprocessedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
+    }
 #if USETSX_RTM
     if (!unprocessedQueueLockState[objId]->isLocked()) {
         _xend_compat();
         unprocessedTsxCommits++;
         return;
+    } 
+#if !USETSX_RTM_STRICT
+    else if (unprocessedQueueLockState[objId]->whoHasLock() != threadId) {
+        _xabort_compat(_ABORT_LOCK_BUSY);
     }
-#endif
+#endif /* !USETSX_RTM_STRICT */
+#endif /* USETSX_RTM */
     if (syncMechanism == "HleAtomicLock") {
         unprocessedQueueLockState[objId]->releaseHleLock(threadId);
     } else {
@@ -243,7 +250,7 @@ void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
             status = _xbegin_compat();
             if (status == _XBEGIN_STARTED) {
 #if USETSX_RTM_STRICT
-                if (!unprocessedQueueLockState[objId]->isLocked()) {
+                if (unprocessedQueueLockState[objId]->isLocked()) {
                     _xabort_compat(_ABORT_LOCK_BUSY);
                 }
 #endif /* USETSX_RTM_STRICT */
@@ -275,14 +282,21 @@ void ThreadedTimeWarpMultiSet::getProcessedLock(int threadId, int objId) {
 }
 
 void ThreadedTimeWarpMultiSet::releaseProcessedLock(int threadId, int objId) {
-    if(!processedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
+    if (!_xtest_compat()) {
+        if(!processedQueueLockState[objId]->hasLock(threadId, syncMechanism)) return;
+    }
 #if USETSX_RTM
     if (!processedQueueLockState[objId]->isLocked()) {
         _xend_compat();
         processedTsxCommits++;
         return;
+    } 
+#if !USETSX_RTM_STRICT
+    else if (processedQueueLockState[objId]->whoHasLock() != threadId) {
+        _xabort_compat(_ABORT_LOCK_BUSY);
     }
-#endif
+#endif /* !USETSX_RTM_STRICT */
+#endif /* USETSX_RTM */
     if (syncMechanism == "HleAtomicLock") {
         processedQueueLockState[objId]->releaseHleLock(threadId);
     } else {
@@ -879,5 +893,22 @@ void ThreadedTimeWarpMultiSet::reportTSXstats() {
         std::cout << "LTSF[" << i << "]:" << std::endl;
         LTSF[i]->reportTSXstats();
     }
+    
+    std::cout << "Processeed Queue" << std::endl;
+    std::cout << "Total commits: "  << processedTsxCommits << std::endl;
+    std::cout << "Total aborts: "   << processedTsxAborts << std::endl;
+    std::cout << "\t_XA_RETRY: "    << processedTsxAbrtType[_XA_RETRY] << std::endl;
+    std::cout << "\t_XA_EXPLICIT: " << processedTsxAbrtType[_XA_EXPLICIT] << std::endl;
+    std::cout << "\t_XA_CONFLICT: " << processedTsxAbrtType[_XA_CONFLICT] << std::endl;
+    std::cout << "\t_XA_CAPACITY: " << processedTsxAbrtType[_XA_CAPACITY] << std::endl;
+
+    std::cout << "Unprocesseed Queue" << std::endl;
+    std::cout << "Total commits: "  << unprocessedTsxCommits << std::endl;
+    std::cout << "Total aborts: "   << unprocessedTsxAborts << std::endl;
+    std::cout << "\t_XA_RETRY: "    << unprocessedTsxAbrtType[_XA_RETRY] << std::endl;
+    std::cout << "\t_XA_EXPLICIT: " << unprocessedTsxAbrtType[_XA_EXPLICIT] << std::endl;
+    std::cout << "\t_XA_CONFLICT: " << unprocessedTsxAbrtType[_XA_CONFLICT] << std::endl;
+    std::cout << "\t_XA_CAPACITY: " << unprocessedTsxAbrtType[_XA_CAPACITY] << std::endl;
+
 }
 #endif

@@ -115,7 +115,7 @@ void ThreadedTimeWarpMultiSetLTSF::getScheduleQueueLock(int threadId) {
             status = _xbegin_compat();
             if (status == _XBEGIN_STARTED) {
 #if USETSX_RTM_STRICT
-                if (!scheduleQueueLock->isLocked()) {
+                if (scheduleQueueLock->isLocked()) {
                     _xabort_compat(_ABORT_LOCK_BUSY);
                 }
 #endif /* USETSX_RTM_STRICT */
@@ -152,7 +152,12 @@ void ThreadedTimeWarpMultiSetLTSF::releaseScheduleQueueLock(int threadId) {
         _xend_compat();
         tsxCommits++;
         return;
+    } 
+#if !USETSX_RTM_STRICT
+    else if (scheduleQueueLock->whoHasLock() != threadId) {
+        _xabort_compat(_ABORT_LOCK_BUSY);
     }
+#endif /* !USETSX_RTM_STRICT */
 #endif
     if (syncMechanism == "HleAtomicLock") {
         scheduleQueueLock->releaseHleLock(threadId);
